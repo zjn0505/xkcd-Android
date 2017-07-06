@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">NeuAndroid</string>
+    <string name="default_text">Hello world, so great!</string>
 </resources>
