@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">NeuAndroid</string>
     <string name="default_text">Hello world, so great!</string>
+    <string name="click_to_load">Click to load Chuck Norris quotes</string>
 </resources>
