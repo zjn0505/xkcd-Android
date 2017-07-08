@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.json.JSONException;
@@ -16,6 +17,7 @@ import java.net.URL;
 public class MainActivity extends AppCompatActivity {
 
     private TextView tvChuck;
+    private ProgressBar pbLoading;
     private static final String CHUCK_QUERY = "http://api.icndb.com/jokes/random?limitTo=[nerdy]";
 
     @Override
@@ -30,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
                 loadChuckQuotes();
             }
         });
+        pbLoading = (ProgressBar) findViewById(R.id.pb_loading);
     }
 
     private void loadChuckQuotes() {
@@ -48,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
             // Here we prepare what we need to be done on the UI
             // For example, show a progress bar for a download task.
             // This method is executed on main thread.
-            tvChuck.setText("Loading famous Chuck quotes");
+            pbLoading.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -80,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            pbLoading.setVisibility(View.GONE);
         }
 
         private String extractJokeFromJson(String json) throws JSONException {
