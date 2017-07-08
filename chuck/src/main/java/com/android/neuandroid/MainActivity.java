@@ -6,9 +6,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 public class MainActivity extends AppCompatActivity {
 
     private TextView tvChuck;
+    private static final String CHUCK_QUERY = "http://api.icndb.com/jokes/random?limitTo=[nerdy]";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,13 +30,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadChuckQuotes() {
-        new ChuckQuoteTask().execute();
+        new ChuckQuoteTask().execute(CHUCK_QUERY);
 
     }
 
     // This is a fake loading progress to simulate how text field is updated.
     // We don't actually query the quote from web for now.
-    private class ChuckQuoteTask extends AsyncTask<Void, Object, String> {
+    private class ChuckQuoteTask extends AsyncTask<String, Object, String> {
 
         @Override
         protected void onPreExecute() {
@@ -42,11 +47,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected String doInBackground(Void... params) {
-            // We can ignore what is done in this method for now
-            // The task should retrieve a String from internet.
-            // Since we use fake query, we pretend here that we've got a String result from internet.
-            String result = fakingQueryProgress();
+        protected String doInBackground(String... params) {
+            String result = null;
+
+            try {
+                URL url = new URL(params[0]);
+                result = NetworkUtils.getResponseFromHttpUrl(url);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
             return result;
         }
