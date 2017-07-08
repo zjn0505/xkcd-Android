@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -34,8 +37,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    // This is a fake loading progress to simulate how text field is updated.
-    // We don't actually query the quote from web for now.
+    /**
+     * This class extends AsyncTask to execute the query out of the main thread.
+     * We should always not run a time consuming task on main thread.
+     */
     private class ChuckQuoteTask extends AsyncTask<String, Object, String> {
 
         @Override
@@ -69,27 +74,19 @@ public class MainActivity extends AppCompatActivity {
 
 
             // This function is executed on main thread as well.
-            tvChuck.setText(result);
+            try {
+                String joke = extractJokeFromJson(result);
+                tvChuck.setText(joke);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
-        // We can ignore this method, it's just a faked query progress.
-        private String fakingQueryProgress() {
-            int i = 6;
-            while (i > 0) {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        tvChuck.append(".");
-                    }
-                });
-                i--;
-            }
-            return "Chuck Norris can access private methods.";
+        private String extractJokeFromJson(String json) throws JSONException {
+            JSONObject jsonObject = new JSONObject(json);
+            JSONObject value = jsonObject.optJSONObject("value");
+            String joke = value.optString("joke");
+            return joke;
         }
     }
 
