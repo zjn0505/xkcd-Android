@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void launchDetailPageActivity() {
 
-        if (TextUtils.isEmpty(currentPic.img)) {
+        if (currentPic == null || TextUtils.isEmpty(currentPic.img)) {
             return;
         }
         Intent intent = new Intent(MainActivity.this, ImageDetailPageActivity.class);
@@ -187,6 +187,10 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
         switch (id) {
             case R.id.action_random:
+                if (latestIndex == 0) {
+                    loadXkcdPic();
+                    break;
+                }
                 Random random = new Random();
                 int randomId = random.nextInt(latestIndex + 1);
                 loadXkcdPicById(randomId);
@@ -203,6 +207,9 @@ public class MainActivity extends AppCompatActivity {
 
                 break;
             case R.id.action_specific:
+                if (currentPic == null) {
+                    break;
+                }
                 NumberPickerDialogFragment pickerDialogFragment = new NumberPickerDialogFragment();
                 pickerDialogFragment.setTitle(getString(R.string.dialog_pick_title));
                 pickerDialogFragment.setContent(getString(R.string.dialog_pick_content));
@@ -222,11 +229,17 @@ public class MainActivity extends AppCompatActivity {
 
                 break;
             case R.id.action_go_xkcd: {
+                if (currentPic == null) {
+                    break;
+                }
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://xkcd.com/" + currentPic.num));
                 startActivity(browserIntent);
                 break;
             }
             case R.id.action_go_explain: {
+                if (currentPic == null) {
+                    break;
+                }
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.explainxkcd.com/wiki/index.php/" + currentPic.num));
                 startActivity(browserIntent);
                 break;
