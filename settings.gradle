@@ -1,1 +1,1 @@
-include ':chuck'
+include ':chuck', ':xkcd'
