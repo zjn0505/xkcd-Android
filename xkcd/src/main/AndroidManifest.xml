@@ -19,6 +19,10 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".ImageDetailPageActivity"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"/>
+
+
     </application>
 
 </manifest>

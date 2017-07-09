@@ -1,7 +1,9 @@
 package com.neuandroid.xkcd;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,6 +28,11 @@ public class MainActivity extends AppCompatActivity {
 
     private final static String TAG = "MainActivity";
 
+    // Use this field to record the latest xkcd pic id
+    private int currentIndex = 0;
+
+    private String imgUrl = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,7 +41,12 @@ public class MainActivity extends AppCompatActivity {
         ivXkcdPic = (ImageView) findViewById(R.id.iv_xkcd_pic);
         tvCreateDate = (TextView) findViewById(R.id.tv_create_date);
         pbLoading = (ProgressBar) findViewById(R.id.pb_loading);
-
+        ivXkcdPic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launchDetailPageActivity();
+            }
+        });
         loadXkcdPic();
     }
 
@@ -73,9 +85,28 @@ public class MainActivity extends AppCompatActivity {
     private void renderXkcdPic(XkcdPic xPic) {
         tvTitle.setText(xPic.num + ". " + xPic.title);
         Glide.with(this).load(xPic.img).into(ivXkcdPic);
-        Log.d(TAG, "Pic to be loaded: " + xPic.img);
+        imgUrl = xPic.img;
+        Log.d(TAG, "Pic to be loaded: " + imgUrl);
         tvCreateDate.setText("created on " + xPic.year + "." + xPic.month + "." + xPic.day);
     }
+
+
+    /**
+     * Launch a new Activity to show the pic in full screen mode
+     */
+    private void launchDetailPageActivity() {
+
+        if (TextUtils.isEmpty(imgUrl)) {
+            return;
+        }
+        Intent intent = new Intent(MainActivity.this, ImageDetailPageActivity.class);
+        intent.putExtra("URL", imgUrl);
+        startActivity(intent);
+
+    }
+
+
+
 
     private IAsyncTaskListener listener = new IAsyncTaskListener() {
         @Override
@@ -86,8 +117,12 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onPostExecute(Serializable result) {
             pbLoading.setVisibility(View.GONE);
-            if (result instanceof XkcdPic)
+            if (result instanceof XkcdPic) {
+                if (0 == currentIndex) {
+                    currentIndex = ((XkcdPic) result).num;
+                }
                 renderXkcdPic((XkcdPic) result);
+            }
         }
     };
 
@@ -104,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
         switch (id) {
             case R.id.action_random:
                 Random random = new Random();
-                int randomId = random.nextInt(1000);
+                int randomId = random.nextInt(currentIndex + 1);
                 loadXkcdPicById(randomId);
                 break;
         }
