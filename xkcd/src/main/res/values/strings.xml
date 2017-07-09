@@ -2,4 +2,7 @@
     <string name="app_name">xkcd</string>
 
     <string name="action_random">Random xkcd</string>
+
+    <string name="dialog_got_it">Got it</string>
+    <string name="dialog_more_details">More details</string>
 </resources>

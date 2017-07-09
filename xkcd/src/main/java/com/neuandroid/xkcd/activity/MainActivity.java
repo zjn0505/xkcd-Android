@@ -1,6 +1,8 @@
 package com.neuandroid.xkcd.activity;
 
 import android.content.Intent;
+import android.net.Uri;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -13,9 +15,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.neuandroid.xkcd.IAsyncTaskListener;
 import com.neuandroid.xkcd.NetworkUtils;
 import com.neuandroid.xkcd.R;
+import com.neuandroid.xkcd.SimpleInfoDialogFragment;
 import com.neuandroid.xkcd.XkcdPic;
 import com.neuandroid.xkcd.XkcdQueryTask;
 
@@ -34,9 +36,10 @@ public class MainActivity extends AppCompatActivity {
     private final static String TAG = "MainActivity";
 
     // Use this field to record the latest xkcd pic id
-    private int currentIndex = 0;
+    private int latestIndex = 0;
 
     private String imgUrl = "";
+    private XkcdPic currentPic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +55,16 @@ public class MainActivity extends AppCompatActivity {
                 launchDetailPageActivity();
             }
         });
+        ivXkcdPic.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                SimpleInfoDialogFragment dialogFragment = new SimpleInfoDialogFragment();
+                dialogFragment.setContent(currentPic.alt);
+                dialogFragment.setListener(dialogListener);
+                dialogFragment.show(getSupportFragmentManager(), "DialogFragment");
+                return true;
+            }
+        });
         loadXkcdPic();
     }
 
@@ -61,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
     private void loadXkcdPic() {
         try {
             URL url = new URL(NetworkUtils.XKCD_QUERY_BASE_URL);
-            new XkcdQueryTask(listener).execute(url);
+            new XkcdQueryTask(queryListener).execute(url);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -76,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             URL url = new URL(queryUrl);
-            new XkcdQueryTask(listener).execute(url);
+            new XkcdQueryTask(queryListener).execute(url);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -91,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
         tvTitle.setText(xPic.num + ". " + xPic.title);
         Glide.with(this).load(xPic.img).into(ivXkcdPic);
         imgUrl = xPic.img;
+        currentPic = xPic;
         Log.d(TAG, "Pic to be loaded: " + imgUrl);
         tvCreateDate.setText("created on " + xPic.year + "." + xPic.month + "." + xPic.day);
     }
@@ -111,9 +125,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    private SimpleInfoDialogFragment.ISimpleInfoDialogListener dialogListener = new SimpleInfoDialogFragment.ISimpleInfoDialogListener() {
+        @Override
+        public void onPositiveClick() {
+            // Do nothing
+        }
+
+        @Override
+        public void onNegativeClick() {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.explainxkcd.com/wiki/index.php/" + currentPic.num));
+            startActivity(browserIntent);
+        }
+    };
 
 
-    private IAsyncTaskListener listener = new IAsyncTaskListener() {
+    private XkcdQueryTask.IAsyncTaskListener queryListener = new XkcdQueryTask.IAsyncTaskListener() {
         @Override
         public void onPreExecute() {
             pbLoading.setVisibility(View.VISIBLE);
@@ -123,8 +149,8 @@ public class MainActivity extends AppCompatActivity {
         public void onPostExecute(Serializable result) {
             pbLoading.setVisibility(View.GONE);
             if (result instanceof XkcdPic) {
-                if (0 == currentIndex) {
-                    currentIndex = ((XkcdPic) result).num;
+                if (0 == latestIndex) {
+                    latestIndex = ((XkcdPic) result).num;
                 }
                 renderXkcdPic((XkcdPic) result);
             }
@@ -144,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
         switch (id) {
             case R.id.action_random:
                 Random random = new Random();
-                int randomId = random.nextInt(currentIndex + 1);
+                int randomId = random.nextInt(latestIndex + 1);
                 loadXkcdPicById(randomId);
                 break;
         }

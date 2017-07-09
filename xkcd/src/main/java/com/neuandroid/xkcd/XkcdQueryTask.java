@@ -5,9 +5,15 @@ import android.os.AsyncTask;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URL;
 
 public class XkcdQueryTask extends AsyncTask<URL, Object, String> {
+
+    public interface IAsyncTaskListener {
+        void onPreExecute();
+        void onPostExecute(Serializable result);
+    }
 
     private IAsyncTaskListener listener;
 
