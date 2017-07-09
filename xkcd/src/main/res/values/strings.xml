@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">xkcd</string>
+
+    <string name="action_random">Random xkcd</string>
 </resources>
