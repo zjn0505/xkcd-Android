@@ -10,6 +10,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -151,10 +153,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void renderXkcdPic(XkcdPic xPic) {
         tvTitle.setText(xPic.num + ". " + xPic.title);
-        // We skip this for now since we don't know how to load image from url;
-        // We can use setImageResource(R.drawable.xkcd_default) to render a local image.
-        // But load internet image is quite different.
-        ivXkcdPic.setImageResource(R.drawable.xkcd_default);
+        Glide.with(this).load(xPic.img).into(ivXkcdPic);
         Log.d("MainActivity", "Pic to be loaded: " + xPic.img);
         tvCreateDate.setText("created on " + xPic.year + "." + xPic.month + "." + xPic.day);
     }
