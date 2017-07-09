@@ -11,7 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"
+        <activity android:name=".activity.MainActivity"
             android:configChanges="screenSize|orientation|keyboardHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,7 +20,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ImageDetailPageActivity"
+        <activity android:name=".activity.ImageDetailPageActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:configChanges="screenSize|orientation|keyboardHidden"/>
 

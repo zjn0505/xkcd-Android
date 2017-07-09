@@ -1,4 +1,4 @@
-package com.neuandroid.xkcd;
+package com.neuandroid.xkcd.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
 import com.github.chrisbanes.photoview.PhotoView;
+import com.neuandroid.xkcd.R;
 
 /**
  * Created by jienanzhang on 09/07/2017.

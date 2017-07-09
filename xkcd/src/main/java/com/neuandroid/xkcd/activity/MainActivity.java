@@ -1,4 +1,4 @@
-package com.neuandroid.xkcd;
+package com.neuandroid.xkcd.activity;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +13,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.neuandroid.xkcd.IAsyncTaskListener;
+import com.neuandroid.xkcd.NetworkUtils;
+import com.neuandroid.xkcd.R;
+import com.neuandroid.xkcd.XkcdPic;
+import com.neuandroid.xkcd.XkcdQueryTask;
 
 import java.io.Serializable;
 import java.net.MalformedURLException;

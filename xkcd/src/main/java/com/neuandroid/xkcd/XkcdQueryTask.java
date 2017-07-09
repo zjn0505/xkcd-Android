@@ -7,7 +7,7 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.net.URL;
 
-class XkcdQueryTask extends AsyncTask<URL, Object, String> {
+public class XkcdQueryTask extends AsyncTask<URL, Object, String> {
 
     private IAsyncTaskListener listener;
 
