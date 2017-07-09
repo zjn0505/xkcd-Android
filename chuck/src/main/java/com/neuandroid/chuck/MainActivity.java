@@ -4,6 +4,7 @@ import android.hardware.SensorManager;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -100,13 +101,18 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
 
 
             // This function is executed on main thread as well.
-            try {
-                String joke = extractJokeFromJson(result);
-                tvChuck.setText(joke);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
             pbLoading.setVisibility(View.GONE);
+            if (!TextUtils.isEmpty(result)) {
+
+                try {
+                    String joke = extractJokeFromJson(result);
+                    tvChuck.setText(joke);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    tvChuck.setText(getString(R.string.result_empty));
+                }
+            }
+            tvChuck.setText(getString(R.string.result_empty));
         }
 
         private String extractJokeFromJson(String json) throws JSONException {
