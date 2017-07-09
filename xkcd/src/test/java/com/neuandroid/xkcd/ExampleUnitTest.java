@@ -1,4 +1,4 @@
-package com.android.xkcd;
+package com.neuandroid.xkcd;
 
 import org.junit.Test;
 

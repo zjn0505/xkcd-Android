@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.android.neuandroid.com.neuandroid.neuandroid.MainActivity"
+    tools:context="com.neuandroid.chuck.MainActivity"
     android:focusableInTouchMode="true">
 
 
