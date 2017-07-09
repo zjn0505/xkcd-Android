@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="@string/header_text"
-            android:textSize="20sp"
+            android:textSize="25sp"
             android:textColor="@color/colorPrimary"
             android:layout_marginTop="20dp"/>
 
@@ -29,26 +29,20 @@
 
             <EditText
                 android:id="@+id/edt_first_name"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                android:hint="@string/hint_chuck"/>
+                android:hint="@string/hint_chuck"
+                style="@style/edt_name_style"/>
 
             <EditText
                 android:id="@+id/edt_last_name"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                android:hint="@string/hint_norris"/>
+                android:hint="@string/hint_norris"
+                style="@style/edt_name_style" />
 
 
         </LinearLayout>
 
         <TextView
             android:id="@+id/tv_chuck"
-            android:layout_width="300dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_margin="@dimen/textview_margin"
@@ -56,7 +50,8 @@
             android:text="@string/default_text"
             android:textColor="@color/colorPrimary"
             android:textSize="20sp"
-            tools:text="Hello World!" />
+            tools:text="Hello World!"
+            android:padding="10dp"/>
 
     </LinearLayout>
 
