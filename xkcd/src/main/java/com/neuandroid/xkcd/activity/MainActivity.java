@@ -14,6 +14,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.neuandroid.xkcd.NetworkUtils;
 import com.neuandroid.xkcd.NumberPickerDialogFragment;
 import com.neuandroid.xkcd.R;
@@ -38,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
     // Use this field to record the latest xkcd pic id
     private int latestIndex = 0;
 
-    private String imgUrl = "";
     private XkcdPic currentPic;
 
     @Override
@@ -100,13 +102,28 @@ public class MainActivity extends AppCompatActivity {
      * Render img, text on the view
      * @param xPic
      */
-    private void renderXkcdPic(XkcdPic xPic) {
-        tvTitle.setText(xPic.num + ". " + xPic.title);
-        Glide.with(this).load(xPic.img).into(ivXkcdPic);
-        imgUrl = xPic.img;
+    private void renderXkcdPic(final XkcdPic xPic) {
+        tvTitle.setText("");
+        tvCreateDate.setText("");
+        Glide.with(this).load(xPic.img).listener(new RequestListener<String, GlideDrawable>() {
+            @Override
+            public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                pbLoading.setVisibility(View.GONE);
+                return false;
+            }
+
+            @Override
+            public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                pbLoading.setVisibility(View.GONE);
+                tvTitle.setText(xPic.num + ". " + xPic.title);
+                tvCreateDate.setText("created on " + xPic.year + "." + xPic.month + "." + xPic.day);
+                return false;
+
+            }
+        }).into(ivXkcdPic);
         currentPic = xPic;
-        Log.d(TAG, "Pic to be loaded: " + imgUrl);
-        tvCreateDate.setText("created on " + xPic.year + "." + xPic.month + "." + xPic.day);
+        Log.d(TAG, "Pic to be loaded: " + xPic.img);
+
     }
 
 
@@ -115,11 +132,11 @@ public class MainActivity extends AppCompatActivity {
      */
     private void launchDetailPageActivity() {
 
-        if (TextUtils.isEmpty(imgUrl)) {
+        if (TextUtils.isEmpty(currentPic.img)) {
             return;
         }
         Intent intent = new Intent(MainActivity.this, ImageDetailPageActivity.class);
-        intent.putExtra("URL", imgUrl);
+        intent.putExtra("URL", currentPic.img);
         startActivity(intent);
 
     }
@@ -147,12 +164,13 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onPostExecute(Serializable result) {
-            pbLoading.setVisibility(View.GONE);
             if (result instanceof XkcdPic) {
                 if (0 == latestIndex) {
                     latestIndex = ((XkcdPic) result).num;
                 }
                 renderXkcdPic((XkcdPic) result);
+            } else {
+                pbLoading.setVisibility(View.GONE);
             }
         }
     };
@@ -174,6 +192,9 @@ public class MainActivity extends AppCompatActivity {
                 loadXkcdPicById(randomId);
                 break;
             case R.id.action_share:
+                if (currentPic == null) {
+                    break;
+                }
                 Intent shareIntent = new Intent();
                 shareIntent.setAction(Intent.ACTION_SEND);
                 shareIntent.putExtra(Intent.EXTRA_TEXT, "Come and check this funny image I got from xkcd. \n " + currentPic.img);
