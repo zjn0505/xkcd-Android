@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
     private void renderXkcdPic(XkcdPic xPic) {
         tvTitle.setText(xPic.num + ". " + xPic.title);
         Glide.with(this).load(xPic.img).into(ivXkcdPic);
-        Log.d("MainActivity", "Pic to be loaded: " + xPic.img);
+        Log.d(TAG, "Pic to be loaded: " + xPic.img);
         tvCreateDate.setText("created on " + xPic.year + "." + xPic.month + "." + xPic.day);
     }
 
