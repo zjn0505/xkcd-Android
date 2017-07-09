@@ -1,5 +1,6 @@
 package com.android.neuandroid;
 
+import android.hardware.SensorManager;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,6 +9,8 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.squareup.seismic.ShakeDetector;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -15,7 +18,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ShakeDetector.Listener {
 
     private TextView tvChuck;
     private ProgressBar pbLoading;
@@ -27,6 +30,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        ShakeDetector sd = new ShakeDetector(this);
+        sd.start(sensorManager);
+
+
+
         tvChuck = (TextView) findViewById(R.id.tv_chuck);
         tvChuck.setText(getText(R.string.click_to_load));
         tvChuck.setOnClickListener(new View.OnClickListener() {
@@ -47,6 +57,11 @@ public class MainActivity extends AppCompatActivity {
 
         new ChuckQuoteTask().execute(url);
 
+    }
+
+    @Override
+    public void hearShake() {
+        loadChuckQuotes();
     }
 
     /**
