@@ -1,4 +1,4 @@
-package com.android.neuandroid;
+package com.neuandroid.chuck;
 
 import android.net.Uri;
 import android.text.TextUtils;

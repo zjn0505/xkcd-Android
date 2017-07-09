@@ -1,4 +1,4 @@
-package com.android.neuandroid;
+package com.neuandroid.chuck;
 
 import org.junit.Test;
 

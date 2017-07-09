@@ -1,4 +1,4 @@
-package com.android.neuandroid;
+package com.neuandroid.chuck;
 
 import android.hardware.SensorManager;
 import android.os.AsyncTask;
@@ -15,7 +15,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity implements ShakeDetector.Listener {
