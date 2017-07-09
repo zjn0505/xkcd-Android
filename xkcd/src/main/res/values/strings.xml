@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">xkcd</string>
 
+    <string name="action_share">Share this xkcd</string>
     <string name="action_random">Random xkcd</string>
     <string name="action_specific">Specific xkcd</string>
     <string name="action_xkcd">Go to xkcd.com</string>
@@ -13,5 +14,7 @@
     <string name="dialog_pick_content">Select the id of xkcd</string>
     <string name="dialog_select">Select</string>
     <string name="dialog_cancel">Cancel</string>
+
+    <string name="share_to">Share this xkcd to</string>
 
 </resources>

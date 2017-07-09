@@ -5,6 +5,10 @@
         android:title="@string/action_random"
         android:icon="@drawable/ic_action_random"
         app:showAsAction="ifRoom" />
+    <item android:id="@+id/action_share"
+        android:title="@string/action_share"
+        android:icon="@drawable/ic_action_share"
+        app:showAsAction="ifRoom" />
     <item android:id="@+id/action_specific"
         android:title="@string/action_specific"
         app:showAsAction="never" />

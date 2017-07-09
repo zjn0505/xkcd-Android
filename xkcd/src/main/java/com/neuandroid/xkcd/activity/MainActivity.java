@@ -173,6 +173,14 @@ public class MainActivity extends AppCompatActivity {
                 int randomId = random.nextInt(latestIndex + 1);
                 loadXkcdPicById(randomId);
                 break;
+            case R.id.action_share:
+                Intent shareIntent = new Intent();
+                shareIntent.setAction(Intent.ACTION_SEND);
+                shareIntent.putExtra(Intent.EXTRA_TEXT, "Come and check this funny image I got from xkcd. \n " + currentPic.img);
+                shareIntent.setType("text/plain");
+                startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.share_to)));
+
+                break;
             case R.id.action_specific:
                 NumberPickerDialogFragment pickerDialogFragment = new NumberPickerDialogFragment();
                 pickerDialogFragment.setTitle(getString(R.string.dialog_pick_title));
