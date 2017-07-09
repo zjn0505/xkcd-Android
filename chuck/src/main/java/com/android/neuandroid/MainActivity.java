@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -18,7 +19,9 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView tvChuck;
     private ProgressBar pbLoading;
-    private static final String CHUCK_QUERY = "http://api.icndb.com/jokes/random?limitTo=[nerdy]";
+    private EditText edtFirstName;
+    private EditText edtLastName;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,10 +36,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         pbLoading = (ProgressBar) findViewById(R.id.pb_loading);
+        edtFirstName = (EditText) findViewById(R.id.edt_first_name);
+        edtLastName = (EditText) findViewById(R.id.edt_last_name);
     }
 
     private void loadChuckQuotes() {
-        new ChuckQuoteTask().execute(CHUCK_QUERY);
+        String firstName = edtFirstName.getText().toString();
+        String lastName = edtLastName.getText().toString();
+        URL url = NetworkUtils.buildUrl(firstName, lastName);
+
+        new ChuckQuoteTask().execute(url);
 
     }
 
@@ -44,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
      * This class extends AsyncTask to execute the query out of the main thread.
      * We should always not run a time consuming task on main thread.
      */
-    private class ChuckQuoteTask extends AsyncTask<String, Object, String> {
+    private class ChuckQuoteTask extends AsyncTask<URL, Object, String> {
 
         @Override
         protected void onPreExecute() {
@@ -55,11 +64,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected String doInBackground(String... params) {
+        protected String doInBackground(URL... params) {
             String result = null;
 
             try {
-                URL url = new URL(params[0]);
+                URL url = params[0];
                 result = NetworkUtils.getResponseFromHttpUrl(url);
             } catch (IOException e) {
                 e.printStackTrace();
