@@ -4,5 +4,18 @@
     <item android:id="@+id/action_random"
         android:title="@string/action_random"
         android:icon="@drawable/ic_action_random"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
+    <item android:id="@+id/action_specific"
+        android:title="@string/action_specific"
+        app:showAsAction="never" />
+
+    <group>
+        <item android:id="@+id/action_go_xkcd"
+            android:title="@string/action_xkcd"
+            app:showAsAction="never" />
+        <item android:id="@+id/action_go_explain"
+            android:title="@string/action_explain"
+            app:showAsAction="never" />
+    </group>
+
 </menu>

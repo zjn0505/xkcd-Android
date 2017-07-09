@@ -2,7 +2,6 @@ package com.neuandroid.xkcd.activity;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -16,6 +15,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.neuandroid.xkcd.NetworkUtils;
+import com.neuandroid.xkcd.NumberPickerDialogFragment;
 import com.neuandroid.xkcd.R;
 import com.neuandroid.xkcd.SimpleInfoDialogFragment;
 import com.neuandroid.xkcd.XkcdPic;
@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
                 SimpleInfoDialogFragment dialogFragment = new SimpleInfoDialogFragment();
                 dialogFragment.setContent(currentPic.alt);
                 dialogFragment.setListener(dialogListener);
-                dialogFragment.show(getSupportFragmentManager(), "DialogFragment");
+                dialogFragment.show(getSupportFragmentManager(), "AltInfoDialogFragment");
                 return true;
             }
         });
@@ -173,6 +173,35 @@ public class MainActivity extends AppCompatActivity {
                 int randomId = random.nextInt(latestIndex + 1);
                 loadXkcdPicById(randomId);
                 break;
+            case R.id.action_specific:
+                NumberPickerDialogFragment pickerDialogFragment = new NumberPickerDialogFragment();
+                pickerDialogFragment.setTitle(getString(R.string.dialog_pick_title));
+                pickerDialogFragment.setContent(getString(R.string.dialog_pick_content));
+                pickerDialogFragment.setNumberRange(1, latestIndex);
+                pickerDialogFragment.setListener(new NumberPickerDialogFragment.INumberPickerDialogListener() {
+                    @Override
+                    public void onPositiveClick(int number) {
+                        loadXkcdPicById(number);
+                    }
+
+                    @Override
+                    public void onNegativeClick() {
+                        // Do nothing
+                    }
+                });
+                pickerDialogFragment.show(getSupportFragmentManager(), "IdPickerDialogFragment");
+
+                break;
+            case R.id.action_go_xkcd: {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://xkcd.com/" + currentPic.num));
+                startActivity(browserIntent);
+                break;
+            }
+            case R.id.action_go_explain: {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.explainxkcd.com/wiki/index.php/" + currentPic.num));
+                startActivity(browserIntent);
+                break;
+            }
         }
         return true;
     }

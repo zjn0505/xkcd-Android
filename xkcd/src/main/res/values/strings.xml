@@ -2,7 +2,16 @@
     <string name="app_name">xkcd</string>
 
     <string name="action_random">Random xkcd</string>
+    <string name="action_specific">Specific xkcd</string>
+    <string name="action_xkcd">Go to xkcd.com</string>
+    <string name="action_explain">Go to explainxkcd</string>
 
     <string name="dialog_got_it">Got it</string>
     <string name="dialog_more_details">More details</string>
+    
+    <string name="dialog_pick_title">Specific xkcd</string>
+    <string name="dialog_pick_content">Select the id of xkcd</string>
+    <string name="dialog_select">Select</string>
+    <string name="dialog_cancel">Cancel</string>
+
 </resources>
