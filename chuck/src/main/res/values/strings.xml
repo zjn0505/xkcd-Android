@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">NeuAndroid</string>
+    <string name="app_name">Chuck Joke</string>
     <string name="default_text">Hello world, so great!</string>
     <string name="click_to_load">Click to load a joke</string>
     <string name="header_text">Show me a joke about</string>
