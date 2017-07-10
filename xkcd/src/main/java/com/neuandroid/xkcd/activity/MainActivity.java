@@ -29,6 +29,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Random;
 
+import static android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING;
+import static android.view.HapticFeedbackConstants.LONG_PRESS;
+
 public class MainActivity extends AppCompatActivity {
 
     private TextView tvTitle;
@@ -64,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
                 dialogFragment.setContent(currentPic.alt);
                 dialogFragment.setListener(dialogListener);
                 dialogFragment.show(getSupportFragmentManager(), "AltInfoDialogFragment");
+                v.performHapticFeedback(LONG_PRESS, FLAG_IGNORE_GLOBAL_SETTING);
                 return true;
             }
         });
