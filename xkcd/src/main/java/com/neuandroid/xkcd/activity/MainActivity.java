@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this, ImageDetailPageActivity.class);
         intent.putExtra("URL", currentPic.img);
         startActivity(intent);
-
+        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
     }
 
 
