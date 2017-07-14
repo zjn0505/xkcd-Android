@@ -4,7 +4,7 @@ Using API from [XKCD](https://xkcd.com/json.html) to retrieve comics about xkcd.
 
 ### Screenshots
 
-![screenshots](https://github.com/zjn0505/Neu-Android/blob/chuck/screenshots/screenshots-chuck.png?raw=true)
+![screenshots](https://github.com/zjn0505/Neu-Android/blob/xkcd/screenshots/xkcd.png?raw=true)
 
 
 We are going to use skills of:
