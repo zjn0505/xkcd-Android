@@ -2,6 +2,8 @@
     <string name="app_name">xkcd</string>
 
     <string name="action_share">Share this xkcd</string>
+    <string name="action_left">Previous</string>
+    <string name="action_right">Next</string>
     <string name="action_random">Random xkcd</string>
     <string name="action_specific">Specific xkcd</string>
     <string name="action_xkcd">Go to xkcd.com</string>
@@ -16,5 +18,8 @@
     <string name="dialog_cancel">Cancel</string>
 
     <string name="share_to">Share this xkcd to</string>
+
+    <string name="toast_first">No more pre-palaeolithic pictures.</string>
+    <string name="toast_last">Oops, xkcd is exhausted.</string>
 
 </resources>

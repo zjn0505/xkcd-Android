@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
@@ -98,6 +99,28 @@ public class MainActivity extends AppCompatActivity {
             new XkcdQueryTask(queryListener).execute(url);
         } catch (MalformedURLException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void loadPreviousPic() {
+        if (currentPic != null) {
+            int currentNum = currentPic.num;
+            if (currentNum > 1) {
+                loadXkcdPicById(currentNum - 1);
+            } else {
+                Toast.makeText(this, getString(R.string.toast_first), Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void loadNextPic() {
+        if (currentPic != null) {
+            int currentNum = currentPic.num;
+            if (currentNum < latestIndex) {
+                loadXkcdPicById(currentNum + 1);
+            } else {
+                Toast.makeText(this, getString(R.string.toast_last), Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -190,6 +213,12 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
+            case R.id.action_left:
+                loadPreviousPic();
+                break;
+            case R.id.action_right:
+                loadNextPic();
+                break;
             case R.id.action_random:
                 if (latestIndex == 0) {
                     loadXkcdPic();

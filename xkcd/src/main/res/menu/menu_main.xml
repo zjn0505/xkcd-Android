@@ -1,14 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/action_left"
+        android:title="@string/action_left"
+        android:icon="@drawable/ic_action_left"
+        app:showAsAction="always" />
     <item android:id="@+id/action_random"
         android:title="@string/action_random"
         android:icon="@drawable/ic_action_random"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
+    <item android:id="@+id/action_right"
+        android:title="@string/action_right"
+        android:icon="@drawable/ic_action_right"
+        app:showAsAction="always" />
     <item android:id="@+id/action_share"
         android:title="@string/action_share"
         android:icon="@drawable/ic_action_share"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
     <item android:id="@+id/action_specific"
         android:title="@string/action_specific"
         app:showAsAction="never" />
