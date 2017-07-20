@@ -2,12 +2,16 @@ package com.neuandroid.xkcd.activity;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v4.view.GestureDetectorCompat;
+import android.support.v4.view.MotionEventCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -46,7 +50,8 @@ public class MainActivity extends AppCompatActivity {
     private int latestIndex = 0;
 
     private XkcdPic currentPic;
-
+    private GestureDetectorCompat mDetector;
+    private boolean isFling;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,7 +63,9 @@ public class MainActivity extends AppCompatActivity {
         ivXkcdPic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                launchDetailPageActivity();
+                if (!isFling)
+                    launchDetailPageActivity();
+                isFling = false;
             }
         });
         ivXkcdPic.setOnLongClickListener(new View.OnLongClickListener() {
@@ -70,6 +77,14 @@ public class MainActivity extends AppCompatActivity {
                 dialogFragment.show(getSupportFragmentManager(), "AltInfoDialogFragment");
                 v.performHapticFeedback(LONG_PRESS, FLAG_IGNORE_GLOBAL_SETTING);
                 return true;
+            }
+        });
+        mDetector = new GestureDetectorCompat(this, new MyGestureListener());
+        ivXkcdPic.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                mDetector.onTouchEvent(event);
+                return false;
             }
         });
         loadXkcdPic();
@@ -279,5 +294,32 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return true;
+    }
+
+    class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
+        private static final int SWIPE_MIN_DISTANCE = 120;
+        private static final int SWIPE_MAX_OFF_PATH = 250;
+        private static final int SWIPE_THRESHOLD_VELOCITY = 200;
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2,
+                               float velocityX, float velocityY) {
+            Log.d("MyGestureListener", "trigger onFling");
+
+            if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH)
+                return false;
+            if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE
+                    && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                loadPreviousPic();
+            } else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE
+                    && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                //left to right flip
+                loadNextPic();
+            }
+            Log.d("MyGestureListener", "trigger onFling action");
+            isFling = true;
+
+            return false;
+        }
     }
 }
