@@ -321,5 +321,17 @@ public class MainActivity extends AppCompatActivity {
 
             return false;
         }
+
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            Log.i("MyGestureListener", "single tap");
+            return super.onSingleTapConfirmed(e);
+        }
+
+        @Override
+        public boolean onSingleTapUp(MotionEvent e) {
+            Log.i("MyGestureListener", "single tap up");
+            return super.onSingleTapUp(e);
+        }
     }
 }
