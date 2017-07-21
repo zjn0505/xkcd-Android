@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvTitle;
     private ImageView ivXkcdPic;
     private TextView tvCreateDate;
+    private TextView tvDescription;
     private ProgressBar pbLoading;
 
     private final static String TAG = "MainActivity";
@@ -52,6 +53,9 @@ public class MainActivity extends AppCompatActivity {
     private XkcdPic currentPic;
     private GestureDetectorCompat mDetector;
     private boolean isFling;
+    private static final String LOADED_XKCD_ID = "xkcd_id";
+    private static final String LATEST_XKCD_ID = "xkcd_latest_id";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
         tvTitle = (TextView) findViewById(R.id.tv_title);
         ivXkcdPic = (ImageView) findViewById(R.id.iv_xkcd_pic);
         tvCreateDate = (TextView) findViewById(R.id.tv_create_date);
+        tvDescription = (TextView) findViewById(R.id.tv_description);
         pbLoading = (ProgressBar) findViewById(R.id.pb_loading);
         ivXkcdPic.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,7 +92,21 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-        loadXkcdPic();
+        if (savedInstanceState != null) {
+            int savedId = savedInstanceState.getInt(LOADED_XKCD_ID);
+            loadXkcdPicById(savedId);
+            latestIndex = savedInstanceState.getInt(LATEST_XKCD_ID);
+        } else {
+            loadXkcdPic();
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (currentPic != null)
+            outState.putInt(LOADED_XKCD_ID, currentPic.num);
+            outState.putInt(LATEST_XKCD_ID, latestIndex);
     }
 
     /**
@@ -147,7 +166,10 @@ public class MainActivity extends AppCompatActivity {
     private void renderXkcdPic(final XkcdPic xPic) {
         tvTitle.setText("");
         tvCreateDate.setText("");
-        Glide.with(this).load(xPic.img).listener(new RequestListener<String, GlideDrawable>() {
+        if (this.isFinishing()) {
+            return;
+        }
+        Glide.with(this.getApplicationContext()).load(xPic.img).listener(new RequestListener<String, GlideDrawable>() {
             @Override
             public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
                 pbLoading.setVisibility(View.GONE);
@@ -159,6 +181,9 @@ public class MainActivity extends AppCompatActivity {
                 pbLoading.setVisibility(View.GONE);
                 tvTitle.setText(xPic.num + ". " + xPic.title);
                 tvCreateDate.setText("created on " + xPic.year + "." + xPic.month + "." + xPic.day);
+                if (tvDescription != null) {
+                    tvDescription.setText(xPic.alt);
+                }
                 return false;
 
             }

@@ -22,25 +22,41 @@
                 android:id="@+id/tv_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="25sp"
                 android:layout_margin="5dp"
-                tools:text="0. Default Image"
                 android:gravity="center"
-                android:textStyle="bold"/>
+                android:textSize="25sp"
+                android:textStyle="bold"
+                tools:text="0. Default Image" />
 
-            <TextView
-                android:id="@+id/tv_description"
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_description"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="20dp"
+                        android:textSize="15sp" />
+
+                </LinearLayout>
+
+            </ScrollView>
 
             <TextView
                 android:id="@+id/tv_create_date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
-                android:textSize="15sp"
                 android:gravity="end"
-                tools:text="created on 2017.7.2"/>
+                android:textSize="15sp"
+                tools:text="created on 2017.7.2" />
 
 
         </LinearLayout>
@@ -54,11 +70,11 @@
                 android:id="@+id/iv_xkcd_pic"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@drawable/xkcd_default"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"/>
+                android:src="@drawable/xkcd_default" />
 
         </ScrollView>
 
@@ -69,7 +85,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 
 </FrameLayout>
