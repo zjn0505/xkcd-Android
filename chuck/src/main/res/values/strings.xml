@@ -1,9 +1,0 @@
-<resources>
-    <string name="app_name">Chuck Joke</string>
-    <string name="default_text">Hello world, so great!</string>
-    <string name="click_to_load">Click to load a joke</string>
-    <string name="header_text">Show me a joke about</string>
-    <string name="hint_chuck">Chuck</string>
-    <string name="hint_norris">Norris</string>
-    <string name="result_empty">Query failed, no valid data</string>
-</resources>

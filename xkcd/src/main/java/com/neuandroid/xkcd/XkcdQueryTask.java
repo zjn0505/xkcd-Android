@@ -43,7 +43,17 @@ public class XkcdQueryTask extends AsyncTask<URL, Object, String> {
     @Override
     protected void onPostExecute(String result) {
         XkcdPic xPic = new Gson().fromJson(result, XkcdPic.class);
+        xPic.img = transformXkcdImgUrl(xPic);
         listener.onPostExecute(xPic);
+    }
+
+    private String transformXkcdImgUrl(XkcdPic xPic) {
+        if (xPic.num >= 1084) {
+            String img = xPic.img;
+            int insert = img.indexOf(".png");
+            return img.substring(0, insert) + "_2x" + img.substring(insert, img.length());
+        }
+        return xPic.img;
     }
 
 }
