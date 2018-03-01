@@ -268,11 +268,13 @@ public class MainActivity extends AppCompatActivity {
         }
         Glide.get(this)
                 .register(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(mOkHttpClient));
-        Glide.with(this.getApplicationContext()).load(xPic.img).diskCacheStrategy(DiskCacheStrategy.SOURCE).listener(new RequestListener<String, GlideDrawable>() {
+        Glide.with(this.getApplicationContext()).load(xPic.getImg()).diskCacheStrategy(DiskCacheStrategy.SOURCE).listener(new RequestListener<String, GlideDrawable>() {
             @Override
             public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
                 pbLoading.setVisibility(View.GONE);
-                Log.e(TAG, "image loading failed " + xPic.img);
+                Log.e(TAG, "image loading failed " + xPic.getImg());
+                Log.d(TAG, "image loading fallback " + xPic.getRawImg());
+                Glide.with(MainActivity.this).load(xPic.getRawImg()).diskCacheStrategy(DiskCacheStrategy.SOURCE).into(ivXkcdPic);
                 return false;
             }
 
@@ -289,7 +291,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }).into(ivXkcdPic);
         currentPic = xPic;
-        Log.d(TAG, "Pic to be loaded: " + xPic.img);
+        Log.d(TAG, "Pic to be loaded: " + xPic.getImg());
 
     }
 
@@ -299,11 +301,11 @@ public class MainActivity extends AppCompatActivity {
      */
     private void launchDetailPageActivity() {
 
-        if (currentPic == null || TextUtils.isEmpty(currentPic.img)) {
+        if (currentPic == null || TextUtils.isEmpty(currentPic.getImg())) {
             return;
         }
         Intent intent = new Intent(MainActivity.this, ImageDetailPageActivity.class);
-        intent.putExtra("URL", currentPic.img);
+        intent.putExtra("URL", currentPic.getImg());
         startActivity(intent);
         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
     }
@@ -343,6 +345,9 @@ public class MainActivity extends AppCompatActivity {
                         doc = Jsoup.connect("http://www.explainxkcd.com/wiki/index.php/" + currentPic.num).get();
                     } catch (IOException e) {
                         e.printStackTrace();
+                    }
+                    if (doc == null) {
+                        return null;
                     }
                     Elements newsHeadlines = doc.select("h2");
                     for (Element headline : newsHeadlines) {
@@ -427,7 +432,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 Intent shareIntent = new Intent();
                 shareIntent.setAction(Intent.ACTION_SEND);
-                shareIntent.putExtra(Intent.EXTRA_TEXT, "Come and check this funny image I got from xkcd. \n " + currentPic.img);
+                shareIntent.putExtra(Intent.EXTRA_TEXT, "Come and check this funny image I got from xkcd. \n " + currentPic.getImg());
                 shareIntent.setType("text/plain");
                 startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.share_to)));
 
