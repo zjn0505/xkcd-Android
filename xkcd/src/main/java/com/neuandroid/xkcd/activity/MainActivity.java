@@ -1,9 +1,11 @@
 package com.neuandroid.xkcd.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.v4.view.GestureDetectorCompat;
-import android.support.v4.view.MotionEventCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -30,6 +32,13 @@ import com.neuandroid.xkcd.SimpleInfoDialogFragment;
 import com.neuandroid.xkcd.XkcdPic;
 import com.neuandroid.xkcd.XkcdQueryTask;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
+import org.jsoup.select.Elements;
+
+import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -56,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean isFling;
     private static final String LOADED_XKCD_ID = "xkcd_id";
     private static final String LATEST_XKCD_ID = "xkcd_latest_id";
+    private SimpleInfoDialogFragment dialogFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         ivXkcdPic.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                SimpleInfoDialogFragment dialogFragment = new SimpleInfoDialogFragment();
+                dialogFragment = new SimpleInfoDialogFragment();
                 dialogFragment.setContent(currentPic.alt);
                 dialogFragment.setListener(dialogListener);
                 dialogFragment.show(getSupportFragmentManager(), "AltInfoDialogFragment");
@@ -128,7 +138,9 @@ public class MainActivity extends AppCompatActivity {
      */
     private void loadXkcdPicById(int id) {
         String queryUrl = String.format(NetworkUtils.XKCD_QUERY_BY_ID_URL, id);
-
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null)
+            actionBar.setSubtitle(String.valueOf(id));
         try {
             URL url = new URL(queryUrl);
             new XkcdQueryTask(queryListener).execute(url);
@@ -220,6 +232,59 @@ public class MainActivity extends AppCompatActivity {
         public void onNegativeClick() {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.explainxkcd.com/wiki/index.php/" + currentPic.num));
             startActivity(browserIntent);
+        }
+
+        @SuppressLint("StaticFieldLeak")
+        @Override
+        public void onExplainMoreClick(final SimpleInfoDialogFragment.ExplainingCallback explainingCallback) {
+            new AsyncTask<Void, Void, String>() {
+
+                private boolean isH2ByType(Element element, String type) {
+
+                    for (Node child : element.childNodes()) {
+                        if (type.equals(child.attr("id"))) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+
+                @Override
+                protected String doInBackground(Void... voids) {
+                    Document doc = null;
+                    try {
+                        doc = Jsoup.connect("http://www.explainxkcd.com/wiki/index.php/" + currentPic.num).get();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Elements newsHeadlines = doc.select("h2");
+                    for (Element headline : newsHeadlines) {
+                        if (isH2ByType(headline, "Explanation")) {
+                            Element element = headline.nextElementSibling();
+                            StringBuilder htmlResult = new StringBuilder();
+                            while (!isH2ByType(element, "Transcript")) {
+                                if (element.tagName().equals("p"))
+                                    htmlResult.append(element.toString());
+                                element = element.nextElementSibling();
+                            }
+                            return htmlResult.toString();
+                        }
+
+                    }
+                    return null;
+                }
+
+                @Override
+                protected void onPostExecute(String result) {
+                    if (result != null) {
+                        if (dialogFragment != null && dialogFragment.isAdded()) {
+                            explainingCallback.explanationLoaded(result);
+                            return;
+                        }
+                    }
+                    explainingCallback.explanationFailed();
+                }
+            }.execute();
         }
     };
 
@@ -336,11 +401,11 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE
                     && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                loadPreviousPic();
+                loadNextPic();
             } else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE
                     && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                 //left to right flip
-                loadNextPic();
+                loadPreviousPic();
             }
             Log.d("MyGestureListener", "trigger onFling action");
             isFling = true;

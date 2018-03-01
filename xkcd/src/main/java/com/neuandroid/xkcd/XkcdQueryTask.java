@@ -48,12 +48,12 @@ public class XkcdQueryTask extends AsyncTask<URL, Object, String> {
     }
 
     private String transformXkcdImgUrl(XkcdPic xPic) {
-        if (xPic.num >= 1084) {
+        if (xPic != null && xPic.num >= 1084) {
             String img = xPic.img;
             int insert = img.indexOf(".png");
             return img.substring(0, insert) + "_2x" + img.substring(insert, img.length());
         }
-        return xPic.img;
+        return xPic == null ? null : xPic.img;
     }
 
 }

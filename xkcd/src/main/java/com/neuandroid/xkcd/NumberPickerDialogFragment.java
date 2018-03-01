@@ -2,12 +2,14 @@ package com.neuandroid.xkcd;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.NumberPicker;
 
 /**
@@ -51,6 +53,7 @@ public class NumberPickerDialogFragment extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View contentView = inflater.inflate(R.layout.dialog_picker, null);
         final NumberPicker picker = (NumberPicker) contentView.findViewById(R.id.picker_xkcd_id);
+        final EditText editText = (EditText) picker.findViewById(Resources.getSystem().getIdentifier("numberpicker_input", "id", "android"));
         picker.setMinValue(min);
         picker.setMaxValue(max);
         builder.setView(contentView)
@@ -58,7 +61,12 @@ public class NumberPickerDialogFragment extends DialogFragment {
                 .setMessage(content)
                 .setPositiveButton(R.string.dialog_select, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        int value = picker.getValue();
+                        int value = 1;
+                        if (editText != null && editText.isFocused()) {
+                            value = Integer.valueOf(editText.getText().toString());
+                        } else {
+                            value = picker.getValue();
+                        }
                         mListener.onPositiveClick(value);
                         dismiss();
                     }
