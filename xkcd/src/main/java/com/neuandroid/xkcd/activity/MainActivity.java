@@ -21,7 +21,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.integration.okhttp3.OkHttpUrlLoader;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
@@ -39,10 +41,22 @@ import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Random;
+
+import okhttp3.Interceptor;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
+import okio.Buffer;
+import okio.BufferedSource;
+import okio.ForwardingSource;
+import okio.Okio;
+import okio.Source;
 
 import static android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING;
 import static android.view.HapticFeedbackConstants.LONG_PRESS;
@@ -66,6 +80,55 @@ public class MainActivity extends AppCompatActivity {
     private static final String LOADED_XKCD_ID = "xkcd_id";
     private static final String LATEST_XKCD_ID = "xkcd_latest_id";
     private SimpleInfoDialogFragment dialogFragment;
+    private OkHttpClient mOkHttpClient;
+    private ProgressListener progressListener;
+    interface ProgressListener {
+        void update(long bytesRead, long contentLength, boolean done);
+    }
+    private static class ProgressResponseBody extends ResponseBody {
+
+        private final ResponseBody responseBody;
+        private final ProgressListener progressListener;
+        private BufferedSource bufferedSource;
+
+        public ProgressResponseBody(ResponseBody responseBody, ProgressListener progressListener) {
+            this.responseBody = responseBody;
+            this.progressListener = progressListener;
+        }
+
+        @Override
+        public MediaType contentType() {
+            return responseBody.contentType();
+        }
+
+        @Override
+        public long contentLength() {
+            return responseBody.contentLength();
+        }
+
+        @Override
+        public BufferedSource source() {
+            if (bufferedSource == null) {
+                bufferedSource = Okio.buffer(source(responseBody.source()));
+            }
+            return bufferedSource;
+        }
+
+        private Source source(Source source) {
+            return new ForwardingSource(source) {
+                long totalBytesRead = 0L;
+
+                @Override
+                public long read(Buffer sink, long byteCount) throws IOException {
+                    long bytesRead = super.read(sink, byteCount);
+                    // read() returns the number of bytes read, or -1 if this source is exhausted.
+                    totalBytesRead += bytesRead != -1 ? bytesRead : 0;
+                    progressListener.update(totalBytesRead, responseBody.contentLength(), bytesRead == -1);
+                    return bytesRead;
+                }
+            };
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +166,27 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        progressListener = new ProgressListener() {
+            @Override
+            public void update(long bytesRead, long contentLength, boolean done) {
+                int progress = (int) ((100 * bytesRead) / contentLength);
+
+                Log.v(TAG, "Progress: " + progress + "%");
+
+            }
+        };
+        OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
+        httpClientBuilder.addNetworkInterceptor(new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                Response originalResponse = chain.proceed(chain.request());
+                return originalResponse.newBuilder()
+                        .body(new ProgressResponseBody(originalResponse.body(), progressListener))
+                        .build();
+            }
+        });
+        mOkHttpClient = httpClientBuilder.build();
         if (savedInstanceState != null) {
             int savedId = savedInstanceState.getInt(LOADED_XKCD_ID);
             loadXkcdPicById(savedId);
@@ -182,10 +266,13 @@ public class MainActivity extends AppCompatActivity {
         if (this.isFinishing()) {
             return;
         }
+        Glide.get(this)
+                .register(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(mOkHttpClient));
         Glide.with(this.getApplicationContext()).load(xPic.img).diskCacheStrategy(DiskCacheStrategy.SOURCE).listener(new RequestListener<String, GlideDrawable>() {
             @Override
             public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
                 pbLoading.setVisibility(View.GONE);
+                Log.e(TAG, "image loading failed " + xPic.img);
                 return false;
             }
 
@@ -395,7 +482,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2,
                                float velocityX, float velocityY) {
-            Log.d("MyGestureListener", "trigger onFling");
 
             if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH)
                 return false;
@@ -407,7 +493,6 @@ public class MainActivity extends AppCompatActivity {
                 //left to right flip
                 loadPreviousPic();
             }
-            Log.d("MyGestureListener", "trigger onFling action");
             isFling = true;
 
             return false;
@@ -415,13 +500,11 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
-            Log.i("MyGestureListener", "single tap");
             return super.onSingleTapConfirmed(e);
         }
 
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
-            Log.i("MyGestureListener", "single tap up");
             return super.onSingleTapUp(e);
         }
     }
