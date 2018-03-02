@@ -4,10 +4,10 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -27,12 +27,11 @@ import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.neuandroid.xkcd.NetworkUtils;
 import com.neuandroid.xkcd.NumberPickerDialogFragment;
 import com.neuandroid.xkcd.R;
 import com.neuandroid.xkcd.SimpleInfoDialogFragment;
 import com.neuandroid.xkcd.XkcdPic;
-import com.neuandroid.xkcd.XkcdQueryTask;
+import com.neuandroid.xkcd.network.NetworkService;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -42,11 +41,13 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Random;
 
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -208,29 +209,48 @@ public class MainActivity extends AppCompatActivity {
      * Request current xkcd picture
      */
     private void loadXkcdPic() {
-        try {
-            URL url = new URL(NetworkUtils.XKCD_QUERY_BASE_URL);
-            new XkcdQueryTask(queryListener).execute(url);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
+        pbLoading.setVisibility(View.VISIBLE);
+        Observable<XkcdPic> xkcdPicObservable = NetworkService.getXkcdAPI().getLatest();
+        xkcdPicObservable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(xkcdPicObserver);
     }
+
+    Observer<XkcdPic> xkcdPicObserver = new Observer<XkcdPic>() {
+        @Override
+        public void onSubscribe(Disposable d) {
+
+        }
+
+        @Override
+        public void onNext(XkcdPic xkcdPic) {
+            if (0 == latestIndex) {
+                latestIndex = xkcdPic.num;
+            }
+            renderXkcdPic(xkcdPic);
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            pbLoading.setVisibility(View.GONE);
+        }
+
+        @Override
+        public void onComplete() {
+
+        }
+    };
 
     /**
      * Request a specific xkcd picture
      * @param id the id of xkcd picture
      */
     private void loadXkcdPicById(int id) {
-        String queryUrl = String.format(NetworkUtils.XKCD_QUERY_BY_ID_URL, id);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null)
             actionBar.setSubtitle(String.valueOf(id));
-        try {
-            URL url = new URL(queryUrl);
-            new XkcdQueryTask(queryListener).execute(url);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
+
+        pbLoading.setVisibility(View.VISIBLE);
+        Observable<XkcdPic> xkcdPicObservable = NetworkService.getXkcdAPI().getComics(String.valueOf(id));
+        xkcdPicObservable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(xkcdPicObserver);
     }
 
     private void loadPreviousPic() {
@@ -281,7 +301,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
                 pbLoading.setVisibility(View.GONE);
-                tvTitle.setText(xPic.num + ". " + xPic.title);
+                tvTitle.setText(xPic.num + ". " + xPic.getTitle());
                 tvCreateDate.setText("created on " + xPic.year + "." + xPic.month + "." + xPic.day);
                 if (tvDescription != null) {
                     tvDescription.setText(xPic.alt);
@@ -379,27 +399,6 @@ public class MainActivity extends AppCompatActivity {
             }.execute();
         }
     };
-
-
-    private XkcdQueryTask.IAsyncTaskListener queryListener = new XkcdQueryTask.IAsyncTaskListener() {
-        @Override
-        public void onPreExecute() {
-            pbLoading.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        public void onPostExecute(Serializable result) {
-            if (result instanceof XkcdPic) {
-                if (0 == latestIndex) {
-                    latestIndex = ((XkcdPic) result).num;
-                }
-                renderXkcdPic((XkcdPic) result);
-            } else {
-                pbLoading.setVisibility(View.GONE);
-            }
-        }
-    };
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

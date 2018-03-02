@@ -10,13 +10,13 @@ public class XkcdPic implements Serializable{
     public String month;
     public String day;
     public int num;
-    public String title;
+    private String title;
     private String img;
     public String alt;
 
 
     public String getImg() {
-        return transformXkcdImgUrl();
+        return XkcdSideloadUtils.sideload(this).img;
     }
 
     public String getRawImg() {
@@ -27,11 +27,27 @@ public class XkcdPic implements Serializable{
         this.img = img;
     }
 
-    private String transformXkcdImgUrl() {
-        if (num >= 1084) {
-            int insert = img.indexOf(".png");
-            return img.substring(0, insert) + "_2x" + img.substring(insert, img.length());
-        }
-        return img;
+    public String getRawTitle() {
+        return title;
+    }
+
+    public String getTitle() {
+        return XkcdSideloadUtils.sideload(this).title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public XkcdPic clone() {
+        XkcdPic clone = new XkcdPic();
+        clone.year = year;
+        clone.month = month;
+        clone.day = day;
+        clone.num = num;
+        clone.title = title;
+        clone.img = img;
+        clone.alt = alt;
+        return clone;
     }
 }

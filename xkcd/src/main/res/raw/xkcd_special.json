@@ -1,0 +1,66 @@
+[
+  {
+    "num" : 76,
+    "img": "https://i.imgur.com/h3fi2RV.jpg"
+  },
+  {
+    "num" : 80,
+    "img": "https://i.imgur.com/lWmI1lB.jpg"
+  },
+  {
+    "num" : 104,
+    "img": "https://i.imgur.com/dnCNfPo.jpg"
+  },
+  {
+    "num" : 1037,
+    "img": "https://www.explainxkcd.com/wiki/images/f/ff/umwelt_the_vonum.jpg"
+  },
+  {
+    "num" : 1054,
+    "title": "The Bacon"
+  },
+  {
+    "num" : 1137,
+    "title": "RTL"
+  },
+  {
+    "num" : 1193,
+    "img": "https://www.explainxkcd.com/wiki/images/0/0b/externalities.png"
+  },
+  {
+    "num" : 1350,
+    "img": "https://www.explainxkcd.com/wiki/images/3/3d/lorenz.png"
+  },
+  {
+    "num" : 1446,
+    "img": "https://i.imgur.com/M4wa8Ed.gif"
+  },
+  {
+    "num" : 1608,
+    "img": "https://www.explainxkcd.com/wiki/images/4/41/hoverboard.png"
+  },
+  {
+    "num" : 1663,
+    "img": "https://www.explainxkcd.com/wiki/images/c/ce/garden.png"
+  },
+  {
+    "num" : 1667,
+    "img": "https://imgs.xkcd.com/comics/algorithms.png"
+  },
+  {
+    "num" : 1735,
+    "img": "https://imgs.xkcd.com/comics/fashion_police_and_grammar_police.png"
+  },
+  {
+    "num" : 1739,
+    "img": "https://imgs.xkcd.com/comics/fixing_problems.png"
+  },
+  {
+    "num" : 1744,
+    "img": "https://imgs.xkcd.com/comics/metabolism.png"
+  },
+  {
+    "num" : 1778,
+    "img": "https://imgs.xkcd.com/comics/interest_timescales.png"
+  }
+]
