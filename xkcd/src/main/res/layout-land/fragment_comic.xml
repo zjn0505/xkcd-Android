@@ -73,8 +73,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:adjustViewBounds="true"
-                android:scaleType="fitCenter"
-                android:src="@drawable/xkcd_default" />
+                android:scaleType="fitCenter"/>
 
         </ScrollView>
 

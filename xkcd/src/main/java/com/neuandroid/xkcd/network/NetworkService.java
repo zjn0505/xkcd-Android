@@ -20,12 +20,14 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.Path;
+import retrofit2.http.Url;
 
 /**
  * Created by Jienan on 2018/3/2.
@@ -39,6 +41,7 @@ public class NetworkService {
 
     public static final String BYPASS_CACHE = "1";
     public static final String USE_CACHE = "2";
+    public static final String SHORT_CACHE = "3";
 
 
     private static XkcdAPI xkcdAPI;
@@ -153,8 +156,17 @@ public class NetworkService {
         @GET("info.0.json")
         Observable<XkcdPic> getLatest();
 
-        @Headers("cacheable: 86400")
+        @Headers("cacheable: 2419200")
         @GET("{comic_id}/info.0.json")
         Observable<XkcdPic> getComics(@Path("comic_id") String comicId);
+
+        @Headers("cacheable: 2419200")
+        @GET
+        Call<ResponseBody> getExplain(@Url String url);
+
+        @Headers("cacheable: 86400")
+        @GET
+        Call<ResponseBody> getExplainWithShortCache(@Url String url);
+
     }
 }

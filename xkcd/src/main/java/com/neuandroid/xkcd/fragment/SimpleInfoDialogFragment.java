@@ -1,4 +1,4 @@
-package com.neuandroid.xkcd;
+package com.neuandroid.xkcd.fragment;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -14,6 +14,8 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.neuandroid.xkcd.R;
 
 /**
  * Created by jienanzhang on 09/07/2017.
@@ -73,7 +75,7 @@ public class SimpleInfoDialogFragment extends DialogFragment {
                     private boolean isLoading = false;
 
                     @Override
-                    public void onClick(View v) {
+                    public void onClick(final View v) {
                         if (!hasExplainedMore) {
                             if (isLoading) {
                                 return;
@@ -93,7 +95,7 @@ public class SimpleInfoDialogFragment extends DialogFragment {
 
                                 @Override
                                 public void explanationFailed() {
-                                    Toast.makeText(getActivity(), "Failed to get more details", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(v.getContext(), "Failed to get more details", Toast.LENGTH_SHORT).show();
                                     pbLoading.setVisibility(View.GONE);
                                     button.setText("MORE ON EXPLAINXKCD");
                                     hasExplainedMore = true;

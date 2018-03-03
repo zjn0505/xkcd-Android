@@ -7,8 +7,18 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textViewStyle">@style/MyTextViewStyle</item>
+        <item name="android:actionBarStyle">@style/Widget.Holo.ActionBar</item>
     </style>
     <style name="MyTextViewStyle" parent="android:Widget.TextView">
         <item name="android:fontFamily">@font/xkcd</item>
+    </style>
+
+    <style name="Widget.Holo.ActionBar" parent="@android:style/Widget.Holo.ActionBar">
+        <item name="android:subtitleTextStyle">@style/TextAppearance.Holo.Widget.ActionBar.Subtitle</item>
+    </style>
+
+    <style name="TextAppearance.Holo.Widget.ActionBar.Subtitle"
+        parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Subtitle">
+        <item name="android:ellipsize">none</item>
     </style>
 </resources>

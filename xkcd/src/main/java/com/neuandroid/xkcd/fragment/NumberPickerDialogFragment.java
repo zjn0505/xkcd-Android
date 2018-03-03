@@ -1,4 +1,4 @@
-package com.neuandroid.xkcd;
+package com.neuandroid.xkcd.fragment;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.NumberPicker;
+
+import com.neuandroid.xkcd.R;
 
 /**
  * Created by jienanzhang on 09/07/2017.
