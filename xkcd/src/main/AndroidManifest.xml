@@ -29,6 +29,8 @@
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:configChanges="screenSize|orientation|keyboardHidden"/>
 
+        <meta-data android:value="GlideModule"
+            android:name="com.neuandroid.xkcd.Glide.OkHttpProgressGlideModule" />
 
     </application>
 

@@ -27,7 +27,6 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:src="@drawable/xkcd_default"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:layout_marginLeft="20dp"

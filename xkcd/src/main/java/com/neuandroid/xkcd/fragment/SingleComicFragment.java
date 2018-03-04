@@ -2,6 +2,7 @@ package com.neuandroid.xkcd.fragment;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -17,12 +18,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.integration.okhttp3.OkHttpUrlLoader;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.model.GlideUrl;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.bumptech.glide.request.target.Target;
+import com.neuandroid.xkcd.Glide.ProgressTarget;
 import com.neuandroid.xkcd.R;
 import com.neuandroid.xkcd.XkcdPic;
 import com.neuandroid.xkcd.activity.ImageDetailPageActivity;
@@ -36,7 +35,6 @@ import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,16 +43,7 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-import okhttp3.Interceptor;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Response;
 import okhttp3.ResponseBody;
-import okio.Buffer;
-import okio.BufferedSource;
-import okio.ForwardingSource;
-import okio.Okio;
-import okio.Source;
 import retrofit2.Call;
 import retrofit2.Callback;
 
@@ -77,6 +66,8 @@ public class SingleComicFragment extends Fragment {
     
     private int id;
     private XkcdPic currentPic;
+
+    private ProgressTarget<String, Bitmap> target;
     
     
     public static SingleComicFragment newInstance(int comicId) {
@@ -121,86 +112,48 @@ public class SingleComicFragment extends Fragment {
                 return true;
             }
         });
-        initNetwork();
+        initGlide();
         loadXkcdPic();
         return view;
     }
-    private OkHttpClient mOkHttpClient;
-    private ProgressListener progressListener;
-    interface ProgressListener {
-        void update(long bytesRead, long contentLength, boolean done);
-    }
-    private static class ProgressResponseBody extends ResponseBody {
 
-        private final ResponseBody responseBody;
-        private final ProgressListener progressListener;
-        private BufferedSource bufferedSource;
-
-        public ProgressResponseBody(ResponseBody responseBody, ProgressListener progressListener) {
-            this.responseBody = responseBody;
-            this.progressListener = progressListener;
+    private static class MyProgressTarget<Z> extends ProgressTarget<String, Z> {
+        private final ProgressBar progress;
+        private final ImageView image;
+        public MyProgressTarget(Target<Z> target, ProgressBar progress, ImageView image) {
+            super(target);
+            this.progress = progress;
+            this.image = image;
         }
 
-        @Override
-        public MediaType contentType() {
-            return responseBody.contentType();
+        @Override public float getGranualityPercentage() {
+            return 0.1f; // this matches the format string for #text below
         }
 
-        @Override
-        public long contentLength() {
-            return responseBody.contentLength();
+        @Override protected void onConnecting() {
+            progress.setIndeterminate(true);
+            progress.setVisibility(View.VISIBLE);
+            image.setImageLevel(0);
         }
-
-        @Override
-        public BufferedSource source() {
-            if (bufferedSource == null) {
-                bufferedSource = Okio.buffer(source(responseBody.source()));
-            }
-            return bufferedSource;
+        @Override protected void onDownloading(long bytesRead, long expectedLength) {
+            progress.setIndeterminate(false);
+            progress.setProgress((int)(100 * bytesRead / expectedLength));
+            image.setImageLevel((int)(10000 * bytesRead / expectedLength));
         }
-
-        private Source source(Source source) {
-            return new ForwardingSource(source) {
-                long totalBytesRead = 0L;
-
-                @Override
-                public long read(Buffer sink, long byteCount) throws IOException {
-                    long bytesRead = super.read(sink, byteCount);
-                    // read() returns the number of bytes read, or -1 if this source is exhausted.
-                    totalBytesRead += bytesRead != -1 ? bytesRead : 0;
-                    progressListener.update(totalBytesRead, responseBody.contentLength(), bytesRead == -1);
-                    return bytesRead;
-                }
-            };
+        @Override protected void onDownloaded() {
+            progress.setIndeterminate(true);
+            image.setImageLevel(10000);
+        }
+        @Override protected void onDelivered() {
+            progress.setVisibility(View.INVISIBLE);
+            image.setImageLevel(0); // reset ImageView default
         }
     }
-    private void initNetwork() {
-        progressListener = new ProgressListener() {
-            @Override
-            public void update(long bytesRead, long contentLength, boolean done) {
-                int progress = (int) ((100 * bytesRead) / contentLength);
 
-                Log.v(GLIDE_TAG, "Progress: " + progress + "%");
-                pbLoading.setProgress(progress);
-                if (progress == 100) {
-                    pbLoading.setVisibility(View.GONE);
-                    Log.v(GLIDE_TAG, "Progress: hide");
-                }
-
-            }
-        };
-        OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
-        httpClientBuilder.addNetworkInterceptor(new Interceptor() {
-            @Override
-            public Response intercept(Chain chain) throws IOException {
-                Response originalResponse = chain.proceed(chain.request());
-                return originalResponse.newBuilder()
-                        .body(new ProgressResponseBody(originalResponse.body(), progressListener))
-                        .build();
-            }
-        });
-        mOkHttpClient = httpClientBuilder.build();
+    private void initGlide() {
+        target =  new MyProgressTarget<>(new BitmapImageViewTarget(ivXkcdPic), pbLoading, ivXkcdPic);
     }
+
 
     /**
      * Launch a new Activity to show the pic in full screen mode
@@ -251,36 +204,20 @@ public class SingleComicFragment extends Fragment {
      * @param xPic
      */
     private void renderXkcdPic(final XkcdPic xPic) {
-        tvTitle.setText("");
-        tvCreateDate.setText("");
         if (getActivity() == null || getActivity().isFinishing()) {
             return;
         }
-        Glide.get(getActivity().getApplicationContext())
-                .register(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(mOkHttpClient));
-        Glide.with(getActivity().getApplicationContext()).load(xPic.getImg()).diskCacheStrategy(DiskCacheStrategy.SOURCE).listener(new RequestListener<String, GlideDrawable>() {
-            @Override
-            public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                pbLoading.setVisibility(View.GONE);
-                Log.e(GLIDE_TAG, "image loading failed " + xPic.getImg());
-                Log.d(GLIDE_TAG, "image loading fallback " + xPic.getRawImg());
-                Glide.with(getActivity().getApplicationContext()).load(xPic.getRawImg()).diskCacheStrategy(DiskCacheStrategy.SOURCE).into(ivXkcdPic);
-                return false;
-            }
 
-            @Override
-            public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                tvTitle.setText(xPic.num + ". " + xPic.getTitle());
-                tvCreateDate.setText("created on " + xPic.year + "." + xPic.month + "." + xPic.day);
-                if (tvDescription != null) {
-                    tvDescription.setText(xPic.alt);
-                }
-                return false;
+        target.setModel(xPic.getImg());
+        Glide.with(getActivity()).load(xPic.getImg()).asBitmap().fitCenter().diskCacheStrategy(DiskCacheStrategy.SOURCE).into(target);
 
-            }
-        }).into(ivXkcdPic);
         currentPic = xPic;
         Log.d(GLIDE_TAG, "Pic to be loaded: " + xPic.getImg());
+        tvTitle.setText(xPic.num + ". " + xPic.getTitle());
+        tvCreateDate.setText("created on " + xPic.year + "." + xPic.month + "." + xPic.day);
+        if (tvDescription != null) {
+            tvDescription.setText(xPic.alt);
+        }
 
     }
 
