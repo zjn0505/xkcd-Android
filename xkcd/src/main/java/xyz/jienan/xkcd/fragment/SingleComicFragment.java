@@ -25,7 +25,7 @@ import com.bumptech.glide.request.target.Target;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.XkcdPic;
 import xyz.jienan.xkcd.activity.ImageDetailPageActivity;
-import xyz.jienan.xkcd.Glide.ProgressTarget;
+import xyz.jienan.xkcd.glide.ProgressTarget;
 import xyz.jienan.xkcd.activity.MainActivity;
 import xyz.jienan.xkcd.network.NetworkService;
 

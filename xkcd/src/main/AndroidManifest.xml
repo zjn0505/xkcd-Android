@@ -29,8 +29,32 @@
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:configChanges="screenSize|orientation|keyboardHidden"/>
 
+        <service
+            android:name=".firebase.XkcdFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".firebase.XkcdFirebaseInstanceIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
+
         <meta-data android:value="GlideModule"
-            android:name="xyz.jienan.xkcd.Glide.OkHttpProgressGlideModule" />
+            android:name="xyz.jienan.xkcd.glide.OkHttpProgressGlideModule" />
+        <!-- Set custom default icon. This is used when no icon is set for incoming notification messages.
+             See README(https://goo.gl/l4GJaQ) for more. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_notification" />
+        <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming
+             notification message. See README(https://goo.gl/6BKBk7) for more. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorAccent" />
 
     </application>
 
