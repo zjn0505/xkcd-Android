@@ -1,17 +1,16 @@
-package com.neuandroid.xkcd.activity;
+package xyz.jienan.xkcd.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.neuandroid.xkcd.R;
+import xyz.jienan.xkcd.R;
 
 /**
  * Created by Jienan on 2018/3/1.

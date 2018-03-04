@@ -1,74 +1,32 @@
-package com.neuandroid.xkcd.activity;
+package xyz.jienan.xkcd.activity;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.view.ViewGroup;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.integration.okhttp3.OkHttpUrlLoader;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.model.GlideUrl;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
-import com.neuandroid.xkcd.fragment.NumberPickerDialogFragment;
-import com.neuandroid.xkcd.R;
-import com.neuandroid.xkcd.fragment.SimpleInfoDialogFragment;
-import com.neuandroid.xkcd.XkcdPic;
-import com.neuandroid.xkcd.fragment.SingleComicFragment;
-import com.neuandroid.xkcd.network.NetworkService;
+import xyz.jienan.xkcd.XkcdPic;
+import xyz.jienan.xkcd.fragment.IComicsCallback;
+import xyz.jienan.xkcd.fragment.NumberPickerDialogFragment;
+import xyz.jienan.xkcd.fragment.SingleComicFragment;
+import xyz.jienan.xkcd.R;
+import xyz.jienan.xkcd.network.NetworkService;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
-import org.jsoup.select.Elements;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Random;
 
-import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-import okhttp3.Interceptor;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
-import okio.Buffer;
-import okio.BufferedSource;
-import okio.ForwardingSource;
-import okio.Okio;
-import okio.Source;
-import retrofit2.Call;
-import retrofit2.Callback;
-
-import static android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING;
-import static android.view.HapticFeedbackConstants.LONG_PRESS;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -80,11 +38,9 @@ public class MainActivity extends AppCompatActivity {
     // Use this field to record the latest xkcd pic id
     private int latestIndex = 0;
 
-    private XkcdPic currentPic;
-
     private static final String LOADED_XKCD_ID = "xkcd_id";
     private static final String LATEST_XKCD_ID = "xkcd_latest_id";
-
+    private int savedId = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +68,15 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        loadXkcdPic();
+
+        if (savedInstanceState != null) {
+            savedId = savedInstanceState.getInt(LOADED_XKCD_ID);
+            latestIndex = savedInstanceState.getInt(LATEST_XKCD_ID);
+        }
+    }
+
+    private void loadXkcdPic() {
         NetworkService.getXkcdAPI().getLatest().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<XkcdPic>() {
             @Override
             public void onSubscribe(Disposable d) {
@@ -122,7 +87,13 @@ public class MainActivity extends AppCompatActivity {
             public void onNext(XkcdPic xkcdPic) {
                 latestIndex = xkcdPic.num;
                 adapter.setSize(latestIndex);
-                viewPager.setCurrentItem(latestIndex - 1);
+                if (savedId != 0) {
+                    viewPager.setCurrentItem(savedId - 1, false);
+                    savedId = 0;
+                } else {
+                    viewPager.setCurrentItem(latestIndex - 1, false);
+                }
+
             }
 
             @Override
@@ -135,27 +106,20 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
-        if (savedInstanceState != null) {
-            int savedId = savedInstanceState.getInt(LOADED_XKCD_ID);
-//            loadXkcdPicById(savedId);
-            latestIndex = savedInstanceState.getInt(LATEST_XKCD_ID);
-        } else {
-
-        }
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (currentPic != null)
-            outState.putInt(LOADED_XKCD_ID, currentPic.num);
+        if (viewPager != null && viewPager.getCurrentItem() > 0)
+            outState.putInt(LOADED_XKCD_ID, viewPager.getCurrentItem() + 1);
             outState.putInt(LATEST_XKCD_ID, latestIndex);
     }
 
     private class ComicsPagerAdapter extends FragmentStatePagerAdapter {
 
         private int length;
+        private HashMap<Integer, SingleComicFragment> fragmentsMap = new HashMap<>();
 
         public ComicsPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -171,10 +135,21 @@ public class MainActivity extends AppCompatActivity {
             notifyDataSetChanged();
         }
 
+        public SingleComicFragment getFragment(int id) {
+            return fragmentsMap.get(id);
+        }
+
         @Override
         public Fragment getItem(int position) {
             SingleComicFragment fragment = SingleComicFragment.newInstance(position + 1);
+            fragmentsMap.put(position + 1, fragment);
             return fragment;
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            fragmentsMap.remove(position + 1);
+            super.destroyItem(container, position, object);
         }
 
         @Override
@@ -196,35 +171,36 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        IComicsCallback comics = (IComicsCallback)adapter.getFragment(viewPager.getCurrentItem() + 1);
         switch (id) {
             case R.id.action_left:
-//                loadPreviousPic();
+                viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
                 break;
             case R.id.action_right:
-//                loadNextPic();
+                viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
                 break;
             case R.id.action_random:
                 if (latestIndex == 0) {
-//                    loadXkcdPic();
+                    loadXkcdPic();
                     break;
                 }
                 Random random = new Random();
                 int randomId = random.nextInt(latestIndex + 1);
-//                loadXkcdPicById(randomId);
+                viewPager.setCurrentItem(randomId - 1);
                 break;
             case R.id.action_share:
-                if (currentPic == null) {
+                if (latestIndex == 0) {
                     break;
                 }
                 Intent shareIntent = new Intent();
                 shareIntent.setAction(Intent.ACTION_SEND);
-                shareIntent.putExtra(Intent.EXTRA_TEXT, "Come and check this funny image I got from xkcd. \n " + currentPic.getImg());
+                shareIntent.putExtra(Intent.EXTRA_TEXT, "Come and check this funny image I got from xkcd. \n " + comics.getCurrentComic().getImg());
                 shareIntent.setType("text/plain");
                 startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.share_to)));
 
                 break;
             case R.id.action_specific:
-                if (currentPic == null) {
+                if (latestIndex == 0) {
                     break;
                 }
                 NumberPickerDialogFragment pickerDialogFragment = new NumberPickerDialogFragment();
@@ -234,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
                 pickerDialogFragment.setListener(new NumberPickerDialogFragment.INumberPickerDialogListener() {
                     @Override
                     public void onPositiveClick(int number) {
-//                        loadXkcdPicById(number);
+                        viewPager.setCurrentItem(number - 1);
                     }
 
                     @Override
@@ -246,18 +222,18 @@ public class MainActivity extends AppCompatActivity {
 
                 break;
             case R.id.action_go_xkcd: {
-                if (currentPic == null) {
+                if (latestIndex == 0) {
                     break;
                 }
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://xkcd.com/" + currentPic.num));
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://xkcd.com/" + comics.getCurrentComic().num));
                 startActivity(browserIntent);
                 break;
             }
             case R.id.action_go_explain: {
-                if (currentPic == null) {
+                if (latestIndex == 0) {
                     break;
                 }
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.explainxkcd.com/wiki/index.php/" + currentPic.num));
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.explainxkcd.com/wiki/index.php/" + comics.getCurrentComic().num));
                 startActivity(browserIntent);
                 break;
             }

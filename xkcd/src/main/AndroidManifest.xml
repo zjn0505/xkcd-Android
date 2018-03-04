@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.neuandroid.xkcd">
+    package="xyz.jienan.xkcd">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -11,9 +11,9 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:name=".XkcdApplication"
+        android:name="xyz.jienan.xkcd.XkcdApplication"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.MainActivity"
+        <activity android:name="xyz.jienan.xkcd.activity.MainActivity"
             android:configChanges="screenSize|keyboardHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,16 +21,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.TestActivity">
+        <activity android:name="xyz.jienan.xkcd.activity.TestActivity">
 
         </activity>
 
-        <activity android:name=".activity.ImageDetailPageActivity"
+        <activity android:name="xyz.jienan.xkcd.activity.ImageDetailPageActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:configChanges="screenSize|orientation|keyboardHidden"/>
 
         <meta-data android:value="GlideModule"
-            android:name="com.neuandroid.xkcd.Glide.OkHttpProgressGlideModule" />
+            android:name="xyz.jienan.xkcd.Glide.OkHttpProgressGlideModule" />
 
     </application>
 

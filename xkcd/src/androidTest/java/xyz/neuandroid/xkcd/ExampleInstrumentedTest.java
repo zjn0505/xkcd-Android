@@ -1,4 +1,4 @@
-package com.neuandroid.xkcd;
+package xyz.neuandroid.xkcd;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

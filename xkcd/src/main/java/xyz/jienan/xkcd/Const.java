@@ -1,4 +1,4 @@
-package com.neuandroid.xkcd;
+package xyz.jienan.xkcd;
 
 /**
  * Created by jienanzhang on 03/03/2018.

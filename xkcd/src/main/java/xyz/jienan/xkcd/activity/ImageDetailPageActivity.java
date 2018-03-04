@@ -1,4 +1,4 @@
-package com.neuandroid.xkcd.activity;
+package xyz.jienan.xkcd.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -8,7 +8,7 @@ import android.view.View;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.github.chrisbanes.photoview.PhotoView;
-import com.neuandroid.xkcd.R;
+import xyz.jienan.xkcd.R;
 
 /**
  * Created by jienanzhang on 09/07/2017.

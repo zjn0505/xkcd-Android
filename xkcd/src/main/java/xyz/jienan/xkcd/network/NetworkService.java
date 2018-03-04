@@ -1,13 +1,13 @@
-package com.neuandroid.xkcd.network;
+package xyz.jienan.xkcd.network;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.text.TextUtils;
 
-import com.neuandroid.xkcd.BuildConfig;
-import com.neuandroid.xkcd.XkcdApplication;
-import com.neuandroid.xkcd.XkcdPic;
+import xyz.jienan.xkcd.XkcdApplication;
+import xyz.jienan.xkcd.XkcdPic;
+import xyz.jienan.xkcd.BuildConfig;
 
 import java.io.File;
 import java.io.IOException;

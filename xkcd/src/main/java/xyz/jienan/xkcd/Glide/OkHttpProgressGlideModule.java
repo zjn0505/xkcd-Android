@@ -1,4 +1,4 @@
-package com.neuandroid.xkcd.Glide;
+package xyz.jienan.xkcd.Glide;
 
 import android.content.Context;
 import android.os.Handler;

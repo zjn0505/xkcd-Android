@@ -1,12 +1,9 @@
-package com.neuandroid.xkcd;
+package xyz.jienan.xkcd;
 
 import android.content.Context;
-import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
-import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package com.neuandroid.xkcd.fragment;
+package xyz.jienan.xkcd.fragment;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -21,12 +21,13 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.bumptech.glide.request.target.Target;
-import com.neuandroid.xkcd.Glide.ProgressTarget;
-import com.neuandroid.xkcd.R;
-import com.neuandroid.xkcd.XkcdPic;
-import com.neuandroid.xkcd.activity.ImageDetailPageActivity;
-import com.neuandroid.xkcd.activity.MainActivity;
-import com.neuandroid.xkcd.network.NetworkService;
+
+import xyz.jienan.xkcd.R;
+import xyz.jienan.xkcd.XkcdPic;
+import xyz.jienan.xkcd.activity.ImageDetailPageActivity;
+import xyz.jienan.xkcd.Glide.ProgressTarget;
+import xyz.jienan.xkcd.activity.MainActivity;
+import xyz.jienan.xkcd.network.NetworkService;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -49,13 +50,13 @@ import retrofit2.Callback;
 
 import static android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING;
 import static android.view.HapticFeedbackConstants.LONG_PRESS;
-import static com.neuandroid.xkcd.Const.GLIDE_TAG;
+import static xyz.jienan.xkcd.Const.GLIDE_TAG;
 
 /**
  * Created by jienanzhang on 03/03/2018.
  */
 
-public class SingleComicFragment extends Fragment {
+public class SingleComicFragment extends Fragment implements IComicsCallback {
 
     private TextView tvTitle;
     private ImageView ivXkcdPic;
@@ -115,6 +116,11 @@ public class SingleComicFragment extends Fragment {
         initGlide();
         loadXkcdPic();
         return view;
+    }
+
+    @Override
+    public XkcdPic getCurrentComic() {
+        return currentPic;
     }
 
     private static class MyProgressTarget<Z> extends ProgressTarget<String, Z> {
@@ -310,4 +316,6 @@ public class SingleComicFragment extends Fragment {
             });
         }
     };
+
+
 }

@@ -1,4 +1,4 @@
-package com.neuandroid.xkcd.fragment;
+package xyz.jienan.xkcd.fragment;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -15,7 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.neuandroid.xkcd.R;
+import xyz.jienan.xkcd.R;
 
 /**
  * Created by jienanzhang on 09/07/2017.

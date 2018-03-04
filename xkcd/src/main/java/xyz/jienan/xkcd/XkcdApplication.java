@@ -1,4 +1,4 @@
-package com.neuandroid.xkcd;
+package xyz.jienan.xkcd;
 
 import android.app.Application;
 
