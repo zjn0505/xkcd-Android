@@ -5,12 +5,9 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.text.TextUtils;
 
-import xyz.jienan.xkcd.XkcdApplication;
-import xyz.jienan.xkcd.XkcdPic;
-import xyz.jienan.xkcd.BuildConfig;
-
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import io.reactivex.Observable;
 import okhttp3.Cache;
@@ -28,6 +25,9 @@ import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.Path;
 import retrofit2.http.Url;
+import xyz.jienan.xkcd.BuildConfig;
+import xyz.jienan.xkcd.XkcdApplication;
+import xyz.jienan.xkcd.XkcdPic;
 
 /**
  * Created by Jienan on 2018/3/2.
@@ -38,6 +38,7 @@ public class NetworkService {
     private static final String XKCD_BASE_URL = "https://xkcd.com/";
     public static final String XKCD_QUERY_BASE_URL = "https://xkcd.com/info.0.json";
     public static final String XKCD_QUERY_BY_ID_URL = "https://xkcd.com/%s/info.0.json";
+    public static final String XKCD_SPECIAL_LIST  = "https://raw.githubusercontent.com/zjn0505/Xkcd-Android/master/xkcd/src/main/res/raw/xkcd_special.json";
 
     public static final String BYPASS_CACHE = "1";
     public static final String USE_CACHE = "2";
@@ -168,5 +169,8 @@ public class NetworkService {
         @GET
         Call<ResponseBody> getExplainWithShortCache(@Url String url);
 
+        @Headers("cacheable: 86400")
+        @GET
+        Observable<List<XkcdPic>> getSpecialXkcds(@Url String url);
     }
 }

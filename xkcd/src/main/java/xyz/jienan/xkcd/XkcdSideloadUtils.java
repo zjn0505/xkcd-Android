@@ -1,6 +1,7 @@
 package xyz.jienan.xkcd;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -14,6 +15,13 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.List;
+
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+import xyz.jienan.xkcd.network.NetworkService;
+
+import static xyz.jienan.xkcd.network.NetworkService.XKCD_SPECIAL_LIST;
 
 /**
  * Created by Jienan on 2018/3/2.
@@ -29,6 +37,35 @@ public class XkcdSideloadUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        checkRemoteJson();
+    }
+
+    private static void checkRemoteJson() {
+        NetworkService.getXkcdAPI()
+            .getSpecialXkcds(XKCD_SPECIAL_LIST).observeOn(Schedulers.io()).subscribeOn(Schedulers.io())
+            .subscribe(new Observer<List<XkcdPic>>() {
+                @Override
+                public void onSubscribe(Disposable d) {
+
+                }
+
+                @Override
+                public void onNext(List<XkcdPic> xkcdPics) {
+                    for (XkcdPic pic : xkcdPics) {
+                        xkcdSideloadMap.put(pic.num, pic);
+                    }
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    Log.e("Xkcd", "XKCD Special list: " + e);
+                }
+
+                @Override
+                public void onComplete() {
+
+                }
+            });
     }
 
 
