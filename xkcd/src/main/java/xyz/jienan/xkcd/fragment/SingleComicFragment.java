@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -21,13 +22,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.bumptech.glide.request.target.Target;
-
-import xyz.jienan.xkcd.R;
-import xyz.jienan.xkcd.XkcdPic;
-import xyz.jienan.xkcd.activity.ImageDetailPageActivity;
-import xyz.jienan.xkcd.glide.ProgressTarget;
-import xyz.jienan.xkcd.activity.MainActivity;
-import xyz.jienan.xkcd.network.NetworkService;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -47,6 +41,12 @@ import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
+import xyz.jienan.xkcd.R;
+import xyz.jienan.xkcd.XkcdPic;
+import xyz.jienan.xkcd.activity.ImageDetailPageActivity;
+import xyz.jienan.xkcd.activity.MainActivity;
+import xyz.jienan.xkcd.glide.ProgressTarget;
+import xyz.jienan.xkcd.network.NetworkService;
 
 import static android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING;
 import static android.view.HapticFeedbackConstants.LONG_PRESS;
@@ -92,6 +92,7 @@ public class SingleComicFragment extends Fragment implements IComicsCallback {
 
         View view = inflater.inflate(R.layout.fragment_comic, container, false);
         pbLoading = view.findViewById(R.id.pb_loading);
+        pbLoading.setAnimation(AnimationUtils.loadAnimation(pbLoading.getContext(), R.anim.rotate));
         tvTitle = view.findViewById(R.id.tv_title);
         ivXkcdPic = view.findViewById(R.id.iv_xkcd_pic);
         tvCreateDate = view.findViewById(R.id.tv_create_date);
@@ -124,11 +125,11 @@ public class SingleComicFragment extends Fragment implements IComicsCallback {
     }
 
     private static class MyProgressTarget<Z> extends ProgressTarget<String, Z> {
-        private final ProgressBar progress;
+        private final ProgressBar progressbar;
         private final ImageView image;
         public MyProgressTarget(Target<Z> target, ProgressBar progress, ImageView image) {
             super(target);
-            this.progress = progress;
+            this.progressbar = progress;
             this.image = image;
         }
 
@@ -137,21 +138,26 @@ public class SingleComicFragment extends Fragment implements IComicsCallback {
         }
 
         @Override protected void onConnecting() {
-            progress.setIndeterminate(true);
-            progress.setVisibility(View.VISIBLE);
+            progressbar.setProgress(1);
+            progressbar.setVisibility(View.VISIBLE);
             image.setImageLevel(0);
         }
         @Override protected void onDownloading(long bytesRead, long expectedLength) {
-            progress.setIndeterminate(false);
-            progress.setProgress((int)(100 * bytesRead / expectedLength));
+            int progress = (int)(100 * bytesRead / expectedLength);
+            progress = progress <= 0 ? 1 : progress;
+            progressbar.setProgress(progress);
+            if (progressbar.getAnimation() == null) {
+                progressbar.setAnimation(AnimationUtils.loadAnimation(progressbar.getContext(), R.anim.rotate));
+            }
+            Log.d("Glide", "onDownloading: " + (int)(100 * bytesRead / expectedLength));
             image.setImageLevel((int)(10000 * bytesRead / expectedLength));
         }
         @Override protected void onDownloaded() {
-            progress.setIndeterminate(true);
             image.setImageLevel(10000);
         }
         @Override protected void onDelivered() {
-            progress.setVisibility(View.INVISIBLE);
+            progressbar.setVisibility(View.INVISIBLE);
+            progressbar.clearAnimation();
             image.setImageLevel(0); // reset ImageView default
         }
     }

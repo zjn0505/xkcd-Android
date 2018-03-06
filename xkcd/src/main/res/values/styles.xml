@@ -21,4 +21,17 @@
         parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Subtitle">
         <item name="android:ellipsize">none</item>
     </style>
+
+    <style name="image_progress_bar">
+        <item name="android:layout_width">50dp</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:progress">1</item>
+        <item name="android:visibility">gone</item>
+        <item name="android:indeterminate">false</item>
+        <item name="draw_progress_text">false</item>
+        <item name="style">solid_line</item>
+        <item name="progress_stroke_width">3dp</item>
+        <item name="progress_start_color">@color/colorAccent</item>
+    </style>
 </resources>

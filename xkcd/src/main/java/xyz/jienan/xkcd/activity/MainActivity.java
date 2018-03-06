@@ -15,21 +15,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 
-import xyz.jienan.xkcd.XkcdPic;
-import xyz.jienan.xkcd.fragment.IComicsCallback;
-import xyz.jienan.xkcd.fragment.NumberPickerDialogFragment;
-import xyz.jienan.xkcd.fragment.SingleComicFragment;
-import xyz.jienan.xkcd.R;
-import xyz.jienan.xkcd.network.NetworkService;
-
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import xyz.jienan.xkcd.R;
+import xyz.jienan.xkcd.XkcdPic;
+import xyz.jienan.xkcd.fragment.IComicsCallback;
+import xyz.jienan.xkcd.fragment.NumberPickerDialogFragment;
+import xyz.jienan.xkcd.fragment.SingleComicFragment;
+import xyz.jienan.xkcd.network.NetworkService;
 
 import static xyz.jienan.xkcd.Const.XKCD_LATEST_INDEX;
 
