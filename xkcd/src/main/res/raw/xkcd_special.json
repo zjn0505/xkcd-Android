@@ -61,7 +61,7 @@
   },
   {
     "num" : 1110,
-    "img": "https://www.explainxkcd.com/wiki/images/c/c7/click_and_drag.png" // TODO use webview ?
+    "img": "https://www.explainxkcd.com/wiki/images/c/c7/click_and_drag.png"
   },
   {
     "num" : 1127,
@@ -74,7 +74,6 @@
   {
     "num" : 1190,
     "img": "https://i.imgur.com/WO4I8Mf.gif"
-    //TODO
   },
   {
     "num" : 1193,
@@ -111,7 +110,6 @@
   {
     "num" : 1446,
     "img": "https://i.imgur.com/M4wa8Ed.gif"
-    // TODO
   },
   {
     "num" : 1461,
@@ -131,7 +129,6 @@
   },
   {
     "num" : 1649
-    //TODO
   },
   {
     "num" : 1663,
@@ -147,7 +144,6 @@
   },
   {
     "num" : 1732
-    //TODO
   },
   {
     "num" : 1735,
