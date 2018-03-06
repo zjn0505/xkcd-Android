@@ -37,7 +37,8 @@ public class XkcdSideloadUtils {
         if (xkcdPic.num >= 1084) {
             String img = xkcdPic.getRawImg();
             int insert = img.indexOf(".png");
-            clone.setImg(img.substring(0, insert) + "_2x" + img.substring(insert, img.length()));
+            if (insert > 0)
+                clone.setImg(img.substring(0, insert) + "_2x" + img.substring(insert, img.length()));
         }
         if (xkcdSideloadMap.containsKey(xkcdPic.num)) {
             XkcdPic sideload = xkcdSideloadMap.get(xkcdPic.num);
