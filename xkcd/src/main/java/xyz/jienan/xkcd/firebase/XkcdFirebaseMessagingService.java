@@ -9,16 +9,19 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.google.gson.Gson;
 
 import java.util.Iterator;
 import java.util.Map;
-import java.util.function.BiConsumer;
+import java.util.Random;
 
 import xyz.jienan.xkcd.R;
+import xyz.jienan.xkcd.XkcdPic;
 import xyz.jienan.xkcd.activity.MainActivity;
 
 /**
@@ -30,7 +33,7 @@ public class XkcdFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
-        Log.d("Firebase", "onMessageReceived: ");
+        Log.d("Firebase", "onMessageReceived: "+ remoteMessage.getData());
         sendNotification(remoteMessage);
         Map<String, String> map  = remoteMessage.getData();
         if (map != null) {
@@ -50,19 +53,24 @@ public class XkcdFirebaseMessagingService extends FirebaseMessagingService {
      * @param remoteMessage FCM message body received.
      */
     private void sendNotification(RemoteMessage remoteMessage) {
+        XkcdPic xkcdPic = new Gson().fromJson(remoteMessage.getData().get("xkcd"), XkcdPic.class);
+        if (xkcdPic == null || TextUtils.isEmpty(xkcdPic.getTitle())) {
+            return;
+        }
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
-        RemoteMessage.Notification notification = remoteMessage.getNotification();
-
+        RemoteMessage.Notification notification = remoteMessage.getNotification(); // notification.getTitle() .getBody() not used
+        String[] titles = getResources().getStringArray(R.array.notification_titles);
+        int index = new Random().nextInt(titles.length);
         String channelId = getString(R.string.default_notification_channel_id);
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(this, channelId)
                         .setSmallIcon(R.drawable.ic_notification)
-                        .setContentTitle(notification.getTitle())
-                        .setContentText(notification.getBody())
+                        .setContentTitle(titles[index])
+                        .setContentText(getString(R.string.notification_content, xkcdPic.num, xkcdPic.getTitle()))
                         .setAutoCancel(true)
                         .setSound(defaultSoundUri)
                         .setContentIntent(pendingIntent);
@@ -77,7 +85,6 @@ public class XkcdFirebaseMessagingService extends FirebaseMessagingService {
                     NotificationManager.IMPORTANCE_DEFAULT);
             notificationManager.createNotificationChannel(channel);
         }
-
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
     }
 }
