@@ -1,8 +1,10 @@
 package xyz.jienan.xkcd.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -21,12 +23,15 @@ import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.network.NetworkService;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+
+import static xyz.jienan.xkcd.Const.XKCD_LATEST_INDEX;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,9 +47,12 @@ public class MainActivity extends AppCompatActivity {
     private static final String LATEST_XKCD_ID = "xkcd_latest_id";
     private int savedId = 0;
 
+    private SharedPreferences.Editor editor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
         setContentView(R.layout.activity_main);
         viewPager = findViewById(R.id.viewpager);
         adapter = new ComicsPagerAdapter(getSupportFragmentManager());
@@ -72,7 +80,10 @@ public class MainActivity extends AppCompatActivity {
 
         if (savedInstanceState != null) {
             savedId = savedInstanceState.getInt(LOADED_XKCD_ID);
-            latestIndex = savedInstanceState.getInt(LATEST_XKCD_ID);
+            int i = savedInstanceState.getInt(LATEST_XKCD_ID);
+            if (i > 0) {
+                latestIndex = i;
+            }
         }
     }
 
@@ -86,6 +97,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onNext(XkcdPic xkcdPic) {
                 latestIndex = xkcdPic.num;
+                editor.putInt(XKCD_LATEST_INDEX, latestIndex);
+                editor.commit();
                 adapter.setSize(latestIndex);
                 if (savedId != 0) {
                     viewPager.setCurrentItem(savedId - 1, false);

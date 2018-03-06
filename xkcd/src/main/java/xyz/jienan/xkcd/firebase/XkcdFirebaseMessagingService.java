@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
@@ -23,6 +24,8 @@ import java.util.Random;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.XkcdPic;
 import xyz.jienan.xkcd.activity.MainActivity;
+
+import static xyz.jienan.xkcd.Const.XKCD_LATEST_INDEX;
 
 /**
  * Created by jienanzhang on 04/03/2018.
@@ -56,6 +59,10 @@ public class XkcdFirebaseMessagingService extends FirebaseMessagingService {
         XkcdPic xkcdPic = new Gson().fromJson(remoteMessage.getData().get("xkcd"), XkcdPic.class);
         if (xkcdPic == null || TextUtils.isEmpty(xkcdPic.getTitle())) {
             return;
+        }
+        int latestIndex = PreferenceManager.getDefaultSharedPreferences(this).getInt(XKCD_LATEST_INDEX, 0);
+        if (latestIndex >= xkcdPic.num) {
+            return; // User already read the latest comic
         }
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

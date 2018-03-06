@@ -6,4 +6,5 @@ package xyz.jienan.xkcd;
 
 public class Const {
     public final static String GLIDE_TAG = "glide";
+    public final static String XKCD_LATEST_INDEX = "xkcd_last_index";
 }
