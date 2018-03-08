@@ -40,6 +40,13 @@ public class XkcdSideloadUtils {
         checkRemoteJson();
     }
 
+    public static boolean useLargeImageView(int num) {
+        if (xkcdSideloadMap.containsKey(num)) {
+            return xkcdSideloadMap.get(num).large;
+        }
+        return false;
+    }
+
     private static void checkRemoteJson() {
         NetworkService.getXkcdAPI()
             .getSpecialXkcds(XKCD_SPECIAL_LIST).observeOn(Schedulers.io()).subscribeOn(Schedulers.io())
@@ -67,7 +74,6 @@ public class XkcdSideloadUtils {
                 }
             });
     }
-
 
     public static XkcdPic sideload(XkcdPic xkcdPic) {
         XkcdPic clone = xkcdPic.clone();

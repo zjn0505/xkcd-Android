@@ -23,6 +23,7 @@
     <string name="toast_last">Oops, xkcd is exhausted.</string>
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
     <string name="notification_content" translatable="false">%d-%s</string>
+    <string name="btn_reload">reload</string>
     <string-array name="notification_titles">
         <item>new Xkcd is coming</item>
         <item>new Xkcd on the way</item>

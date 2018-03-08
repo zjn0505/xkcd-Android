@@ -61,21 +61,36 @@
 
         </LinearLayout>
 
-        <ScrollView
+        <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2">
 
-            <ImageView
-                android:id="@+id/iv_xkcd_pic"
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:adjustViewBounds="true"
-                android:scaleType="fitCenter"/>
+                android:layout_height="match_parent">
 
-        </ScrollView>
+                <ImageView
+                    android:id="@+id/iv_xkcd_pic"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"/>
+
+            </ScrollView>
+
+            <Button
+                android:id="@+id/btn_reload"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_reload"
+                android:layout_gravity="center"
+                android:visibility="gone"/>
+
+        </FrameLayout>
+
 
     </LinearLayout>
 

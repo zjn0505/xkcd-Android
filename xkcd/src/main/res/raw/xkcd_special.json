@@ -13,23 +13,28 @@
   },
   {
     "num" : 657,
-    "img": "https://imgs.xkcd.com/comics/movie_narrative_charts_large.png"
+    "img": "https://imgs.xkcd.com/comics/movie_narrative_charts_large.png",
+    "large": true
   },
   {
     "num" : 681,
-    "img": "https://imgs.xkcd.com/comics/gravity_wells_large.png"
+    "img": "https://imgs.xkcd.com/comics/gravity_wells_large.png",
+    "large": true
   },
   {
     "num" : 802,
-    "img": "https://imgs.xkcd.com/comics/online_communities_2_large.png"
+    "img": "https://imgs.xkcd.com/comics/online_communities_2_large.png",
+    "large": true
   },
   {
     "num" : 980,
-    "img": "https://imgs.xkcd.com/comics/money_huge.png"
+    "img": "https://imgs.xkcd.com/comics/money_huge.png",
+    "large": true
   },
   {
     "num" : 1000,
-    "img": "https://imgs.xkcd.com/comics/1000_comics_large.png"
+    "img": "https://imgs.xkcd.com/comics/1000_comics_large.png",
+    "large": true
   },
   {
     "num" : 1037,
@@ -37,7 +42,8 @@
   },
   {
     "num" : 1040,
-    "img": "https://imgs.xkcd.com/comics/lakes_and_oceans_large.png"
+    "img": "https://imgs.xkcd.com/comics/lakes_and_oceans_large.png",
+    "large": true
   },
   {
     "num" : 1054,
@@ -49,15 +55,18 @@
   },
   {
     "num" : 1071,
-    "img": "https://imgs.xkcd.com/comics/exoplanets_large.png"
+    "img": "https://imgs.xkcd.com/comics/exoplanets_large.png",
+    "large": true
   },
   {
     "num" : 1079,
-    "img": "https://imgs.xkcd.com/comics/united_shapes_large.png"
+    "img": "https://imgs.xkcd.com/comics/united_shapes_large.png",
+    "large": true
   },
   {
     "num" : 1080,
-    "img": "https://imgs.xkcd.com/comics/visual_field_large.png"
+    "img": "https://imgs.xkcd.com/comics/visual_field_large.png",
+    "large": true
   },
   {
     "num" : 1110,
@@ -65,7 +74,8 @@
   },
   {
     "num" : 1127,
-    "img": "https://imgs.xkcd.com/comics/congress_large.png"
+    "img": "https://imgs.xkcd.com/comics/congress_large.png",
+    "large": true
   },
   {
     "num" : 1137,
@@ -81,19 +91,30 @@
   },
   {
     "num" : 1196,
-    "img": "https://imgs.xkcd.com/comics/subways_large.png"
+    "img": "https://imgs.xkcd.com/comics/subways_large.png",
+    "large": true
+  },
+  {
+    "num" : 1227,
+    "large": true
   },
   {
     "num" : 1256,
-    "img": "https://imgs.xkcd.com/comics/questions_large.png"
+    "img": "https://imgs.xkcd.com/comics/questions_large.png",
+    "large": true
   },
   {
     "num" : 1298,
-    "img": "https://imgs.xkcd.com/comics/exoplanet_neighborhood_large.png"
+    "img": "https://imgs.xkcd.com/comics/exoplanet_neighborhood_large.png",
+    "large": true
   },
   {
     "num" : 1335,
     "img": "https://i.imgur.com/5PAaVXW.gif"
+  },
+  {
+    "num" : 1349,
+    "img": "https://imgs.xkcd.com/comics/shouldnt_be_hard.png"
   },
   {
     "num" : 1350,
@@ -101,11 +122,13 @@
   },
   {
     "num" : 1389,
-    "img": "https://imgs.xkcd.com/comics/surface_area_large.png"
+    "img": "https://imgs.xkcd.com/comics/surface_area_large.png",
+    "large": true
   },
   {
     "num" : 1392,
-    "img": "https://imgs.xkcd.com/comics/dominant_players_large.png"
+    "img": "https://imgs.xkcd.com/comics/dominant_players_large.png",
+    "large": true
   },
   {
     "num" : 1446,
@@ -113,11 +136,13 @@
   },
   {
     "num" : 1461,
-    "img": "https://imgs.xkcd.com/comics/dpayloads_large.png"
+    "img": "https://imgs.xkcd.com/comics/dpayloads_large.png",
+    "large": true
   },
   {
     "num" : 1491,
-    "img": "https://imgs.xkcd.com/comics/stories_of_the_past_and_future_large.png"
+    "img": "https://imgs.xkcd.com/comics/stories_of_the_past_and_future_large.png",
+    "large": true
   },
   {
     "num" : 1525,
@@ -140,10 +165,12 @@
   },
   {
     "num" : 1688,
-    "img": "https://imgs.xkcd.com/comics/map_age_guide_large.png"
+    "img": "https://imgs.xkcd.com/comics/map_age_guide_large.png",
+    "large": true
   },
   {
-    "num" : 1732
+    "num" : 1732,
+    "large": true
   },
   {
     "num" : 1735,

@@ -33,5 +33,6 @@
         <item name="style">solid_line</item>
         <item name="progress_stroke_width">3dp</item>
         <item name="progress_start_color">@color/colorAccent</item>
+        <item name="progress_end_color">@color/colorAccent</item>
     </style>
 </resources>

@@ -27,6 +27,7 @@
 
         <activity android:name="xyz.jienan.xkcd.activity.ImageDetailPageActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:launchMode="singleTop"
             android:configChanges="screenSize|orientation|keyboardHidden"/>
 
         <service

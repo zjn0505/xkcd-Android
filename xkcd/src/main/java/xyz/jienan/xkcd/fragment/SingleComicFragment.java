@@ -14,12 +14,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.bumptech.glide.request.target.Target;
 
@@ -63,6 +65,7 @@ public class SingleComicFragment extends Fragment implements IComicsCallback {
     private TextView tvCreateDate;
     private TextView tvDescription;
     private ProgressBar pbLoading;
+    private Button btnReload;
     private SimpleInfoDialogFragment dialogFragment;
     
     private int id;
@@ -97,6 +100,7 @@ public class SingleComicFragment extends Fragment implements IComicsCallback {
         ivXkcdPic = view.findViewById(R.id.iv_xkcd_pic);
         tvCreateDate = view.findViewById(R.id.tv_create_date);
         tvDescription = view.findViewById(R.id.tv_description);
+        btnReload = view.findViewById(R.id.btn_reload);
         ivXkcdPic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -135,6 +139,21 @@ public class SingleComicFragment extends Fragment implements IComicsCallback {
 
         @Override public float getGranualityPercentage() {
             return 0.1f; // this matches the format string for #text below
+        }
+
+        @Override
+        public void onDownloadStart() {
+
+        }
+
+        @Override
+        public void onProgress(int progress) {
+
+        }
+
+        @Override
+        public void onDownloadFinish() {
+
         }
 
         @Override protected void onConnecting() {
@@ -176,6 +195,7 @@ public class SingleComicFragment extends Fragment implements IComicsCallback {
         }
         Intent intent = new Intent(getActivity(), ImageDetailPageActivity.class);
         intent.putExtra("URL", currentPic.getImg());
+        intent.putExtra("ID", currentPic.num);
         startActivity(intent);
         getActivity().overridePendingTransition(R.anim.fadein, R.anim.fadeout);
     }
@@ -221,7 +241,7 @@ public class SingleComicFragment extends Fragment implements IComicsCallback {
         }
 
         target.setModel(xPic.getImg());
-        Glide.with(getActivity()).load(xPic.getImg()).asBitmap().fitCenter().diskCacheStrategy(DiskCacheStrategy.SOURCE).into(target);
+        Glide.with(getActivity()).load(xPic.getImg()).asBitmap().fitCenter().diskCacheStrategy(DiskCacheStrategy.SOURCE).listener(glideListener).into(target);
 
         currentPic = xPic;
         Log.d(GLIDE_TAG, "Pic to be loaded: " + xPic.getImg());
@@ -232,6 +252,25 @@ public class SingleComicFragment extends Fragment implements IComicsCallback {
         }
 
     }
+    RequestListener glideListener = new RequestListener<String, Bitmap>() {
+        @Override
+        public boolean onException(Exception e, final String model, final Target<Bitmap> target, boolean isFirstResource) {
+            btnReload.setVisibility(View.VISIBLE);
+            btnReload.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Glide.with(getActivity()).load(model).asBitmap().fitCenter().diskCacheStrategy(DiskCacheStrategy.SOURCE).listener(glideListener).into(target);
+                    btnReload.setVisibility(View.GONE);
+                }
+            });
+            return false;
+        }
+
+        @Override
+        public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
+            return false;
+        }
+    };
 
     private SimpleInfoDialogFragment.ISimpleInfoDialogListener dialogListener = new SimpleInfoDialogFragment.ISimpleInfoDialogListener() {
         @Override

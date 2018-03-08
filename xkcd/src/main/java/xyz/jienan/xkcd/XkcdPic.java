@@ -13,7 +13,7 @@ public class XkcdPic implements Serializable{
     private String title;
     private String img;
     public String alt;
-
+    public boolean large = false;
 
     public String getImg() {
         return XkcdSideloadUtils.sideload(this).img;
