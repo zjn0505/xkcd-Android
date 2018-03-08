@@ -31,12 +31,17 @@ public class XkcdSideloadUtils {
 
     private static HashMap<Integer, XkcdPic> xkcdSideloadMap = new HashMap<>();
 
-    public static void init(Context context) {
-        try {
-            initXkcdSideloadMap(context);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public static void init(final Context context) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    initXkcdSideloadMap(context);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
         checkRemoteJson();
     }
 

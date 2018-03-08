@@ -117,7 +117,7 @@ public class NetworkService {
             okhttp3.Response originalResponse = chain.proceed(request);
             Response.Builder builder = originalResponse.newBuilder().removeHeader("pragma").removeHeader("cacheable");
             if (TextUtils.isEmpty(cacheable)) {
-                return builder.build();
+                return builder.header("Cache-Control", "no-cache" ).build();
             } else {
                 return builder.header("Cache-Control", "public, max-age=" + cacheable).build();
             }
@@ -169,7 +169,6 @@ public class NetworkService {
         @GET
         Call<ResponseBody> getExplainWithShortCache(@Url String url);
 
-        @Headers("cacheable: 86400")
         @GET
         Observable<List<XkcdPic>> getSpecialXkcds(@Url String url);
     }

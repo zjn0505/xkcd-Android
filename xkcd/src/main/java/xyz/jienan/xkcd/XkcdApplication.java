@@ -3,7 +3,6 @@ package xyz.jienan.xkcd;
 import android.app.Application;
 
 import com.github.piasy.biv.BigImageViewer;
-import com.github.piasy.biv.loader.fresco.FrescoImageLoader;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import xyz.jienan.xkcd.glide.GlideImageLoader;

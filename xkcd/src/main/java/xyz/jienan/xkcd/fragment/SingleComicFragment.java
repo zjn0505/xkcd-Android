@@ -168,7 +168,6 @@ public class SingleComicFragment extends Fragment implements IComicsCallback {
             if (progressbar.getAnimation() == null) {
                 progressbar.setAnimation(AnimationUtils.loadAnimation(progressbar.getContext(), R.anim.rotate));
             }
-            Log.d("Glide", "onDownloading: " + (int)(100 * bytesRead / expectedLength));
             image.setImageLevel((int)(10000 * bytesRead / expectedLength));
         }
         @Override protected void onDownloaded() {
