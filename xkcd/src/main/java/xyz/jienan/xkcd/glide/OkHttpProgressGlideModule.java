@@ -27,6 +27,7 @@ import okio.BufferedSource;
 import okio.ForwardingSource;
 import okio.Okio;
 import okio.Source;
+import xyz.jienan.xkcd.network.NetworkService;
 
 /**
  * Created by jienanzhang on 03/03/2018.
@@ -40,7 +41,7 @@ public class OkHttpProgressGlideModule implements GlideModule {
 
     @Override
     public void registerComponents(Context context, Glide glide) {
-        OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
+        OkHttpClient.Builder httpClientBuilder = NetworkService.getOkHttpClientBuilder();
         httpClientBuilder.addNetworkInterceptor(createInterceptor(new DispatchingProgressListener()));
         OkHttpClient client = httpClientBuilder.build();
         glide.register(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(client));

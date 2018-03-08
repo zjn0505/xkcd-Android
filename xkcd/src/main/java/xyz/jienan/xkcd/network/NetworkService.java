@@ -3,19 +3,31 @@ package xyz.jienan.xkcd.network;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.KeyStore;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 
 import io.reactivex.Observable;
 import okhttp3.Cache;
+import okhttp3.ConnectionSpec;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import okhttp3.TlsVersion;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Retrofit;
@@ -44,10 +56,25 @@ public class NetworkService {
     public static final String USE_CACHE = "2";
     public static final String SHORT_CACHE = "3";
 
+    private static final String TAG = "NetworkService";
+    private static final int DEFAULT_READ_TIMEOUT = 30; // in seconds
+    private static final int DEFAULT_CONNECT_TIMEOUT = 15; // in seconds
 
     private static XkcdAPI xkcdAPI;
 
     private NetworkService() {
+        OkHttpClient client = getOkHttpClientBuilder().build();
+
+        Retrofit.Builder builder = new Retrofit.Builder()
+                .baseUrl(XKCD_BASE_URL)
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create());
+        Retrofit retrofit = builder.build();
+        xkcdAPI = retrofit.create(XkcdAPI.class);
+    }
+
+    public static OkHttpClient.Builder getOkHttpClientBuilder() {
         OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
         httpClientBuilder.addNetworkInterceptor(new NetworkCacheInterceptor())
                 .addInterceptor(new ApplicationCacheInterceptor());
@@ -66,15 +93,48 @@ public class NetworkService {
             httpClientBuilder.addInterceptor(interceptor);
         }
 
-        OkHttpClient client = httpClientBuilder.build();
 
-        Retrofit.Builder builder = new Retrofit.Builder()
-                .baseUrl(XKCD_BASE_URL)
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create());
-        Retrofit retrofit = builder.build();
-        xkcdAPI = retrofit.create(XkcdAPI.class);
+        httpClientBuilder = enableTls12(httpClientBuilder)
+                .connectTimeout(DEFAULT_CONNECT_TIMEOUT, TimeUnit.SECONDS)
+                .readTimeout(DEFAULT_READ_TIMEOUT, TimeUnit.SECONDS);
+
+        return httpClientBuilder;
+    }
+
+    /**
+     * Enable TLS on the OKHttp builder by setting a custom SocketFactory
+     */
+    private static OkHttpClient.Builder enableTls12(OkHttpClient.Builder client) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN || Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+            return client;
+        }
+        try {
+            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(
+                    TrustManagerFactory.getDefaultAlgorithm());
+            trustManagerFactory.init((KeyStore) null);
+            TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
+            if (trustManagers.length != 1 || !(trustManagers[0] instanceof X509TrustManager)) {
+                throw new IllegalStateException("Unexpected default trust managers:"
+                        + Arrays.toString(trustManagers));
+            }
+            X509TrustManager trustManager = (X509TrustManager) trustManagers[0];
+
+            client.sslSocketFactory(new TLSSocketFactory(), trustManager);
+
+            ConnectionSpec cs = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+                    .tlsVersions(TlsVersion.TLS_1_2, TlsVersion.TLS_1_1)
+                    .build();
+
+            List<ConnectionSpec> specs = new ArrayList<>();
+            specs.add(cs);
+            specs.add(ConnectionSpec.COMPATIBLE_TLS);
+            specs.add(ConnectionSpec.CLEARTEXT);
+
+            client.connectionSpecs(specs);
+        } catch (Exception exc) {
+            Log.e(TAG, "Error while setting TLS", exc);
+        }
+        return client;
     }
 
 
