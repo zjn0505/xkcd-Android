@@ -24,6 +24,7 @@
 
         <ImageView
             android:id="@+id/iv_xkcd_pic"
+            android:contentDescription="@string/xkcd_pic"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"

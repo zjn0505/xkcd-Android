@@ -250,8 +250,8 @@ public class SingleComicFragment extends Fragment implements IComicsCallback {
 
         currentPic = xPic;
         Log.d(GLIDE_TAG, "Pic to be loaded: " + xPic.getImg());
-        tvTitle.setText(xPic.num + ". " + xPic.getTitle());
-        tvCreateDate.setText("created on " + xPic.year + "." + xPic.month + "." + xPic.day);
+        tvTitle.setText(String.format("%d. %s", xPic.num, xPic.getTitle()));
+        tvCreateDate.setText(String.format(getString(R.string.created_on), xPic.year, xPic.month, xPic.day));
         if (tvDescription != null) {
             tvDescription.setText(xPic.alt);
         }
