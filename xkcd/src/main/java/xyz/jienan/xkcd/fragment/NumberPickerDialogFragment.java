@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
@@ -20,32 +21,40 @@ import xyz.jienan.xkcd.R;
 
 public class NumberPickerDialogFragment extends DialogFragment {
 
+    private final static String INT_MIN = "min";
+    private final static String INT_MAX = "max";
+
     public interface INumberPickerDialogListener {
         void onPositiveClick(int number);
         void onNegativeClick();
     }
 
-    private String title, content;
     private int min, max;
     private INumberPickerDialogListener mListener;
-
-
 
     public void setListener(INumberPickerDialogListener listener) {
         mListener = listener;
     }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public void setNumberRange(int min, int max) {
         this.min = min;
         this.max = max;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            max = savedInstanceState.getInt(INT_MAX);
+            min = savedInstanceState.getInt(INT_MIN);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(INT_MAX, max);
+        outState.putInt(INT_MIN, min);
     }
 
     @NonNull
@@ -59,8 +68,7 @@ public class NumberPickerDialogFragment extends DialogFragment {
         picker.setMinValue(min);
         picker.setMaxValue(max);
         builder.setView(contentView)
-                .setTitle(title)
-                .setMessage(content)
+                .setTitle(R.string.dialog_pick_content)
                 .setPositiveButton(R.string.dialog_select, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         int value = 1;

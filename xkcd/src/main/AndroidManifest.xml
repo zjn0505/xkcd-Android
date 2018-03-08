@@ -21,9 +21,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="xyz.jienan.xkcd.activity.TestActivity">
-
-        </activity>
 
         <activity android:name="xyz.jienan.xkcd.activity.ImageDetailPageActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"

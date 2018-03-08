@@ -83,6 +83,13 @@ public class MainActivity extends AppCompatActivity {
                 latestIndex = i;
             }
         }
+        if (savedInstanceState != null) {
+            NumberPickerDialogFragment pickerDialog =
+                    (NumberPickerDialogFragment) getSupportFragmentManager().findFragmentByTag("IdPickerDialogFragment");
+            if (pickerDialog != null) {
+                pickerDialog.setListener(pickerListener);
+            }
+        }
     }
 
     private void loadXkcdPic() {
@@ -215,20 +222,8 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 }
                 NumberPickerDialogFragment pickerDialogFragment = new NumberPickerDialogFragment();
-                pickerDialogFragment.setTitle(getString(R.string.dialog_pick_title));
-                pickerDialogFragment.setContent(getString(R.string.dialog_pick_content));
                 pickerDialogFragment.setNumberRange(1, latestIndex);
-                pickerDialogFragment.setListener(new NumberPickerDialogFragment.INumberPickerDialogListener() {
-                    @Override
-                    public void onPositiveClick(int number) {
-                        viewPager.setCurrentItem(number - 1);
-                    }
-
-                    @Override
-                    public void onNegativeClick() {
-                        // Do nothing
-                    }
-                });
+                pickerDialogFragment.setListener(pickerListener);
                 pickerDialogFragment.show(getSupportFragmentManager(), "IdPickerDialogFragment");
 
                 break;
@@ -251,4 +246,17 @@ public class MainActivity extends AppCompatActivity {
         }
         return true;
     }
+
+    private NumberPickerDialogFragment.INumberPickerDialogListener pickerListener =
+            new NumberPickerDialogFragment.INumberPickerDialogListener() {
+        @Override
+        public void onPositiveClick(int number) {
+            viewPager.setCurrentItem(number - 1, false);
+        }
+
+        @Override
+        public void onNegativeClick() {
+            // Do nothing
+        }
+    };
 }

@@ -120,6 +120,12 @@ public class SingleComicFragment extends Fragment implements IComicsCallback {
         });
         initGlide();
         loadXkcdPic();
+        if (savedInstanceState != null) {
+            dialogFragment = (SimpleInfoDialogFragment) getChildFragmentManager().findFragmentByTag("AltInfoDialogFragment");
+            if (dialogFragment != null) {
+                dialogFragment.setListener(dialogListener);
+            }
+        }
         return view;
     }
 
