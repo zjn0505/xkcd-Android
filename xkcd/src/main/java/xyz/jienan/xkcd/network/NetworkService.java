@@ -48,8 +48,6 @@ import xyz.jienan.xkcd.XkcdPic;
 public class NetworkService {
 
     private static final String XKCD_BASE_URL = "https://xkcd.com/";
-    public static final String XKCD_QUERY_BASE_URL = "https://xkcd.com/info.0.json";
-    public static final String XKCD_QUERY_BY_ID_URL = "https://xkcd.com/%s/info.0.json";
     public static final String XKCD_SPECIAL_LIST  = "https://raw.githubusercontent.com/zjn0505/Xkcd-Android/master/xkcd/src/main/res/raw/xkcd_special.json";
 
     public static final String BYPASS_CACHE = "1";

@@ -110,6 +110,9 @@ public class SingleComicFragment extends Fragment implements IComicsCallback {
         ivXkcdPic.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
+                if (currentPic == null) {
+                    return true;
+                }
                 dialogFragment = new SimpleInfoDialogFragment();
                 dialogFragment.setContent(currentPic.alt);
                 dialogFragment.setListener(dialogListener);
