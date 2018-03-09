@@ -105,12 +105,6 @@ public class SingleComicFragment extends Fragment {
         tvCreateDate = view.findViewById(R.id.tv_create_date);
         tvDescription = view.findViewById(R.id.tv_description);
         btnReload = view.findViewById(R.id.btn_reload);
-        ivXkcdPic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                launchDetailPageActivity();
-            }
-        });
         ivXkcdPic.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -307,6 +301,12 @@ public class SingleComicFragment extends Fragment {
 
         @Override
         public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
+            ivXkcdPic.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    launchDetailPageActivity();
+                }
+            });
             return false;
         }
     };
