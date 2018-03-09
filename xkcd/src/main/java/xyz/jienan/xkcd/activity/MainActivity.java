@@ -100,7 +100,7 @@ public class MainActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         if (viewPager != null) {
-            int lastViewed = viewPager.getCurrentItem();
+            int lastViewed = viewPager.getCurrentItem() + 1;
             editor.putInt(LAST_VIEW_XKCD_ID, lastViewed).apply();
         }
     }
