@@ -204,7 +204,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        String skipCount = getString(getResources().getIdentifier(sharedPreferences.getString(PREF_ARROW, "1"), "string", getPackageName()));
+        String skipCount = getString(getResources().getIdentifier(sharedPreferences.getString(PREF_ARROW, "arrow_1"), "string", getPackageName()));
         int id = item.getItemId();
         switch (id) {
             case R.id.action_left:
