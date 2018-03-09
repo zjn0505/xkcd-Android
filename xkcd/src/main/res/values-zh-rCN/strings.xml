@@ -6,8 +6,8 @@
     <string name="action_left">向前</string>
     <string name="action_right">向后</string>
     <string name="action_random">随机Xkcd</string>
-    <string name="action_specific">指定Xkcd</string>
-    <string name="action_xkcd">访问xkcd.com</string>
+    <string name="action_specific">选择指定Xkcd</string>
+    <string name="action_xkcd">访问Xkcd.com</string>
     <string name="action_explain">访问ExplainXkcd</string>
 
     <string name="dialog_got_it">了解</string>
@@ -38,6 +38,8 @@
     <string name="pref_font_xkcd">使用Xkcd字体</string>
     <string name="pref_font_normal">使用正常字体</string>
     <string name="settings">设置</string>
+    <string name="share_text">一起来看看这张有趣的xkcd漫画吧.</string>
+
     <string-array name="notification_titles">
         <item>有新的Xkcd漫画了</item>
         <item>Xkcd刚刚更新</item>

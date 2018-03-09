@@ -11,6 +11,9 @@ import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
@@ -58,7 +61,7 @@ import static xyz.jienan.xkcd.Const.GLIDE_TAG;
  * Created by jienanzhang on 03/03/2018.
  */
 
-public class SingleComicFragment extends Fragment implements IComicsCallback {
+public class SingleComicFragment extends Fragment {
 
     private TextView tvTitle;
     private ImageView ivXkcdPic;
@@ -87,6 +90,7 @@ public class SingleComicFragment extends Fragment implements IComicsCallback {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
         id = args.getInt("id");
+        setHasOptionsMenu(true);
     }
 
     @Nullable
@@ -130,11 +134,6 @@ public class SingleComicFragment extends Fragment implements IComicsCallback {
             }
         }
         return view;
-    }
-
-    @Override
-    public XkcdPic getCurrentComic() {
-        return currentPic;
     }
 
     private static class MyProgressTarget<Z> extends ProgressTarget<String, Z> {
@@ -187,6 +186,38 @@ public class SingleComicFragment extends Fragment implements IComicsCallback {
             progressbar.clearAnimation();
             image.setImageLevel(0); // reset ImageView default
         }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (currentPic == null) {
+            return false;
+        }
+        switch (item.getItemId()) {
+            case R.id.action_share:
+                Intent shareIntent = new Intent();
+                shareIntent.setAction(Intent.ACTION_SEND);
+                shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_text) + currentPic.getImg());
+                shareIntent.setType("text/plain");
+                startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.share_to)));
+                return true;
+            case R.id.action_go_xkcd: {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://xkcd.com/" + currentPic.num));
+                startActivity(browserIntent);
+                return true;
+            }
+            case R.id.action_go_explain: {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.explainxkcd.com/wiki/index.php/" + currentPic.num));
+                startActivity(browserIntent);
+                return true;
+            }
+        }
+        return false;
     }
 
     private void initGlide() {

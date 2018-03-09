@@ -2,7 +2,6 @@ package xyz.jienan.xkcd.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -10,7 +9,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
@@ -24,7 +22,6 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.XkcdPic;
-import xyz.jienan.xkcd.fragment.IComicsCallback;
 import xyz.jienan.xkcd.fragment.NumberPickerDialogFragment;
 import xyz.jienan.xkcd.fragment.SingleComicFragment;
 import xyz.jienan.xkcd.network.NetworkService;
@@ -45,6 +42,7 @@ public class MainActivity extends BaseActivity {
 
     private static final String LOADED_XKCD_ID = "xkcd_id";
     private static final String LATEST_XKCD_ID = "xkcd_latest_id";
+    private static final String LAST_VIEW_XKCD_ID = "xkcd_last_viewed_id";
     private int savedId = 0;
 
     private SharedPreferences.Editor editor;
@@ -82,9 +80,12 @@ public class MainActivity extends BaseActivity {
         if (savedInstanceState != null) {
             savedId = savedInstanceState.getInt(LOADED_XKCD_ID);
             int i = savedInstanceState.getInt(LATEST_XKCD_ID);
+            actionBar.setSubtitle(String.valueOf(savedId));
             if (i > 0) {
                 latestIndex = i;
             }
+        } else {
+            savedId = sharedPreferences.getInt(LAST_VIEW_XKCD_ID, latestIndex);
         }
         if (savedInstanceState != null) {
             NumberPickerDialogFragment pickerDialog =
@@ -92,6 +93,15 @@ public class MainActivity extends BaseActivity {
             if (pickerDialog != null) {
                 pickerDialog.setListener(pickerListener);
             }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (viewPager != null) {
+            int lastViewed = viewPager.getCurrentItem();
+            editor.putInt(LAST_VIEW_XKCD_ID, lastViewed).apply();
         }
     }
 
@@ -135,7 +145,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (viewPager != null && viewPager.getCurrentItem() > 0)
+        if (viewPager != null && viewPager.getCurrentItem() >= 0)
             outState.putInt(LOADED_XKCD_ID, viewPager.getCurrentItem() + 1);
             outState.putInt(LATEST_XKCD_ID, latestIndex);
     }
@@ -196,7 +206,6 @@ public class MainActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         String skipCount = getString(getResources().getIdentifier(sharedPreferences.getString(PREF_ARROW, "1"), "string", getPackageName()));
         int id = item.getItemId();
-        IComicsCallback comics = (IComicsCallback)adapter.getFragment(viewPager.getCurrentItem() + 1);
         switch (id) {
             case R.id.action_left:
                 viewPager.setCurrentItem(viewPager.getCurrentItem() - Integer.valueOf(skipCount));
@@ -213,17 +222,6 @@ public class MainActivity extends BaseActivity {
                 int randomId = random.nextInt(latestIndex + 1);
                 viewPager.setCurrentItem(randomId - 1);
                 break;
-            case R.id.action_share:
-                if (latestIndex == 0) {
-                    break;
-                }
-                Intent shareIntent = new Intent();
-                shareIntent.setAction(Intent.ACTION_SEND);
-                shareIntent.putExtra(Intent.EXTRA_TEXT, "Come and check this funny image I got from xkcd. \n " + comics.getCurrentComic().getImg());
-                shareIntent.setType("text/plain");
-                startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.share_to)));
-
-                break;
             case R.id.action_specific:
                 if (latestIndex == 0) {
                     break;
@@ -232,31 +230,14 @@ public class MainActivity extends BaseActivity {
                 pickerDialogFragment.setNumberRange(1, latestIndex);
                 pickerDialogFragment.setListener(pickerListener);
                 pickerDialogFragment.show(getSupportFragmentManager(), "IdPickerDialogFragment");
-
                 break;
-            case R.id.action_go_xkcd: {
-                if (latestIndex == 0) {
-                    break;
-                }
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://xkcd.com/" + comics.getCurrentComic().num));
-                startActivity(browserIntent);
-                break;
-            }
-            case R.id.action_go_explain: {
-                if (latestIndex == 0) {
-                    break;
-                }
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.explainxkcd.com/wiki/index.php/" + comics.getCurrentComic().num));
-                startActivity(browserIntent);
-                break;
-            }
             case R.id.action_settings: {
                 Intent settingsIntent = new Intent(this, PreferenceActivity.class);
                 startActivityForResult(settingsIntent, REQ_SETTINGS);
                 break;
             }
         }
-        return true;
+        return false;
     }
 
     private NumberPickerDialogFragment.INumberPickerDialogListener pickerListener =
