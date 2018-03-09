@@ -10,7 +10,7 @@
             android:id="@+id/tv_explain"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
+            android:textSize="17sp"
             android:layout_margin="10dp"
             tools:text="This is the sample text"/>
     </ScrollView>

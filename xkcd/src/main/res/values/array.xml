@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="arrow_switch_by">
+        <item>@string/arrow_1</item>
+        <item>@string/arrow_10</item>
+        <item>@string/arrow_30</item>
+    </string-array>
+    <string-array name="arrow_switch_by_value">
+        <item>arrow_1</item>
+        <item>arrow_10</item>
+        <item>arrow_30</item>
+    </string-array>
+
+</resources>

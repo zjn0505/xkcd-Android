@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     tools:context="xyz.jienan.xkcd.activity.MainActivity">
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -26,7 +25,8 @@
                 android:gravity="center"
                 android:textSize="25sp"
                 android:textStyle="bold"
-                tools:text="0. Default Image" />
+                tools:text="0. Default Image"
+                android:fontFamily="@font/xkcd"/>
 
             <ScrollView
                 android:layout_width="match_parent"
@@ -56,6 +56,7 @@
                 android:layout_margin="20dp"
                 android:gravity="end"
                 android:textSize="15sp"
+                android:fontFamily="@font/xkcd"
                 tools:text="created on 2017.7.2" />
 
 

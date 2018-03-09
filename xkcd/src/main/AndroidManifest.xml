@@ -27,6 +27,10 @@
             android:launchMode="singleTop"
             android:configChanges="screenSize|orientation|keyboardHidden"/>
 
+        <activity android:name=".activity.PreferenceActivity"
+            android:launchMode="singleTask"
+            android:configChanges="screenSize|orientation|keyboardHidden"/>
+
         <service
             android:name=".firebase.XkcdFirebaseMessagingService">
             <intent-filter>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <ListPreference
+        android:key="pref_arrow"
+        android:title="@string/pref_arrow"
+        android:dialogTitle="@string/pref_arrow_content"
+        android:entries="@array/arrow_switch_by"
+        android:entryValues="@array/arrow_switch_by_value"
+        android:defaultValue="arrow_1"/>
+    <SwitchPreference
+        android:key="pref_font"
+        android:title="@string/pref_font"
+        android:summaryOn="@string/pref_font_normal"
+        android:summaryOff="@string/pref_font_xkcd"
+        android:defaultValue="false"/>
+
+</PreferenceScreen>

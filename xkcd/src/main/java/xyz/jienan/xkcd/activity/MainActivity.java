@@ -29,14 +29,16 @@ import xyz.jienan.xkcd.fragment.NumberPickerDialogFragment;
 import xyz.jienan.xkcd.fragment.SingleComicFragment;
 import xyz.jienan.xkcd.network.NetworkService;
 
+import static xyz.jienan.xkcd.Const.PREF_ARROW;
 import static xyz.jienan.xkcd.Const.XKCD_LATEST_INDEX;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     private ViewPager viewPager;
     private ComicsPagerAdapter adapter;
 
     private final static String TAG = "MainActivity";
+    private final static int REQ_SETTINGS = 101;
 
     // Use this field to record the latest xkcd pic id
     private int latestIndex = 0;
@@ -46,11 +48,12 @@ public class MainActivity extends AppCompatActivity {
     private int savedId = 0;
 
     private SharedPreferences.Editor editor;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         setContentView(R.layout.activity_main);
         viewPager = findViewById(R.id.viewpager);
         adapter = new ComicsPagerAdapter(getSupportFragmentManager());
@@ -101,9 +104,12 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onNext(XkcdPic xkcdPic) {
+                if (editor == null) {
+                    editor = sharedPreferences.edit();
+                }
                 latestIndex = xkcdPic.num;
                 editor.putInt(XKCD_LATEST_INDEX, latestIndex);
-                editor.commit();
+                editor.apply();
                 adapter.setSize(latestIndex);
                 if (savedId != 0) {
                     viewPager.setCurrentItem(savedId - 1, false);
@@ -188,14 +194,15 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        String skipCount = getString(getResources().getIdentifier(sharedPreferences.getString(PREF_ARROW, "1"), "string", getPackageName()));
         int id = item.getItemId();
         IComicsCallback comics = (IComicsCallback)adapter.getFragment(viewPager.getCurrentItem() + 1);
         switch (id) {
             case R.id.action_left:
-                viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+                viewPager.setCurrentItem(viewPager.getCurrentItem() - Integer.valueOf(skipCount));
                 break;
             case R.id.action_right:
-                viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
+                viewPager.setCurrentItem(viewPager.getCurrentItem() + Integer.valueOf(skipCount));
                 break;
             case R.id.action_random:
                 if (latestIndex == 0) {
@@ -243,6 +250,11 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(browserIntent);
                 break;
             }
+            case R.id.action_settings: {
+                Intent settingsIntent = new Intent(this, PreferenceActivity.class);
+                startActivityForResult(settingsIntent, REQ_SETTINGS);
+                break;
+            }
         }
         return true;
     }
@@ -259,4 +271,14 @@ public class MainActivity extends AppCompatActivity {
             // Do nothing
         }
     };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQ_SETTINGS) {
+            if (resultCode == RESULT_OK) {
+                recreate();
+            }
+        }
+    }
 }

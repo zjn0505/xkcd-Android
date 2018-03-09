@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">xkcd</string>
+    <string name="app_name" translatable="false">xkcd</string>
 
     <string name="action_share">Share this xkcd</string>
     <string name="action_left">Previous</string>
@@ -28,6 +28,22 @@
     <string name="more_on_explainxkcd">MORE ON EXPLAINXKCD</string>
     <string name="created_on">created on %s.%s.%s</string>
     <string name="xkcd_pic">xkcd comics</string>
+    <string name="pref_arrow">Quick switch</string>
+    <plurals name="pref_arrow_summary">
+        <item quantity="one">Switch %s comic when action bar arrow clicked</item>
+        <item quantity="other">Switch %s comics when action bar arrow clicked</item>
+    </plurals>
+
+    <string name="pref_arrow_content">Set the number of comics to skip when arrow clicked</string>
+    <string name="pref_font">Increase legibility</string>
+    <string name="pref_font_xkcd">Use Xkcd font</string>
+    <string name="pref_font_normal">Use normal font</string>
+    <string name="settings">Settings</string>
+
+    <string name="arrow_1" translatable="false">1</string>
+    <string name="arrow_10" translatable="false">10</string>
+    <string name="arrow_30" translatable="false">30</string>
+
     <string-array name="notification_titles">
         <item>new Xkcd is coming</item>
         <item>new Xkcd on the way</item>
