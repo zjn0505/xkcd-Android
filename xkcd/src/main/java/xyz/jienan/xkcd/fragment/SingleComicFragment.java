@@ -381,6 +381,13 @@ public class SingleComicFragment extends Fragment {
                                             node.remove();
                                         }
                                     }
+                                for (Element child : element.getAllElements()) {
+                                    if ("a".equals(child.tagName()) && child.hasAttr("href")
+                                            && child.attr("href").startsWith("/wiki")) {
+                                        String href = child.attr("href");
+                                        child.attr("href", "https://www.explainxkcd.com" + href);
+                                    }
+                                }
                                 htmlResult.append(element.toString());
                                 element = element.nextElementSibling();
                             }
