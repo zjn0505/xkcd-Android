@@ -99,8 +99,11 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (viewPager != null) {
+        if (viewPager != null && latestIndex > 0) {
             int lastViewed = viewPager.getCurrentItem() + 1;
+            if (editor == null) {
+                editor = sharedPreferences.edit();
+            }
             editor.putInt(LAST_VIEW_XKCD_ID, lastViewed).apply();
         }
     }
