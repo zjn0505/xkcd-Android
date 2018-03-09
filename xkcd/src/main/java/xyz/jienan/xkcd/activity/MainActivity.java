@@ -18,6 +18,7 @@ import java.util.Random;
 
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import xyz.jienan.xkcd.R;
@@ -47,6 +48,7 @@ public class MainActivity extends BaseActivity {
 
     private SharedPreferences.Editor editor;
     private SharedPreferences sharedPreferences;
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +101,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        compositeDisposable.dispose();
         if (viewPager != null && latestIndex > 0) {
             int lastViewed = viewPager.getCurrentItem() + 1;
             if (editor == null) {
@@ -112,7 +115,7 @@ public class MainActivity extends BaseActivity {
         NetworkService.getXkcdAPI().getLatest().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<XkcdPic>() {
             @Override
             public void onSubscribe(Disposable d) {
-
+                compositeDisposable.add(d);
             }
 
             @Override
