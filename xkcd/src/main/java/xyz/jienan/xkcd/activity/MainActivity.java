@@ -28,6 +28,7 @@ import xyz.jienan.xkcd.fragment.SingleComicFragment;
 import xyz.jienan.xkcd.network.NetworkService;
 
 import static xyz.jienan.xkcd.Const.PREF_ARROW;
+import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NOTI_INTENT;
 import static xyz.jienan.xkcd.Const.XKCD_LATEST_INDEX;
 
 public class MainActivity extends BaseActivity {
@@ -39,16 +40,18 @@ public class MainActivity extends BaseActivity {
     private final static int REQ_SETTINGS = 101;
 
     // Use this field to record the latest xkcd pic id
-    private int latestIndex = 0;
+    private int latestIndex = INVALID_ID;
 
     private static final String LOADED_XKCD_ID = "xkcd_id";
     private static final String LATEST_XKCD_ID = "xkcd_latest_id";
     private static final String LAST_VIEW_XKCD_ID = "xkcd_last_viewed_id";
-    private int savedId = 0;
+    private int savedId = INVALID_ID;
+    private static final int INVALID_ID = 0;
 
     private SharedPreferences.Editor editor;
     private SharedPreferences sharedPreferences;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
+    private boolean isFre = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,19 +85,37 @@ public class MainActivity extends BaseActivity {
         if (savedInstanceState != null) {
             savedId = savedInstanceState.getInt(LOADED_XKCD_ID);
             int i = savedInstanceState.getInt(LATEST_XKCD_ID);
-            actionBar.setSubtitle(String.valueOf(savedId));
-            if (i > 0) {
+            if (actionBar != null) {
+                actionBar.setSubtitle(String.valueOf(savedId));
+            }
+            if (i > INVALID_ID) {
                 latestIndex = i;
             }
-        } else {
-            savedId = sharedPreferences.getInt(LAST_VIEW_XKCD_ID, latestIndex);
-        }
-        if (savedInstanceState != null) {
             NumberPickerDialogFragment pickerDialog =
                     (NumberPickerDialogFragment) getSupportFragmentManager().findFragmentByTag("IdPickerDialogFragment");
             if (pickerDialog != null) {
                 pickerDialog.setListener(pickerListener);
             }
+            latestIndex = sharedPreferences.getInt(XKCD_LATEST_INDEX, INVALID_ID);
+
+        } else {
+            if (getIntent() != null && getIntent().getIntExtra(XKCD_INDEX_ON_NOTI_INTENT, INVALID_ID) != INVALID_ID) {
+                savedId = getIntent().getIntExtra(XKCD_INDEX_ON_NOTI_INTENT, INVALID_ID);
+                latestIndex = savedId;
+                if (editor == null) {
+                    editor = sharedPreferences.edit();
+                }
+                editor.putInt(XKCD_LATEST_INDEX, latestIndex);
+                editor.apply();
+            } else {
+                latestIndex = sharedPreferences.getInt(XKCD_LATEST_INDEX, INVALID_ID);
+                savedId = sharedPreferences.getInt(LAST_VIEW_XKCD_ID, latestIndex);
+            }
+        }
+        isFre = latestIndex == INVALID_ID;
+        if (latestIndex > INVALID_ID) {
+            adapter.setSize(latestIndex);
+            viewPager.setCurrentItem(savedId > INVALID_ID ? savedId - 1 : latestIndex - 1, false);
         }
     }
 
@@ -102,7 +123,7 @@ public class MainActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         compositeDisposable.dispose();
-        if (viewPager != null && latestIndex > 0) {
+        if (viewPager != null && latestIndex > INVALID_ID) {
             int lastViewed = viewPager.getCurrentItem() + 1;
             if (editor == null) {
                 editor = sharedPreferences.edit();
@@ -127,13 +148,14 @@ public class MainActivity extends BaseActivity {
                 editor.putInt(XKCD_LATEST_INDEX, latestIndex);
                 editor.apply();
                 adapter.setSize(latestIndex);
-                if (savedId != 0) {
-                    viewPager.setCurrentItem(savedId - 1, false);
-                    savedId = 0;
-                } else {
-                    viewPager.setCurrentItem(latestIndex - 1, false);
+                if (isFre) {
+                    if (savedId != INVALID_ID) {
+                        viewPager.setCurrentItem(savedId - 1, false);
+                        savedId = INVALID_ID;
+                    } else {
+                        viewPager.setCurrentItem(latestIndex - 1, false);
+                    }
                 }
-
             }
 
             @Override
@@ -220,7 +242,7 @@ public class MainActivity extends BaseActivity {
                 viewPager.setCurrentItem(viewPager.getCurrentItem() + Integer.valueOf(skipCount));
                 break;
             case R.id.action_random:
-                if (latestIndex == 0) {
+                if (latestIndex == INVALID_ID) {
                     loadXkcdPic();
                     break;
                 }
@@ -229,7 +251,7 @@ public class MainActivity extends BaseActivity {
                 viewPager.setCurrentItem(randomId - 1);
                 break;
             case R.id.action_specific:
-                if (latestIndex == 0) {
+                if (latestIndex == INVALID_ID) {
                     break;
                 }
                 NumberPickerDialogFragment pickerDialogFragment = new NumberPickerDialogFragment();
