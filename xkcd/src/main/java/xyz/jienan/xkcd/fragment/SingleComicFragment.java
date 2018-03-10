@@ -328,7 +328,7 @@ public class SingleComicFragment extends Fragment {
         @SuppressLint("StaticFieldLeak")
         @Override
         public void onExplainMoreClick(final SimpleInfoDialogFragment.ExplainingCallback explainingCallback) {
-            String url = "http://www.explainxkcd.com/wiki/index.php/" + currentPic.num;
+            String url = "https://www.explainxkcd.com/wiki/index.php/" + currentPic.num;
             Call<ResponseBody> call = NetworkService.getXkcdAPI().getExplain(url);
             if (((MainActivity)getActivity()).getMaxId() - currentPic.num < 3) {
                 call = NetworkService.getXkcdAPI().getExplainWithShortCache(url);

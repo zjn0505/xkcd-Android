@@ -106,7 +106,7 @@ public class SimpleInfoDialogFragment extends DialogFragment {
     private DialogInterface.OnShowListener showListener = new DialogInterface.OnShowListener() {
 
         @Override
-        public void onShow(DialogInterface dialog) {
+        public void onShow(final DialogInterface dialog) {
             buttonNegative = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
             buttonNegative.setOnClickListener(new View.OnClickListener() {
                 private boolean isLoading = false;
@@ -133,11 +133,13 @@ public class SimpleInfoDialogFragment extends DialogFragment {
 
                             @Override
                             public void explanationFailed() {
-                                Toast.makeText(v.getContext(), "Failed to get more details", Toast.LENGTH_SHORT).show();
-                                pbLoading.setVisibility(View.GONE);
-                                buttonNegative.setText(R.string.more_on_explainxkcd);
-                                hasExplainedMore = true;
-                                isLoading = false;
+                                if (dialog != null && ((AlertDialog) dialog).isShowing()) {
+                                    Toast.makeText(v.getContext(), R.string.toast_more_explain_failed, Toast.LENGTH_SHORT).show();
+                                    pbLoading.setVisibility(View.GONE);
+                                    buttonNegative.setText(R.string.more_on_explainxkcd);
+                                    hasExplainedMore = true;
+                                    isLoading = false;
+                                }
                             }
                         });
                         pbLoading.setVisibility(View.VISIBLE);

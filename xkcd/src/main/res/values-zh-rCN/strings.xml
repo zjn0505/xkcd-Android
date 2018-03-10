@@ -24,7 +24,7 @@
     <string name="toast_last">已经是最新的漫画了</string>
     <string name="btn_reload">刷新</string>
     <string name="go_to_explainxkcd">访问ExplainXkcd</string>
-    <string name="more_on_explainxkcd">求助ExplainXkcd</string>
+    <string name="more_on_explainxkcd">访问ExplainXkcd</string>
     <string name="created_on">创建于 %s.%s.%s</string>
     <string name="xkcd_pic">Xkcd漫画</string>
     <string name="pref_arrow">快速切换</string>
