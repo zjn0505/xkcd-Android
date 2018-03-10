@@ -120,6 +120,25 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (getIntent() != null && getIntent().getIntExtra(XKCD_INDEX_ON_NOTI_INTENT, INVALID_ID) != INVALID_ID) {
+            savedId = getIntent().getIntExtra(XKCD_INDEX_ON_NOTI_INTENT, INVALID_ID);
+            latestIndex = savedId;
+            if (editor == null) {
+                editor = sharedPreferences.edit();
+            }
+            editor.putInt(XKCD_LATEST_INDEX, latestIndex);
+            editor.apply();
+        }
+        isFre = latestIndex == INVALID_ID;
+        if (latestIndex > INVALID_ID) {
+            adapter.setSize(latestIndex);
+            viewPager.setCurrentItem(savedId > INVALID_ID ? savedId - 1 : latestIndex - 1, false);
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         compositeDisposable.dispose();
