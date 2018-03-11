@@ -7,9 +7,9 @@
         <item>@string/arrow_30</item>
     </string-array>
     <string-array name="arrow_switch_by_value">
-        <item>arrow_1</item>
-        <item>arrow_10</item>
-        <item>arrow_30</item>
+        <item>@string/arrow_1_value</item>
+        <item>@string/arrow_10_value</item>
+        <item>@string/arrow_30_value</item>
     </string-array>
 
 </resources>

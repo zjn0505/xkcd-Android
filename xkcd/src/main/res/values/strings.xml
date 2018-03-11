@@ -26,7 +26,7 @@
     <string name="btn_reload">reload</string>
     <string name="go_to_explainxkcd">GO TO EXPLAINXKCD</string>
     <string name="more_on_explainxkcd">MORE ON EXPLAINXKCD</string>
-    <string name="created_on">created on %s.%s.%s</string>
+    <string name="created_on" translatable="false">%s.%s.%s</string>
     <string name="xkcd_pic">xkcd comics</string>
     <string name="pref_arrow">Quick switch</string>
     <plurals name="pref_arrow_summary">
@@ -43,6 +43,9 @@
     <string name="arrow_1" translatable="false">1</string>
     <string name="arrow_10" translatable="false">10</string>
     <string name="arrow_30" translatable="false">30</string>
+    <string name="arrow_1_value" translatable="false">arrow_1</string>
+    <string name="arrow_10_value" translatable="false">arrow_10</string>
+    <string name="arrow_30_value" translatable="false">arrow_30</string>
     <string name="share_text">Come and check this funny image I got from xkcd.</string>
     <string name="toast_more_explain_failed">Failed to get more details</string>
 
