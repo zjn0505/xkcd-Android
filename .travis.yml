@@ -1,0 +1,33 @@
+language: android
+before_cache:
+- rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+- rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+  - "$HOME/.gradle/caches/"
+  - "$HOME/.gradle/wrapper/"
+  - "$HOME/.android/build-cache"
+android:
+  components:
+  - build-tools-26.0.2
+  - android-26
+before_install:
+- openssl aes-256-cbc -K $encrypted_89744ce7a44a_key -iv $encrypted_89744ce7a44a_iv -in secrets.tar.enc -out secrets.tar -d
+- tar xvf secrets.tar
+- mv google-services.json xkcd/google-services.json
+- rvm install 2.2.6
+- gem install dropbox-deployment
+script:
+- "./gradlew assembleRelease"
+deploy:
+  provider: releases
+  api_key:
+    secure: 2JNGJxl5VSgZkU4Fuvw8Cj1lulQJX6tMJQbmdZ6lZ4XeG1vI5d3Qt/xLI5s8h/ahXDSFZwA/HefJ2r6MxSSs4sAtpXjMEkyudLEqetbYV/0Y7URmgC2M97YfObsRD4eEM238jOkP/b9SLgzZ9K8MDv2YNhfztG+XT5rtVQcr+Vw3EJ4omvkmtj6MMClCii7fFhCtQOUljusFe+QzdwlbeuPhltO1LJ+TczNmP3A0+f3iHA30TIQAm15NFhbHI8Bd/DmhljLVRMlAEIrk8pAC2dRFURsheVBTQWricyXP/+gdHEtD8HuWZHOlNhs7KiBCgKEMpzI7gedCJWPSv5CNO00iiJtCEj3AlVEjjp5RyNsSM9cvqwRjmZgNH1Cpd6GN9ifjzzjiD9402kk8Cwl9WtEPX0ZZ80kM8fd/Ce+qAVlC3bKnU/4QX8OAWQfqMmXtBdDLGCIQqGW1LD3ntPMu62i0AUzEcdXSTJ0rerpcBWBKTuFvtA2Q5Cm2erOC+NpOSmVSnpKhn/8EHiZDzRXe8VAhaoNrvEgEbSOApzRAgEZ0HHzh6Pcx/2uaPiNgxTJmeo3ccdI1MC5rvOkpkPYgitRdUYILI8a1sCGS3k0BkwEoZxt4jv1ulQHBEaAKVppK24IoAB/PQcBIWqxEonIcnZ3loBinXgPxEEdqQ2qQrhc=
+  file_glob: true
+  file: xkcd/build/outputs/apk/release/*.apk
+  skip_cleanup: true
+  on:
+    tags: true
+    all_branches: true
+after_deploy:
+- dropbox-deployment
