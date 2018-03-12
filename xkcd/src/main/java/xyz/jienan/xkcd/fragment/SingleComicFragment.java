@@ -129,8 +129,12 @@ public class SingleComicFragment extends Fragment {
         XkcdPic xkcdPic = box.get(id);
         if (xkcdPic != null) {
             renderXkcdPic(xkcdPic);
+            if (((MainActivity)getActivity()).getMaxId() - xkcdPic.num < 10) {
+                loadXkcdPic();
+            }
+        } else {
+            loadXkcdPic();
         }
-        loadXkcdPic();
 
         if (savedInstanceState != null) {
             dialogFragment = (SimpleInfoDialogFragment) getChildFragmentManager().findFragmentByTag("AltInfoDialogFragment");
@@ -343,7 +347,7 @@ public class SingleComicFragment extends Fragment {
         public void onExplainMoreClick(final SimpleInfoDialogFragment.ExplainingCallback explainingCallback) {
             String url = "https://www.explainxkcd.com/wiki/index.php/" + currentPic.num;
             Call<ResponseBody> call = NetworkService.getXkcdAPI().getExplain(url);
-            if (((MainActivity)getActivity()).getMaxId() - currentPic.num < 3) {
+            if (((MainActivity)getActivity()).getMaxId() - currentPic.num < 10) {
                 call = NetworkService.getXkcdAPI().getExplainWithShortCache(url);
             }
             call.enqueue(new Callback<ResponseBody>() {
