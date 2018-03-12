@@ -20,6 +20,8 @@ public class XkcdPic {
     public String alt;
     public boolean large = false;
     public boolean special = false;
+    public boolean isFavorite = false;
+    public boolean isLiked = false;
 
     public String getTargetImg() {
         return XkcdSideloadUtils.sideload(this).img;
