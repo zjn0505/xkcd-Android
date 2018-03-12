@@ -83,15 +83,15 @@ public class XkcdSideloadUtils {
     public static XkcdPic sideload(XkcdPic xkcdPic) {
         XkcdPic clone = xkcdPic.clone();
         if (xkcdPic.num >= 1084) {
-            String img = xkcdPic.getRawImg();
+            String img = xkcdPic.getImg();
             int insert = img.indexOf(".png");
             if (insert > 0)
                 clone.setImg(img.substring(0, insert) + "_2x" + img.substring(insert, img.length()));
         }
         if (xkcdSideloadMap.containsKey((int)xkcdPic.num)) {
             XkcdPic sideload = xkcdSideloadMap.get((int)xkcdPic.num);
-            if (sideload.getRawImg() != null) {
-                clone.setImg(sideload.getRawImg());
+            if (sideload.getImg() != null) {
+                clone.setImg(sideload.getImg());
             }
             if (sideload.getRawTitle() != null) {
                 clone.setTitle(sideload.getRawTitle());

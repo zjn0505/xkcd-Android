@@ -215,7 +215,6 @@ public class NetworkService {
         @GET("info.0.json")
         Observable<XkcdPic> getLatest();
 
-        @Headers("cacheable: 2419200")
         @GET("{comic_id}/info.0.json")
         Observable<XkcdPic> getComics(@Path("comic_id") String comicId);
 

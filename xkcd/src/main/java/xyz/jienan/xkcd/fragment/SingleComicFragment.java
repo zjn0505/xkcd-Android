@@ -207,7 +207,7 @@ public class SingleComicFragment extends Fragment {
             case R.id.action_share:
                 Intent shareIntent = new Intent();
                 shareIntent.setAction(Intent.ACTION_SEND);
-                shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_text) + currentPic.getImg());
+                shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_text) + currentPic.getTargetImg());
                 shareIntent.setType("text/plain");
                 startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.share_to)));
                 return true;
@@ -234,11 +234,11 @@ public class SingleComicFragment extends Fragment {
      * Launch a new Activity to show the pic in full screen mode
      */
     private void launchDetailPageActivity() {
-        if (currentPic == null || TextUtils.isEmpty(currentPic.getImg())) {
+        if (currentPic == null || TextUtils.isEmpty(currentPic.getTargetImg())) {
             return;
         }
         Intent intent = new Intent(getActivity(), ImageDetailPageActivity.class);
-        intent.putExtra("URL", currentPic.getImg());
+        intent.putExtra("URL", currentPic.getTargetImg());
         intent.putExtra("ID", currentPic.num);
         startActivity(intent);
         getActivity().overridePendingTransition(R.anim.fadein, R.anim.fadeout);
@@ -285,12 +285,12 @@ public class SingleComicFragment extends Fragment {
             return;
         }
         if (TextUtils.isEmpty(target.getModel())) {
-            target.setModel(xPic.getImg());
-            Glide.with(getActivity()).load(xPic.getImg()).asBitmap().fitCenter().diskCacheStrategy(DiskCacheStrategy.SOURCE).listener(glideListener).into(target);
+            target.setModel(xPic.getTargetImg());
+            Glide.with(getActivity()).load(xPic.getTargetImg()).asBitmap().fitCenter().diskCacheStrategy(DiskCacheStrategy.SOURCE).listener(glideListener).into(target);
         }
 
         currentPic = xPic;
-        Log.d(GLIDE_TAG, "Pic to be loaded: " + xPic.getImg());
+        Log.d(GLIDE_TAG, "Pic to be loaded: " + xPic.getTargetImg());
         tvTitle.setText(String.format("%d. %s", xPic.num, xPic.getTitle()));
         tvCreateDate.setText(String.format(getString(R.string.created_on), xPic.year, xPic.month, xPic.day));
         if (tvDescription != null) {

@@ -21,11 +21,11 @@ public class XkcdPic {
     public boolean large = false;
     public boolean special = false;
 
-    public String getImg() {
+    public String getTargetImg() {
         return XkcdSideloadUtils.sideload(this).img;
     }
 
-    public String getRawImg() {
+    public String getImg() {
         return img;
     }
 
