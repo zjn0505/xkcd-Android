@@ -26,7 +26,7 @@ public class ImageDetailPageActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_detail);
         String url = getIntent().getStringExtra("URL");
-        int index = getIntent().getIntExtra("ID", 0);
+        int index = (int) getIntent().getLongExtra("ID", 0L);
         photoView = findViewById(R.id.photo_view);
         bigImageView = findViewById(R.id.big_image_view);
         photoView.setMaximumScale(10);

@@ -6,6 +6,7 @@ import com.github.piasy.biv.BigImageViewer;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.squareup.leakcanary.LeakCanary;
 
+import io.objectbox.BoxStore;
 import xyz.jienan.xkcd.glide.GlideImageLoader;
 
 /**
@@ -19,6 +20,8 @@ public class XkcdApplication extends Application {
         return mInstance;
     }
 
+    private BoxStore boxStore;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -29,8 +32,13 @@ public class XkcdApplication extends Application {
         }
         LeakCanary.install(this);
         mInstance = this;
+        boxStore = MyObjectBox.builder().androidContext(this).build();
         XkcdSideloadUtils.init(this);
         FirebaseMessaging.getInstance().subscribeToTopic("new_comics");
         BigImageViewer.initialize(GlideImageLoader.with(getApplicationContext()));
+    }
+
+    public BoxStore getBoxStore() {
+        return boxStore;
     }
 }

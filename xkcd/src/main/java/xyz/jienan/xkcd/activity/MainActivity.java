@@ -16,12 +16,15 @@ import android.view.ViewGroup;
 import java.util.HashMap;
 import java.util.Random;
 
+import io.objectbox.Box;
+import io.objectbox.BoxStore;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import xyz.jienan.xkcd.R;
+import xyz.jienan.xkcd.XkcdApplication;
 import xyz.jienan.xkcd.XkcdPic;
 import xyz.jienan.xkcd.fragment.NumberPickerDialogFragment;
 import xyz.jienan.xkcd.fragment.SingleComicFragment;
@@ -163,7 +166,7 @@ public class MainActivity extends BaseActivity {
                 if (editor == null) {
                     editor = sharedPreferences.edit();
                 }
-                latestIndex = xkcdPic.num;
+                latestIndex = (int) xkcdPic.num;
                 editor.putInt(XKCD_LATEST_INDEX, latestIndex);
                 editor.apply();
                 adapter.setSize(latestIndex);
@@ -175,6 +178,12 @@ public class MainActivity extends BaseActivity {
                         viewPager.setCurrentItem(latestIndex - 1, false);
                     }
                 }
+                saveLatestXkcdDao(xkcdPic);
+            }
+
+            private void saveLatestXkcdDao(XkcdPic xkcdPic) {
+                Box<XkcdPic> box = ((XkcdApplication)getApplication()).getBoxStore().boxFor(XkcdPic.class);
+                box.put(xkcdPic);
             }
 
             @Override
