@@ -67,7 +67,7 @@ public class XkcdFirebaseMessagingService extends FirebaseMessagingService {
         }
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.putExtra(XKCD_INDEX_ON_NOTI_INTENT, xkcdPic.num);
+        intent.putExtra(XKCD_INDEX_ON_NOTI_INTENT, (int) xkcdPic.num);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
         RemoteMessage.Notification notification = remoteMessage.getNotification(); // notification.getTitle() .getBody() not used

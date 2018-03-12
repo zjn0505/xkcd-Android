@@ -64,7 +64,7 @@ public class XkcdSideloadUtils {
                 @Override
                 public void onNext(List<XkcdPic> xkcdPics) {
                     for (XkcdPic pic : xkcdPics) {
-                        xkcdSideloadMap.put(pic.num, pic);
+                        xkcdSideloadMap.put((int) pic.num, pic);
                     }
                 }
 
@@ -88,8 +88,8 @@ public class XkcdSideloadUtils {
             if (insert > 0)
                 clone.setImg(img.substring(0, insert) + "_2x" + img.substring(insert, img.length()));
         }
-        if (xkcdSideloadMap.containsKey(xkcdPic.num)) {
-            XkcdPic sideload = xkcdSideloadMap.get(xkcdPic.num);
+        if (xkcdSideloadMap.containsKey((int)xkcdPic.num)) {
+            XkcdPic sideload = xkcdSideloadMap.get((int)xkcdPic.num);
             if (sideload.getRawImg() != null) {
                 clone.setImg(sideload.getRawImg());
             }
@@ -119,7 +119,7 @@ public class XkcdSideloadUtils {
         }
         List<XkcdPic> sideloadList = new Gson().fromJson(writer.toString(),  new TypeToken<List<XkcdPic>>(){}.getType());
         for (XkcdPic pic : sideloadList) {
-            xkcdSideloadMap.put(pic.num, pic);
+            xkcdSideloadMap.put((int) pic.num, pic);
         }
     }
 

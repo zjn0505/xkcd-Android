@@ -38,6 +38,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.objectbox.Box;
+import io.objectbox.query.Query;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -47,7 +49,9 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import xyz.jienan.xkcd.R;
+import xyz.jienan.xkcd.XkcdApplication;
 import xyz.jienan.xkcd.XkcdPic;
+import xyz.jienan.xkcd.XkcdPic_;
 import xyz.jienan.xkcd.activity.ImageDetailPageActivity;
 import xyz.jienan.xkcd.activity.MainActivity;
 import xyz.jienan.xkcd.glide.ProgressTarget;
@@ -73,7 +77,7 @@ public class SingleComicFragment extends Fragment {
     
     private int id;
     private XkcdPic currentPic;
-
+    private Box<XkcdPic> box;
     private ProgressTarget<String, Bitmap> target;
     
     
@@ -120,7 +124,14 @@ public class SingleComicFragment extends Fragment {
             }
         });
         initGlide();
+        box = ((XkcdApplication)getActivity().getApplication()).getBoxStore().boxFor(XkcdPic.class);
+//        Query<XkcdPic>  xkcdQuery = box.query().order(XkcdPic_.num).build();
+        XkcdPic xkcdPic = box.get(id);
+        if (xkcdPic != null) {
+            renderXkcdPic(xkcdPic);
+        }
         loadXkcdPic();
+
         if (savedInstanceState != null) {
             dialogFragment = (SimpleInfoDialogFragment) getChildFragmentManager().findFragmentByTag("AltInfoDialogFragment");
             if (dialogFragment != null) {
@@ -251,6 +262,7 @@ public class SingleComicFragment extends Fragment {
         @Override
         public void onNext(XkcdPic xkcdPic) {
             renderXkcdPic(xkcdPic);
+            box.put(xkcdPic);
         }
 
         @Override
@@ -272,9 +284,10 @@ public class SingleComicFragment extends Fragment {
         if (getActivity() == null || getActivity().isFinishing()) {
             return;
         }
-
-        target.setModel(xPic.getImg());
-        Glide.with(getActivity()).load(xPic.getImg()).asBitmap().fitCenter().diskCacheStrategy(DiskCacheStrategy.SOURCE).listener(glideListener).into(target);
+        if (TextUtils.isEmpty(target.getModel())) {
+            target.setModel(xPic.getImg());
+            Glide.with(getActivity()).load(xPic.getImg()).asBitmap().fitCenter().diskCacheStrategy(DiskCacheStrategy.SOURCE).listener(glideListener).into(target);
+        }
 
         currentPic = xPic;
         Log.d(GLIDE_TAG, "Pic to be loaded: " + xPic.getImg());

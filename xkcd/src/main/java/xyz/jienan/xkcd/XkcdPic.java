@@ -1,19 +1,25 @@
 package xyz.jienan.xkcd;
 
-import java.io.Serializable;
+
+import io.objectbox.annotation.Entity;
+import io.objectbox.annotation.Id;
 
 /**
  * Created by jienanzhang on 09/07/2017.
  */
-public class XkcdPic implements Serializable{
+
+@Entity
+public class XkcdPic {
     public String year;
     public String month;
     public String day;
-    public int num;
+    @Id(assignable = true)
+    public long num;
     private String title;
     private String img;
     public String alt;
     public boolean large = false;
+    public boolean special = false;
 
     public String getImg() {
         return XkcdSideloadUtils.sideload(this).img;
