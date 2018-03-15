@@ -177,6 +177,10 @@
     "large": true
   },
   {
+    "num" : 1705,
+    "title": "Pokémon Go"
+  },
+  {
     "num" : 1732,
     "large": true
   },
@@ -195,5 +199,9 @@
   {
     "num" : 1778,
     "img": "https://imgs.xkcd.com/comics/interest_timescales.png"
+  },
+  {
+    "num" : 1913,
+    "title": "A �"
   }
 ]
