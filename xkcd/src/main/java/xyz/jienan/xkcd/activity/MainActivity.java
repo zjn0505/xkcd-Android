@@ -2,6 +2,7 @@ package xyz.jienan.xkcd.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -12,6 +13,8 @@ import android.support.v7.app.ActionBar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+
+import com.squareup.seismic.ShakeDetector;
 
 import java.util.HashMap;
 import java.util.Random;
@@ -30,11 +33,14 @@ import xyz.jienan.xkcd.fragment.NumberPickerDialogFragment;
 import xyz.jienan.xkcd.fragment.SingleComicFragment;
 import xyz.jienan.xkcd.network.NetworkService;
 
+import static android.view.HapticFeedbackConstants.CONTEXT_CLICK;
+import static android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING;
+import static android.view.HapticFeedbackConstants.LONG_PRESS;
 import static xyz.jienan.xkcd.Const.PREF_ARROW;
 import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NEW_INTENT;
 import static xyz.jienan.xkcd.Const.XKCD_LATEST_INDEX;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements ShakeDetector.Listener {
 
     private ViewPager viewPager;
     private ComicsPagerAdapter adapter;
@@ -55,6 +61,7 @@ public class MainActivity extends BaseActivity {
     private SharedPreferences sharedPreferences;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private boolean isFre = true;
+    private boolean isPaused = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,6 +127,9 @@ public class MainActivity extends BaseActivity {
             adapter.setSize(latestIndex);
             viewPager.setCurrentItem(savedId > INVALID_ID ? savedId - 1 : latestIndex - 1, false);
         }
+        SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        ShakeDetector sd = new ShakeDetector(this);
+        sd.start(sensorManager);
     }
 
     @Override
@@ -139,6 +149,18 @@ public class MainActivity extends BaseActivity {
             adapter.setSize(latestIndex);
             viewPager.setCurrentItem(savedId > INVALID_ID ? savedId - 1 : latestIndex - 1, false);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isPaused = false;
+    }
+
+    @Override
+    protected void onPause() {
+        isPaused = true;
+        super.onPause();
     }
 
     @Override
@@ -206,6 +228,20 @@ public class MainActivity extends BaseActivity {
             outState.putInt(LATEST_XKCD_ID, latestIndex);
     }
 
+    @Override
+    public void hearShake() {
+        if (isPaused) {
+            return;
+        }
+        latestIndex = sharedPreferences.getInt(XKCD_LATEST_INDEX, INVALID_ID);
+        if (latestIndex != INVALID_ID) {
+            Random random = new Random();
+            int randomId = random.nextInt(latestIndex + 1);
+            viewPager.setCurrentItem(randomId - 1);
+        }
+        getWindow().getDecorView().performHapticFeedback(CONTEXT_CLICK, FLAG_IGNORE_GLOBAL_SETTING);
+    }
+
     private class ComicsPagerAdapter extends FragmentStatePagerAdapter {
 
         private int length;
@@ -270,13 +306,6 @@ public class MainActivity extends BaseActivity {
                 viewPager.setCurrentItem(viewPager.getCurrentItem() + Integer.valueOf(skipCount));
                 break;
             case R.id.action_search:
-                //if (latestIndex == INVALID_ID) {
-                //    loadXkcdPic();
-               //     break;
-                //}
-                //Random random = new Random();
-              //  int randomId = random.nextInt(latestIndex + 1);
-                //viewPager.setCurrentItem(randomId - 1);
                 break;
             case R.id.action_specific:
                 if (latestIndex == INVALID_ID) {
