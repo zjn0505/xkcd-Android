@@ -1,13 +1,18 @@
 package xyz.jienan.xkcd.fragment;
 
 import android.annotation.SuppressLint;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
+import android.database.MatrixCursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.BaseColumns;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,10 +41,10 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import io.objectbox.Box;
-import io.objectbox.query.Query;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -48,10 +53,10 @@ import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
+import xyz.jienan.xkcd.SearchCursorAdapter;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.XkcdApplication;
 import xyz.jienan.xkcd.XkcdPic;
-import xyz.jienan.xkcd.XkcdPic_;
 import xyz.jienan.xkcd.activity.ImageDetailPageActivity;
 import xyz.jienan.xkcd.activity.MainActivity;
 import xyz.jienan.xkcd.glide.ProgressTarget;
@@ -60,12 +65,16 @@ import xyz.jienan.xkcd.network.NetworkService;
 import static android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING;
 import static android.view.HapticFeedbackConstants.LONG_PRESS;
 import static xyz.jienan.xkcd.Const.GLIDE_TAG;
+import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NEW_INTENT;
+import static xyz.jienan.xkcd.network.NetworkService.XKCD_SEARCH_SUGGESTION;
 
 /**
  * Created by jienanzhang on 03/03/2018.
  */
 
 public class SingleComicFragment extends Fragment {
+
+    private final static String TAG = SingleComicFragment.class.getSimpleName();
 
     private TextView tvTitle;
     private ImageView ivXkcdPic;
@@ -79,7 +88,10 @@ public class SingleComicFragment extends Fragment {
     private XkcdPic currentPic;
     private Box<XkcdPic> box;
     private ProgressTarget<String, Bitmap> target;
-    
+
+    private List<XkcdPic> searchSuggestions;
+    private SearchCursorAdapter searchAdapter;
+    private List<Disposable> disposables = new ArrayList<>();
     
     public static SingleComicFragment newInstance(int comicId) {
         SingleComicFragment fragment = new SingleComicFragment();
@@ -145,6 +157,19 @@ public class SingleComicFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onDestroyView() {
+        Iterator<Disposable> iterator = disposables.iterator();
+        while (iterator.hasNext()) {
+            Disposable disposable = iterator.next();
+            if (disposable != null && !disposable.isDisposed()) {
+                disposable.dispose();
+            }
+            iterator.remove();
+        }
+        super.onDestroyView();
+    }
+
     private static class MyProgressTarget<Z> extends ProgressTarget<String, Z> {
         private final ProgressBar progressbar;
         private final ImageView image;
@@ -198,8 +223,86 @@ public class SingleComicFragment extends Fragment {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(final Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
+        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+        final MenuItem searchItem = menu.findItem(R.id.action_search);
+        final SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setQueryHint(getString(R.string.search_hint));
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+        if (searchAdapter == null) {
+            searchAdapter = new SearchCursorAdapter(getActivity(), null, 0);
+        }
+        searchView.setSuggestionsAdapter(searchAdapter);
+        searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
+            @Override
+            public boolean onSuggestionSelect(int position) {
+                return false;
+            }
+
+            @Override
+            public boolean onSuggestionClick(int position) {
+                XkcdPic xkcd = searchSuggestions.get(position);
+                // searchView.setQuery(xkcd, true);
+                searchView.clearFocus();
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra(XKCD_INDEX_ON_NEW_INTENT, (int) xkcd.num);
+                startActivity(intent);
+                //AnalyticsManager.getInstance().logEvent(EVENT_ENTER_ISLAND);
+                searchItem.collapseActionView();
+                return true;
+            }
+        });
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                NetworkService.getXkcdAPI().getXkcdsSearchResult(XKCD_SEARCH_SUGGESTION, newText)
+                        .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Observer<List<XkcdPic>>() {
+                            @Override
+                            public void onSubscribe(Disposable d) {
+                                disposables.add(d);
+                            }
+
+                            @Override
+                            public void onNext(List<XkcdPic> xkcdPics) {
+                                if (xkcdPics != null && xkcdPics.size() > 0)
+                                    renderXkcdSearch(xkcdPics);
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+
+                            }
+
+                            @Override
+                            public void onComplete() {
+
+                            }
+                        });
+
+                return true;
+            }
+        });
+        searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem menuItem) {
+                setItemsVisibility(menu, new int[]{R.id.action_left, R.id.action_right, R.id.action_share}, false);
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem menuItem) {
+                setItemsVisibility(menu, new int[]{R.id.action_left, R.id.action_right, R.id.action_share}, true);
+                return true;
+            }
+        });
     }
 
     @Override
@@ -227,6 +330,29 @@ public class SingleComicFragment extends Fragment {
             }
         }
         return false;
+    }
+
+    private void renderXkcdSearch(List<XkcdPic> xkcdPics) {
+        searchSuggestions = xkcdPics;
+        box.put(xkcdPics);
+        String[] columns = { BaseColumns._ID,
+                SearchManager.SUGGEST_COLUMN_TEXT_1,
+                SearchManager.SUGGEST_COLUMN_TEXT_2,
+                SearchManager.SUGGEST_COLUMN_INTENT_DATA,
+        };
+        MatrixCursor cursor = new MatrixCursor(columns);
+        for (int i = 0; i < searchSuggestions.size(); i++) {
+            XkcdPic xkcdPic = searchSuggestions.get(i);
+            String[] tmp = {Integer.toString(i), xkcdPic.getTargetImg(), xkcdPic.getTitle(), String.valueOf(xkcdPic.num)};
+            cursor.addRow(tmp);
+        }
+        searchAdapter.swapCursor(cursor);
+    }
+
+    private void setItemsVisibility(Menu menu, int[] hideItems, boolean visible) {
+        for (int i = 0; i < hideItems.length; i++) {
+            menu.findItem(hideItems[i]).setVisible(visible);
+        }
     }
 
     private void initGlide() {
@@ -260,7 +386,7 @@ public class SingleComicFragment extends Fragment {
     Observer<XkcdPic> xkcdPicObserver = new Observer<XkcdPic>() {
         @Override
         public void onSubscribe(Disposable d) {
-
+            disposables.add(d);
         }
 
         @Override
@@ -302,6 +428,7 @@ public class SingleComicFragment extends Fragment {
         }
 
     }
+
     RequestListener glideListener = new RequestListener<String, Bitmap>() {
         @Override
         public boolean onException(Exception e, final String model, final Target<Bitmap> target, boolean isFirstResource) {

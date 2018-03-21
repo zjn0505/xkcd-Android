@@ -4,10 +4,11 @@
     <string name="action_share">Share this xkcd</string>
     <string name="action_left">Previous</string>
     <string name="action_right">Next</string>
-    <string name="action_random">Random xkcd</string>
+    <string name="action_search">Search</string>
     <string name="action_specific">Specific xkcd</string>
     <string name="action_xkcd">Go to xkcd.com</string>
     <string name="action_explain">Go to explainxkcd</string>
+    <string name="search_hint">Search xkcd</string>
 
     <string name="dialog_got_it">Got it</string>
     <string name="dialog_more_details">More details</string>
@@ -23,6 +24,7 @@
     <string name="toast_last">Oops, xkcd is exhausted.</string>
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
     <string name="notification_content" translatable="false">%d-%s</string>
+    <string name="item_search_title" translatable="false">%s - %s</string>
     <string name="btn_reload">reload</string>
     <string name="go_to_explainxkcd">GO TO EXPLAINXKCD</string>
     <string name="more_on_explainxkcd">MORE ON EXPLAINXKCD</string>

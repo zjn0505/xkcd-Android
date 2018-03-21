@@ -36,6 +36,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 import retrofit2.http.Url;
 import xyz.jienan.xkcd.BuildConfig;
 import xyz.jienan.xkcd.XkcdApplication;
@@ -48,7 +49,8 @@ import xyz.jienan.xkcd.XkcdPic;
 public class NetworkService {
 
     private static final String XKCD_BASE_URL = "https://xkcd.com/";
-    public static final String XKCD_SPECIAL_LIST  = "https://raw.githubusercontent.com/zjn0505/Xkcd-Android/master/xkcd/src/main/res/raw/xkcd_special.json";
+    public static final String XKCD_SPECIAL_LIST = "https://raw.githubusercontent.com/zjn0505/Xkcd-Android/master/xkcd/src/main/res/raw/xkcd_special.json";
+    public static final String XKCD_SEARCH_SUGGESTION = "http://130.211.211.220:3003/xkcd-suggest";
 
     public static final String BYPASS_CACHE = "1";
     public static final String USE_CACHE = "2";
@@ -229,5 +231,9 @@ public class NetworkService {
 
         @GET
         Observable<List<XkcdPic>> getSpecialXkcds(@Url String url);
+
+        @Headers("cacheable: 600")
+        @GET
+        Observable<List<XkcdPic>> getXkcdsSearchResult(@Url String url, @Query("q") String query);
     }
 }
