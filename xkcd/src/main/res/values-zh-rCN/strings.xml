@@ -3,10 +3,11 @@
     <string name="action_share">分享xkcd</string>
     <string name="action_left">向前</string>
     <string name="action_right">向后</string>
-    <string name="action_random">随机xkcd</string>
+    <string name="action_search">搜索</string>
     <string name="action_specific">选择指定xkcd</string>
     <string name="action_xkcd">访问xkcd.com</string>
     <string name="action_explain">访问Explainxkcd</string>
+    <string name="search_hint">搜索xkcd</string>
 
     <string name="dialog_got_it">了解</string>
     <string name="dialog_more_details">更多解释</string>

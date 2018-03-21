@@ -31,7 +31,7 @@ import xyz.jienan.xkcd.fragment.SingleComicFragment;
 import xyz.jienan.xkcd.network.NetworkService;
 
 import static xyz.jienan.xkcd.Const.PREF_ARROW;
-import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NOTI_INTENT;
+import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NEW_INTENT;
 import static xyz.jienan.xkcd.Const.XKCD_LATEST_INDEX;
 
 public class MainActivity extends BaseActivity {
@@ -102,8 +102,8 @@ public class MainActivity extends BaseActivity {
             latestIndex = sharedPreferences.getInt(XKCD_LATEST_INDEX, INVALID_ID);
 
         } else {
-            if (getIntent() != null && getIntent().getIntExtra(XKCD_INDEX_ON_NOTI_INTENT, INVALID_ID) != INVALID_ID) {
-                savedId = getIntent().getIntExtra(XKCD_INDEX_ON_NOTI_INTENT, INVALID_ID);
+            if (getIntent() != null && getIntent().getIntExtra(XKCD_INDEX_ON_NEW_INTENT, INVALID_ID) != INVALID_ID) {
+                savedId = getIntent().getIntExtra(XKCD_INDEX_ON_NEW_INTENT, INVALID_ID);
                 latestIndex = savedId;
                 if (editor == null) {
                     editor = sharedPreferences.edit();
@@ -125,8 +125,8 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        if (getIntent() != null && getIntent().getIntExtra(XKCD_INDEX_ON_NOTI_INTENT, INVALID_ID) != INVALID_ID) {
-            savedId = getIntent().getIntExtra(XKCD_INDEX_ON_NOTI_INTENT, INVALID_ID);
+        if (intent.getIntExtra(XKCD_INDEX_ON_NEW_INTENT, INVALID_ID) != INVALID_ID) {
+            savedId = intent.getIntExtra(XKCD_INDEX_ON_NEW_INTENT, INVALID_ID);
             latestIndex = savedId;
             if (editor == null) {
                 editor = sharedPreferences.edit();
@@ -269,14 +269,14 @@ public class MainActivity extends BaseActivity {
             case R.id.action_right:
                 viewPager.setCurrentItem(viewPager.getCurrentItem() + Integer.valueOf(skipCount));
                 break;
-            case R.id.action_random:
-                if (latestIndex == INVALID_ID) {
-                    loadXkcdPic();
-                    break;
-                }
-                Random random = new Random();
-                int randomId = random.nextInt(latestIndex + 1);
-                viewPager.setCurrentItem(randomId - 1);
+            case R.id.action_search:
+                //if (latestIndex == INVALID_ID) {
+                //    loadXkcdPic();
+               //     break;
+                //}
+                //Random random = new Random();
+              //  int randomId = random.nextInt(latestIndex + 1);
+                //viewPager.setCurrentItem(randomId - 1);
                 break;
             case R.id.action_specific:
                 if (latestIndex == INVALID_ID) {
