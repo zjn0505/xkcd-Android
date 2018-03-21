@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Random;
 
 import io.objectbox.Box;
-import io.objectbox.BoxStore;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -35,7 +34,6 @@ import xyz.jienan.xkcd.network.NetworkService;
 
 import static android.view.HapticFeedbackConstants.CONTEXT_CLICK;
 import static android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING;
-import static android.view.HapticFeedbackConstants.LONG_PRESS;
 import static xyz.jienan.xkcd.Const.PREF_ARROW;
 import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NEW_INTENT;
 import static xyz.jienan.xkcd.Const.XKCD_LATEST_INDEX;
