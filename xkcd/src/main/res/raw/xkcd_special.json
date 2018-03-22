@@ -203,5 +203,10 @@
   {
     "num" : 1913,
     "title": "A �"
+  },
+  {
+    "num" : 1970,
+    "img": "https://imgs.xkcd.com/comics/name_dominos_large.png",
+    "large": true
   }
 ]
