@@ -15,6 +15,7 @@ before_install:
 - yes | sdkmanager "platforms;android-27"
 - openssl aes-256-cbc -K $encrypted_89744ce7a44a_key -iv $encrypted_89744ce7a44a_iv -in secrets.tar.enc -out secrets.tar -d
 - tar xvf secrets.tar
+- cd xkcd
 - ls
 - mv google-services.json src/release/google-services.json
 - rvm install 2.2.6
