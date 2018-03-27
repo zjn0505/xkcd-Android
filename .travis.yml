@@ -9,7 +9,7 @@ cache:
   - "$HOME/.android/build-cache"
 android:
   components:
-  - build-tools-26.0.3
+  - build-tools-27.0.3
   - android-27
 before_install:
 - yes | sdkmanager "platforms;android-27"
