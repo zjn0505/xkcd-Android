@@ -22,6 +22,8 @@ public class XkcdPic {
     public boolean special = false;
     public boolean isFavorite = false;
     public boolean isLiked = false;
+    public int width;
+    public int height;
 
     public String getTargetImg() {
         return XkcdSideloadUtils.sideload(this).img;

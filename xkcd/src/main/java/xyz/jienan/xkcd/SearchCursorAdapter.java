@@ -51,7 +51,7 @@ public class SearchCursorAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         String url = cursor.getString(1);
         ImageView ivThumbnail = view.findViewById(R.id.iv_thumbnail);
-        Glide.with(context).load(url).diskCacheStrategy(DiskCacheStrategy.SOURCE).into(ivThumbnail);
+        Glide.with(context).load(url).asBitmap().diskCacheStrategy(DiskCacheStrategy.SOURCE).into(ivThumbnail);
 
         ((TextView) view.findViewById(R.id.tv_xkcd_title))
                 .setText(context.getResources().getString(R.string.item_search_title, cursor.getString(3), cursor.getString(2)));

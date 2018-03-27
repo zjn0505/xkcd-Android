@@ -5,6 +5,7 @@
     <string name="action_left">Previous</string>
     <string name="action_right">Next</string>
     <string name="action_search">Search</string>
+    <string name="action_xkcd_list">Browse xkcds</string>
     <string name="action_specific">Specific xkcd</string>
     <string name="action_xkcd">Go to xkcd.com</string>
     <string name="action_explain">Go to explainxkcd</string>
@@ -50,6 +51,7 @@
     <string name="arrow_30_value" translatable="false">arrow_30</string>
     <string name="share_text">Come and check this funny image I got from xkcd.</string>
     <string name="toast_more_explain_failed">Failed to get more details</string>
+    <string name="title_xkcd_list">xkcd list</string>
 
     <string-array name="notification_titles">
         <item>new xkcd is coming</item>

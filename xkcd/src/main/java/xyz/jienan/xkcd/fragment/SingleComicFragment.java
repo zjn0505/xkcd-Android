@@ -105,7 +105,8 @@ public class SingleComicFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
-        id = args.getInt("id");
+        if (args != null)
+            id = args.getInt("id");
         setHasOptionsMenu(true);
     }
 
@@ -262,6 +263,9 @@ public class SingleComicFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                if (TextUtils.isEmpty(newText)) {
+                    return true;
+                }
                 NetworkService.getXkcdAPI().getXkcdsSearchResult(XKCD_SEARCH_SUGGESTION, newText)
                         .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new Observer<List<XkcdPic>>() {

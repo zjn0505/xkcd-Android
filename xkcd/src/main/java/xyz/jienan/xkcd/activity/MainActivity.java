@@ -36,6 +36,7 @@ import static android.view.HapticFeedbackConstants.CONTEXT_CLICK;
 import static android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING;
 import static xyz.jienan.xkcd.Const.PREF_ARROW;
 import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NEW_INTENT;
+import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NOTI_INTENT;
 import static xyz.jienan.xkcd.Const.XKCD_LATEST_INDEX;
 
 public class MainActivity extends BaseActivity implements ShakeDetector.Listener {
@@ -107,14 +108,23 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
             latestIndex = sharedPreferences.getInt(XKCD_LATEST_INDEX, INVALID_ID);
 
         } else {
-            if (getIntent() != null && getIntent().getIntExtra(XKCD_INDEX_ON_NEW_INTENT, INVALID_ID) != INVALID_ID) {
-                savedId = getIntent().getIntExtra(XKCD_INDEX_ON_NEW_INTENT, INVALID_ID);
-                latestIndex = savedId;
-                if (editor == null) {
-                    editor = sharedPreferences.edit();
+            if (getIntent() != null && (getIntent().getIntExtra(XKCD_INDEX_ON_NOTI_INTENT, INVALID_ID) != INVALID_ID
+                || getIntent().getIntExtra(XKCD_INDEX_ON_NEW_INTENT, INVALID_ID) != INVALID_ID)) {
+                int newIntentIndex = getIntent().getIntExtra(XKCD_INDEX_ON_NEW_INTENT, INVALID_ID);
+                int notiIndex = getIntent().getIntExtra(XKCD_INDEX_ON_NOTI_INTENT, INVALID_ID);
+                if (newIntentIndex != INVALID_ID) {
+                    savedId = newIntentIndex;
                 }
-                editor.putInt(XKCD_LATEST_INDEX, latestIndex);
-                editor.apply();
+                if (notiIndex != INVALID_ID) {
+                    savedId = notiIndex;
+                    latestIndex = savedId;
+                    if (editor == null) {
+                        editor = sharedPreferences.edit();
+                    }
+                    editor.putInt(XKCD_LATEST_INDEX, latestIndex);
+                    editor.apply();
+                }
+
             } else {
                 latestIndex = sharedPreferences.getInt(XKCD_LATEST_INDEX, INVALID_ID);
                 savedId = sharedPreferences.getInt(LAST_VIEW_XKCD_ID, latestIndex);
@@ -133,14 +143,23 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        if (intent.getIntExtra(XKCD_INDEX_ON_NEW_INTENT, INVALID_ID) != INVALID_ID) {
-            savedId = intent.getIntExtra(XKCD_INDEX_ON_NEW_INTENT, INVALID_ID);
-            latestIndex = savedId;
-            if (editor == null) {
-                editor = sharedPreferences.edit();
+        if (intent.getIntExtra(XKCD_INDEX_ON_NEW_INTENT, INVALID_ID) != INVALID_ID
+                || intent.getIntExtra(XKCD_INDEX_ON_NOTI_INTENT, INVALID_ID) != INVALID_ID) {
+            int newIntentIndex = intent.getIntExtra(XKCD_INDEX_ON_NEW_INTENT, INVALID_ID);
+            int notiIntentIndex = intent.getIntExtra(XKCD_INDEX_ON_NOTI_INTENT, INVALID_ID);
+            if (newIntentIndex != INVALID_ID) {
+                savedId = newIntentIndex;
+                latestIndex = sharedPreferences.getInt(XKCD_LATEST_INDEX, INVALID_ID);
             }
-            editor.putInt(XKCD_LATEST_INDEX, latestIndex);
-            editor.apply();
+            if (notiIntentIndex != INVALID_ID) {
+                savedId = intent.getIntExtra(XKCD_INDEX_ON_NEW_INTENT, INVALID_ID);
+                latestIndex = savedId;
+                if (editor == null) {
+                    editor = sharedPreferences.edit();
+                }
+                editor.putInt(XKCD_LATEST_INDEX, latestIndex);
+                editor.apply();
+            }
         }
         isFre = latestIndex == INVALID_ID;
         if (latestIndex > INVALID_ID) {
@@ -304,6 +323,10 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
                 viewPager.setCurrentItem(viewPager.getCurrentItem() + Integer.valueOf(skipCount));
                 break;
             case R.id.action_search:
+                break;
+            case R.id.action_xkcd_list:
+                Intent intent = new Intent(this, XkcdListActivity.class);
+                startActivity(intent);
                 break;
             case R.id.action_specific:
                 if (latestIndex == INVALID_ID) {

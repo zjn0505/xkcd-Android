@@ -34,6 +34,10 @@
             android:launchMode="singleTask"
             android:configChanges="screenSize|orientation|keyboardHidden"/>
 
+        <activity android:name=".activity.XkcdListActivity"
+            android:label="@string/title_xkcd_list"
+            android:configChanges="screenSize|orientation|keyboardHidden"/>
+
         <service
             android:name=".firebase.XkcdFirebaseMessagingService">
             <intent-filter>

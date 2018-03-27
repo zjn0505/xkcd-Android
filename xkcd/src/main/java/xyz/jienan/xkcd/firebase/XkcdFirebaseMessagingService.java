@@ -25,7 +25,7 @@ import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.XkcdPic;
 import xyz.jienan.xkcd.activity.MainActivity;
 
-import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NEW_INTENT;
+import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NOTI_INTENT;
 import static xyz.jienan.xkcd.Const.XKCD_LATEST_INDEX;
 
 /**
@@ -67,7 +67,7 @@ public class XkcdFirebaseMessagingService extends FirebaseMessagingService {
         }
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.putExtra(XKCD_INDEX_ON_NEW_INTENT, (int) xkcdPic.num);
+        intent.putExtra(XKCD_INDEX_ON_NOTI_INTENT, (int) xkcdPic.num);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
         RemoteMessage.Notification notification = remoteMessage.getNotification(); // notification.getTitle() .getBody() not used

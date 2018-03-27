@@ -19,6 +19,9 @@
         android:title="@string/action_share"
         android:icon="@drawable/ic_action_share"
         app:showAsAction="always" />
+    <item android:id="@+id/action_xkcd_list"
+        android:title="@string/action_xkcd_list"
+        app:showAsAction="never" />
     <item android:id="@+id/action_specific"
         android:title="@string/action_specific"
         app:showAsAction="never" />
