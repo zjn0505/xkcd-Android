@@ -43,25 +43,57 @@ import static xyz.jienan.xkcd.network.NetworkService.XKCD_BROWSE_LIST;
 public class XkcdListActivity extends BaseActivity {
 
     private GridAdapter mAdapter;
-    private List<XkcdPic> pics = new ArrayList<>();
     private Box<XkcdPic> box;
+    private RecyclerView rvList;
+    private StaggeredGridLayoutManager sglm;
+    private int spanCount = 2;
+    private final static int COUNT_IN_ADV = 10;
 
+    //TODO  skip query if in Box
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        RecyclerView rvList = new RecyclerView(this);
+        rvList = new RecyclerView(this);
         setContentView(rvList);
         box = ((XkcdApplication) getApplication()).getBoxStore().boxFor(XkcdPic.class);
         mAdapter = new GridAdapter(this);
         rvList.setAdapter(mAdapter);
         rvList.setHasFixedSize(true);
-        StaggeredGridLayoutManager sglm = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        sglm = new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL);
         rvList.setLayoutManager(sglm);
-        loadList();
+        rvList.addOnScrollListener(rvScrollListener);
+        loadList(1);
     }
 
-    private void loadList() {
-        NetworkService.getXkcdAPI().getXkcdList(XKCD_BROWSE_LIST, 1, 0, 400)
+    @Override
+    protected void onDestroy() {
+        rvList.removeOnScrollListener(rvScrollListener);
+        super.onDestroy();
+    }
+
+    private RecyclerView.OnScrollListener rvScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+        }
+
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            int visibleItemCount = sglm.getChildCount();
+            int totalItemCount = sglm.getItemCount();
+            int[] firstVisibileItemPositions = new int[spanCount];
+            firstVisibileItemPositions = sglm.findFirstVisibleItemPositions(firstVisibileItemPositions);
+            Log.d("XKCDLIST", "onScrolled: " + visibleItemCount + " " + mAdapter.getItemCount() + " " + firstVisibileItemPositions[0]
+            + " " + firstVisibileItemPositions[1]);
+            if (firstVisibileItemPositions[1] + visibleItemCount >= mAdapter.getItemCount() - COUNT_IN_ADV) {
+                loadList(mAdapter.getItemCount() + 1);
+            }
+        }
+    };
+
+    private void loadList(int start) {
+        NetworkService.getXkcdAPI().getXkcdList(XKCD_BROWSE_LIST, start, 0, 400)
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<List<XkcdPic>>() {
                     @Override
@@ -72,7 +104,6 @@ public class XkcdListActivity extends BaseActivity {
                     @Override
                     public void onNext(List<XkcdPic> xkcdPics) {
                         box.put(xkcdPics);
-                        pics.addAll(xkcdPics);
                         mAdapter.appendList(xkcdPics);
                     }
 
@@ -120,7 +151,11 @@ public class XkcdListActivity extends BaseActivity {
         }
 
         public void appendList(List<XkcdPic> xkcdPics) {
-            pics.addAll(xkcdPics);
+            for (XkcdPic pic : xkcdPics) {
+                if (!pics.contains(pic)) {
+                    pics.add(pic);
+                }
+            }
             notifyDataSetChanged();
         }
 

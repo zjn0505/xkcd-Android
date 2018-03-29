@@ -60,4 +60,9 @@ public class XkcdPic {
         clone.alt = alt;
         return clone;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof XkcdPic && this.num == ((XkcdPic) obj).num;
+    }
 }
