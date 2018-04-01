@@ -32,6 +32,7 @@ import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.XkcdApplication;
 import xyz.jienan.xkcd.XkcdPic;
 import xyz.jienan.xkcd.network.NetworkService;
+import xyz.jienan.xkcd.ui.RecyclerViewFastScroller;
 
 import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NEW_INTENT;
 import static xyz.jienan.xkcd.network.NetworkService.XKCD_BROWSE_LIST;
@@ -45,16 +46,21 @@ public class XkcdListActivity extends BaseActivity {
     private GridAdapter mAdapter;
     private Box<XkcdPic> box;
     private RecyclerView rvList;
+    private RecyclerViewFastScroller scroller;
     private StaggeredGridLayoutManager sglm;
     private int spanCount = 2;
     private final static int COUNT_IN_ADV = 10;
+
 
     //TODO  skip query if in Box
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        rvList = new RecyclerView(this);
-        setContentView(rvList);
+        setContentView(R.layout.activity_list);
+        rvList = findViewById(R.id.rv_list);
+        scroller = findViewById(R.id.rv_scroller);
+        scroller.setRecyclerView(rvList);
+        scroller.setViewsToUse(R.layout.rv_scroller, R.id.fastscroller_bubble, R.id.fastscroller_handle);
         box = ((XkcdApplication) getApplication()).getBoxStore().boxFor(XkcdPic.class);
         mAdapter = new GridAdapter(this);
         rvList.setAdapter(mAdapter);
@@ -120,7 +126,7 @@ public class XkcdListActivity extends BaseActivity {
 
     }
 
-    private class GridAdapter extends RecyclerView.Adapter<GridAdapter.XkcdViewHolder> {
+    private class GridAdapter extends RecyclerView.Adapter<GridAdapter.XkcdViewHolder> implements RecyclerViewFastScroller.BubbleTextGetter{
 
         private Context mContext;
         private List<XkcdPic> pics = new ArrayList<>();
@@ -156,7 +162,13 @@ public class XkcdListActivity extends BaseActivity {
                     pics.add(pic);
                 }
             }
+            scroller.setVisibility(pics.size() == 0 ? View.GONE : View.VISIBLE);
             notifyDataSetChanged();
+        }
+
+        @Override
+        public String getTextToShowInBubble(int pos) {
+            return pos+"";
         }
 
         class XkcdViewHolder extends RecyclerView.ViewHolder {
