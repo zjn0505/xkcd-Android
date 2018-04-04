@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
@@ -24,6 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.objectbox.Box;
+import io.objectbox.android.AndroidScheduler;
+import io.objectbox.query.Query;
+import io.objectbox.reactive.DataObserver;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -31,9 +35,12 @@ import io.reactivex.schedulers.Schedulers;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.XkcdApplication;
 import xyz.jienan.xkcd.XkcdPic;
+import xyz.jienan.xkcd.XkcdPic_;
 import xyz.jienan.xkcd.network.NetworkService;
 import xyz.jienan.xkcd.ui.RecyclerViewFastScroller;
 
+import static android.support.v7.widget.RecyclerView.SCROLL_STATE_DRAGGING;
+import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NEW_INTENT;
 import static xyz.jienan.xkcd.network.NetworkService.XKCD_BROWSE_LIST;
 
@@ -50,7 +57,9 @@ public class XkcdListActivity extends BaseActivity {
     private StaggeredGridLayoutManager sglm;
     private int spanCount = 2;
     private final static int COUNT_IN_ADV = 10;
-
+    private boolean loadingMore = false;
+    private boolean inRequest = false;
+    private RequestManager glide;
 
     //TODO  skip query if in Box
     @Override
@@ -68,6 +77,7 @@ public class XkcdListActivity extends BaseActivity {
         sglm = new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL);
         rvList.setLayoutManager(sglm);
         rvList.addOnScrollListener(rvScrollListener);
+        glide = Glide.with(this);
         loadList(1);
     }
 
@@ -78,51 +88,93 @@ public class XkcdListActivity extends BaseActivity {
     }
 
     private RecyclerView.OnScrollListener rvScrollListener = new RecyclerView.OnScrollListener() {
+
+        private static final int FLING_JUMP_LOW_THRESHOLD = 80;
+        private static final int FLING_JUMP_HIGH_THRESHOLD = 120;
+
+        private boolean dragging = false;
+
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
             super.onScrollStateChanged(recyclerView, newState);
+            dragging = newState == SCROLL_STATE_DRAGGING;
+            if (glide.isPaused()) {
+                if (newState == SCROLL_STATE_DRAGGING || newState == SCROLL_STATE_IDLE) {
+                    // user is touchy or the scroll finished, show images
+                    glide.resumeRequests();
+                } // settling means the user let the screen go, but it can still be flinging
+            }
         }
 
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
             int visibleItemCount = sglm.getChildCount();
-            int totalItemCount = sglm.getItemCount();
             int[] firstVisibileItemPositions = new int[spanCount];
             firstVisibileItemPositions = sglm.findFirstVisibleItemPositions(firstVisibileItemPositions);
             Log.d("XKCDLIST", "onScrolled: " + visibleItemCount + " " + mAdapter.getItemCount() + " " + firstVisibileItemPositions[0]
             + " " + firstVisibileItemPositions[1]);
-            if (firstVisibileItemPositions[1] + visibleItemCount >= mAdapter.getItemCount() - COUNT_IN_ADV) {
+            if (firstVisibileItemPositions[1] + visibleItemCount >= mAdapter.getItemCount() - COUNT_IN_ADV && !loadingMore) {
+                loadingMore = true;
                 loadList(mAdapter.getItemCount() + 1);
+            }
+            if (!dragging) {
+                int currentSpeed = Math.abs(dy);
+                boolean paused = glide.isPaused();
+                if (paused && currentSpeed < FLING_JUMP_LOW_THRESHOLD) {
+                    glide.resumeRequests();
+                } else if (!paused && FLING_JUMP_HIGH_THRESHOLD < currentSpeed) {
+                    glide.pauseRequests();
+                }
             }
         }
     };
 
-    private void loadList(int start) {
-        NetworkService.getXkcdAPI().getXkcdList(XKCD_BROWSE_LIST, start, 0, 400)
-                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<List<XkcdPic>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
+    private void loadList(final int start) {
 
+
+        Query<XkcdPic> query = box.query().between(XkcdPic_.num, start, start+399).build();
+        query.subscribe().on(AndroidScheduler.mainThread()).observer(new DataObserver<List<XkcdPic>>() {
+            @Override
+            public void onData(List<XkcdPic> data) {
+                int x = data.size();
+                Log.d("XKCDLIST", "onData: start " + start + "  found " + x);
+                if ((start != 401 && x != 400) || (start == 401 && x != 399)) {
+                    if (inRequest) {
+                        return;
                     }
+                    NetworkService.getXkcdAPI().getXkcdList(XKCD_BROWSE_LIST, start, 0, 400)
+                            .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Observer<List<XkcdPic>>() {
+                                @Override
+                                public void onSubscribe(Disposable d) {
+                                    inRequest = true;
+                                }
 
-                    @Override
-                    public void onNext(List<XkcdPic> xkcdPics) {
-                        box.put(xkcdPics);
-                        mAdapter.appendList(xkcdPics);
-                    }
+                                @Override
+                                public void onNext(List<XkcdPic> xkcdPics) {
+                                    box.put(xkcdPics);
+                                    mAdapter.appendList(xkcdPics);
+                                    loadingMore = false;
+                                    inRequest = false;
+                                }
 
-                    @Override
-                    public void onError(Throwable e) {
+                                @Override
+                                public void onError(Throwable e) {
+                                    inRequest = false;
+                                }
 
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+                                @Override
+                                public void onComplete() {
+                                    inRequest = false;
+                                }
+                            });
+                } else {
+                    mAdapter.appendList(data);
+                    loadingMore = false;
+                }
+            }
+        });
 
     }
 
@@ -130,12 +182,9 @@ public class XkcdListActivity extends BaseActivity {
 
         private Context mContext;
         private List<XkcdPic> pics = new ArrayList<>();
-        private RequestManager glide;
-
 
         public GridAdapter(Context context) {
             mContext = context;
-            glide = Glide.with(mContext);
         }
 
         @NonNull
@@ -192,7 +241,7 @@ public class XkcdListActivity extends BaseActivity {
                 layoutParams.height = 0;
                 itemXkcdImageView.setLayoutParams(layoutParams);
                 glide.load(pic.getTargetImg()).asBitmap()
-                        .diskCacheStrategy(DiskCacheStrategy.SOURCE).fitCenter().into(itemXkcdImageView);
+                        .diskCacheStrategy(DiskCacheStrategy.SOURCE).priority(Priority.HIGH).fitCenter().into(itemXkcdImageView);
                 itemXkcdImageNum.setText(String.valueOf(pic.num));
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override

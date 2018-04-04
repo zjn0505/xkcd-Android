@@ -27,7 +27,7 @@
         android:textColor="#FFF"
         tools:text="1334"
         android:layout_gravity="bottom|end"
-        android:layout_margin="2dp"
+        android:layout_margin="1dp"
         android:background="@drawable/item_num_bg"/>
 
 </android.support.percent.PercentFrameLayout>
