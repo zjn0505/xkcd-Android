@@ -3,6 +3,7 @@ package xyz.jienan.xkcd.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.percent.PercentFrameLayout;
@@ -42,6 +43,7 @@ import xyz.jienan.xkcd.ui.RecyclerViewFastScroller;
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_DRAGGING;
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NEW_INTENT;
+import static xyz.jienan.xkcd.Const.XKCD_LATEST_INDEX;
 import static xyz.jienan.xkcd.network.NetworkService.XKCD_BROWSE_LIST;
 
 /**
@@ -50,6 +52,7 @@ import static xyz.jienan.xkcd.network.NetworkService.XKCD_BROWSE_LIST;
 
 public class XkcdListActivity extends BaseActivity {
 
+    private static final int INVALID_ID = 0;
     private GridAdapter mAdapter;
     private Box<XkcdPic> box;
     private RecyclerView rvList;
@@ -60,6 +63,7 @@ public class XkcdListActivity extends BaseActivity {
     private boolean loadingMore = false;
     private boolean inRequest = false;
     private RequestManager glide;
+    private int latestIndex;
 
     //TODO  skip query if in Box
     @Override
@@ -78,6 +82,7 @@ public class XkcdListActivity extends BaseActivity {
         rvList.setLayoutManager(sglm);
         rvList.addOnScrollListener(rvScrollListener);
         glide = Glide.with(this);
+        latestIndex = PreferenceManager.getDefaultSharedPreferences(this).getInt(XKCD_LATEST_INDEX, INVALID_ID);
         loadList(1);
     }
 
@@ -114,7 +119,9 @@ public class XkcdListActivity extends BaseActivity {
             firstVisibileItemPositions = sglm.findFirstVisibleItemPositions(firstVisibileItemPositions);
             Log.d("XKCDLIST", "onScrolled: " + visibleItemCount + " " + mAdapter.getItemCount() + " " + firstVisibileItemPositions[0]
             + " " + firstVisibileItemPositions[1]);
-            if (firstVisibileItemPositions[1] + visibleItemCount >= mAdapter.getItemCount() - COUNT_IN_ADV && !loadingMore) {
+            if (firstVisibileItemPositions[1] + visibleItemCount >= mAdapter.getItemCount() - COUNT_IN_ADV
+                    && !loadingMore
+                    && !lastItemReached()) {
                 loadingMore = true;
                 loadList(mAdapter.getItemCount() + 1);
             }
@@ -129,6 +136,15 @@ public class XkcdListActivity extends BaseActivity {
             }
         }
     };
+
+    private boolean lastItemReached() {
+        if (mAdapter.getPics() != null) {
+            List<XkcdPic> pics = mAdapter.getPics();
+            XkcdPic lastPic = pics.get(pics.size() - 1);
+            return lastPic.num >= latestIndex;
+        }
+        return false;
+    }
 
     private void loadList(final int start) {
 
@@ -181,6 +197,7 @@ public class XkcdListActivity extends BaseActivity {
     private class GridAdapter extends RecyclerView.Adapter<GridAdapter.XkcdViewHolder> implements RecyclerViewFastScroller.BubbleTextGetter{
 
         private Context mContext;
+
         private List<XkcdPic> pics = new ArrayList<>();
 
         public GridAdapter(Context context) {
@@ -213,6 +230,10 @@ public class XkcdListActivity extends BaseActivity {
             }
             scroller.setVisibility(pics.size() == 0 ? View.GONE : View.VISIBLE);
             notifyDataSetChanged();
+        }
+
+        public List<XkcdPic> getPics() {
+            return pics;
         }
 
         @Override
