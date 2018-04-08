@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -24,6 +23,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import timber.log.Timber;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.XkcdApplication;
 import xyz.jienan.xkcd.XkcdPic;
@@ -58,7 +58,7 @@ public class ImageDetailPageActivity extends Activity {
         } else if (index != 0) {
             requestImage();
         } else {
-            Log.e("ImageDetailPageActivity", "No valid image");
+            Timber.e("No valid info for detail page");
             finish();
         }
     }

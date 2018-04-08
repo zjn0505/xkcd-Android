@@ -14,7 +14,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -53,6 +52,7 @@ import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
+import timber.log.Timber;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.SearchCursorAdapter;
 import xyz.jienan.xkcd.XkcdApplication;
@@ -64,7 +64,6 @@ import xyz.jienan.xkcd.network.NetworkService;
 
 import static android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING;
 import static android.view.HapticFeedbackConstants.LONG_PRESS;
-import static xyz.jienan.xkcd.Const.GLIDE_TAG;
 import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NEW_INTENT;
 import static xyz.jienan.xkcd.network.NetworkService.XKCD_SEARCH_SUGGESTION;
 
@@ -424,7 +423,7 @@ public class SingleComicFragment extends Fragment {
         }
 
         currentPic = xPic;
-        Log.d(GLIDE_TAG, "Pic to be loaded: " + xPic.getTargetImg());
+        Timber.i("Pic to be loaded: %d - %s", id, xPic.getTargetImg());
         tvTitle.setText(String.format("%d. %s", xPic.num, xPic.getTitle()));
         tvCreateDate.setText(String.format(getString(R.string.created_on), xPic.year, xPic.month, xPic.day));
         if (tvDescription != null) {

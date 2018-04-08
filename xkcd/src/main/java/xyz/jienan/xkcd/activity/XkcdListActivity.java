@@ -10,7 +10,6 @@ import android.support.percent.PercentFrameLayout;
 import android.support.percent.PercentLayoutHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +32,7 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import timber.log.Timber;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.XkcdApplication;
 import xyz.jienan.xkcd.XkcdPic;
@@ -117,8 +117,12 @@ public class XkcdListActivity extends BaseActivity {
             int visibleItemCount = sglm.getChildCount();
             int[] firstVisibileItemPositions = new int[spanCount];
             firstVisibileItemPositions = sglm.findFirstVisibleItemPositions(firstVisibileItemPositions);
-            Log.d("XKCDLIST", "onScrolled: " + visibleItemCount + " " + mAdapter.getItemCount() + " " + firstVisibileItemPositions[0]
-            + " " + firstVisibileItemPositions[1]);
+            Timber.v("onScrolled -- \n" +
+                    "visible items: %d\n" +
+                    "adapter items: %d\n" +
+                    "first visible item left panel: %d\n" +
+                    "first visible item right paned: %d",
+                    visibleItemCount, mAdapter.getItemCount(), firstVisibileItemPositions[0], firstVisibileItemPositions[1]);
             if (firstVisibileItemPositions[1] + visibleItemCount >= mAdapter.getItemCount() - COUNT_IN_ADV
                     && !loadingMore
                     && !lastItemReached()) {
@@ -147,15 +151,13 @@ public class XkcdListActivity extends BaseActivity {
     }
 
     private void loadList(final int start) {
-
-
         Query<XkcdPic> query = box.query().between(XkcdPic_.num, start, start+399).build();
         query.subscribe().on(AndroidScheduler.mainThread()).observer(new DataObserver<List<XkcdPic>>() {
             @Override
             public void onData(List<XkcdPic> data) {
-                int x = data.size();
-                Log.d("XKCDLIST", "onData: start " + start + "  found " + x);
-                if ((start != 401 && x != 400) || (start == 401 && x != 399)) {
+                int dataSize = data.size();
+                Timber.d("Load xkcd list request, start from: %d, the response items: %d", start, dataSize);
+                if ((start != 401 && dataSize != 400) || (start == 401 && dataSize != 399)) {
                     if (inRequest) {
                         return;
                     }

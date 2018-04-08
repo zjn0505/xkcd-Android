@@ -5,7 +5,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.text.TextUtils;
-import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,6 +37,7 @@ import retrofit2.http.Headers;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.Url;
+import timber.log.Timber;
 import xyz.jienan.xkcd.BuildConfig;
 import xyz.jienan.xkcd.XkcdApplication;
 import xyz.jienan.xkcd.XkcdPic;
@@ -62,6 +62,8 @@ public class NetworkService {
     private static final int DEFAULT_CONNECT_TIMEOUT = 15; // in seconds
 
     private static XkcdAPI xkcdAPI;
+
+    private static final String HEADER_CACHE_CONTROL = "Cache-Control";
 
     private NetworkService() {
         OkHttpClient client = getOkHttpClientBuilder().build();
@@ -133,7 +135,7 @@ public class NetworkService {
 
             client.connectionSpecs(specs);
         } catch (Exception exc) {
-            Log.e(TAG, "Error while setting TLS", exc);
+            Timber.e(exc, "Error while setting TLS");
         }
         return client;
     }
@@ -152,12 +154,12 @@ public class NetworkService {
             if (!isNetworkAvailable()) {
                 request = request.newBuilder()
                         .removeHeader("pragma")
-                        .header("Cache-Control",
+                        .header(HEADER_CACHE_CONTROL,
                                 "public, only-if-cached, max-stale=" + 2419200)
                         .build();
             }
             if ("1".equals(request.header("bypass"))) {
-                Request.Builder builder = request.newBuilder().addHeader("Cache-Control", "no-cache");
+                Request.Builder builder = request.newBuilder().addHeader(HEADER_CACHE_CONTROL, "no-cache");
                 request =  builder.build();
             }
             return chain.proceed(request);
@@ -178,9 +180,9 @@ public class NetworkService {
             okhttp3.Response originalResponse = chain.proceed(request);
             Response.Builder builder = originalResponse.newBuilder().removeHeader("pragma").removeHeader("cacheable");
             if (TextUtils.isEmpty(cacheable)) {
-                return builder.header("Cache-Control", "no-cache" ).build();
+                return builder.header(HEADER_CACHE_CONTROL, "no-cache" ).build();
             } else {
-                return builder.header("Cache-Control", "public, max-age=" + cacheable).build();
+                return builder.header(HEADER_CACHE_CONTROL, "public, max-age=" + cacheable).build();
             }
         }
     }

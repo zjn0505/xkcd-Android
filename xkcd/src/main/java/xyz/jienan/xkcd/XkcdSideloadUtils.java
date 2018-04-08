@@ -1,7 +1,7 @@
 package xyz.jienan.xkcd;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -16,9 +16,12 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.List;
 
+import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import timber.log.Timber;
 import xyz.jienan.xkcd.network.NetworkService;
 
 import static xyz.jienan.xkcd.network.NetworkService.XKCD_SPECIAL_LIST;
@@ -31,17 +34,18 @@ public class XkcdSideloadUtils {
 
     private static HashMap<Integer, XkcdPic> xkcdSideloadMap = new HashMap<>();
 
+    @SuppressLint("CheckResult")
     public static void init(final Context context) {
-        new Thread(new Runnable() {
+        Observable.empty().subscribeOn(Schedulers.io()).subscribe(new Consumer<Object>() {
             @Override
-            public void run() {
+            public void accept(Object o) throws Exception {
                 try {
                     initXkcdSideloadMap(context);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-        }).start();
+        });
         checkRemoteJson();
     }
 
@@ -70,7 +74,7 @@ public class XkcdSideloadUtils {
 
                 @Override
                 public void onError(Throwable e) {
-                    Log.e("Xkcd", "XKCD Special list: " + e);
+                    Timber.e(e, "Failed to get remote special list");
                 }
 
                 @Override

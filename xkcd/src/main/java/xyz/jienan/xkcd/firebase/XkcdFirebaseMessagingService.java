@@ -11,7 +11,6 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -21,6 +20,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 
+import timber.log.Timber;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.XkcdPic;
 import xyz.jienan.xkcd.activity.MainActivity;
@@ -37,7 +37,7 @@ public class XkcdFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
-        Log.d("Firebase", "onMessageReceived: "+ remoteMessage.getData());
+        Timber.d("onMessageReceived: " + remoteMessage.getData());
         sendNotification(remoteMessage);
         Map<String, String> map  = remoteMessage.getData();
         if (map != null) {
@@ -46,7 +46,7 @@ public class XkcdFirebaseMessagingService extends FirebaseMessagingService {
             while (iterator.hasNext()) {
                 String key = iterator.next().toString();
                 String value = map.get(key);
-                Log.d("Firebase", "msg data: " + key + " " + value);
+                Timber.d("msg data: %s  %s", key, value);
             }
         }
     }
