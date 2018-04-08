@@ -37,4 +37,7 @@
         <item name="progress_start_color">@color/colorAccent</item>
         <item name="progress_end_color">@color/colorAccent</item>
     </style>
+
+    <style name="holo_progressbar" parent="android:Widget.Holo.ProgressBar" >
+    </style>
 </resources>

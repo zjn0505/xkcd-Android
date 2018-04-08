@@ -126,10 +126,10 @@ public class SingleComicFragment extends Fragment {
             @Override
             public boolean onLongClick(View v) {
                 if (currentPic == null) {
-                    return true;
+                    return false;
                 }
                 dialogFragment = new SimpleInfoDialogFragment();
-                dialogFragment.setContent(currentPic.alt);
+                dialogFragment.setPic(currentPic);
                 dialogFragment.setListener(dialogListener);
                 dialogFragment.show(getChildFragmentManager(), "AltInfoDialogFragment");
                 v.performHapticFeedback(LONG_PRESS, FLAG_IGNORE_GLOBAL_SETTING);

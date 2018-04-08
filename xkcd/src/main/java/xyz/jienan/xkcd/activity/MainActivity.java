@@ -56,6 +56,7 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
     private int savedId = INVALID_ID;
     private static final int INVALID_ID = 0;
 
+    private ShakeDetector sd;
     private SharedPreferences.Editor editor;
     private SharedPreferences sharedPreferences;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
@@ -136,7 +137,7 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
             viewPager.setCurrentItem(savedId > INVALID_ID ? savedId - 1 : latestIndex - 1, false);
         }
         SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        ShakeDetector sd = new ShakeDetector(this);
+        sd = new ShakeDetector(this);
         sd.start(sensorManager);
     }
 
@@ -182,7 +183,6 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         compositeDisposable.dispose();
         if (viewPager != null && latestIndex > INVALID_ID) {
             int lastViewed = viewPager.getCurrentItem() + 1;
@@ -191,6 +191,8 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
             }
             editor.putInt(LAST_VIEW_XKCD_ID, lastViewed).apply();
         }
+        sd.stop();
+        super.onDestroy();
     }
 
     private void loadXkcdPic() {
