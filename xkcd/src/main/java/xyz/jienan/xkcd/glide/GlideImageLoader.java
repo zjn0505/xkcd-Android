@@ -50,10 +50,9 @@ import xyz.jienan.xkcd.R;
 
 public final class GlideImageLoader implements ImageLoader {
     private final RequestManager mRequestManager;
-    private Context context;
-
     private final ConcurrentHashMap<Integer, ImageDownloadTarget> mRequestTargetMap
             = new ConcurrentHashMap<>();
+    private Context context;
 
     private GlideImageLoader(Context context, OkHttpClient okHttpClient) {
         this.context = context;

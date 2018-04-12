@@ -17,11 +17,11 @@ import xyz.jienan.xkcd.glide.GlideImageLoader;
 public class XkcdApplication extends Application {
 
     private static XkcdApplication mInstance;
+    private BoxStore boxStore;
+
     public static XkcdApplication getInstance() {
         return mInstance;
     }
-
-    private BoxStore boxStore;
 
     @Override
     public void onCreate() {

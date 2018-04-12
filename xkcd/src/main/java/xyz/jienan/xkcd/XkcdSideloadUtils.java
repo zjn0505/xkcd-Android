@@ -58,30 +58,30 @@ public class XkcdSideloadUtils {
 
     private static void checkRemoteJson() {
         NetworkService.getXkcdAPI()
-            .getSpecialXkcds(XKCD_SPECIAL_LIST).observeOn(Schedulers.io()).subscribeOn(Schedulers.io())
-            .subscribe(new Observer<List<XkcdPic>>() {
-                @Override
-                public void onSubscribe(Disposable d) {
+                .getSpecialXkcds(XKCD_SPECIAL_LIST).observeOn(Schedulers.io()).subscribeOn(Schedulers.io())
+                .subscribe(new Observer<List<XkcdPic>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
 
-                }
-
-                @Override
-                public void onNext(List<XkcdPic> xkcdPics) {
-                    for (XkcdPic pic : xkcdPics) {
-                        xkcdSideloadMap.put((int) pic.num, pic);
                     }
-                }
 
-                @Override
-                public void onError(Throwable e) {
-                    Timber.e(e, "Failed to get remote special list");
-                }
+                    @Override
+                    public void onNext(List<XkcdPic> xkcdPics) {
+                        for (XkcdPic pic : xkcdPics) {
+                            xkcdSideloadMap.put((int) pic.num, pic);
+                        }
+                    }
 
-                @Override
-                public void onComplete() {
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e, "Failed to get remote special list");
+                    }
 
-                }
-            });
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     public static XkcdPic sideload(XkcdPic xkcdPic) {
@@ -92,8 +92,8 @@ public class XkcdSideloadUtils {
             if (insert > 0)
                 clone.setImg(img.substring(0, insert) + "_2x" + img.substring(insert, img.length()));
         }
-        if (xkcdSideloadMap.containsKey((int)xkcdPic.num)) {
-            XkcdPic sideload = xkcdSideloadMap.get((int)xkcdPic.num);
+        if (xkcdSideloadMap.containsKey((int) xkcdPic.num)) {
+            XkcdPic sideload = xkcdSideloadMap.get((int) xkcdPic.num);
             if (sideload.getImg() != null) {
                 clone.setImg(sideload.getImg());
             }
@@ -121,7 +121,8 @@ public class XkcdSideloadUtils {
         } finally {
             is.close();
         }
-        List<XkcdPic> sideloadList = new Gson().fromJson(writer.toString(),  new TypeToken<List<XkcdPic>>(){}.getType());
+        List<XkcdPic> sideloadList = new Gson().fromJson(writer.toString(), new TypeToken<List<XkcdPic>>() {
+        }.getType());
         for (XkcdPic pic : sideloadList) {
             xkcdSideloadMap.put((int) pic.num, pic);
         }

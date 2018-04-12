@@ -15,15 +15,16 @@ public class XkcdPic {
     public String day;
     @Id(assignable = true)
     public long num;
-    private String title;
-    private String img;
     public String alt;
     public boolean large = false;
     public boolean special = false;
-    public boolean isFavorite = false;
-    public boolean isLiked = false;
     public int width;
     public int height;
+    public boolean isFavorite = false;
+    public boolean hasThumbed = false;
+    public long thumbCount;
+    private String title;
+    private String img;
 
     public String getTargetImg() {
         return XkcdSideloadUtils.sideload(this).img;

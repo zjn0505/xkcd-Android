@@ -82,16 +82,165 @@ public class SingleComicFragment extends Fragment {
     private ProgressBar pbLoading;
     private Button btnReload;
     private SimpleInfoDialogFragment dialogFragment;
-    
+
     private int id;
     private XkcdPic currentPic;
+    RequestListener glideListener = new RequestListener<String, Bitmap>() {
+        @Override
+        public boolean onException(Exception e, final String model, final Target<Bitmap> target, boolean isFirstResource) {
+            btnReload.setVisibility(View.VISIBLE);
+            btnReload.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    pbLoading.clearAnimation();
+                    pbLoading.setAnimation(AnimationUtils.loadAnimation(pbLoading.getContext(), R.anim.rotate));
+                    Glide.with(getActivity()).load(model).asBitmap().fitCenter().diskCacheStrategy(DiskCacheStrategy.SOURCE).listener(glideListener).into(target);
+                    btnReload.setVisibility(View.GONE);
+                }
+            });
+            return false;
+        }
+
+        @Override
+        public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
+            ivXkcdPic.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    launchDetailPageActivity();
+                }
+            });
+            return false;
+        }
+    };
     private Box<XkcdPic> box;
     private ProgressTarget<String, Bitmap> target;
-
     private List<XkcdPic> searchSuggestions;
     private SearchCursorAdapter searchAdapter;
     private List<Disposable> disposables = new ArrayList<>();
-    
+    Observer<XkcdPic> xkcdPicObserver = new Observer<XkcdPic>() {
+        @Override
+        public void onSubscribe(Disposable d) {
+            disposables.add(d);
+        }
+
+        @Override
+        public void onNext(XkcdPic resXkcdPic) {
+            renderXkcdPic(resXkcdPic);
+            XkcdPic xkcdPic = box.get(resXkcdPic.num);
+            if (xkcdPic != null) {
+                resXkcdPic.isFavorite = xkcdPic.isFavorite;
+                resXkcdPic.hasThumbed = xkcdPic.hasThumbed;
+            }
+            box.put(resXkcdPic);
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            pbLoading.setVisibility(View.GONE);
+        }
+
+        @Override
+        public void onComplete() {
+
+        }
+    };
+    private SimpleInfoDialogFragment.ISimpleInfoDialogListener dialogListener = new SimpleInfoDialogFragment.ISimpleInfoDialogListener() {
+        @Override
+        public void onPositiveClick() {
+            // Do nothing
+        }
+
+        @Override
+        public void onNegativeClick() {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.explainxkcd.com/wiki/index.php/" + currentPic.num));
+            startActivity(browserIntent);
+        }
+
+        @SuppressLint("StaticFieldLeak")
+        @Override
+        public void onExplainMoreClick(final SimpleInfoDialogFragment.ExplainingCallback explainingCallback) {
+            String url = "https://www.explainxkcd.com/wiki/index.php/" + currentPic.num;
+            Call<ResponseBody> call = NetworkService.getXkcdAPI().getExplain(url);
+            if (((MainActivity) getActivity()).getMaxId() - currentPic.num < 10) {
+                call = NetworkService.getXkcdAPI().getExplainWithShortCache(url);
+            }
+            call.enqueue(new Callback<ResponseBody>() {
+
+                private boolean isH2ByType(Element element, String type) {
+                    if (!"h2".equals(element.nodeName())) {
+                        return false;
+                    }
+                    for (Node child : element.childNodes()) {
+                        if (type.equals(child.attr("id"))) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+
+                @Override
+                public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
+                    Document doc = null;
+                    try {
+                        doc = Jsoup.parse(response.body().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    if (doc == null) {
+                        explainingCallback.explanationFailed();
+                        return;
+                    }
+                    Elements newsHeadlines = doc.select("h2");
+                    if (newsHeadlines == null || newsHeadlines.size() == 0) {
+                        explainingCallback.explanationFailed();
+                        return;
+                    }
+                    for (Element headline : newsHeadlines) {
+                        if (isH2ByType(headline, "Explanation")) {
+                            Element element = headline.nextElementSibling();
+                            StringBuilder htmlResult = new StringBuilder();
+                            while (!"h2".equals(element.nodeName()) && !"h3".equals(element.nodeName())) {
+                                if (element.tagName().equals("p"))
+                                    if (element.toString().contains("<i>citation needed</i>")) {
+                                        List<Node> nodes = new ArrayList<>();
+                                        for (Node node : element.childNodes()) {
+                                            if ("sup".equals(node.nodeName()) && node.toString().contains("<i>citation needed</i>")) {
+                                                nodes.add(node);
+                                            }
+                                        }
+                                        for (Node node : nodes) {
+                                            node.remove();
+                                        }
+                                    }
+                                for (Element child : element.getAllElements()) {
+                                    if ("a".equals(child.tagName()) && child.hasAttr("href")
+                                            && child.attr("href").startsWith("/wiki")) {
+                                        String href = child.attr("href");
+                                        child.attr("href", "https://www.explainxkcd.com" + href);
+                                    }
+                                }
+                                htmlResult.append(element.toString());
+                                element = element.nextElementSibling();
+                            }
+                            if (dialogFragment != null && dialogFragment.isAdded()) {
+                                if (!htmlResult.toString().endsWith("</p>"))
+                                    htmlResult.append("<br>");
+                                explainingCallback.explanationLoaded(htmlResult.toString());
+                                return;
+                            }
+                        }
+                    }
+                    explainingCallback.explanationFailed();
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    explainingCallback.explanationFailed();
+                }
+            });
+        }
+    };
+
     public static SingleComicFragment newInstance(int comicId) {
         SingleComicFragment fragment = new SingleComicFragment();
         Bundle args = new Bundle();
@@ -136,12 +285,12 @@ public class SingleComicFragment extends Fragment {
             }
         });
         initGlide();
-        box = ((XkcdApplication)getActivity().getApplication()).getBoxStore().boxFor(XkcdPic.class);
+        box = ((XkcdApplication) getActivity().getApplication()).getBoxStore().boxFor(XkcdPic.class);
 //        Query<XkcdPic>  xkcdQuery = box.query().order(XkcdPic_.num).build();
         XkcdPic xkcdPic = box.get(id);
         if (xkcdPic != null) {
             renderXkcdPic(xkcdPic);
-            if (((MainActivity)getActivity()).getMaxId() - xkcdPic.num < 10) {
+            if (((MainActivity) getActivity()).getMaxId() - xkcdPic.num < 10) {
                 loadXkcdPic();
             }
         } else {
@@ -168,58 +317,6 @@ public class SingleComicFragment extends Fragment {
             iterator.remove();
         }
         super.onDestroyView();
-    }
-
-    private static class MyProgressTarget<Z> extends ProgressTarget<String, Z> {
-        private final ProgressBar progressbar;
-        private final ImageView image;
-        public MyProgressTarget(Target<Z> target, ProgressBar progress, ImageView image) {
-            super(target);
-            this.progressbar = progress;
-            this.image = image;
-        }
-
-        @Override public float getGranualityPercentage() {
-            return 0.1f; // this matches the format string for #text below
-        }
-
-        @Override
-        public void onDownloadStart() {
-
-        }
-
-        @Override
-        public void onProgress(int progress) {
-
-        }
-
-        @Override
-        public void onDownloadFinish() {
-
-        }
-
-        @Override protected void onConnecting() {
-            progressbar.setProgress(1);
-            progressbar.setVisibility(View.VISIBLE);
-            image.setImageLevel(0);
-        }
-        @Override protected void onDownloading(long bytesRead, long expectedLength) {
-            int progress = (int)(100 * bytesRead / expectedLength);
-            progress = progress <= 0 ? 1 : progress;
-            progressbar.setProgress(progress);
-            if (progressbar.getAnimation() == null) {
-                progressbar.setAnimation(AnimationUtils.loadAnimation(progressbar.getContext(), R.anim.rotate));
-            }
-            image.setImageLevel((int)(10000 * bytesRead / expectedLength));
-        }
-        @Override protected void onDownloaded() {
-            image.setImageLevel(10000);
-        }
-        @Override protected void onDelivered() {
-            progressbar.setVisibility(View.INVISIBLE);
-            progressbar.clearAnimation();
-            image.setImageLevel(0); // reset ImageView default
-        }
     }
 
     @Override
@@ -337,8 +434,15 @@ public class SingleComicFragment extends Fragment {
 
     private void renderXkcdSearch(List<XkcdPic> xkcdPics) {
         searchSuggestions = xkcdPics;
+        for (XkcdPic pic : xkcdPics) {
+            XkcdPic xkcdPic = box.get(pic.num);
+            if (xkcdPic != null) {
+                pic.isFavorite = xkcdPic.isFavorite;
+                pic.hasThumbed = xkcdPic.hasThumbed;
+            }
+        }
         box.put(xkcdPics);
-        String[] columns = { BaseColumns._ID,
+        String[] columns = {BaseColumns._ID,
                 SearchManager.SUGGEST_COLUMN_TEXT_1,
                 SearchManager.SUGGEST_COLUMN_TEXT_2,
                 SearchManager.SUGGEST_COLUMN_INTENT_DATA,
@@ -359,9 +463,8 @@ public class SingleComicFragment extends Fragment {
     }
 
     private void initGlide() {
-        target =  new MyProgressTarget<>(new BitmapImageViewTarget(ivXkcdPic), pbLoading, ivXkcdPic);
+        target = new MyProgressTarget<>(new BitmapImageViewTarget(ivXkcdPic), pbLoading, ivXkcdPic);
     }
-
 
     /**
      * Launch a new Activity to show the pic in full screen mode
@@ -386,31 +489,9 @@ public class SingleComicFragment extends Fragment {
         xkcdPicObservable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(xkcdPicObserver);
     }
 
-    Observer<XkcdPic> xkcdPicObserver = new Observer<XkcdPic>() {
-        @Override
-        public void onSubscribe(Disposable d) {
-            disposables.add(d);
-        }
-
-        @Override
-        public void onNext(XkcdPic xkcdPic) {
-            renderXkcdPic(xkcdPic);
-            box.put(xkcdPic);
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            pbLoading.setVisibility(View.GONE);
-        }
-
-        @Override
-        public void onComplete() {
-
-        }
-    };
-
     /**
      * Render img, text on the view
+     *
      * @param xPic
      */
     private void renderXkcdPic(final XkcdPic xPic) {
@@ -432,130 +513,66 @@ public class SingleComicFragment extends Fragment {
 
     }
 
-    RequestListener glideListener = new RequestListener<String, Bitmap>() {
-        @Override
-        public boolean onException(Exception e, final String model, final Target<Bitmap> target, boolean isFirstResource) {
-            btnReload.setVisibility(View.VISIBLE);
-            btnReload.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    pbLoading.clearAnimation();
-                    pbLoading.setAnimation(AnimationUtils.loadAnimation(pbLoading.getContext(), R.anim.rotate));
-                    Glide.with(getActivity()).load(model).asBitmap().fitCenter().diskCacheStrategy(DiskCacheStrategy.SOURCE).listener(glideListener).into(target);
-                    btnReload.setVisibility(View.GONE);
-                }
-            });
-            return false;
+    private static class MyProgressTarget<Z> extends ProgressTarget<String, Z> {
+        private final ProgressBar progressbar;
+        private final ImageView image;
+
+        public MyProgressTarget(Target<Z> target, ProgressBar progress, ImageView image) {
+            super(target);
+            this.progressbar = progress;
+            this.image = image;
         }
 
         @Override
-        public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
-            ivXkcdPic.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    launchDetailPageActivity();
-                }
-            });
-            return false;
-        }
-    };
-
-    private SimpleInfoDialogFragment.ISimpleInfoDialogListener dialogListener = new SimpleInfoDialogFragment.ISimpleInfoDialogListener() {
-        @Override
-        public void onPositiveClick() {
-            // Do nothing
+        public float getGranualityPercentage() {
+            return 0.1f; // this matches the format string for #text below
         }
 
         @Override
-        public void onNegativeClick() {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.explainxkcd.com/wiki/index.php/" + currentPic.num));
-            startActivity(browserIntent);
+        public void onDownloadStart() {
+
         }
 
-        @SuppressLint("StaticFieldLeak")
         @Override
-        public void onExplainMoreClick(final SimpleInfoDialogFragment.ExplainingCallback explainingCallback) {
-            String url = "https://www.explainxkcd.com/wiki/index.php/" + currentPic.num;
-            Call<ResponseBody> call = NetworkService.getXkcdAPI().getExplain(url);
-            if (((MainActivity)getActivity()).getMaxId() - currentPic.num < 10) {
-                call = NetworkService.getXkcdAPI().getExplainWithShortCache(url);
+        public void onProgress(int progress) {
+
+        }
+
+        @Override
+        public void onDownloadFinish() {
+
+        }
+
+        @Override
+        protected void onConnecting() {
+            progressbar.setProgress(1);
+            progressbar.setVisibility(View.VISIBLE);
+            image.setImageLevel(0);
+        }
+
+        @Override
+        protected void onDownloading(long bytesRead, long expectedLength) {
+            int progress = (int) (100 * bytesRead / expectedLength);
+            progress = progress <= 0 ? 1 : progress;
+            progressbar.setProgress(progress);
+            if (progressbar.getAnimation() == null) {
+                progressbar.setAnimation(AnimationUtils.loadAnimation(progressbar.getContext(), R.anim.rotate));
             }
-            call.enqueue(new Callback<ResponseBody>() {
-
-                private boolean isH2ByType(Element element, String type) {
-                    if (!"h2".equals(element.nodeName())) {
-                        return false;
-                    }
-                    for (Node child : element.childNodes()) {
-                        if (type.equals(child.attr("id"))) {
-                            return true;
-                        }
-                    }
-                    return false;
-                }
-
-                @Override
-                public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
-                    Document doc = null;
-                    try {
-                        doc = Jsoup.parse(response.body().string());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    if (doc == null) {
-                        explainingCallback.explanationFailed();
-                        return;
-                    }
-                    Elements newsHeadlines = doc.select("h2");
-                    if (newsHeadlines == null || newsHeadlines.size() == 0) {
-                        explainingCallback.explanationFailed();
-                        return;
-                    }
-                    for (Element headline : newsHeadlines) {
-                        if (isH2ByType(headline, "Explanation")) {
-                            Element element = headline.nextElementSibling();
-                            StringBuilder htmlResult = new StringBuilder();
-                            while (!"h2".equals(element.nodeName()) && !"h3".equals(element.nodeName())) {
-                                if (element.tagName().equals("p"))
-                                    if (element.toString().contains("<i>citation needed</i>")) {
-                                        List<Node> nodes = new ArrayList<>();
-                                        for (Node node : element.childNodes()) {
-                                            if ("sup".equals(node.nodeName()) && node.toString().contains("<i>citation needed</i>")) {
-                                                nodes.add(node);
-                                            }
-                                        }
-                                        for (Node node : nodes) {
-                                            node.remove();
-                                        }
-                                    }
-                                for (Element child : element.getAllElements()) {
-                                    if ("a".equals(child.tagName()) && child.hasAttr("href")
-                                            && child.attr("href").startsWith("/wiki")) {
-                                        String href = child.attr("href");
-                                        child.attr("href", "https://www.explainxkcd.com" + href);
-                                    }
-                                }
-                                htmlResult.append(element.toString());
-                                element = element.nextElementSibling();
-                            }
-                            if (dialogFragment != null && dialogFragment.isAdded()) {
-                                if (!htmlResult.toString().endsWith("</p>"))
-                                    htmlResult.append("<br>");
-                                explainingCallback.explanationLoaded(htmlResult.toString());
-                                return;
-                            }
-                        }
-                    }
-                    explainingCallback.explanationFailed();
-                }
-
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    explainingCallback.explanationFailed();
-                }
-            });
+            image.setImageLevel((int) (10000 * bytesRead / expectedLength));
         }
-    };
+
+        @Override
+        protected void onDownloaded() {
+            image.setImageLevel(10000);
+        }
+
+        @Override
+        protected void onDelivered() {
+            progressbar.setVisibility(View.INVISIBLE);
+            progressbar.clearAnimation();
+            image.setImageLevel(0); // reset ImageView default
+        }
+    }
 
 
 }

@@ -38,8 +38,8 @@
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
             android:textSize="15sp"
-            android:gravity="end"
-            tools:text="created on 2017.7.2"
+            android:gravity="start"
+            tools:text="2017.7.2"
             android:fontFamily="@font/xkcd"/>
 
     </LinearLayout>

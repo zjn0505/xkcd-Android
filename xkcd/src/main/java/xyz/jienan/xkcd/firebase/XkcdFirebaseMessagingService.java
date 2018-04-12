@@ -39,7 +39,7 @@ public class XkcdFirebaseMessagingService extends FirebaseMessagingService {
         super.onMessageReceived(remoteMessage);
         Timber.d("onMessageReceived: " + remoteMessage.getData());
         sendNotification(remoteMessage);
-        Map<String, String> map  = remoteMessage.getData();
+        Map<String, String> map = remoteMessage.getData();
         if (map != null) {
             Iterator iterator = map.keySet().iterator();
 
@@ -74,7 +74,7 @@ public class XkcdFirebaseMessagingService extends FirebaseMessagingService {
         String[] titles = getResources().getStringArray(R.array.notification_titles);
         int index = new Random().nextInt(titles.length);
         String channelId = getString(R.string.default_notification_channel_id);
-        Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(this, channelId)
                         .setSmallIcon(R.drawable.ic_notification)

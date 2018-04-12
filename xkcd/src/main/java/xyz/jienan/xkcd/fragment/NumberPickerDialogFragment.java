@@ -23,12 +23,6 @@ public class NumberPickerDialogFragment extends DialogFragment {
 
     private final static String INT_MIN = "min";
     private final static String INT_MAX = "max";
-
-    public interface INumberPickerDialogListener {
-        void onPositiveClick(int number);
-        void onNegativeClick();
-    }
-
     private int min, max;
     private INumberPickerDialogListener mListener;
 
@@ -89,5 +83,11 @@ public class NumberPickerDialogFragment extends DialogFragment {
                 });
         // Create the AlertDialog object and return it
         return builder.create();
+    }
+
+    public interface INumberPickerDialogListener {
+        void onPositiveClick(int number);
+
+        void onNegativeClick();
     }
 }

@@ -39,15 +39,7 @@ public class SimpleInfoDialogFragment extends DialogFragment {
 
     private final static String CONTENT = "content";
     private final static String HTML_CONTENT = "html_content";
-
-    public interface ISimpleInfoDialogListener {
-        void onPositiveClick();
-        void onNegativeClick();
-        void onExplainMoreClick(ExplainingCallback explainingCallback);
-    }
-
     private Box<XkcdPic> box;
-
     private String xkcdContent;
     private String htmlContent;
     private ISimpleInfoDialogListener mListener;
@@ -55,68 +47,6 @@ public class SimpleInfoDialogFragment extends DialogFragment {
     private ProgressBar pbLoading;
     private Button buttonNegative;
     private boolean hasExplainedMore = false;
-
-    public void setListener(ISimpleInfoDialogListener listener) {
-        mListener = listener;
-    }
-
-    public void setPic(XkcdPic pic) {
-        this.xkcdContent = pic.alt;
-    }
-
-    public interface ExplainingCallback {
-        void explanationLoaded(String result);
-        void explanationFailed();
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            xkcdContent = savedInstanceState.getString(CONTENT);
-            htmlContent = savedInstanceState.getString(HTML_CONTENT);
-        }
-        box = ((XkcdApplication)getActivity().getApplication()).getBoxStore().boxFor(XkcdPic.class);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString(CONTENT, xkcdContent);
-        outState.putString(HTML_CONTENT, htmlContent);
-    }
-
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        View view = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_explain, null);
-        tvExplain = (TextView) view.findViewById(R.id.tv_explain);
-        int negativeBtnTextId = R.string.dialog_more_details;
-        if (TextUtils.isEmpty(htmlContent)) {
-            tvExplain.setText(xkcdContent);
-        } else {
-            tvExplain.setText(Html.fromHtml(htmlContent));
-            tvExplain.setMovementMethod(LinkMovementMethod.getInstance());
-            negativeBtnTextId = R.string.go_to_explainxkcd;
-            hasExplainedMore = true;
-        }
-
-        pbLoading = (ProgressBar) view.findViewById(R.id.pb_explaining);
-        builder.setView(view)
-                .setPositiveButton(R.string.dialog_got_it, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        mListener.onPositiveClick();
-                        dismiss();
-                    }
-                })
-                .setNegativeButton(negativeBtnTextId, null);
-        // Create the AlertDialog object and return it
-        AlertDialog dialog = builder.create();
-        dialog.setOnShowListener(showListener);
-        return dialog;
-    }
-
     private DialogInterface.OnShowListener showListener = new DialogInterface.OnShowListener() {
 
         @Override
@@ -168,6 +98,62 @@ public class SimpleInfoDialogFragment extends DialogFragment {
         }
     };
 
+    public void setListener(ISimpleInfoDialogListener listener) {
+        mListener = listener;
+    }
+
+    public void setPic(XkcdPic pic) {
+        this.xkcdContent = pic.alt;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            xkcdContent = savedInstanceState.getString(CONTENT);
+            htmlContent = savedInstanceState.getString(HTML_CONTENT);
+        }
+        box = ((XkcdApplication) getActivity().getApplication()).getBoxStore().boxFor(XkcdPic.class);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(CONTENT, xkcdContent);
+        outState.putString(HTML_CONTENT, htmlContent);
+    }
+
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_explain, null);
+        tvExplain = (TextView) view.findViewById(R.id.tv_explain);
+        int negativeBtnTextId = R.string.dialog_more_details;
+        if (TextUtils.isEmpty(htmlContent)) {
+            tvExplain.setText(xkcdContent);
+        } else {
+            tvExplain.setText(Html.fromHtml(htmlContent));
+            tvExplain.setMovementMethod(LinkMovementMethod.getInstance());
+            negativeBtnTextId = R.string.go_to_explainxkcd;
+            hasExplainedMore = true;
+        }
+
+        pbLoading = (ProgressBar) view.findViewById(R.id.pb_explaining);
+        builder.setView(view)
+                .setPositiveButton(R.string.dialog_got_it, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        mListener.onPositiveClick();
+                        dismiss();
+                    }
+                })
+                .setNegativeButton(negativeBtnTextId, null);
+        // Create the AlertDialog object and return it
+        AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(showListener);
+        return dialog;
+    }
+
     private void makeLinkClickable(SpannableStringBuilder strBuilder, final URLSpan span) {
         int start = strBuilder.getSpanStart(span);
         int end = strBuilder.getSpanEnd(span);
@@ -200,7 +186,7 @@ public class SimpleInfoDialogFragment extends DialogFragment {
         CharSequence sequence = Html.fromHtml(html);
         SpannableStringBuilder strBuilder = new SpannableStringBuilder(sequence);
         URLSpan[] urls = strBuilder.getSpans(0, sequence.length(), URLSpan.class);
-        for(URLSpan span : urls) {
+        for (URLSpan span : urls) {
             makeLinkClickable(strBuilder, span);
         }
         text.setText(strBuilder);
@@ -220,5 +206,19 @@ public class SimpleInfoDialogFragment extends DialogFragment {
         } else {
             return 0;
         }
+    }
+
+    public interface ISimpleInfoDialogListener {
+        void onPositiveClick();
+
+        void onNegativeClick();
+
+        void onExplainMoreClick(ExplainingCallback explainingCallback);
+    }
+
+    public interface ExplainingCallback {
+        void explanationLoaded(String result);
+
+        void explanationFailed();
     }
 }

@@ -32,8 +32,11 @@ import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.Url;
@@ -48,22 +51,19 @@ import xyz.jienan.xkcd.XkcdPic;
 
 public class NetworkService {
 
-    private static final String XKCD_BASE_URL = "https://xkcd.com/";
     public static final String XKCD_SPECIAL_LIST = "https://raw.githubusercontent.com/zjn0505/Xkcd-Android/master/xkcd/src/main/res/raw/xkcd_special.json";
     public static final String XKCD_SEARCH_SUGGESTION = "http://130.211.211.220:3003/xkcd-suggest";
     public static final String XKCD_BROWSE_LIST = "http://130.211.211.220:3003/xkcd-list";
-
+    public static final String XKCD_THUMBS_UP = "http://130.211.211.220:3003/xkcd-thumb-up";
     public static final String BYPASS_CACHE = "1";
     public static final String USE_CACHE = "2";
     public static final String SHORT_CACHE = "3";
-
+    private static final String XKCD_BASE_URL = "https://xkcd.com/";
     private static final String TAG = "NetworkService";
     private static final int DEFAULT_READ_TIMEOUT = 30; // in seconds
     private static final int DEFAULT_CONNECT_TIMEOUT = 15; // in seconds
-
-    private static XkcdAPI xkcdAPI;
-
     private static final String HEADER_CACHE_CONTROL = "Cache-Control";
+    private static XkcdAPI xkcdAPI;
 
     private NetworkService() {
         OkHttpClient client = getOkHttpClientBuilder().build();
@@ -140,54 +140,6 @@ public class NetworkService {
         return client;
     }
 
-
-    /**
-     * Interceptor to cache data and maintain it for four weeks.
-     *
-     * If the device is offline, stale (at most four weeks old)
-     * response is fetched from the cache.
-     */
-    private static class ApplicationCacheInterceptor implements Interceptor {
-        @Override
-        public okhttp3.Response intercept(Chain chain) throws IOException {
-            Request request = chain.request();
-            if (!isNetworkAvailable()) {
-                request = request.newBuilder()
-                        .removeHeader("pragma")
-                        .header(HEADER_CACHE_CONTROL,
-                                "public, only-if-cached, max-stale=" + 2419200)
-                        .build();
-            }
-            if ("1".equals(request.header("bypass"))) {
-                Request.Builder builder = request.newBuilder().addHeader(HEADER_CACHE_CONTROL, "no-cache");
-                request =  builder.build();
-            }
-            return chain.proceed(request);
-        }
-    }
-
-    /**
-     * Interceptor to cache data and maintain it for a minute.
-     *
-     * If the same network request is sent within a minute,
-     * the response is retrieved from cache.
-     */
-    private static class NetworkCacheInterceptor implements Interceptor {
-        @Override
-        public okhttp3.Response intercept(Chain chain) throws IOException {
-            Request request = chain.request();
-            String cacheable = request.header("cacheable");
-            okhttp3.Response originalResponse = chain.proceed(request);
-            Response.Builder builder = originalResponse.newBuilder().removeHeader("pragma").removeHeader("cacheable");
-            if (TextUtils.isEmpty(cacheable)) {
-                return builder.header(HEADER_CACHE_CONTROL, "no-cache" ).build();
-            } else {
-                return builder.header(HEADER_CACHE_CONTROL, "public, max-age=" + cacheable).build();
-            }
-        }
-    }
-
-
     public static XkcdAPI getXkcdAPI() {
         if (xkcdAPI == null) {
             new NetworkService();
@@ -195,10 +147,9 @@ public class NetworkService {
         return xkcdAPI;
     }
 
-
     public static boolean isNetworkAvailable() {
         Context context = XkcdApplication.getInstance();
-        ConnectivityManager connectivity =(ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connectivity = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         if (connectivity == null) {
             return false;
@@ -214,6 +165,7 @@ public class NetworkService {
         }
         return false;
     }
+
 
     public interface XkcdAPI {
 
@@ -241,14 +193,65 @@ public class NetworkService {
 
         /**
          * Get the xkcd list with paging
+         *
          * @param url
-         * @param start the start index of xkcd list
+         * @param start    the start index of xkcd list
          * @param reversed 0 not reversed, 1 reversed
-         * @param size the size of returned xkcd list
+         * @param size     the size of returned xkcd list
          * @return
          */
         @GET
         Observable<List<XkcdPic>> getXkcdList(@Url String url,
-           @Query("start") int start, @Query("reversed") int reversed, @Query("size") int size);
+                                              @Query("start") int start, @Query("reversed") int reversed, @Query("size") int size);
+
+        @FormUrlEncoded
+        @POST
+        Observable<XkcdPic> thumbsUp(@Url String url, @Field("comic_id") int comicId);
+    }
+
+    /**
+     * Interceptor to cache data and maintain it for four weeks.
+     * <p>
+     * If the device is offline, stale (at most four weeks old)
+     * response is fetched from the cache.
+     */
+    private static class ApplicationCacheInterceptor implements Interceptor {
+        @Override
+        public okhttp3.Response intercept(Chain chain) throws IOException {
+            Request request = chain.request();
+            if (!isNetworkAvailable()) {
+                request = request.newBuilder()
+                        .removeHeader("pragma")
+                        .header(HEADER_CACHE_CONTROL,
+                                "public, only-if-cached, max-stale=" + 2419200)
+                        .build();
+            }
+            if ("1".equals(request.header("bypass"))) {
+                Request.Builder builder = request.newBuilder().addHeader(HEADER_CACHE_CONTROL, "no-cache");
+                request = builder.build();
+            }
+            return chain.proceed(request);
+        }
+    }
+
+    /**
+     * Interceptor to cache data and maintain it for a minute.
+     * <p>
+     * If the same network request is sent within a minute,
+     * the response is retrieved from cache.
+     */
+    private static class NetworkCacheInterceptor implements Interceptor {
+        @Override
+        public okhttp3.Response intercept(Chain chain) throws IOException {
+            Request request = chain.request();
+            String cacheable = request.header("cacheable");
+            okhttp3.Response originalResponse = chain.proceed(request);
+            Response.Builder builder = originalResponse.newBuilder().removeHeader("pragma").removeHeader("cacheable");
+            if (TextUtils.isEmpty(cacheable)) {
+                return builder.header(HEADER_CACHE_CONTROL, "no-cache").build();
+            } else {
+                return builder.header(HEADER_CACHE_CONTROL, "public, max-age=" + cacheable).build();
+            }
+        }
     }
 }

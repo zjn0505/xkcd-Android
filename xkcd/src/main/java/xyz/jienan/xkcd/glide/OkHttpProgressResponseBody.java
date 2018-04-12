@@ -28,15 +28,18 @@ public class OkHttpProgressResponseBody extends ResponseBody {
         this.progressListener = progressListener;
     }
 
-    @Override public MediaType contentType() {
+    @Override
+    public MediaType contentType() {
         return responseBody.contentType();
     }
 
-    @Override public long contentLength() {
+    @Override
+    public long contentLength() {
         return responseBody.contentLength();
     }
 
-    @Override public BufferedSource source() {
+    @Override
+    public BufferedSource source() {
         if (bufferedSource == null) {
             bufferedSource = Okio.buffer(source(responseBody.source()));
         }
@@ -46,7 +49,9 @@ public class OkHttpProgressResponseBody extends ResponseBody {
     private Source source(Source source) {
         return new ForwardingSource(source) {
             long totalBytesRead = 0L;
-            @Override public long read(Buffer sink, long byteCount) throws IOException {
+
+            @Override
+            public long read(Buffer sink, long byteCount) throws IOException {
                 long bytesRead = super.read(sink, byteCount);
                 long fullLength = responseBody.contentLength();
                 if (bytesRead == -1) { // this source is exhausted

@@ -19,10 +19,9 @@ import static xyz.jienan.xkcd.Const.PREF_FONT;
 
 public class SettingsFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener {
 
+    private static boolean needRecreateForParent = false;
     private ListPreference arrowPref;
     private SwitchPreference fontPref;
-    private static boolean needRecreateForParent = false;
-
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -31,7 +30,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         arrowPref = (ListPreference) findPreference(PREF_ARROW);
         fontPref = (SwitchPreference) findPreference(PREF_FONT);
         arrowPref.setSummary(getResources().getQuantityString(R.plurals.pref_arrow_summary,
-                Integer.valueOf(arrowPref.getEntry().toString()) ,arrowPref.getEntry().toString()));
+                Integer.valueOf(arrowPref.getEntry().toString()), arrowPref.getEntry().toString()));
         arrowPref.setOnPreferenceChangeListener(this);
         fontPref.setOnPreferenceChangeListener(this);
     }
@@ -42,7 +41,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
             case PREF_ARROW:
                 ((ListPreference) preference).setValue(newValue.toString());
                 arrowPref.setSummary(getResources().getQuantityString(R.plurals.pref_arrow_summary,
-                        Integer.valueOf(arrowPref.getEntry().toString()) ,arrowPref.getEntry().toString()));
+                        Integer.valueOf(arrowPref.getEntry().toString()), arrowPref.getEntry().toString()));
                 break;
             case PREF_FONT:
                 ((SwitchPreference) preference).setChecked((boolean) newValue);

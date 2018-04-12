@@ -25,19 +25,14 @@ public class RecyclerViewFastScroller extends LinearLayout {
     private View handle;
     private RecyclerView recyclerView;
     private int height;
-    private boolean isInitialized = false;
-    private ObjectAnimator currentAnimator = null;
-
     private final RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrolled(final RecyclerView recyclerView, final int dx, final int dy) {
             updateBubbleAndHandlePosition();
         }
     };
-
-    public interface BubbleTextGetter {
-        String getTextToShowInBubble(int pos);
-    }
+    private boolean isInitialized = false;
+    private ObjectAnimator currentAnimator = null;
 
     public RecyclerViewFastScroller(final Context context, final AttributeSet attrs, final int defStyleAttr) {
         super(context, attrs, defStyleAttr);
@@ -198,5 +193,9 @@ public class RecyclerViewFastScroller extends LinearLayout {
             }
         });
         currentAnimator.start();
+    }
+
+    public interface BubbleTextGetter {
+        String getTextToShowInBubble(int pos);
     }
 }

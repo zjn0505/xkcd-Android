@@ -1,5 +1,6 @@
 package xyz.jienan.xkcd.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,15 +23,19 @@ import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import io.objectbox.Box;
 import io.objectbox.android.AndroidScheduler;
 import io.objectbox.query.Query;
 import io.objectbox.reactive.DataObserver;
+import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 import xyz.jienan.xkcd.R;
@@ -53,17 +58,65 @@ import static xyz.jienan.xkcd.network.NetworkService.XKCD_BROWSE_LIST;
 public class XkcdListActivity extends BaseActivity {
 
     private static final int INVALID_ID = 0;
+    private final static int COUNT_IN_ADV = 10;
     private GridAdapter mAdapter;
     private Box<XkcdPic> box;
     private RecyclerView rvList;
     private RecyclerViewFastScroller scroller;
     private StaggeredGridLayoutManager sglm;
     private int spanCount = 2;
-    private final static int COUNT_IN_ADV = 10;
     private boolean loadingMore = false;
     private boolean inRequest = false;
     private RequestManager glide;
     private int latestIndex;
+    private RecyclerView.OnScrollListener rvScrollListener = new RecyclerView.OnScrollListener() {
+
+        private static final int FLING_JUMP_LOW_THRESHOLD = 80;
+        private static final int FLING_JUMP_HIGH_THRESHOLD = 120;
+
+        private boolean dragging = false;
+
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+            dragging = newState == SCROLL_STATE_DRAGGING;
+            if (glide.isPaused()) {
+                if (newState == SCROLL_STATE_DRAGGING || newState == SCROLL_STATE_IDLE) {
+                    // user is touchy or the scroll finished, show images
+                    glide.resumeRequests();
+                } // settling means the user let the screen go, but it can still be flinging
+            }
+        }
+
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            int visibleItemCount = sglm.getChildCount();
+            int[] firstVisibileItemPositions = new int[spanCount];
+            firstVisibileItemPositions = sglm.findFirstVisibleItemPositions(firstVisibileItemPositions);
+//            Timber.v("onScrolled -- \n" +
+//                    "visible items: %d\n" +
+//                    "adapter items: %d\n" +
+//                    "first visible item left panel: %d\n" +
+//                    "first visible item right paned: %d",
+//                    visibleItemCount, mAdapter.getItemCount(), firstVisibileItemPositions[0], firstVisibileItemPositions[1]);
+            if (firstVisibileItemPositions[1] + visibleItemCount >= mAdapter.getItemCount() - COUNT_IN_ADV
+                    && !loadingMore
+                    && !lastItemReached()) {
+                loadingMore = true;
+                loadList(mAdapter.getItemCount() + 1);
+            }
+            if (!dragging) {
+                int currentSpeed = Math.abs(dy);
+                boolean paused = glide.isPaused();
+                if (paused && currentSpeed < FLING_JUMP_LOW_THRESHOLD) {
+                    glide.resumeRequests();
+                } else if (!paused && FLING_JUMP_HIGH_THRESHOLD < currentSpeed) {
+                    glide.pauseRequests();
+                }
+            }
+        }
+    };
 
     //TODO  skip query if in Box
     @Override
@@ -92,55 +145,6 @@ public class XkcdListActivity extends BaseActivity {
         super.onDestroy();
     }
 
-    private RecyclerView.OnScrollListener rvScrollListener = new RecyclerView.OnScrollListener() {
-
-        private static final int FLING_JUMP_LOW_THRESHOLD = 80;
-        private static final int FLING_JUMP_HIGH_THRESHOLD = 120;
-
-        private boolean dragging = false;
-
-        @Override
-        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-            super.onScrollStateChanged(recyclerView, newState);
-            dragging = newState == SCROLL_STATE_DRAGGING;
-            if (glide.isPaused()) {
-                if (newState == SCROLL_STATE_DRAGGING || newState == SCROLL_STATE_IDLE) {
-                    // user is touchy or the scroll finished, show images
-                    glide.resumeRequests();
-                } // settling means the user let the screen go, but it can still be flinging
-            }
-        }
-
-        @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            super.onScrolled(recyclerView, dx, dy);
-            int visibleItemCount = sglm.getChildCount();
-            int[] firstVisibileItemPositions = new int[spanCount];
-            firstVisibileItemPositions = sglm.findFirstVisibleItemPositions(firstVisibileItemPositions);
-            Timber.v("onScrolled -- \n" +
-                    "visible items: %d\n" +
-                    "adapter items: %d\n" +
-                    "first visible item left panel: %d\n" +
-                    "first visible item right paned: %d",
-                    visibleItemCount, mAdapter.getItemCount(), firstVisibileItemPositions[0], firstVisibileItemPositions[1]);
-            if (firstVisibileItemPositions[1] + visibleItemCount >= mAdapter.getItemCount() - COUNT_IN_ADV
-                    && !loadingMore
-                    && !lastItemReached()) {
-                loadingMore = true;
-                loadList(mAdapter.getItemCount() + 1);
-            }
-            if (!dragging) {
-                int currentSpeed = Math.abs(dy);
-                boolean paused = glide.isPaused();
-                if (paused && currentSpeed < FLING_JUMP_LOW_THRESHOLD) {
-                    glide.resumeRequests();
-                } else if (!paused && FLING_JUMP_HIGH_THRESHOLD < currentSpeed) {
-                    glide.pauseRequests();
-                }
-            }
-        }
-    };
-
     private boolean lastItemReached() {
         if (mAdapter.getPics() != null) {
             List<XkcdPic> pics = mAdapter.getPics();
@@ -151,7 +155,7 @@ public class XkcdListActivity extends BaseActivity {
     }
 
     private void loadList(final int start) {
-        Query<XkcdPic> query = box.query().between(XkcdPic_.num, start, start+399).build();
+        Query<XkcdPic> query = box.query().between(XkcdPic_.num, start, start + 399).build();
         query.subscribe().on(AndroidScheduler.mainThread()).observer(new DataObserver<List<XkcdPic>>() {
             @Override
             public void onData(List<XkcdPic> data) {
@@ -171,8 +175,7 @@ public class XkcdListActivity extends BaseActivity {
 
                                 @Override
                                 public void onNext(List<XkcdPic> xkcdPics) {
-                                    box.put(xkcdPics);
-                                    mAdapter.appendList(xkcdPics);
+                                    mAdapter.appendList(xkcdPics, true);
                                     loadingMore = false;
                                     inRequest = false;
                                 }
@@ -188,7 +191,7 @@ public class XkcdListActivity extends BaseActivity {
                                 }
                             });
                 } else {
-                    mAdapter.appendList(data);
+                    mAdapter.appendList(data, false);
                     loadingMore = false;
                 }
             }
@@ -196,7 +199,7 @@ public class XkcdListActivity extends BaseActivity {
 
     }
 
-    private class GridAdapter extends RecyclerView.Adapter<GridAdapter.XkcdViewHolder> implements RecyclerViewFastScroller.BubbleTextGetter{
+    private class GridAdapter extends RecyclerView.Adapter<GridAdapter.XkcdViewHolder> implements RecyclerViewFastScroller.BubbleTextGetter {
 
         private Context mContext;
 
@@ -209,7 +212,7 @@ public class XkcdListActivity extends BaseActivity {
         @NonNull
         @Override
         public XkcdViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(mContext).inflate(R.layout.item_xkcd_list,parent, false);
+            View view = LayoutInflater.from(mContext).inflate(R.layout.item_xkcd_list, parent, false);
             return new XkcdViewHolder(view);
         }
 
@@ -224,14 +227,49 @@ public class XkcdListActivity extends BaseActivity {
             return pics == null ? 0 : pics.size();
         }
 
-        public void appendList(List<XkcdPic> xkcdPics) {
-            for (XkcdPic pic : xkcdPics) {
-                if (!pics.contains(pic)) {
-                    pics.add(pic);
+        @SuppressLint("CheckResult")
+        public void appendList(final List<XkcdPic> xkcdPics, boolean checkDB) {
+            if (checkDB) {
+                final Query<XkcdPic> query = box.query().between(XkcdPic_.num, xkcdPics.get(0).num, xkcdPics.get(xkcdPics.size() - 1).num).build();
+                final List<XkcdPic> list = query.find();
+                final HashMap<Long, XkcdPic> map = new HashMap<Long, XkcdPic>();
+                for (XkcdPic xkcdPic : list) {
+                    map.put(xkcdPic.num, xkcdPic);
                 }
+                Observable.fromArray(xkcdPics.toArray(new XkcdPic[xkcdPics.size()]))
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(Schedulers.io())
+                        .map(new Function<XkcdPic, XkcdPic>() {
+                            @Override
+                            public XkcdPic apply(XkcdPic xkcdPic) throws Exception {
+                                XkcdPic pic = map.get(xkcdPic.num);
+                                if (pic != null) {
+                                    xkcdPic.isFavorite = pic.isFavorite;
+                                    xkcdPic.hasThumbed = pic.hasThumbed;
+                                }
+                                if (!pics.contains(xkcdPic)) {
+                                    pics.add(xkcdPic);
+                                }
+                                return xkcdPic;
+                            }
+                        }).toList().observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Consumer<List<XkcdPic>>() {
+                            @Override
+                            public void accept(List<XkcdPic> xkcdPics) throws Exception {
+                                box.put(xkcdPics);
+                                notifyDataSetChanged();
+                            }
+                        });
+            } else {
+                for (XkcdPic pic : xkcdPics) {
+                    if (!pics.contains(pic)) {
+                        pics.add(pic);
+                    }
+                }
+                notifyDataSetChanged();
             }
+
             scroller.setVisibility(pics.size() == 0 ? View.GONE : View.VISIBLE);
-            notifyDataSetChanged();
         }
 
         public List<XkcdPic> getPics() {
@@ -240,7 +278,7 @@ public class XkcdListActivity extends BaseActivity {
 
         @Override
         public String getTextToShowInBubble(int pos) {
-            return pos+"";
+            return String.valueOf(pos + 1);
         }
 
         class XkcdViewHolder extends RecyclerView.ViewHolder {
@@ -255,17 +293,22 @@ public class XkcdListActivity extends BaseActivity {
 
             public void bind(final XkcdPic pic) {
                 PercentFrameLayout.LayoutParams layoutParams =
-                        (PercentFrameLayout.LayoutParams)itemXkcdImageView.getLayoutParams();
+                        (PercentFrameLayout.LayoutParams) itemXkcdImageView.getLayoutParams();
                 PercentLayoutHelper.PercentLayoutInfo info = layoutParams.getPercentLayoutInfo();
                 int width = pic.width;
                 int height = pic.height;
 
-                info.aspectRatio = ((float)width) / height;
+                info.aspectRatio = ((float) width) / height;
                 layoutParams.height = 0;
                 itemXkcdImageView.setLayoutParams(layoutParams);
                 glide.load(pic.getTargetImg()).asBitmap()
                         .diskCacheStrategy(DiskCacheStrategy.SOURCE).priority(Priority.HIGH).fitCenter().into(itemXkcdImageView);
                 itemXkcdImageNum.setText(String.valueOf(pic.num));
+                if (pic.isFavorite) {
+                    itemXkcdImageNum.setBackground(getResources().getDrawable(R.drawable.ic_heart_on));
+                } else {
+                    itemXkcdImageNum.setBackground(getResources().getDrawable(R.drawable.item_num_bg));
+                }
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {

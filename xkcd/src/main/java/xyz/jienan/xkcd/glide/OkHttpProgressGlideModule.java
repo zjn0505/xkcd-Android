@@ -27,6 +27,27 @@ import xyz.jienan.xkcd.network.NetworkService;
  */
 
 public class OkHttpProgressGlideModule implements GlideModule {
+    private static Interceptor createInterceptor(final ResponseProgressListener listener) {
+        return new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                Request request = chain.request();
+                Response response = chain.proceed(request);
+                return response.newBuilder()
+                        .body(new OkHttpProgressResponseBody(request.url(), response.body(), listener))
+                        .build();
+            }
+        };
+    }
+
+    public static void forget(String url) {
+        DispatchingProgressListener.forget(url);
+    }
+
+    public static void expect(String url, UIProgressListener listener) {
+        DispatchingProgressListener.expect(url, listener);
+    }
+
     @Override
     public void applyOptions(Context context, GlideBuilder builder) {
 
@@ -40,22 +61,12 @@ public class OkHttpProgressGlideModule implements GlideModule {
         glide.register(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(client));
     }
 
-    private static Interceptor createInterceptor(final ResponseProgressListener listener) {
-        return new Interceptor() {
-            @Override public Response intercept(Chain chain) throws IOException {
-                Request request = chain.request();
-                Response response = chain.proceed(request);
-                return response.newBuilder()
-                        .body(new OkHttpProgressResponseBody(request.url(), response.body(), listener))
-                        .build();
-            }
-        };
-    }
-
     public interface UIProgressListener {
         void onProgress(long bytesRead, long expectedLength);
+
         /**
          * Control how often the listener needs an update. 0% and 100% will always be dispatched.
+         *
          * @return in percentage (0.2 = call {@link #onProgress} around every 0.2 percent of progress)
          */
         float getGranualityPercentage();
@@ -67,20 +78,12 @@ public class OkHttpProgressGlideModule implements GlideModule {
         void onDownloadFinish();
     }
 
-    public static void forget(String url) {
-        DispatchingProgressListener.forget(url);
-    }
-    public static void expect(String url, UIProgressListener listener) {
-        DispatchingProgressListener.expect(url, listener);
-    }
-
-
-
     private static class DispatchingProgressListener implements ResponseProgressListener {
         private static final Map<String, UIProgressListener> LISTENERS = new HashMap<>();
         private static final Map<String, Long> PROGRESSES = new HashMap<>();
 
         private final Handler handler;
+
         DispatchingProgressListener() {
             this.handler = new Handler(Looper.getMainLooper());
         }
@@ -89,11 +92,13 @@ public class OkHttpProgressGlideModule implements GlideModule {
             LISTENERS.remove(url);
             PROGRESSES.remove(url);
         }
+
         static void expect(String url, UIProgressListener listener) {
             LISTENERS.put(url, listener);
         }
 
-        @Override public void update(HttpUrl url, final long bytesRead, final long contentLength) {
+        @Override
+        public void update(HttpUrl url, final long bytesRead, final long contentLength) {
             //System.out.printf("%s: %d/%d = %.2f%%%n", url, bytesRead, contentLength, (100f * bytesRead) / contentLength);
             String key = url.toString();
             final UIProgressListener listener = LISTENERS.get(key);
@@ -111,7 +116,8 @@ public class OkHttpProgressGlideModule implements GlideModule {
             }
             if (needsDispatch(key, bytesRead, contentLength, listener.getGranualityPercentage())) {
                 handler.post(new Runnable() {
-                    @Override public void run() {
+                    @Override
+                    public void run() {
                         listener.onProgress(bytesRead, contentLength);
                     }
                 });
@@ -123,7 +129,7 @@ public class OkHttpProgressGlideModule implements GlideModule {
                 return true;
             }
             float percent = 100f * current / total;
-            long currentProgress = (long)(percent / granularity);
+            long currentProgress = (long) (percent / granularity);
             Long lastProgress = PROGRESSES.get(key);
             if (lastProgress == null || currentProgress != lastProgress) {
                 PROGRESSES.put(key, currentProgress);

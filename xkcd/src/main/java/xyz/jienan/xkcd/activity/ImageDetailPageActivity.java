@@ -16,12 +16,15 @@ import com.bumptech.glide.request.target.Target;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.github.piasy.biv.view.BigImageView;
 
+import java.util.concurrent.TimeUnit;
+
 import io.objectbox.Box;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 import xyz.jienan.xkcd.R;
@@ -100,15 +103,21 @@ public class ImageDetailPageActivity extends Activity {
             bigImageView.setVisibility(View.GONE);
             photoView.setVisibility(View.VISIBLE);
         }
-        View.OnClickListener listener = new View.OnClickListener() {
+        final View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ImageDetailPageActivity.this.finish();
                 ImageDetailPageActivity.this.overridePendingTransition(R.anim.fadein, R.anim.fadeout);
             }
         };
-        photoView.setOnClickListener(listener);
-        bigImageView.setOnClickListener(listener);
+        Observable.timer(500, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<Long>() {
+            @Override
+            public void accept(Long aLong) throws Exception {
+                photoView.setOnClickListener(listener);
+                bigImageView.setOnClickListener(listener);
+            }
+        });
     }
 
     private void requestImage() {
@@ -121,9 +130,14 @@ public class ImageDetailPageActivity extends Activity {
             }
 
             @Override
-            public void onNext(XkcdPic xkcdPic) {
-                box.put(xkcdPic);
-                renderPic(xkcdPic.getTargetImg());
+            public void onNext(XkcdPic resXkcdPic) {
+                XkcdPic xkcdPic = box.get(resXkcdPic.num);
+                if (xkcdPic != null) {
+                    resXkcdPic.isFavorite = xkcdPic.isFavorite;
+                    resXkcdPic.hasThumbed = xkcdPic.hasThumbed;
+                }
+                box.put(resXkcdPic);
+                renderPic(resXkcdPic.getTargetImg());
             }
 
             @Override

@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:7400301097756525204",
-      "lastPropertyId": "13:7086783021137211715",
+      "lastPropertyId": "15:4531149468420226174",
       "name": "XkcdPic",
       "properties": [
         {
@@ -49,16 +49,20 @@
           "name": "isFavorite"
         },
         {
-          "id": "11:3062322936490117812",
-          "name": "isLiked"
-        },
-        {
           "id": "12:3915247161263449916",
           "name": "width"
         },
         {
           "id": "13:7086783021137211715",
           "name": "height"
+        },
+        {
+          "id": "14:9125666023352709174",
+          "name": "hasThumbed"
+        },
+        {
+          "id": "15:4531149468420226174",
+          "name": "thumbCount"
         }
       ],
       "relations": []
@@ -72,7 +76,9 @@
   "modelVersionParserMinimum": 4,
   "retiredEntityUids": [],
   "retiredIndexUids": [],
-  "retiredPropertyUids": [],
+  "retiredPropertyUids": [
+    3062322936490117812
+  ],
   "retiredRelationUids": [],
   "version": 1
 }
