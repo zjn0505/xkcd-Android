@@ -498,6 +498,7 @@ public class SingleComicFragment extends Fragment {
         if (getActivity() == null || getActivity().isFinishing()) {
             return;
         }
+        ((MainActivity) getActivity()).getPipeline().send(xPic);
         if (TextUtils.isEmpty(target.getModel())) {
             target.setModel(xPic.getTargetImg());
             Glide.with(getActivity()).load(xPic.getTargetImg()).asBitmap().fitCenter().diskCacheStrategy(DiskCacheStrategy.SOURCE).listener(glideListener).into(target);

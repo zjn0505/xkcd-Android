@@ -29,7 +29,6 @@ import com.squareup.seismic.ShakeDetector;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 import io.objectbox.Box;
 import io.reactivex.Observable;
@@ -38,7 +37,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.PublishSubject;
 import timber.log.Timber;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.XkcdApplication;
@@ -150,7 +151,6 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
                 if (actionBar != null) {
                     actionBar.setSubtitle(String.valueOf(position + 1));
                 }
-                Timber.d("selected");
             }
 
             @Override
@@ -161,8 +161,6 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
                 } else if (state == SCROLL_STATE_IDLE) {
                     getInfoAndShowFab();
                 }
-
-                Timber.d("state " + state);
             }
         });
         loadXkcdPic();
@@ -479,20 +477,33 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
         fab.hide();
         toggleSubFabs(false);
         if (!smoothScroll) {
-            if (fabShowSubscription != null && !fabShowSubscription.isDisposed()) {
-                fabShowSubscription.dispose();
-            }
-            fabShowSubscription = Observable.timer(400, TimeUnit.MILLISECONDS).observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<Long>() {
-                @Override
-                public void accept(Long ignored) throws Exception {
-                    getInfoAndShowFab();
-                }
-            });
+            getInfoAndShowFab();
         }
     }
 
     private void getInfoAndShowFab() {
+        if (fabShowSubscription != null && !fabShowSubscription.isDisposed()) {
+            fabShowSubscription.dispose();
+        }
         XkcdPic xkcdPic = box.get(getCurrentIndex());
+        if (xkcdPic == null) {
+            fabShowSubscription = getPipeline().toObservable().filter(new Predicate<XkcdPic>() {
+                @Override
+                public boolean test(XkcdPic xkcdPic) throws Exception {
+                    return xkcdPic.num == getCurrentIndex();
+                }
+            }).doOnNext(new Consumer<XkcdPic>() {
+                @Override
+                public void accept(XkcdPic xkcdPic) throws Exception {
+                    showFab(xkcdPic);
+                }
+            }).subscribe();
+        } else {
+            showFab(xkcdPic);
+        }
+    }
+
+    private void showFab(XkcdPic xkcdPic) {
         toggleFab(xkcdPic.isFavorite);
         btnFav.setLiked(xkcdPic.isFavorite);
         btnThumb.setLiked(xkcdPic.hasThumbed);
@@ -531,7 +542,7 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
         }
     }
 
-    public final void showToast(Context context, String text) {
+    private void showToast(Context context, String text) {
         try {
             toast.getView().isShown();
             toast.setText(text);
@@ -539,6 +550,10 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
             toast = Toast.makeText(context.getApplicationContext(), text, Toast.LENGTH_SHORT);
         }
         toast.show();
+    }
+
+    public PicsPipeline getPipeline() {
+        return pipeline;
     }
 
     private class ComicsPagerAdapter extends FragmentStatePagerAdapter {
@@ -582,4 +597,18 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
             return length;
         }
     }
+
+    public static class PicsPipeline {
+        private PublishSubject<XkcdPic> picsPipeline = PublishSubject.create();
+
+        public void send(XkcdPic pic) {
+            picsPipeline.onNext(pic);
+        }
+
+        public Observable<XkcdPic> toObservable() {
+            return picsPipeline;
+        }
+    }
+
+    private PicsPipeline pipeline = new PicsPipeline();
 }
