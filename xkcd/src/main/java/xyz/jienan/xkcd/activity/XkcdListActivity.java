@@ -258,6 +258,7 @@ public class XkcdListActivity extends BaseActivity {
                             public void accept(List<XkcdPic> xkcdPics) throws Exception {
                                 box.put(xkcdPics);
                                 notifyDataSetChanged();
+                                scroller.setVisibility(pics.isEmpty() ? View.GONE : View.VISIBLE);
                             }
                         });
             } else {
@@ -267,9 +268,8 @@ public class XkcdListActivity extends BaseActivity {
                     }
                 }
                 notifyDataSetChanged();
+                scroller.setVisibility(pics.isEmpty() ? View.GONE : View.VISIBLE);
             }
-
-            scroller.setVisibility(pics.size() == 0 ? View.GONE : View.VISIBLE);
         }
 
         public List<XkcdPic> getPics() {
