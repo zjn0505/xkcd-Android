@@ -89,3 +89,5 @@
 }
 
 -dontwarn com.bumptech.glide.load.resource.bitmap.VideoDecoder
+
+-keep class android.support.v7.widget.SearchView { *; }
