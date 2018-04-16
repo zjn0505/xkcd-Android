@@ -1,4 +1,4 @@
-# Xkcd-Android
+# Xkcd-Android  [![Build Status](https://travis-ci.org/zjn0505/Xkcd-Android.svg?branch=master)](https://travis-ci.org/zjn0505/Xkcd-Android)
 
 - [xkcd](https://xkcd.com) comics viewer, based on the [json interface](https://xkcd.com/json.html).
 - Full support to all large comics, with the help from [Glide](https://github.com/bumptech/glide), [PhotoView](https://github.com/chrisbanes/PhotoView), and [BigImageViewer](https://github.com/Piasy/BigImageViewer).
