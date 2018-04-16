@@ -17,6 +17,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatDelegate;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -67,6 +68,11 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
     private static final String LATEST_XKCD_ID = "xkcd_latest_id";
     private static final String LAST_VIEW_XKCD_ID = "xkcd_last_viewed_id";
     private static final int INVALID_ID = 0;
+
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
+
     private ViewPager viewPager;
     private FloatingActionButton fab;
     private LikeButton btnFav;
