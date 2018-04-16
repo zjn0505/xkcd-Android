@@ -1,5 +1,6 @@
 package xyz.jienan.xkcd.activity;
 
+import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
@@ -87,10 +88,11 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private boolean isFre = true;
     private boolean isPaused = true;
-
     private Disposable fabShowSubscription;
     private boolean isFabsShowing = false;
     private Box<XkcdPic> box;
+    private Toast toast;
+    private PicsPipeline pipeline = new PicsPipeline();
     private NumberPickerDialogFragment.INumberPickerDialogListener pickerListener =
             new NumberPickerDialogFragment.INumberPickerDialogListener() {
                 @Override
@@ -103,7 +105,6 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
                     // Do nothing
                 }
             };
-    private Toast toast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -220,76 +221,6 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
         sd.start(sensorManager);
     }
 
-    private int getCurrentIndex() {
-        return viewPager.getCurrentItem() + 1;
-    }
-
-    private void comicLiked() {
-        final XkcdPic xkcdPic = box.get(getCurrentIndex());
-        xkcdPic.hasThumbed = true;
-        box.put(xkcdPic);
-        Observable<XkcdPic> thumbsUpObservable = NetworkService.getXkcdAPI()
-                .thumbsUp(NetworkService.XKCD_THUMBS_UP, getCurrentIndex())
-                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-        thumbsUpObservable.subscribe(new Observer<XkcdPic>() {
-            @Override
-            public void onSubscribe(Disposable d) {
-                // no ops
-            }
-
-            @Override
-            public void onNext(XkcdPic resXkcdPic) {
-                resXkcdPic.isFavorite = xkcdPic.isFavorite;
-                resXkcdPic.hasThumbed = xkcdPic.hasThumbed;
-                box.put(resXkcdPic);
-                showToast(MainActivity.this, String.valueOf(resXkcdPic.thumbCount));
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                Timber.e("Thumbs up failed", e);
-            }
-
-            @Override
-            public void onComplete() {
-                // no ops
-            }
-        });
-    }
-
-    private void comicFavorited(boolean isFav) {
-        XkcdPic xkcdPic = box.get(getCurrentIndex());
-        xkcdPic.isFavorite = isFav;
-        box.put(xkcdPic);
-        toggleFab(isFav);
-    }
-
-    private void toggleSubFabs(boolean showSubFabs) {
-        ArrayList<ObjectAnimator> objectAnimatorsArray = new ArrayList<ObjectAnimator>();
-        ObjectAnimator thumbMove, thumbAlpha, favMove, favAlpha;
-        if (showSubFabs) {
-            thumbMove = ObjectAnimator.ofFloat(btnThumb, "translationX", -215);
-            thumbAlpha = ObjectAnimator.ofFloat(btnThumb, "alpha", 1);
-            favMove = ObjectAnimator.ofFloat(btnFav, "translationX", -150, -400);
-            favAlpha = ObjectAnimator.ofFloat(btnFav, "alpha", 1);
-        } else {
-            thumbMove = ObjectAnimator.ofFloat(btnThumb, "translationX", 0);
-            thumbAlpha = ObjectAnimator.ofFloat(btnThumb, "alpha", 0);
-            favMove = ObjectAnimator.ofFloat(btnFav, "translationX", -150);
-            favAlpha = ObjectAnimator.ofFloat(btnFav, "alpha", 0);
-        }
-        objectAnimatorsArray.add(thumbMove);
-        objectAnimatorsArray.add(thumbAlpha);
-        objectAnimatorsArray.add(favMove);
-        objectAnimatorsArray.add(favAlpha);
-        isFabsShowing = showSubFabs;
-        ObjectAnimator[] objectAnimators = objectAnimatorsArray.toArray(new ObjectAnimator[objectAnimatorsArray.size()]);
-        AnimatorSet animSet = new AnimatorSet();
-        animSet.playTogether(objectAnimators);
-        animSet.setDuration(300);
-        animSet.start();
-    }
-
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -342,54 +273,6 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
         }
         sd.stop();
         super.onDestroy();
-    }
-
-    private void loadXkcdPic() {
-        NetworkService.getXkcdAPI().getLatest().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<XkcdPic>() {
-            @Override
-            public void onSubscribe(Disposable d) {
-                compositeDisposable.add(d);
-            }
-
-            @Override
-            public void onNext(XkcdPic xkcdPic) {
-                if (editor == null) {
-                    editor = sharedPreferences.edit();
-                }
-                latestIndex = (int) xkcdPic.num;
-                editor.putInt(XKCD_LATEST_INDEX, latestIndex);
-                editor.apply();
-                adapter.setSize(latestIndex);
-                if (isFre) {
-                    if (savedId != INVALID_ID) {
-                        scrollViewPagerToItem(savedId - 1, false);
-                        savedId = INVALID_ID;
-                    } else {
-                        scrollViewPagerToItem(latestIndex - 1, false);
-                    }
-                }
-                saveLatestXkcdDao(xkcdPic);
-            }
-
-            private void saveLatestXkcdDao(XkcdPic resXkcdPic) {
-                XkcdPic xkcdPic = box.get(resXkcdPic.num);
-                if (xkcdPic != null) {
-                    resXkcdPic.isFavorite = xkcdPic.isFavorite;
-                    resXkcdPic.hasThumbed = xkcdPic.hasThumbed;
-                }
-                box.put(resXkcdPic);
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                // no op
-            }
-
-            @Override
-            public void onComplete() {
-                // no op
-            }
-        });
     }
 
     @Override
@@ -478,6 +361,148 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
         }
     }
 
+    private void loadXkcdPic() {
+        NetworkService.getXkcdAPI().getLatest().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<XkcdPic>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+                compositeDisposable.add(d);
+            }
+
+            @Override
+            public void onNext(XkcdPic xkcdPic) {
+                if (editor == null) {
+                    editor = sharedPreferences.edit();
+                }
+                latestIndex = (int) xkcdPic.num;
+                editor.putInt(XKCD_LATEST_INDEX, latestIndex);
+                editor.apply();
+                adapter.setSize(latestIndex);
+                if (isFre) {
+                    if (savedId != INVALID_ID) {
+                        scrollViewPagerToItem(savedId - 1, false);
+                        savedId = INVALID_ID;
+                    } else {
+                        scrollViewPagerToItem(latestIndex - 1, false);
+                    }
+                }
+                saveLatestXkcdDao(xkcdPic);
+            }
+
+            private void saveLatestXkcdDao(XkcdPic resXkcdPic) {
+                XkcdPic xkcdPic = box.get(resXkcdPic.num);
+                if (xkcdPic != null) {
+                    resXkcdPic.isFavorite = xkcdPic.isFavorite;
+                    resXkcdPic.hasThumbed = xkcdPic.hasThumbed;
+                }
+                box.put(resXkcdPic);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                // no op
+            }
+
+            @Override
+            public void onComplete() {
+                // no op
+            }
+        });
+    }
+
+    private int getCurrentIndex() {
+        return viewPager.getCurrentItem() + 1;
+    }
+
+    private void comicLiked() {
+        final XkcdPic xkcdPic = box.get(getCurrentIndex());
+        xkcdPic.hasThumbed = true;
+        box.put(xkcdPic);
+        Observable<XkcdPic> thumbsUpObservable = NetworkService.getXkcdAPI()
+                .thumbsUp(NetworkService.XKCD_THUMBS_UP, getCurrentIndex())
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        thumbsUpObservable.subscribe(new Observer<XkcdPic>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+                // no ops
+            }
+
+            @Override
+            public void onNext(XkcdPic resXkcdPic) {
+                resXkcdPic.isFavorite = xkcdPic.isFavorite;
+                resXkcdPic.hasThumbed = xkcdPic.hasThumbed;
+                box.put(resXkcdPic);
+                showToast(MainActivity.this, String.valueOf(resXkcdPic.thumbCount));
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Timber.e(e, "Thumbs up failed");
+            }
+
+            @Override
+            public void onComplete() {
+                // no ops
+            }
+        });
+    }
+
+    private void comicFavorited(boolean isFav) {
+        XkcdPic xkcdPic = box.get(getCurrentIndex());
+        xkcdPic.isFavorite = isFav;
+        box.put(xkcdPic);
+        toggleFab(isFav);
+    }
+
+    private void toggleSubFabs(final boolean showSubFabs) {
+        btnThumb.setClickable(showSubFabs);
+        btnFav.setClickable(showSubFabs);
+        ObjectAnimator thumbMove, thumbAlpha, favMove, favAlpha;
+        if (showSubFabs) {
+            thumbMove = ObjectAnimator.ofFloat(btnThumb, "translationX", -215);
+            thumbAlpha = ObjectAnimator.ofFloat(btnThumb, "alpha", 1);
+            favMove = ObjectAnimator.ofFloat(btnFav, "translationX", -150, -400);
+            favAlpha = ObjectAnimator.ofFloat(btnFav, "alpha", 1);
+        } else {
+            thumbMove = ObjectAnimator.ofFloat(btnThumb, "translationX", 0);
+            thumbAlpha = ObjectAnimator.ofFloat(btnThumb, "alpha", 0);
+            favMove = ObjectAnimator.ofFloat(btnFav, "translationX", -150);
+            favAlpha = ObjectAnimator.ofFloat(btnFav, "alpha", 0);
+        }
+
+        isFabsShowing = showSubFabs;
+        AnimatorSet animSet = new AnimatorSet();
+        animSet.playTogether(thumbMove, thumbAlpha, favMove, favAlpha);
+        animSet.setDuration(300);
+        animSet.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animator) {
+                if (showSubFabs) {
+                    btnThumb.setVisibility(View.VISIBLE);
+                    btnFav.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                if (!showSubFabs) {
+                    btnThumb.setVisibility(View.GONE);
+                    btnFav.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) {
+
+            }
+        });
+        animSet.start();
+    }
+
     private void scrollViewPagerToItem(int id, boolean smoothScroll) {
         viewPager.setCurrentItem(id, smoothScroll);
         fab.hide();
@@ -562,6 +587,18 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
         return pipeline;
     }
 
+    public static class PicsPipeline {
+        private PublishSubject<XkcdPic> picsPipeline = PublishSubject.create();
+
+        public void send(XkcdPic pic) {
+            picsPipeline.onNext(pic);
+        }
+
+        public Observable<XkcdPic> toObservable() {
+            return picsPipeline;
+        }
+    }
+
     private class ComicsPagerAdapter extends FragmentStatePagerAdapter {
 
         private int length;
@@ -603,18 +640,4 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
             return length;
         }
     }
-
-    public static class PicsPipeline {
-        private PublishSubject<XkcdPic> picsPipeline = PublishSubject.create();
-
-        public void send(XkcdPic pic) {
-            picsPipeline.onNext(pic);
-        }
-
-        public Observable<XkcdPic> toObservable() {
-            return picsPipeline;
-        }
-    }
-
-    private PicsPipeline pipeline = new PicsPipeline();
 }

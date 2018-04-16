@@ -53,6 +53,9 @@
     <string name="toast_more_explain_failed">Failed to get more details</string>
     <string name="title_xkcd_list">xkcd list</string>
 
+    <string name="thumbs_up">Thumbs-up</string>
+    <string name="add_to_fav">Add to favorite</string>
+
     <string-array name="notification_titles">
         <item>new xkcd is coming</item>
         <item>new xkcd on the way</item>

@@ -117,7 +117,7 @@ public class SingleComicFragment extends Fragment {
     private List<XkcdPic> searchSuggestions;
     private SearchCursorAdapter searchAdapter;
     private List<Disposable> disposables = new ArrayList<>();
-    Observer<XkcdPic> xkcdPicObserver = new Observer<XkcdPic>() {
+    private Observer<XkcdPic> xkcdPicObserver = new Observer<XkcdPic>() {
         @Override
         public void onSubscribe(Disposable d) {
             disposables.add(d);
@@ -284,6 +284,7 @@ public class SingleComicFragment extends Fragment {
                 return true;
             }
         });
+
         initGlide();
         box = ((XkcdApplication) getActivity().getApplication()).getBoxStore().boxFor(XkcdPic.class);
 //        Query<XkcdPic>  xkcdQuery = box.query().order(XkcdPic_.num).build();

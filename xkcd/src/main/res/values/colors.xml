@@ -11,4 +11,6 @@
     <color name="pink">#e91e63</color>
     <color name="white">#FFF</color>
     <color name="blue">#2196f3</color>
+
+    <color name="like_btn_bg">#ffffff</color>
 </resources>

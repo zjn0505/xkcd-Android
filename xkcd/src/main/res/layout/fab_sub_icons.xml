@@ -6,17 +6,6 @@
     android:layout_height="match_parent"
     tools:showIn="@layout/activity_main">
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        app:backgroundTint="@color/pink"
-        app:srcCompat="@drawable/ic_heart_white"
-        android:layout_margin="16dp"/>
-
     <xyz.jienan.xkcd.ui.like.LikeButton
         android:id="@+id/btn_fav"
         app:icon_type="heart"
@@ -26,7 +15,9 @@
         android:paddingBottom="8dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"/>
+        android:layout_alignParentRight="true"
+        android:contentDescription="@string/add_to_fav"
+        android:visibility="gone" />
 
     <xyz.jienan.xkcd.ui.like.LikeButton
         android:id="@+id/btn_thumb"
@@ -38,6 +29,20 @@
         android:paddingBottom="8dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"/>
+        android:layout_alignParentRight="true"
+        android:contentDescription="@string/thumbs_up"
+        android:visibility="gone"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        app:backgroundTint="@color/pink"
+        app:srcCompat="@drawable/ic_heart_white"
+        app:useCompatPadding="true"
+        android:layout_marginRight="8dp"/>
 
 </merge>
