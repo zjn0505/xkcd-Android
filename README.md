@@ -15,4 +15,6 @@ So, I just put all these great services and modules together, and offering the b
 
 Kudos to Randall, and all xkcd lovers.
 
+# Disclaimer
 
+This project is under Apache License 2.0, and the xkcd comics are under [CC BY-NC 2.5](https://xkcd.com/license.html).
