@@ -8,7 +8,11 @@
 - Caching with [ObjectBox](http://objectbox.io/) and [OkHttp](https://github.com/square/okhttp/)
 - FCM, crashlytics from [Firebase](firebase.google.com)
 - xkcd staggered list, server implemented in this [repo](https://github.com/zjn0505/xkcd)
+- Favorite :heart: and thumbs-up :thumbsup:, modified from [LikeButton](https://github.com/jd-alexander/LikeButton)
+
 
 So, I just put all these great services and modules together, and offering the best experience to explore xkcd comic on mobile phone.
 
 Kudos to Randall, and all xkcd lovers.
+
+
