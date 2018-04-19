@@ -448,9 +448,11 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
 
     private void comicFavorited(boolean isFav) {
         XkcdPic xkcdPic = box.get(getCurrentIndex());
-        xkcdPic.isFavorite = isFav;
-        box.put(xkcdPic);
-        toggleFab(isFav);
+        if (xkcdPic != null) {
+            xkcdPic.isFavorite = isFav;
+            box.put(xkcdPic);
+            toggleFab(isFav); 
+        }
     }
 
     private void toggleSubFabs(final boolean showSubFabs) {
