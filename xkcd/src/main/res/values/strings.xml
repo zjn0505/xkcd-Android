@@ -52,6 +52,8 @@
     <string name="share_text">Come and check this funny image I got from xkcd.</string>
     <string name="toast_more_explain_failed">Failed to get more details</string>
     <string name="title_xkcd_list">xkcd list</string>
+    <string name="menu_my_fav">My Favorite</string>
+    <string name="menu_most_liked">Most liked</string>
 
     <string name="thumbs_up">Thumbs-up</string>
     <string name="add_to_fav">Add to favorite</string>

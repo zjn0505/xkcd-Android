@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/action_fav"
+        android:title="@string/menu_my_fav"
+        app:showAsAction="never"/>
+
+    <item android:id="@+id/action_most_liked"
+        android:title="@string/menu_my_fav"
+        app:showAsAction="never"/>
+
+</menu>

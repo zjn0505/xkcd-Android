@@ -48,4 +48,6 @@
         <item>有新的xkcd漫画了</item>
         <item>xkcd刚刚更新</item>
     </string-array>
+    <string name="menu_my_fav">我的最爱</string>
+    <string name="menu_most_liked">最多点赞</string>
 </resources>
