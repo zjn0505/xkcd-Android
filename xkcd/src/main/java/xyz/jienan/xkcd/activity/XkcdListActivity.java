@@ -12,6 +12,7 @@ import android.support.percent.PercentLayoutHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -118,6 +119,17 @@ public class XkcdListActivity extends BaseActivity {
         }
     };
 
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     //TODO  skip query if in Box
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -137,6 +149,7 @@ public class XkcdListActivity extends BaseActivity {
         glide = Glide.with(this);
         latestIndex = PreferenceManager.getDefaultSharedPreferences(this).getInt(XKCD_LATEST_INDEX, INVALID_ID);
         loadList(1);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
