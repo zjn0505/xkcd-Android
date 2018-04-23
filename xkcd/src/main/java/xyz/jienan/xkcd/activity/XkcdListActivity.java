@@ -1,6 +1,8 @@
 package xyz.jienan.xkcd.activity;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -30,6 +32,7 @@ import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.XkcdApplication;
 import xyz.jienan.xkcd.XkcdPic;
 import xyz.jienan.xkcd.XkcdPic_;
+import xyz.jienan.xkcd.fragment.ListFilterDialogFragment;
 import xyz.jienan.xkcd.network.NetworkService;
 import xyz.jienan.xkcd.ui.RecyclerViewFastScroller;
 import xyz.jienan.xkcd.ui.XkcdListGridAdapter;
@@ -37,6 +40,7 @@ import xyz.jienan.xkcd.ui.XkcdListGridAdapter;
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_DRAGGING;
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static xyz.jienan.xkcd.Const.XKCD_LATEST_INDEX;
+import static xyz.jienan.xkcd.activity.XkcdListActivity.Selection.ALL_COMICS;
 import static xyz.jienan.xkcd.network.NetworkService.XKCD_BROWSE_LIST;
 
 /**
@@ -55,6 +59,10 @@ public class XkcdListActivity extends BaseActivity {
     private boolean loadingMore = false;
     private boolean inRequest = false;
     private int latestIndex;
+
+    private SharedPreferences sharedPreferences;
+    private Selection currentSelection = ALL_COMICS;
+
     private List<XkcdPic> pics = new ArrayList<>();
     private RecyclerViewFastScroller scroller;
     private RecyclerView.OnScrollListener rvScrollListener = new RecyclerView.OnScrollListener() {
@@ -79,21 +87,6 @@ public class XkcdListActivity extends BaseActivity {
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
-            int visibleItemCount = sglm.getChildCount();
-            int[] firstVisibileItemPositions = new int[spanCount];
-            firstVisibileItemPositions = sglm.findFirstVisibleItemPositions(firstVisibileItemPositions);
-//            Timber.v("onScrolled -- \n" +
-//                    "visible items: %d\n" +
-//                    "adapter items: %d\n" +
-//                    "first visible item left panel: %d\n" +
-//                    "first visible item right paned: %d",
-//                    visibleItemCount, mAdapter.getItemCount(), firstVisibileItemPositions[0], firstVisibileItemPositions[1]);
-            if (firstVisibileItemPositions[1] + visibleItemCount >= mAdapter.getItemCount() - COUNT_IN_ADV
-                    && !loadingMore
-                    && !lastItemReached()) {
-                loadingMore = true;
-                loadList(mAdapter.getItemCount() + 1);
-            }
             if (!dragging) {
                 int currentSpeed = Math.abs(dy);
                 boolean paused = mAdapter.getGlide().isPaused();
@@ -103,8 +96,28 @@ public class XkcdListActivity extends BaseActivity {
                     mAdapter.getGlide().pauseRequests();
                 }
             }
+            if (currentSelection != ALL_COMICS) {
+                return;
+            }
+            int visibleItemCount = sglm.getChildCount();
+            int[] firstVisibileItemPositions = new int[spanCount];
+            firstVisibileItemPositions = sglm.findFirstVisibleItemPositions(firstVisibileItemPositions);
+            if (firstVisibileItemPositions[1] + visibleItemCount >= mAdapter.getItemCount() - COUNT_IN_ADV
+                    && !loadingMore
+                    && !lastItemReached()) {
+                loadingMore = true;
+                loadList(mAdapter.getItemCount() + 1);
+            }
         }
     };
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (currentSelection != ALL_COMICS) {
+            outState.putInt("Selection", currentSelection.id);
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -118,16 +131,42 @@ public class XkcdListActivity extends BaseActivity {
             case android.R.id.home:
                 onBackPressed();
                 break;
-            case R.id.action_fav:
-
+            case R.id.action_filter:
+                ListFilterDialogFragment filterDialog = new ListFilterDialogFragment();
+                filterDialog.show(getSupportFragmentManager(), "filter");
+                getSupportFragmentManager().executePendingTransactions();
+                filterDialog.getDialog().setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        int selection = sharedPreferences.getInt("FILTER_SELECTION", 0);
+                        if (currentSelection.ordinal() != selection) {
+                            currentSelection = Selection.fromValue(selection);
+                            reloadList(currentSelection);
+                        }
+                    }
+                });
                 break;
         }
         return true;
     }
 
+    private void reloadList(Selection currentSelection) {
+        switch (currentSelection) {
+            case ALL_COMICS:
+                loadList(1);
+                break;
+            case MY_FAVORITE:
+                Query<XkcdPic> query = box.query().equal(XkcdPic_.isFavorite, true).build();
+                List<XkcdPic> list = query.find();
+                mAdapter.updateData(list);
+                break;
+        }
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         setContentView(R.layout.activity_list);
         rvList = findViewById(R.id.rv_list);
         scroller = findViewById(R.id.rv_scroller);
@@ -141,8 +180,14 @@ public class XkcdListActivity extends BaseActivity {
         rvList.setLayoutManager(sglm);
         rvList.addOnScrollListener(rvScrollListener);
         latestIndex = PreferenceManager.getDefaultSharedPreferences(this).getInt(XKCD_LATEST_INDEX, INVALID_ID);
-        loadList(1);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (savedInstanceState != null) {
+            int selection = savedInstanceState.getInt("Selection", ALL_COMICS.id);
+            currentSelection = Selection.fromValue(selection);
+        } else {
+            sharedPreferences.edit().putInt("FILTER_SELECTION", ALL_COMICS.id).apply();
+        }
+        reloadList(currentSelection);
     }
 
     @Override
@@ -247,6 +292,26 @@ public class XkcdListActivity extends BaseActivity {
             }
             scroller.setVisibility(pics.isEmpty() ? View.GONE : View.VISIBLE);
             mAdapter.updateData(pics);
+        }
+    }
+
+    public enum Selection {
+        ALL_COMICS(0),
+        MY_FAVORITE(1),
+        PEOPLES_CHOICE(2);
+
+        public int id;
+        Selection(int id) {
+            this.id = id;
+        }
+
+        public static Selection fromValue(int value) {
+            for (Selection selection : values()) {
+                if (selection.id == value) {
+                    return selection;
+                }
+            }
+            return null;
         }
     }
 }

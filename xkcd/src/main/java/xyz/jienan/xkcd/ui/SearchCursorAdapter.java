@@ -1,4 +1,4 @@
-package xyz.jienan.xkcd;
+package xyz.jienan.xkcd.ui;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
+import xyz.jienan.xkcd.R;
 
 /**
  * Created by jienanzhang on 21/03/2018.

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:layout_margin="15dp">
+
+    <ImageView
+        android:id="@+id/iv_filter"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginLeft="15dp"
+        android:src="@mipmap/ic_launcher_round"/>
+
+    <CheckedTextView
+        android:id="@+id/tv_filter"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:checkMark="?android:attr/listChoiceIndicatorSingle"
+        android:gravity="center_vertical"
+        android:fontFamily="@font/xkcd"
+        android:textSize="25sp"
+        android:layout_marginRight="15dp"
+        android:layout_marginLeft="15dp"
+        android:text="All comics"/>
+
+</LinearLayout>

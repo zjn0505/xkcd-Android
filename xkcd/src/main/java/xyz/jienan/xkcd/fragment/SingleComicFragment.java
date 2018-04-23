@@ -54,7 +54,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import timber.log.Timber;
 import xyz.jienan.xkcd.R;
-import xyz.jienan.xkcd.SearchCursorAdapter;
+import xyz.jienan.xkcd.ui.SearchCursorAdapter;
 import xyz.jienan.xkcd.XkcdApplication;
 import xyz.jienan.xkcd.XkcdPic;
 import xyz.jienan.xkcd.activity.ImageDetailPageActivity;

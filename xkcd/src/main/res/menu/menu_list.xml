@@ -2,12 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/action_fav"
-        android:title="@string/menu_my_fav"
-        app:showAsAction="never"/>
-
-    <item android:id="@+id/action_most_liked"
-        android:title="@string/menu_my_fav"
-        app:showAsAction="never"/>
+    <item android:id="@+id/action_filter"
+        android:title="@string/menu_filter"
+        android:icon="@drawable/ic_filter_list"
+        app:showAsAction="always"/>
 
 </menu>
