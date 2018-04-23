@@ -85,7 +85,8 @@ public class SingleComicFragment extends Fragment {
 
     private int id;
     private XkcdPic currentPic;
-    RequestListener glideListener = new RequestListener<String, Bitmap>() {
+    private Box<XkcdPic> box;
+    private RequestListener glideListener = new RequestListener<String, Bitmap>() {
         @Override
         public boolean onException(Exception e, final String model, final Target<Bitmap> target, boolean isFirstResource) {
             btnReload.setVisibility(View.VISIBLE);
@@ -109,10 +110,19 @@ public class SingleComicFragment extends Fragment {
                     launchDetailPageActivity();
                 }
             });
+            if (currentPic != null && (currentPic.width == 0 || currentPic.height == 0) && resource != null) {
+                XkcdPic xkcdPic = box.get(currentPic.num);
+                int width = resource.getWidth();
+                int height = resource.getHeight();
+                if (xkcdPic != null && width > 0 && height > 0) {
+                    xkcdPic.width = width;
+                    xkcdPic.height = height;
+                    box.put(xkcdPic);
+                }
+            }
             return false;
         }
     };
-    private Box<XkcdPic> box;
     private ProgressTarget<String, Bitmap> target;
     private List<XkcdPic> searchSuggestions;
     private SearchCursorAdapter searchAdapter;

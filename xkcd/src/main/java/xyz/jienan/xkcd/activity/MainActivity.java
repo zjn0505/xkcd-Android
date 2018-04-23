@@ -28,17 +28,23 @@ import android.widget.Toast;
 
 import com.squareup.seismic.ShakeDetector;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 import io.objectbox.Box;
+import io.objectbox.android.AndroidScheduler;
+import io.objectbox.query.Query;
+import io.objectbox.reactive.DataObserver;
 import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
+import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
@@ -46,6 +52,7 @@ import timber.log.Timber;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.XkcdApplication;
 import xyz.jienan.xkcd.XkcdPic;
+import xyz.jienan.xkcd.XkcdPic_;
 import xyz.jienan.xkcd.fragment.NumberPickerDialogFragment;
 import xyz.jienan.xkcd.fragment.SingleComicFragment;
 import xyz.jienan.xkcd.network.NetworkService;
@@ -60,6 +67,7 @@ import static xyz.jienan.xkcd.Const.PREF_ARROW;
 import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NEW_INTENT;
 import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NOTI_INTENT;
 import static xyz.jienan.xkcd.Const.XKCD_LATEST_INDEX;
+import static xyz.jienan.xkcd.network.NetworkService.XKCD_BROWSE_LIST;
 
 public class MainActivity extends BaseActivity implements ShakeDetector.Listener {
 
@@ -395,6 +403,9 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
                     resXkcdPic.hasThumbed = xkcdPic.hasThumbed;
                 }
                 box.put(resXkcdPic);
+                for (int i = 0; i < latestIndex / 400; i++) {
+                    loadList(i * 400 + 1);
+                }
             }
 
             @Override
@@ -451,7 +462,37 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
         if (xkcdPic != null) {
             xkcdPic.isFavorite = isFav;
             box.put(xkcdPic);
-            toggleFab(isFav); 
+            toggleFab(isFav);
+            if (xkcdPic.width == 0 || xkcdPic.height == 0) {
+                NetworkService.getXkcdAPI().getXkcdList(XKCD_BROWSE_LIST, (int) xkcdPic.num, 0, 1)
+                        .subscribeOn(Schedulers.io()).observeOn(Schedulers.io()).subscribe(new Observer<List<XkcdPic>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(List<XkcdPic> xkcdPics) {
+                        if (xkcdPics != null && xkcdPics.size() == 1) {
+                            XkcdPic xkcdPic = xkcdPics.get(0);
+                            XkcdPic xkcdPicBox = box.get(xkcdPic.num);
+                            xkcdPicBox.width = xkcdPic.width;
+                            xkcdPicBox.height = xkcdPic.height;
+                            box.put(xkcdPicBox);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+            }
         }
     }
 
@@ -640,6 +681,59 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
         @Override
         public int getCount() {
             return length;
+        }
+    }
+
+    private void loadList(final int start) {
+        final Query<XkcdPic> query = box.query().between(XkcdPic_.num, start, start + 399).build();
+        final List<XkcdPic> list = query.find();
+        final HashMap<Long, XkcdPic> map = new HashMap<Long, XkcdPic>();
+        for (XkcdPic xkcdPic : list) {
+            map.put(xkcdPic.num, xkcdPic);
+        }
+        List<XkcdPic> data = query.find();
+
+        int dataSize = data.size();
+        Timber.d("Load xkcd list request, start from: %d, the response items: %d", start, dataSize);
+        if ((start <= latestIndex - 399 && dataSize != 400 && start != 401) ||
+                (start == 401 && dataSize != 399) ||
+                (start > latestIndex - 399 && start + dataSize - 1 != latestIndex)) {
+            NetworkService.getXkcdAPI().getXkcdList(XKCD_BROWSE_LIST, start, 0, 400)
+                    .subscribeOn(Schedulers.io()).observeOn(Schedulers.computation())
+                    .flatMap(new Function<List<XkcdPic>, ObservableSource<XkcdPic>>() {
+                        @Override
+                        public ObservableSource<XkcdPic> apply(List<XkcdPic> xkcdPics) throws Exception {
+                            return Observable.fromIterable(xkcdPics);
+                        }
+                    }).filter(new Predicate<XkcdPic>() {
+                @Override
+                public boolean test(XkcdPic xkcdPic) throws Exception {
+                    XkcdPic pic = map.get(xkcdPic.num);
+                    return pic == null || pic.height == 0 || pic.width == 0;
+                }
+            }).toList().subscribe(new SingleObserver<List<XkcdPic>>() {
+                @Override
+                public void onSubscribe(Disposable d) {
+
+                }
+
+                @Override
+                public void onSuccess(List<XkcdPic> xkcdPics) {
+                    for (XkcdPic pic : xkcdPics) {
+                        XkcdPic picInBox = map.get(pic.num);
+                        if (picInBox != null) {
+                            pic.isFavorite = picInBox.isFavorite;
+                            pic.hasThumbed = picInBox.hasThumbed;
+                        }
+                    }
+                    box.put(xkcdPics);
+                }
+
+                @Override
+                public void onError(Throwable e) {
+
+                }
+            });
         }
     }
 }

@@ -20,21 +20,30 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.objectbox.Box;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import xyz.jienan.xkcd.R;
+import xyz.jienan.xkcd.XkcdApplication;
 import xyz.jienan.xkcd.XkcdPic;
 import xyz.jienan.xkcd.activity.MainActivity;
+import xyz.jienan.xkcd.network.NetworkService;
 
 import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NEW_INTENT;
+import static xyz.jienan.xkcd.network.NetworkService.XKCD_BROWSE_LIST;
 
 public class XkcdListGridAdapter extends RecyclerView.Adapter<XkcdListGridAdapter.XkcdViewHolder> implements RecyclerViewFastScroller.BubbleTextGetter {
 
     private Context mContext;
     private RequestManager glide;
     private List<XkcdPic> pics = new ArrayList<>();
+    private Box<XkcdPic> box;
 
     public XkcdListGridAdapter(Context context) {
         mContext = context;
         glide = Glide.with(context);
+        box = ((XkcdApplication) context.getApplicationContext()).getBoxStore().boxFor(XkcdPic.class);
     }
 
     public RequestManager getGlide() {
@@ -116,6 +125,36 @@ public class XkcdListGridAdapter extends RecyclerView.Adapter<XkcdListGridAdapte
                     mContext.startActivity(intent);
                 }
             });
+            if (width == 0 || height == 0) {
+                NetworkService.getXkcdAPI().getXkcdList(XKCD_BROWSE_LIST, (int) pic.num, 0, 1)
+                        .subscribeOn(Schedulers.io()).observeOn(Schedulers.io()).subscribe(new Observer<List<XkcdPic>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(List<XkcdPic> xkcdPics) {
+                        if (xkcdPics != null && xkcdPics.size() == 1) {
+                            XkcdPic xkcdPic = xkcdPics.get(0);
+                            XkcdPic xkcdPicBox = box.get(pic.num);
+                            xkcdPicBox.width = xkcdPic.width;
+                            xkcdPicBox.height = xkcdPic.height;
+                            box.put(xkcdPicBox);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+            }
         }
     }
 }

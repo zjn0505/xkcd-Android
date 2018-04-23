@@ -21,11 +21,15 @@ import io.objectbox.android.AndroidScheduler;
 import io.objectbox.query.Query;
 import io.objectbox.reactive.DataObserver;
 import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
+import io.reactivex.SingleObserver;
+import io.reactivex.SingleSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
+import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 import xyz.jienan.xkcd.R;
@@ -106,7 +110,7 @@ public class XkcdListActivity extends BaseActivity {
                     && !loadingMore
                     && !lastItemReached()) {
                 loadingMore = true;
-                loadList(mAdapter.getItemCount() + 1);
+                loadList((int) (pics.get(pics.size() - 1).num + 1));
             }
         }
     };
@@ -121,7 +125,47 @@ public class XkcdListActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_list, menu);
+        Query<XkcdPic> query = box.query().equal(XkcdPic_.isFavorite, true).build();
+        List<XkcdPic> list = query.find();
+        if (list.size() > 0) {
+            getMenuInflater().inflate(R.menu.menu_list, menu);
+            Observable.fromIterable(list).subscribeOn(Schedulers.io()).observeOn(Schedulers.computation())
+                    .filter(new Predicate<XkcdPic>() {
+                @Override
+                public boolean test(XkcdPic xkcdPic) throws Exception {
+                    return xkcdPic == null || xkcdPic.width == 0 || xkcdPic.height == 0;
+                }
+            }).toSortedList().observeOn(Schedulers.io()).flatMap(new Function<List<XkcdPic>, SingleSource<List<XkcdPic>>>() {
+                @Override
+                public SingleSource<List<XkcdPic>> apply(List<XkcdPic> xkcdPics) throws Exception {
+                    return NetworkService.getXkcdAPI()
+                            .getXkcdList(XKCD_BROWSE_LIST, (int) xkcdPics.get(0).num, 0, (int) xkcdPics.get(xkcdPics.size() - 1).num)
+                            .singleOrError();
+                }
+            }).subscribe(new SingleObserver<List<XkcdPic>>() {
+                @Override
+                public void onSubscribe(Disposable d) {
+
+                }
+
+                @Override
+                public void onSuccess(List<XkcdPic> xkcdPics) {
+                    for (XkcdPic pic : xkcdPics) {
+                        XkcdPic xkcdPic = box.get(pic.num);
+                        if (xkcdPic != null) {
+                            pic.isFavorite = xkcdPic.isFavorite;
+                            pic.hasThumbed = xkcdPic.hasThumbed;
+                        }
+                    }
+                    box.put(xkcdPics);
+                }
+
+                @Override
+                public void onError(Throwable e) {
+
+                }
+            });
+        }
         return true;
     }
 
@@ -207,47 +251,44 @@ public class XkcdListActivity extends BaseActivity {
 
     private void loadList(final int start) {
         Query<XkcdPic> query = box.query().between(XkcdPic_.num, start, start + 399).build();
-        query.subscribe().on(AndroidScheduler.mainThread()).observer(new DataObserver<List<XkcdPic>>() {
-            @Override
-            public void onData(List<XkcdPic> data) {
-                int dataSize = data.size();
-                Timber.d("Load xkcd list request, start from: %d, the response items: %d", start, dataSize);
-                if ((start != 401 && dataSize != 400) || (start == 401 && dataSize != 399)) {
-                    if (inRequest) {
-                        return;
-                    }
-                    NetworkService.getXkcdAPI().getXkcdList(XKCD_BROWSE_LIST, start, 0, 400)
-                            .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(new Observer<List<XkcdPic>>() {
-                                @Override
-                                public void onSubscribe(Disposable d) {
-                                    inRequest = true;
-                                }
-
-                                @Override
-                                public void onNext(List<XkcdPic> xkcdPics) {
-                                    appendList(xkcdPics, true);
-                                    loadingMore = false;
-                                    inRequest = false;
-                                }
-
-                                @Override
-                                public void onError(Throwable e) {
-                                    inRequest = false;
-                                }
-
-                                @Override
-                                public void onComplete() {
-                                    inRequest = false;
-                                }
-                            });
-                } else {
-                    appendList(data, false);
-                    loadingMore = false;
-                }
+        List<XkcdPic> data = query.find();
+        int dataSize = data.size();
+        Timber.d("Load xkcd list request, start from: %d, the response items: %d", start, dataSize);
+        if ((start <= latestIndex - 399 && dataSize != 400 && start != 401) ||
+                (start == 401 && dataSize != 399) ||
+                (start > latestIndex - 399 && start + dataSize - 1 != latestIndex)) {
+            if (inRequest) {
+                return;
             }
-        });
+            NetworkService.getXkcdAPI().getXkcdList(XKCD_BROWSE_LIST, start, 0, 400)
+                    .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<List<XkcdPic>>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
+                            inRequest = true;
+                        }
 
+                        @Override
+                        public void onNext(List<XkcdPic> xkcdPics) {
+                            appendList(xkcdPics, true);
+                            loadingMore = false;
+                            inRequest = false;
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            inRequest = false;
+                        }
+
+                        @Override
+                        public void onComplete() {
+                            inRequest = false;
+                        }
+                    });
+        } else {
+            appendList(data, false);
+            loadingMore = false;
+        }
     }
 
     @SuppressLint("CheckResult")
