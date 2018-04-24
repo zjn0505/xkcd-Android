@@ -267,6 +267,7 @@ public class XkcdListActivity extends BaseActivity {
                 });
                 break;
         }
+        rvList.scrollToPosition(0);
     }
 
     @Override
