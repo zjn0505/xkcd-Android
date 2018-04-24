@@ -15,6 +15,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.github.piasy.biv.view.BigImageView;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.concurrent.TimeUnit;
 
@@ -33,6 +34,11 @@ import xyz.jienan.xkcd.XkcdPic;
 import xyz.jienan.xkcd.XkcdSideloadUtils;
 import xyz.jienan.xkcd.network.NetworkService;
 
+import static xyz.jienan.xkcd.Const.FIRE_COMIC_ID;
+import static xyz.jienan.xkcd.Const.FIRE_COMIC_URL;
+import static xyz.jienan.xkcd.Const.FIRE_DETAIL_PAGE;
+import static xyz.jienan.xkcd.Const.FIRE_LARGE_IMAGE;
+
 /**
  * Created by jienanzhang on 09/07/2017.
  */
@@ -44,10 +50,12 @@ public class ImageDetailPageActivity extends Activity {
     private int index;
     private Box<XkcdPic> box;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         setContentView(R.layout.activity_image_detail);
         box = ((XkcdApplication) getApplication()).getBoxStore().boxFor(XkcdPic.class);
         String url = getIntent().getStringExtra("URL");
@@ -82,10 +90,12 @@ public class ImageDetailPageActivity extends Activity {
     }
 
     private void renderPic(String url) {
+        Bundle bundle = new Bundle();
         if (XkcdSideloadUtils.useLargeImageView(index)) {
             bigImageView.showImage(Uri.parse(url));
             bigImageView.setVisibility(View.VISIBLE);
             photoView.setVisibility(View.GONE);
+            bundle.putBoolean(FIRE_LARGE_IMAGE, true);
         } else {
             Glide.with(this).load(url).diskCacheStrategy(DiskCacheStrategy.SOURCE).listener(new RequestListener<String, GlideDrawable>() {
                 @Override
@@ -102,7 +112,11 @@ public class ImageDetailPageActivity extends Activity {
             }).into(photoView);
             bigImageView.setVisibility(View.GONE);
             photoView.setVisibility(View.VISIBLE);
+            bundle.putBoolean(FIRE_LARGE_IMAGE, false);
         }
+        bundle.putInt(FIRE_COMIC_ID, index);
+        bundle.putString(FIRE_COMIC_URL, url);
+        mFirebaseAnalytics.logEvent(FIRE_DETAIL_PAGE, bundle);
         final View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -142,12 +156,12 @@ public class ImageDetailPageActivity extends Activity {
 
             @Override
             public void onError(Throwable e) {
-
+                Timber.e(e, "Request pic in detail page error, %d", index);
             }
 
             @Override
             public void onComplete() {
-
+                // no ops
             }
         });
     }

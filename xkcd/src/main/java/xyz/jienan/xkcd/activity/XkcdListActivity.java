@@ -17,11 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import io.objectbox.Box;
-import io.objectbox.android.AndroidScheduler;
 import io.objectbox.query.Query;
-import io.objectbox.reactive.DataObserver;
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.SingleObserver;
 import io.reactivex.SingleSource;
@@ -43,6 +40,11 @@ import xyz.jienan.xkcd.ui.XkcdListGridAdapter;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_DRAGGING;
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
+import static xyz.jienan.xkcd.Const.FIRE_FILTER_ALL;
+import static xyz.jienan.xkcd.Const.FIRE_FILTER_FAV;
+import static xyz.jienan.xkcd.Const.FIRE_FILTER_THUMB;
+import static xyz.jienan.xkcd.Const.FIRE_LIST_FILTER_BAR;
+import static xyz.jienan.xkcd.Const.FIRE_SCROLL_TO_END;
 import static xyz.jienan.xkcd.Const.XKCD_LATEST_INDEX;
 import static xyz.jienan.xkcd.activity.XkcdListActivity.Selection.ALL_COMICS;
 import static xyz.jienan.xkcd.network.NetworkService.XKCD_BROWSE_LIST;
@@ -85,6 +87,10 @@ public class XkcdListActivity extends BaseActivity {
                     // user is touchy or the scroll finished, show images
                     mAdapter.getGlide().resumeRequests();
                 } // settling means the user let the screen go, but it can still be flinging
+            }
+
+            if (!rvList.canScrollVertically(1) && lastItemReached() && newState == SCROLL_STATE_IDLE) {
+                logUXEvent(FIRE_SCROLL_TO_END);
             }
         }
 
@@ -170,25 +176,42 @@ public class XkcdListActivity extends BaseActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
                 break;
             case R.id.action_filter:
+                item.setEnabled(false);
                 ListFilterDialogFragment filterDialog = new ListFilterDialogFragment();
                 filterDialog.show(getSupportFragmentManager(), "filter");
                 getSupportFragmentManager().executePendingTransactions();
                 filterDialog.getDialog().setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialog) {
+                        item.setEnabled(true);
                         int selection = sharedPreferences.getInt("FILTER_SELECTION", 0);
                         if (currentSelection.ordinal() != selection) {
                             currentSelection = Selection.fromValue(selection);
                             reloadList(currentSelection);
+                            switch (currentSelection) {
+                                case ALL_COMICS:
+                                    logUXEvent(FIRE_FILTER_ALL);
+                                    break;
+                                case MY_FAVORITE:
+                                    logUXEvent(FIRE_FILTER_FAV);
+                                    break;
+                                case PEOPLES_CHOICE:
+                                    logUXEvent(FIRE_FILTER_THUMB);
+                                    break;
+                                default:
+                                    break;
+                            }
                         }
                     }
                 });
+                logUXEvent(FIRE_LIST_FILTER_BAR);
+
                 break;
         }
         return true;

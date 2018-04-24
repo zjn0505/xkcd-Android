@@ -31,6 +31,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.bumptech.glide.request.target.Target;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -54,16 +55,22 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import timber.log.Timber;
 import xyz.jienan.xkcd.R;
-import xyz.jienan.xkcd.ui.SearchCursorAdapter;
 import xyz.jienan.xkcd.XkcdApplication;
 import xyz.jienan.xkcd.XkcdPic;
 import xyz.jienan.xkcd.activity.ImageDetailPageActivity;
 import xyz.jienan.xkcd.activity.MainActivity;
 import xyz.jienan.xkcd.glide.ProgressTarget;
 import xyz.jienan.xkcd.network.NetworkService;
+import xyz.jienan.xkcd.ui.SearchCursorAdapter;
 
 import static android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING;
 import static android.view.HapticFeedbackConstants.LONG_PRESS;
+import static xyz.jienan.xkcd.Const.FIRE_GO_EXPLAIN_MENU;
+import static xyz.jienan.xkcd.Const.FIRE_GO_XKCD_MENU;
+import static xyz.jienan.xkcd.Const.FIRE_LONG_PRESS;
+import static xyz.jienan.xkcd.Const.FIRE_MORE_EXPLAIN;
+import static xyz.jienan.xkcd.Const.FIRE_SHARE_BAR;
+import static xyz.jienan.xkcd.Const.FIRE_UX_ACTION;
 import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NEW_INTENT;
 import static xyz.jienan.xkcd.network.NetworkService.XKCD_SEARCH_SUGGESTION;
 
@@ -82,7 +89,7 @@ public class SingleComicFragment extends Fragment {
     private ProgressBar pbLoading;
     private Button btnReload;
     private SimpleInfoDialogFragment dialogFragment;
-
+    private FirebaseAnalytics mFirebaseAnalytics;
     private int id;
     private XkcdPic currentPic;
     private Box<XkcdPic> box;
@@ -248,6 +255,7 @@ public class SingleComicFragment extends Fragment {
                     explainingCallback.explanationFailed();
                 }
             });
+            logUXEvent(FIRE_MORE_EXPLAIN);
         }
     };
 
@@ -262,6 +270,7 @@ public class SingleComicFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
         Bundle args = getArguments();
         if (args != null)
             id = args.getInt("id");
@@ -291,6 +300,7 @@ public class SingleComicFragment extends Fragment {
                 dialogFragment.setListener(dialogListener);
                 dialogFragment.show(getChildFragmentManager(), "AltInfoDialogFragment");
                 v.performHapticFeedback(LONG_PRESS, FLAG_IGNORE_GLOBAL_SETTING);
+                logUXEvent(FIRE_LONG_PRESS);
                 return true;
             }
         });
@@ -428,15 +438,18 @@ public class SingleComicFragment extends Fragment {
                 shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_text) + currentPic.getTargetImg());
                 shareIntent.setType("text/plain");
                 startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.share_to)));
+                logUXEvent(FIRE_SHARE_BAR);
                 return true;
             case R.id.action_go_xkcd: {
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://xkcd.com/" + currentPic.num));
                 startActivity(browserIntent);
+                logUXEvent(FIRE_GO_XKCD_MENU);
                 return true;
             }
             case R.id.action_go_explain: {
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.explainxkcd.com/wiki/index.php/" + currentPic.num));
                 startActivity(browserIntent);
+                logUXEvent(FIRE_GO_EXPLAIN_MENU);
                 return true;
             }
         }
@@ -586,5 +599,9 @@ public class SingleComicFragment extends Fragment {
         }
     }
 
-
+    private void logUXEvent(String event) {
+        Bundle bundle = new Bundle();
+        bundle.putString(FIRE_UX_ACTION, event);
+        mFirebaseAnalytics.logEvent(FIRE_UX_ACTION, bundle);
+    }
 }

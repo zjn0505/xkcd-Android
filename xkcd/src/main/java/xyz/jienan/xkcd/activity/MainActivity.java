@@ -34,9 +34,7 @@ import java.util.List;
 import java.util.Random;
 
 import io.objectbox.Box;
-import io.objectbox.android.AndroidScheduler;
 import io.objectbox.query.Query;
-import io.objectbox.reactive.DataObserver;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
@@ -64,6 +62,16 @@ import static android.support.v4.view.ViewPager.SCROLL_STATE_DRAGGING;
 import static android.support.v4.view.ViewPager.SCROLL_STATE_IDLE;
 import static android.view.HapticFeedbackConstants.CONTEXT_CLICK;
 import static android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING;
+import static xyz.jienan.xkcd.Const.FIRE_BROWSE_LIST_MENU;
+import static xyz.jienan.xkcd.Const.FIRE_FAVORITE_OFF;
+import static xyz.jienan.xkcd.Const.FIRE_FAVORITE_ON;
+import static xyz.jienan.xkcd.Const.FIRE_NEXT_BAR;
+import static xyz.jienan.xkcd.Const.FIRE_PREVIOUS_BAR;
+import static xyz.jienan.xkcd.Const.FIRE_SEARCH;
+import static xyz.jienan.xkcd.Const.FIRE_SETTING_MENU;
+import static xyz.jienan.xkcd.Const.FIRE_SHAKE;
+import static xyz.jienan.xkcd.Const.FIRE_SPECIFIC_MENU;
+import static xyz.jienan.xkcd.Const.FIRE_THUMB_UP;
 import static xyz.jienan.xkcd.Const.PREF_ARROW;
 import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NEW_INTENT;
 import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NOTI_INTENT;
@@ -135,17 +143,20 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
             @Override
             public void liked(LikeButton likeButton) {
                 comicFavorited(true);
+                logUXEvent(FIRE_FAVORITE_ON);
             }
 
             @Override
             public void unLiked(LikeButton likeButton) {
                 comicFavorited(false);
+                logUXEvent(FIRE_FAVORITE_OFF);
             }
         });
         btnThumb.setOnLikeListener(new OnLikeListener() {
             @Override
             public void liked(LikeButton likeButton) {
                 comicLiked();
+                logUXEvent(FIRE_THUMB_UP);
             }
 
             @Override
@@ -304,6 +315,7 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
             scrollViewPagerToItem(randomId - 1, false);
         }
         getWindow().getDecorView().performHapticFeedback(CONTEXT_CLICK, FLAG_IGNORE_GLOBAL_SETTING);
+        logUXEvent(FIRE_SHAKE);
     }
 
     @Override
@@ -328,6 +340,7 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
                 } else {
                     scrollViewPagerToItem(viewPager.getCurrentItem() - skip, false);
                 }
+                logUXEvent(FIRE_PREVIOUS_BAR);
                 break;
             case R.id.action_right:
                 if (skip == 1) {
@@ -335,12 +348,15 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
                 } else {
                     scrollViewPagerToItem(viewPager.getCurrentItem() + skip, false);
                 }
+                logUXEvent(FIRE_NEXT_BAR);
                 break;
             case R.id.action_search:
+                logUXEvent(FIRE_SEARCH);
                 break;
             case R.id.action_xkcd_list:
                 Intent intent = new Intent(this, XkcdListActivity.class);
                 startActivity(intent);
+                logUXEvent(FIRE_BROWSE_LIST_MENU);
                 break;
             case R.id.action_specific:
                 if (latestIndex == INVALID_ID) {
@@ -350,12 +366,15 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
                 pickerDialogFragment.setNumberRange(1, latestIndex);
                 pickerDialogFragment.setListener(pickerListener);
                 pickerDialogFragment.show(getSupportFragmentManager(), "IdPickerDialogFragment");
+                logUXEvent(FIRE_SPECIFIC_MENU);
                 break;
-            case R.id.action_settings: {
+            case R.id.action_settings:
                 Intent settingsIntent = new Intent(this, PreferenceActivity.class);
                 startActivityForResult(settingsIntent, REQ_SETTINGS);
+                logUXEvent(FIRE_SETTING_MENU);
                 break;
-            }
+            default:
+                break;
         }
         return false;
     }
