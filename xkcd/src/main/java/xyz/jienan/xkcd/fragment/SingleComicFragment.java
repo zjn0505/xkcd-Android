@@ -346,6 +346,9 @@ public class SingleComicFragment extends Fragment {
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
         final MenuItem searchItem = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView) searchItem.getActionView();
+        if (searchView == null) {
+            return;
+        }
         searchView.setQueryHint(getString(R.string.search_hint));
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
         if (searchAdapter == null) {
