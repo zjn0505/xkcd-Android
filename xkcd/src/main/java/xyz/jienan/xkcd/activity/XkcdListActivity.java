@@ -48,6 +48,8 @@ import static xyz.jienan.xkcd.Const.FIRE_SCROLL_TO_END;
 import static xyz.jienan.xkcd.Const.XKCD_LATEST_INDEX;
 import static xyz.jienan.xkcd.activity.XkcdListActivity.Selection.ALL_COMICS;
 import static xyz.jienan.xkcd.network.NetworkService.XKCD_BROWSE_LIST;
+import static xyz.jienan.xkcd.network.NetworkService.XKCD_TOP;
+import static xyz.jienan.xkcd.network.NetworkService.XKCD_TOP_SORT_BY_THUMB_UP;
 
 /**
  * Created by jienanzhang on 22/03/2018.
@@ -68,7 +70,7 @@ public class XkcdListActivity extends BaseActivity {
 
     private SharedPreferences sharedPreferences;
     private Selection currentSelection = ALL_COMICS;
-
+    private final HashMap<Long, XkcdPic> mapAll = new HashMap<Long, XkcdPic>();
     private List<XkcdPic> pics = new ArrayList<>();
     private RecyclerViewFastScroller scroller;
     private RecyclerView.OnScrollListener rvScrollListener = new RecyclerView.OnScrollListener() {
@@ -223,9 +225,46 @@ public class XkcdListActivity extends BaseActivity {
                 loadList(1);
                 break;
             case MY_FAVORITE:
-                Query<XkcdPic> query = box.query().equal(XkcdPic_.isFavorite, true).build();
-                List<XkcdPic> list = query.find();
-                mAdapter.updateData(list);
+                final Query<XkcdPic> queryFav = box.query().equal(XkcdPic_.isFavorite, true).build();
+                List<XkcdPic> listFav = queryFav.find();
+                mAdapter.updateData(listFav);
+                break;
+            case PEOPLES_CHOICE:
+                final Query<XkcdPic> queryAll = box.query().build();
+                final List<XkcdPic> listAll = queryAll.find();
+                if (mapAll.size() != listAll.size()) {
+                    for (XkcdPic xkcdPic : listAll) {
+                        mapAll.put(xkcdPic.num, xkcdPic);
+                    }
+                }
+                NetworkService.getXkcdAPI().getTopXkcds(XKCD_TOP, XKCD_TOP_SORT_BY_THUMB_UP)
+                        .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<List<XkcdPic>>() {
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        // no ops
+                    }
+
+                    @Override
+                    public void onNext(List<XkcdPic> xkcdPics) {
+                        for (XkcdPic xkcdPic : xkcdPics) {
+                            XkcdPic picInBox = mapAll.get(xkcdPic.num);
+                            xkcdPic.isFavorite = picInBox.isFavorite;
+                            xkcdPic.hasThumbed = picInBox.hasThumbed;
+                        }
+                        mAdapter.updateData(xkcdPics);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e, "get top xkcd error");
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        // no ops
+                    }
+                });
                 break;
         }
     }

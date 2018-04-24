@@ -55,6 +55,8 @@ public class NetworkService {
     public static final String XKCD_SEARCH_SUGGESTION = "http://130.211.211.220:3003/xkcd-suggest";
     public static final String XKCD_BROWSE_LIST = "http://130.211.211.220:3003/xkcd-list";
     public static final String XKCD_THUMBS_UP = "http://130.211.211.220:3003/xkcd-thumb-up";
+    public static final String XKCD_TOP = "http://130.211.211.220:3003/xkcd-top";
+    public static final String XKCD_TOP_SORT_BY_THUMB_UP = "thumb-up";
     public static final String BYPASS_CACHE = "1";
     public static final String USE_CACHE = "2";
     public static final String SHORT_CACHE = "3";
@@ -207,6 +209,10 @@ public class NetworkService {
         @FormUrlEncoded
         @POST
         Observable<XkcdPic> thumbsUp(@Url String url, @Field("comic_id") int comicId);
+
+        @Headers("cacheable: 60")
+        @GET
+        Observable<List<XkcdPic>> getTopXkcds(@Url String url, @Query("sortby") String sortby);
     }
 
     /**
