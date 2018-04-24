@@ -102,6 +102,7 @@ public class ListFilterDialogFragment extends DialogFragment {
             CheckedTextView tvFilter = view.findViewById(R.id.tv_filter);
             ivFilter.setImageResource(Integer.valueOf(map.get("iconRes")));
             tvFilter.setChecked(position == selection);
+            tvFilter.setText(map.get("filter"));
             return view;
         }
     }

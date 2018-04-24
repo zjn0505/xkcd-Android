@@ -49,4 +49,7 @@
         <item>xkcd刚刚更新</item>
     </string-array>
     <string name="menu_filter">筛选</string>
+    <string name="filter_all_comics">全部漫画</string>
+    <string name="filter_my_fav">我的最爱</string>
+    <string name="filter_people_choice">人民之选</string>
 </resources>
