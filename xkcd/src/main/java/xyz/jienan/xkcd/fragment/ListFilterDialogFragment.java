@@ -73,8 +73,7 @@ public class ListFilterDialogFragment extends DialogFragment {
             }
         });
 
-        AlertDialog dialog = builder.create();
-        return dialog;
+        return builder.create();
     }
 
     private class FilterAdapter extends BaseAdapter {

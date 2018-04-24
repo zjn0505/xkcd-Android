@@ -127,7 +127,7 @@ public class XkcdListActivity extends BaseActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         Query<XkcdPic> query = box.query().equal(XkcdPic_.isFavorite, true).build();
         List<XkcdPic> list = query.find();
-        if (list.size() > 0) {
+        if (!list.isEmpty()) {
             getMenuInflater().inflate(R.menu.menu_list, menu);
             Observable.fromIterable(list).subscribeOn(Schedulers.io()).observeOn(Schedulers.computation())
                     .filter(new Predicate<XkcdPic>() {
@@ -145,7 +145,7 @@ public class XkcdListActivity extends BaseActivity {
             }).subscribe(new SingleObserver<List<XkcdPic>>() {
                 @Override
                 public void onSubscribe(Disposable d) {
-
+                    // no op
                 }
 
                 @Override
@@ -162,7 +162,7 @@ public class XkcdListActivity extends BaseActivity {
 
                 @Override
                 public void onError(Throwable e) {
-
+                    Timber.e(e, "error on get pic info");
                 }
             });
         }

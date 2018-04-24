@@ -5,6 +5,7 @@ import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -403,7 +404,7 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
                     resXkcdPic.hasThumbed = xkcdPic.hasThumbed;
                 }
                 box.put(resXkcdPic);
-                for (int i = 0; i < latestIndex / 400; i++) {
+                for (int i = 0; i <= latestIndex / 400; i++) {
                     loadList(i * 400 + 1);
                 }
             }
@@ -458,7 +459,7 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
     }
 
     private void comicFavorited(boolean isFav) {
-        XkcdPic xkcdPic = box.get(getCurrentIndex());
+        final XkcdPic xkcdPic = box.get(getCurrentIndex());
         if (xkcdPic != null) {
             xkcdPic.isFavorite = isFav;
             box.put(xkcdPic);
@@ -468,7 +469,7 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
                         .subscribeOn(Schedulers.io()).observeOn(Schedulers.io()).subscribe(new Observer<List<XkcdPic>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-
+                        // no op
                     }
 
                     @Override
@@ -484,12 +485,12 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
 
                     @Override
                     public void onError(Throwable e) {
-
+                        Timber.e(e, "error on get one pic: %d", xkcdPic.num);
                     }
 
                     @Override
                     public void onComplete() {
-
+                        // no op
                     }
                 });
             }
@@ -535,12 +536,12 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
 
             @Override
             public void onAnimationCancel(Animator animator) {
-
+                // no op
             }
 
             @Override
             public void onAnimationRepeat(Animator animator) {
-
+                // no op
             }
         });
         animSet.start();
@@ -584,6 +585,7 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
         fab.show();
     }
 
+    @SuppressLint("ObjectAnimatorBinding")
     private void toggleFab(boolean isFavorite) {
         if (isFavorite) {
             final ObjectAnimator animator = ObjectAnimator.ofInt(fab, "backgroundTint", getResources().getColor(R.color.pink), getResources().getColor(R.color.white));
@@ -685,7 +687,9 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
     }
 
     private void loadList(final int start) {
-        final Query<XkcdPic> query = box.query().between(XkcdPic_.num, start, start + 399).build();
+        final Query<XkcdPic> query = box.query()
+                .between(XkcdPic_.num, start, start + 399)
+                .and().greater(XkcdPic_.width, 0).build();
         final List<XkcdPic> list = query.find();
         final HashMap<Long, XkcdPic> map = new HashMap<Long, XkcdPic>();
         for (XkcdPic xkcdPic : list) {
@@ -714,7 +718,7 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
             }).toList().subscribe(new SingleObserver<List<XkcdPic>>() {
                 @Override
                 public void onSubscribe(Disposable d) {
-
+                    // no op
                 }
 
                 @Override
@@ -731,7 +735,7 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
 
                 @Override
                 public void onError(Throwable e) {
-
+                    Timber.e(e, "load list error: start - %d", start);
                 }
             });
         }
