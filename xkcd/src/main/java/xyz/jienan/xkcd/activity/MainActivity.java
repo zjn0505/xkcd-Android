@@ -209,27 +209,7 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
             latestIndex = sharedPreferences.getInt(XKCD_LATEST_INDEX, INVALID_ID);
 
         } else {
-            if (getIntent() != null && (getIntent().getIntExtra(XKCD_INDEX_ON_NOTI_INTENT, INVALID_ID) != INVALID_ID
-                    || getIntent().getIntExtra(XKCD_INDEX_ON_NEW_INTENT, INVALID_ID) != INVALID_ID)) {
-                int newIntentIndex = getIntent().getIntExtra(XKCD_INDEX_ON_NEW_INTENT, INVALID_ID);
-                int notiIndex = getIntent().getIntExtra(XKCD_INDEX_ON_NOTI_INTENT, INVALID_ID);
-                if (newIntentIndex != INVALID_ID) {
-                    savedId = newIntentIndex;
-                }
-                if (notiIndex != INVALID_ID) {
-                    savedId = notiIndex;
-                    latestIndex = savedId;
-                    if (editor == null) {
-                        editor = sharedPreferences.edit();
-                    }
-                    editor.putInt(XKCD_LATEST_INDEX, latestIndex);
-                    editor.apply();
-                }
-
-            } else {
-                latestIndex = sharedPreferences.getInt(XKCD_LATEST_INDEX, INVALID_ID);
-                savedId = sharedPreferences.getInt(LAST_VIEW_XKCD_ID, latestIndex);
-            }
+            updateIndices(getIntent());
         }
         isFre = latestIndex == INVALID_ID;
         if (latestIndex > INVALID_ID) {
@@ -244,24 +224,7 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        if (intent.getIntExtra(XKCD_INDEX_ON_NEW_INTENT, INVALID_ID) != INVALID_ID
-                || intent.getIntExtra(XKCD_INDEX_ON_NOTI_INTENT, INVALID_ID) != INVALID_ID) {
-            int newIntentIndex = intent.getIntExtra(XKCD_INDEX_ON_NEW_INTENT, INVALID_ID);
-            int notiIntentIndex = intent.getIntExtra(XKCD_INDEX_ON_NOTI_INTENT, INVALID_ID);
-            if (newIntentIndex != INVALID_ID) {
-                savedId = newIntentIndex;
-                latestIndex = sharedPreferences.getInt(XKCD_LATEST_INDEX, INVALID_ID);
-            }
-            if (notiIntentIndex != INVALID_ID) {
-                savedId = intent.getIntExtra(XKCD_INDEX_ON_NEW_INTENT, INVALID_ID);
-                latestIndex = savedId;
-                if (editor == null) {
-                    editor = sharedPreferences.edit();
-                }
-                editor.putInt(XKCD_LATEST_INDEX, latestIndex);
-                editor.apply();
-            }
-        }
+        updateIndices(intent);
         isFre = latestIndex == INVALID_ID;
         if (latestIndex > INVALID_ID) {
             adapter.setSize(latestIndex);
@@ -282,8 +245,7 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
     }
 
     @Override
-    protected void onDestroy() {
-        compositeDisposable.dispose();
+    protected void onStop() {
         if (viewPager != null && latestIndex > INVALID_ID) {
             int lastViewed = viewPager.getCurrentItem() + 1;
             if (editor == null) {
@@ -291,6 +253,12 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
             }
             editor.putInt(LAST_VIEW_XKCD_ID, lastViewed).apply();
         }
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        compositeDisposable.dispose();
         sd.stop();
         super.onDestroy();
     }
@@ -438,6 +406,30 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
                 // no op
             }
         });
+    }
+
+    private void updateIndices(Intent intent) {
+        if (intent != null && (intent.getIntExtra(XKCD_INDEX_ON_NOTI_INTENT, INVALID_ID) != INVALID_ID
+                || intent.getIntExtra(XKCD_INDEX_ON_NEW_INTENT, INVALID_ID) != INVALID_ID)) {
+            int newIntentIndex = intent.getIntExtra(XKCD_INDEX_ON_NEW_INTENT, INVALID_ID);
+            int notiIndex = intent.getIntExtra(XKCD_INDEX_ON_NOTI_INTENT, INVALID_ID);
+            if (newIntentIndex != INVALID_ID) {
+                savedId = newIntentIndex;
+            }
+            if (notiIndex != INVALID_ID) {
+                savedId = notiIndex;
+                latestIndex = savedId;
+                if (editor == null) {
+                    editor = sharedPreferences.edit();
+                }
+                editor.putInt(XKCD_LATEST_INDEX, latestIndex);
+                editor.apply();
+            }
+
+        } else {
+            latestIndex = sharedPreferences.getInt(XKCD_LATEST_INDEX, INVALID_ID);
+            savedId = sharedPreferences.getInt(LAST_VIEW_XKCD_ID, latestIndex);
+        }
     }
 
     private int getCurrentIndex() {
