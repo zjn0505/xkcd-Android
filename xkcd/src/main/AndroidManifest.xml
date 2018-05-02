@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:name="xyz.jienan.xkcd.XkcdApplication"
         android:theme="@style/AppTheme">
-        <activity android:name="xyz.jienan.xkcd.activity.MainActivity"
+        <activity android:name="xyz.jienan.xkcd.home.activity.MainActivity"
             android:configChanges="screenSize|keyboardHidden"
             android:launchMode="singleTask">
             <intent-filter>
@@ -25,35 +25,35 @@
                 android:resource="@xml/searchable" />
         </activity>
 
-        <activity android:name="xyz.jienan.xkcd.activity.ImageDetailPageActivity"
+        <activity android:name="xyz.jienan.xkcd.home.activity.ImageDetailPageActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:launchMode="singleTask"
             android:configChanges="screenSize|orientation|keyboardHidden"/>
 
-        <activity android:name=".activity.PreferenceActivity"
+        <activity android:name=".settings.PreferenceActivity"
             android:launchMode="singleTask"
             android:configChanges="screenSize|orientation|keyboardHidden"/>
 
-        <activity android:name=".activity.XkcdListActivity"
+        <activity android:name=".list.XkcdListActivity"
             android:label="@string/title_xkcd_list"
             android:configChanges="screenSize|orientation|keyboardHidden"/>
 
         <service
-            android:name=".firebase.XkcdFirebaseMessagingService">
+            android:name=".base.firebase.XkcdFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
 
         <service
-            android:name=".firebase.XkcdFirebaseInstanceIDService">
+            android:name=".base.firebase.XkcdFirebaseInstanceIDService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>
         </service>
 
         <meta-data android:value="GlideModule"
-            android:name="xyz.jienan.xkcd.glide.OkHttpProgressGlideModule" />
+            android:name="xyz.jienan.xkcd.base.glide.OkHttpProgressGlideModule" />
         <!-- Set custom default icon. This is used when no icon is set for incoming notification messages.
              See README(https://goo.gl/l4GJaQ) for more. -->
         <meta-data

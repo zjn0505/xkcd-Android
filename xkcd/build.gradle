@@ -41,6 +41,10 @@ android {
             signingConfig signingConfigs.releaseConfig
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
@@ -52,6 +56,8 @@ dependencies {
     implementation 'com.android.support:design:27.1.0'
     implementation 'com.android.support:percent:27.1.0'
     implementation 'org.jsoup:jsoup:1.11.2'
+    implementation 'com.jakewharton:butterknife:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'

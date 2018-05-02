@@ -8,7 +8,7 @@ import com.squareup.leakcanary.LeakCanary;
 
 import io.objectbox.BoxStore;
 import timber.log.Timber;
-import xyz.jienan.xkcd.glide.GlideImageLoader;
+import xyz.jienan.xkcd.base.glide.GlideImageLoader;
 
 /**
  * Created by Jienan on 2018/3/2.
