@@ -181,11 +181,11 @@ public class NetworkService {
 
         @Headers("cacheable: 2419200")
         @GET
-        Call<ResponseBody> getExplain(@Url String url);
+        Observable<ResponseBody> getExplain(@Url String url);
 
         @Headers("cacheable: 86400")
         @GET
-        Call<ResponseBody> getExplainWithShortCache(@Url String url);
+        Observable<ResponseBody> getExplainWithShortCache(@Url String url);
 
         @GET
         Observable<List<XkcdPic>> getSpecialXkcds(@Url String url);

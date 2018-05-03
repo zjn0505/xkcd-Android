@@ -48,6 +48,7 @@ import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -138,89 +139,64 @@ public class SingleComicFragment extends Fragment {
             startActivity(browserIntent);
         }
 
-        @SuppressLint("StaticFieldLeak")
+        @SuppressLint({"StaticFieldLeak", "CheckResult"})
         @Override
         public void onExplainMoreClick(final SimpleInfoDialogFragment.ExplainingCallback explainingCallback) {
             String url = "https://www.explainxkcd.com/wiki/index.php/" + currentPic.num;
-            Call<ResponseBody> call = NetworkService.getXkcdAPI().getExplain(url);
+            Observable<ResponseBody> call = NetworkService.getXkcdAPI().getExplain(url);
             if (((MainActivity) getActivity()).getMaxId() - currentPic.num < 10) {
                 call = NetworkService.getXkcdAPI().getExplainWithShortCache(url);
             }
-            call.enqueue(new Callback<ResponseBody>() {
-
-                private boolean isH2ByType(Element element, String type) {
-                    if (!"h2".equals(element.nodeName())) {
-                        return false;
-                    }
-                    for (Node child : element.childNodes()) {
-                        if (type.equals(child.attr("id"))) {
-                            return true;
-                        }
-                    }
-                    return false;
-                }
-
-                @Override
-                public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
-                    Document doc = null;
-                    try {
-                        doc = Jsoup.parse(response.body().string());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    if (doc == null) {
-                        explainingCallback.explanationFailed();
-                        return;
-                    }
-                    Elements newsHeadlines = doc.select("h2");
-                    if (newsHeadlines == null || newsHeadlines.size() == 0) {
-                        explainingCallback.explanationFailed();
-                        return;
-                    }
-                    for (Element headline : newsHeadlines) {
-                        if (isH2ByType(headline, "Explanation")) {
-                            Element element = headline.nextElementSibling();
-                            StringBuilder htmlResult = new StringBuilder();
-                            while (!"h2".equals(element.nodeName()) && !"h3".equals(element.nodeName())) {
-                                if (element.tagName().equals("p"))
-                                    if (element.toString().contains("<i>citation needed</i>")) {
-                                        List<Node> nodes = new ArrayList<>();
-                                        for (Node node : element.childNodes()) {
-                                            if ("sup".equals(node.nodeName()) && node.toString().contains("<i>citation needed</i>")) {
-                                                nodes.add(node);
-                                            }
-                                        }
-                                        for (Node node : nodes) {
-                                            node.remove();
+            call.subscribeOn(Schedulers.io()).map(responseBody -> {
+                Document doc = Jsoup.parse(responseBody.string());
+                Elements newsHeadlines = doc.select("h2");
+                for (Element headline : newsHeadlines) {
+                    if (isH2ByType(headline, "Explanation")) {
+                        Element element = headline.nextElementSibling();
+                        StringBuilder htmlResult = new StringBuilder();
+                        while (!"h2".equals(element.nodeName()) && !"h3".equals(element.nodeName())) {
+                            if (element.tagName().equals("p"))
+                                if (element.toString().contains("<i>citation needed</i>")) {
+                                    List<Node> nodes = new ArrayList<>();
+                                    for (Node node : element.childNodes()) {
+                                        if ("sup".equals(node.nodeName()) && node.toString().contains("<i>citation needed</i>")) {
+                                            nodes.add(node);
                                         }
                                     }
-                                for (Element child : element.getAllElements()) {
-                                    if ("a".equals(child.tagName()) && child.hasAttr("href")
-                                            && child.attr("href").startsWith("/wiki")) {
-                                        String href = child.attr("href");
-                                        child.attr("href", "https://www.explainxkcd.com" + href);
+                                    for (Node node : nodes) {
+                                        node.remove();
                                     }
                                 }
-                                htmlResult.append(element.toString());
-                                element = element.nextElementSibling();
+                            for (Element child : element.getAllElements()) {
+                                if ("a".equals(child.tagName()) && child.hasAttr("href")
+                                        && child.attr("href").startsWith("/wiki")) {
+                                    String href = child.attr("href");
+                                    child.attr("href", "https://www.explainxkcd.com" + href);
+                                }
                             }
-                            if (dialogFragment != null && dialogFragment.isAdded()) {
-                                if (!htmlResult.toString().endsWith("</p>"))
-                                    htmlResult.append("<br>");
-                                explainingCallback.explanationLoaded(htmlResult.toString());
-                                return;
-                            }
+                            htmlResult.append(element.toString());
+                            element = element.nextElementSibling();
+                        }
+                        if (dialogFragment != null && dialogFragment.isAdded()) {
+                            if (!htmlResult.toString().endsWith("</p>"))
+                                htmlResult.append("<br>");
+                            return htmlResult.toString();
                         }
                     }
-                    explainingCallback.explanationFailed();
                 }
-
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    explainingCallback.explanationFailed();
-                }
-            });
-            logUXEvent(FIRE_MORE_EXPLAIN);
+                return null;
+            }).observeOn(AndroidSchedulers.mainThread())
+                    .doOnSubscribe(disposable -> {
+                        logUXEvent(FIRE_MORE_EXPLAIN);
+                        compositeDisposable.add(disposable);
+                    })
+                    .subscribe(result -> {
+                        if (!TextUtils.isEmpty(result)) {
+                            explainingCallback.explanationLoaded(result);
+                        } else {
+                            explainingCallback.explanationFailed();
+                        }
+                    }, e -> explainingCallback.explanationFailed());
         }
     };
 
@@ -245,7 +221,6 @@ public class SingleComicFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment_comic, container, false);
         pbLoading = view.findViewById(R.id.pb_loading);
         pbLoading.setAnimation(AnimationUtils.loadAnimation(pbLoading.getContext(), R.anim.rotate));
@@ -348,8 +323,6 @@ public class SingleComicFragment extends Fragment {
                             }
                         }, e -> Timber.e(e, "search error"));
                 compositeDisposable.add(d);
-
-
                 return true;
             }
         });
@@ -449,22 +422,25 @@ public class SingleComicFragment extends Fragment {
     /**
      * Request current xkcd picture
      */
+    @SuppressLint("CheckResult")
     private void loadXkcdPic() {
         pbLoading.setVisibility(View.VISIBLE);
         Observable<XkcdPic> xkcdPicObservable = NetworkService.getXkcdAPI().getComics(String.valueOf(id));
-        Disposable d = xkcdPicObservable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(resXkcdPic -> {
-            renderXkcdPic(resXkcdPic);
-            XkcdPic xkcdPic = box.get(resXkcdPic.num);
-            if (xkcdPic != null) {
-                resXkcdPic.isFavorite = xkcdPic.isFavorite;
-                resXkcdPic.hasThumbed = xkcdPic.hasThumbed;
-            }
-            box.put(resXkcdPic);
-        }, e -> {
-            Timber.e(e, "load xkcd pic error");
-            pbLoading.setVisibility(View.GONE);
-        });
-        compositeDisposable.add(d);
+        xkcdPicObservable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(compositeDisposable::add)
+                .subscribe(resXkcdPic -> {
+                    renderXkcdPic(resXkcdPic);
+                    XkcdPic xkcdPic = box.get(resXkcdPic.num);
+                    if (xkcdPic != null) {
+                        resXkcdPic.isFavorite = xkcdPic.isFavorite;
+                        resXkcdPic.hasThumbed = xkcdPic.hasThumbed;
+                    }
+                    box.put(resXkcdPic);
+                }, e -> {
+                    Timber.e(e, "load xkcd pic error");
+                    pbLoading.setVisibility(View.GONE);
+                });
     }
 
     /**
@@ -490,6 +466,18 @@ public class SingleComicFragment extends Fragment {
             tvDescription.setText(xPic.alt);
         }
 
+    }
+
+    private boolean isH2ByType(Element element, String type) {
+        if (!"h2".equals(element.nodeName())) {
+            return false;
+        }
+        for (Node child : element.childNodes()) {
+            if (type.equals(child.attr("id"))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static class MyProgressTarget<Z> extends ProgressTarget<String, Z> {

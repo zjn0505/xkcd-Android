@@ -76,7 +76,6 @@ import static xyz.jienan.xkcd.network.NetworkService.XKCD_BROWSE_LIST;
 
 public class MainActivity extends BaseActivity implements ShakeDetector.Listener {
 
-    private final static String TAG = "MainActivity";
     private final static int REQ_SETTINGS = 101;
     private static final String LOADED_XKCD_ID = "xkcd_id";
     private static final String LATEST_XKCD_ID = "xkcd_latest_id";

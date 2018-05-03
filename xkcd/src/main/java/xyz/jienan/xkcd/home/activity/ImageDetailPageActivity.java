@@ -1,5 +1,6 @@
 package xyz.jienan.xkcd.home.activity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,6 +20,8 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.concurrent.TimeUnit;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import io.objectbox.Box;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
@@ -44,9 +47,12 @@ import static xyz.jienan.xkcd.Const.FIRE_LARGE_IMAGE;
  */
 
 public class ImageDetailPageActivity extends Activity {
-    private PhotoView photoView;
-    private BigImageView bigImageView;
-    private ProgressBar pbLoading;
+    @BindView(R.id.photo_view)
+    PhotoView photoView;
+    @BindView(R.id.big_image_view)
+    BigImageView bigImageView;
+    @BindView(R.id.pb_loading)
+    ProgressBar pbLoading;
     private int index;
     private Box<XkcdPic> box;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
@@ -57,12 +63,10 @@ public class ImageDetailPageActivity extends Activity {
         super.onCreate(savedInstanceState);
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         setContentView(R.layout.activity_image_detail);
+        ButterKnife.bind(this);
         box = ((XkcdApplication) getApplication()).getBoxStore().boxFor(XkcdPic.class);
         String url = getIntent().getStringExtra("URL");
         index = (int) getIntent().getLongExtra("ID", 0L);
-        photoView = findViewById(R.id.photo_view);
-        bigImageView = findViewById(R.id.big_image_view);
-        pbLoading = findViewById(R.id.pb_loading);
         photoView.setMaximumScale(10);
         if (!TextUtils.isEmpty(url)) {
             renderPic(url);
@@ -97,19 +101,22 @@ public class ImageDetailPageActivity extends Activity {
             photoView.setVisibility(View.GONE);
             bundle.putBoolean(FIRE_LARGE_IMAGE, true);
         } else {
-            Glide.with(this).load(url).diskCacheStrategy(DiskCacheStrategy.SOURCE).listener(new RequestListener<String, GlideDrawable>() {
-                @Override
-                public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                    pbLoading.setVisibility(View.GONE);
-                    return false;
-                }
+            Glide.with(this)
+                    .load(url)
+                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                    .listener(new RequestListener<String, GlideDrawable>() {
+                        @Override
+                        public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                            pbLoading.setVisibility(View.GONE);
+                            return false;
+                        }
 
-                @Override
-                public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                    pbLoading.setVisibility(View.GONE);
-                    return false;
-                }
-            }).into(photoView);
+                        @Override
+                        public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                            pbLoading.setVisibility(View.GONE);
+                            return false;
+                        }
+                    }).into(photoView);
             bigImageView.setVisibility(View.GONE);
             photoView.setVisibility(View.VISIBLE);
             bundle.putBoolean(FIRE_LARGE_IMAGE, false);
@@ -117,52 +124,35 @@ public class ImageDetailPageActivity extends Activity {
         bundle.putInt(FIRE_COMIC_ID, index);
         bundle.putString(FIRE_COMIC_URL, url);
         mFirebaseAnalytics.logEvent(FIRE_DETAIL_PAGE, bundle);
-        final View.OnClickListener listener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ImageDetailPageActivity.this.finish();
-                ImageDetailPageActivity.this.overridePendingTransition(R.anim.fadein, R.anim.fadeout);
-            }
+        final View.OnClickListener listener = v -> {
+            ImageDetailPageActivity.this.finish();
+            ImageDetailPageActivity.this.overridePendingTransition(R.anim.fadein, R.anim.fadeout);
         };
-        Observable.timer(500, TimeUnit.MILLISECONDS)
-                .observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<Long>() {
-            @Override
-            public void accept(Long aLong) throws Exception {
-                photoView.setOnClickListener(listener);
-                bigImageView.setOnClickListener(listener);
-            }
-        });
+        compositeDisposable.add(Observable.timer(500, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread()).subscribe(ignored -> {
+                    photoView.setOnClickListener(listener);
+                    bigImageView.setOnClickListener(listener);
+                }));
     }
 
+    @SuppressLint("CheckResult")
     private void requestImage() {
-        Observable<XkcdPic> xkcdPicObservable = NetworkService.getXkcdAPI().getComics(String.valueOf(index));
-        xkcdPicObservable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<XkcdPic>() {
-            @Override
-            public void onSubscribe(Disposable d) {
-                compositeDisposable.add(d);
-                pbLoading.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onNext(XkcdPic resXkcdPic) {
-                XkcdPic xkcdPic = box.get(resXkcdPic.num);
-                if (xkcdPic != null) {
-                    resXkcdPic.isFavorite = xkcdPic.isFavorite;
-                    resXkcdPic.hasThumbed = xkcdPic.hasThumbed;
-                }
-                box.put(resXkcdPic);
-                renderPic(resXkcdPic.getTargetImg());
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                Timber.e(e, "Request pic in detail page error, %d", index);
-            }
-
-            @Override
-            public void onComplete() {
-                // no ops
-            }
-        });
+        NetworkService.getXkcdAPI()
+                .getComics(String.valueOf(index))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(disposable -> {
+                    pbLoading.setVisibility(View.VISIBLE);
+                    compositeDisposable.add(disposable);
+                })
+                .subscribe(resXkcdPic -> {
+                    XkcdPic xkcdPic = box.get(resXkcdPic.num);
+                    if (xkcdPic != null) {
+                        resXkcdPic.isFavorite = xkcdPic.isFavorite;
+                        resXkcdPic.hasThumbed = xkcdPic.hasThumbed;
+                    }
+                    box.put(resXkcdPic);
+                    renderPic(resXkcdPic.getTargetImg());
+                }, e -> Timber.e(e, "Request pic in detail page error, %d", index));
     }
 }
