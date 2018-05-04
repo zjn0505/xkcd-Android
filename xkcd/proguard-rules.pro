@@ -52,7 +52,7 @@
 -keep class com.google.gson.stream.** { *; }
 -keepattributes EnclosingMethod
 -keep class xyz.jienan.xkcd.XkcdPic { *; }
--keep class xyz.jienan.xkcd.network.NetworkService { *; }
+-keep class xyz.jienan.xkcd.base.network.NetworkService { *; }
 
 -keepclassmembers class rx.internal.util.unsafe.*ArrayQueue*Field* {
    long producerIndex;
@@ -91,3 +91,12 @@
 -dontwarn com.bumptech.glide.load.resource.bitmap.VideoDecoder
 
 -keep class android.support.v7.widget.SearchView { *; }
+
+# okhttp
+
+-dontwarn okhttp3.**
+-dontwarn okio.**
+-dontwarn javax.annotation.**
+-dontwarn org.conscrypt.**
+# A resource is loaded with a relative path so the package of this class must be preserved.
+-keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase

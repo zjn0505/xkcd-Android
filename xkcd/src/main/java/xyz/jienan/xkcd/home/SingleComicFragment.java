@@ -39,7 +39,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,21 +47,18 @@ import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
 import timber.log.Timber;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.XkcdApplication;
 import xyz.jienan.xkcd.XkcdPic;
 import xyz.jienan.xkcd.base.glide.ProgressTarget;
-import xyz.jienan.xkcd.home.dialog.SimpleInfoDialogFragment;
-import xyz.jienan.xkcd.home.dialog.SimpleInfoDialogFragment.ISimpleInfoDialogListener;
+import xyz.jienan.xkcd.base.network.NetworkService;
 import xyz.jienan.xkcd.home.activity.ImageDetailPageActivity;
 import xyz.jienan.xkcd.home.activity.MainActivity;
-import xyz.jienan.xkcd.network.NetworkService;
+import xyz.jienan.xkcd.home.dialog.SimpleInfoDialogFragment;
+import xyz.jienan.xkcd.home.dialog.SimpleInfoDialogFragment.ISimpleInfoDialogListener;
 
 import static android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING;
 import static android.view.HapticFeedbackConstants.LONG_PRESS;
@@ -73,7 +69,7 @@ import static xyz.jienan.xkcd.Const.FIRE_MORE_EXPLAIN;
 import static xyz.jienan.xkcd.Const.FIRE_SHARE_BAR;
 import static xyz.jienan.xkcd.Const.FIRE_UX_ACTION;
 import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NEW_INTENT;
-import static xyz.jienan.xkcd.network.NetworkService.XKCD_SEARCH_SUGGESTION;
+import static xyz.jienan.xkcd.base.network.NetworkService.XKCD_SEARCH_SUGGESTION;
 
 /**
  * Created by jienanzhang on 03/03/2018.
@@ -480,6 +476,12 @@ public class SingleComicFragment extends Fragment {
         return false;
     }
 
+    private void logUXEvent(String event) {
+        Bundle bundle = new Bundle();
+        bundle.putString(FIRE_UX_ACTION, event);
+        mFirebaseAnalytics.logEvent(FIRE_UX_ACTION, bundle);
+    }
+
     private static class MyProgressTarget<Z> extends ProgressTarget<String, Z> {
         private final ProgressBar progressbar;
         private final ImageView image;
@@ -539,11 +541,5 @@ public class SingleComicFragment extends Fragment {
             progressbar.clearAnimation();
             image.setImageLevel(0); // reset ImageView default
         }
-    }
-
-    private void logUXEvent(String event) {
-        Bundle bundle = new Bundle();
-        bundle.putString(FIRE_UX_ACTION, event);
-        mFirebaseAnalytics.logEvent(FIRE_UX_ACTION, bundle);
     }
 }

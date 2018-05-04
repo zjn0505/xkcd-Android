@@ -1,211 +1,211 @@
 [
   {
-    "num" : 24,
+    "num": 24,
     "large": true
   },
   {
-    "num" : 76,
+    "num": 76,
     "img": "https://i.imgur.com/h3fi2RV.jpg"
   },
   {
-    "num" : 80,
+    "num": 80,
     "img": "https://i.imgur.com/lWmI1lB.jpg"
   },
   {
-    "num" : 104,
+    "num": 104,
     "img": "https://i.imgur.com/dnCNfPo.jpg"
   },
   {
-    "num" : 657,
+    "num": 657,
     "img": "https://imgs.xkcd.com/comics/movie_narrative_charts_large.png",
     "large": true
   },
   {
-    "num" : 681,
+    "num": 681,
     "img": "https://imgs.xkcd.com/comics/gravity_wells_large.png",
     "large": true
   },
   {
-    "num" : 802,
+    "num": 802,
     "img": "https://imgs.xkcd.com/comics/online_communities_2_large.png",
     "large": true
   },
   {
-    "num" : 980,
+    "num": 980,
     "img": "https://imgs.xkcd.com/comics/money_huge.png",
     "large": true
   },
   {
-    "num" : 1000,
+    "num": 1000,
     "img": "https://imgs.xkcd.com/comics/1000_comics_large.png",
     "large": true
   },
   {
-    "num" : 1037,
+    "num": 1037,
     "img": "https://www.explainxkcd.com/wiki/images/f/ff/umwelt_the_void.jpg"
   },
   {
-    "num" : 1040,
+    "num": 1040,
     "img": "https://imgs.xkcd.com/comics/lakes_and_oceans_large.png",
     "large": true
   },
   {
-    "num" : 1047,
+    "num": 1047,
     "large": true
   },
   {
-    "num" : 1054,
+    "num": 1054,
     "title": "The Bacon"
   },
   {
-    "num" : 1056,
+    "num": 1056,
     "img": "https://imgs.xkcd.com/comics/xkcloud.png"
   },
   {
-    "num" : 1071,
+    "num": 1071,
     "img": "https://imgs.xkcd.com/comics/exoplanets_large.png",
     "large": true
   },
   {
-    "num" : 1079,
+    "num": 1079,
     "img": "https://imgs.xkcd.com/comics/united_shapes_large.png",
     "large": true
   },
   {
-    "num" : 1080,
+    "num": 1080,
     "img": "https://imgs.xkcd.com/comics/visual_field_large.png",
     "large": true
   },
   {
-    "num" : 1110,
+    "num": 1110,
     "img": "https://www.explainxkcd.com/wiki/images/c/c7/click_and_drag.png"
   },
   {
-    "num" : 1127,
+    "num": 1127,
     "img": "https://imgs.xkcd.com/comics/congress_large.png",
     "large": true
   },
   {
-    "num" : 1137,
+    "num": 1137,
     "title": "RTL"
   },
   {
-    "num" : 1190,
+    "num": 1190,
     "img": "https://i.imgur.com/WO4I8Mf.gif"
   },
   {
-    "num" : 1193,
+    "num": 1193,
     "img": "https://www.explainxkcd.com/wiki/images/0/0b/externalities.png"
   },
   {
-    "num" : 1196,
+    "num": 1196,
     "img": "https://imgs.xkcd.com/comics/subways_large.png",
     "large": true
   },
   {
-    "num" : 1227,
+    "num": 1227,
     "large": true
   },
   {
-    "num" : 1256,
+    "num": 1256,
     "img": "https://imgs.xkcd.com/comics/questions_large.png",
     "large": true
   },
   {
-    "num" : 1298,
+    "num": 1298,
     "img": "https://imgs.xkcd.com/comics/exoplanet_neighborhood_large.png",
     "large": true
   },
   {
-    "num" : 1335,
+    "num": 1335,
     "img": "https://i.imgur.com/5PAaVXW.gif"
   },
   {
-    "num" : 1349,
+    "num": 1349,
     "img": "https://imgs.xkcd.com/comics/shouldnt_be_hard.png"
   },
   {
-    "num" : 1350,
+    "num": 1350,
     "img": "https://www.explainxkcd.com/wiki/images/3/3d/lorenz.png"
   },
   {
-    "num" : 1389,
+    "num": 1389,
     "img": "https://imgs.xkcd.com/comics/surface_area_large.png",
     "large": true
   },
   {
-    "num" : 1392,
+    "num": 1392,
     "img": "https://imgs.xkcd.com/comics/dominant_players_large.png",
     "large": true
   },
   {
-    "num" : 1446,
+    "num": 1446,
     "img": "https://i.imgur.com/M4wa8Ed.gif"
   },
   {
-    "num" : 1461,
+    "num": 1461,
     "img": "https://imgs.xkcd.com/comics/payloads_large.png",
     "large": true
   },
   {
-    "num" : 1491,
+    "num": 1491,
     "img": "https://imgs.xkcd.com/comics/stories_of_the_past_and_future_large.png",
     "large": true
   },
   {
-    "num" : 1525,
+    "num": 1525,
     "img": "https://www.explainxkcd.com/wiki/images/e/e0/emojic_8_ball.png"
   },
   {
-    "num" : 1608,
+    "num": 1608,
     "img": "https://www.explainxkcd.com/wiki/images/4/41/hoverboard.png"
   },
   {
-    "num" : 1649
+    "num": 1649
   },
   {
-    "num" : 1663,
+    "num": 1663,
     "img": "https://www.explainxkcd.com/wiki/images/c/ce/garden.png"
   },
   {
-    "num" : 1667,
+    "num": 1667,
     "img": "https://imgs.xkcd.com/comics/algorithms.png"
   },
   {
-    "num" : 1688,
+    "num": 1688,
     "img": "https://imgs.xkcd.com/comics/map_age_guide_large.png",
     "large": true
   },
   {
-    "num" : 1705,
+    "num": 1705,
     "title": "Pokémon Go"
   },
   {
-    "num" : 1732,
+    "num": 1732,
     "large": true
   },
   {
-    "num" : 1735,
+    "num": 1735,
     "img": "https://imgs.xkcd.com/comics/fashion_police_and_grammar_police.png"
   },
   {
-    "num" : 1739,
+    "num": 1739,
     "img": "https://imgs.xkcd.com/comics/fixing_problems.png"
   },
   {
-    "num" : 1744,
+    "num": 1744,
     "img": "https://imgs.xkcd.com/comics/metabolism.png"
   },
   {
-    "num" : 1778,
+    "num": 1778,
     "img": "https://imgs.xkcd.com/comics/interest_timescales.png"
   },
   {
-    "num" : 1913,
+    "num": 1913,
     "title": "A �"
   },
   {
-    "num" : 1970,
+    "num": 1970,
     "img": "https://imgs.xkcd.com/comics/name_dominos_large.png",
     "large": true
   }

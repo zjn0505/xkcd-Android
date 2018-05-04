@@ -22,11 +22,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
+                android:fontFamily="@font/xkcd"
                 android:gravity="center"
                 android:textSize="25sp"
                 android:textStyle="bold"
-                tools:text="0. Default Image"
-                android:fontFamily="@font/xkcd"/>
+                tools:text="0. Default Image" />
 
             <ScrollView
                 android:layout_width="match_parent"
@@ -54,9 +54,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
+                android:fontFamily="@font/xkcd"
                 android:gravity="end"
                 android:textSize="15sp"
-                android:fontFamily="@font/xkcd"
                 tools:text="created on 2017.7.2" />
 
 
@@ -74,15 +74,15 @@
                 android:layout_margin="20dp"
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/xkcd_pic"
-                android:scaleType="fitCenter"/>
+                android:scaleType="fitCenter" />
 
             <Button
                 android:id="@+id/btn_reload"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/btn_reload"
                 android:layout_gravity="center"
-                android:visibility="gone"/>
+                android:text="@string/btn_reload"
+                android:visibility="gone" />
 
         </FrameLayout>
 
@@ -91,7 +91,7 @@
 
     <com.dinuscxj.progressbar.CircleProgressBar
         android:id="@+id/pb_loading"
-        style="@style/image_progress_bar"/>
+        style="@style/image_progress_bar" />
 
 
 </FrameLayout>

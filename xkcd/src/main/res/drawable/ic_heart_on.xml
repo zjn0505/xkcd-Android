@@ -1,12 +1,11 @@
-<vector
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:height="48dp"
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="48dp"
+    android:height="48dp"
     android:viewportHeight="100"
-    android:viewportWidth="100" >
+    android:viewportWidth="100">
     <path
         android:fillColor="@color/pink"
-        android:pathData="@string/heart"/>
+        android:pathData="@string/heart" />
     <group
         android:name="heart_group"
         android:pivotX="50"
@@ -16,6 +15,6 @@
         <path
             android:name="heart"
             android:fillColor="@color/pink"
-            android:pathData="@string/heart"/>
+            android:pathData="@string/heart" />
     </group>
 </vector>

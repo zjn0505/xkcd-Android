@@ -3,17 +3,18 @@
     package="xyz.jienan.xkcd">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name="xyz.jienan.xkcd.XkcdApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:name="xyz.jienan.xkcd.XkcdApplication"
         android:theme="@style/AppTheme">
-        <activity android:name="xyz.jienan.xkcd.home.activity.MainActivity"
+        <activity
+            android:name="xyz.jienan.xkcd.home.activity.MainActivity"
             android:configChanges="screenSize|keyboardHidden"
             android:launchMode="singleTask">
             <intent-filter>
@@ -21,39 +22,42 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <meta-data android:name="android.app.searchable"
+            <meta-data
+                android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
 
-        <activity android:name="xyz.jienan.xkcd.home.activity.ImageDetailPageActivity"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+        <activity
+            android:name="xyz.jienan.xkcd.home.activity.ImageDetailPageActivity"
+            android:configChanges="screenSize|orientation|keyboardHidden"
             android:launchMode="singleTask"
-            android:configChanges="screenSize|orientation|keyboardHidden"/>
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
 
-        <activity android:name=".settings.PreferenceActivity"
-            android:launchMode="singleTask"
-            android:configChanges="screenSize|orientation|keyboardHidden"/>
+        <activity
+            android:name=".settings.PreferenceActivity"
+            android:configChanges="screenSize|orientation|keyboardHidden"
+            android:launchMode="singleTask" />
 
-        <activity android:name=".list.XkcdListActivity"
-            android:label="@string/title_xkcd_list"
-            android:configChanges="screenSize|orientation|keyboardHidden"/>
+        <activity
+            android:name=".list.XkcdListActivity"
+            android:configChanges="screenSize|orientation|keyboardHidden"
+            android:label="@string/title_xkcd_list" />
 
-        <service
-            android:name=".base.firebase.XkcdFirebaseMessagingService">
+        <service android:name=".base.firebase.XkcdFirebaseMessagingService">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
-        <service
-            android:name=".base.firebase.XkcdFirebaseInstanceIDService">
+        <service android:name=".base.firebase.XkcdFirebaseInstanceIDService">
             <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
 
-        <meta-data android:value="GlideModule"
-            android:name="xyz.jienan.xkcd.base.glide.OkHttpProgressGlideModule" />
+        <meta-data
+            android:name="xyz.jienan.xkcd.base.glide.OkHttpProgressGlideModule"
+            android:value="GlideModule" />
         <!-- Set custom default icon. This is used when no icon is set for incoming notification messages.
              See README(https://goo.gl/l4GJaQ) for more. -->
         <meta-data
@@ -62,8 +66,8 @@
         <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming
              notification message. See README(https://goo.gl/6BKBk7) for more. -->
         <!--<meta-data-->
-            <!--android:name="com.google.firebase.messaging.default_notification_color"-->
-            <!--android:resource="@color/colorAccent" />-->
+        <!--android:name="com.google.firebase.messaging.default_notification_color"-->
+        <!--android:resource="@color/colorAccent" />-->
 
     </application>
 

@@ -8,23 +8,23 @@
         android:id="@+id/photo_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
-        android:contentDescription="@string/xkcd_pic"/>
+        android:contentDescription="@string/xkcd_pic"
+        android:visibility="gone" />
 
 
     <com.github.piasy.biv.view.BigImageView
         android:id="@+id/big_image_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:optimizeDisplay="true"
-        android:contentDescription="@string/xkcd_pic"/>
+        android:contentDescription="@string/xkcd_pic"
+        app:optimizeDisplay="true" />
 
     <ProgressBar
         android:id="@+id/pb_loading"
+        style="@style/holo_progressbar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        style="@style/holo_progressbar"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 </FrameLayout>

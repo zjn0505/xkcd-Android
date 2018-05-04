@@ -13,7 +13,7 @@
 
     <string name="dialog_got_it">Got it</string>
     <string name="dialog_more_details">More details</string>
-    
+
     <string name="dialog_pick_title">Specific xkcd</string>
     <string name="dialog_pick_content">Select the id of xkcd</string>
     <string name="dialog_select">Select</string>

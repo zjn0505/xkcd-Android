@@ -14,7 +14,7 @@
         android:textColor="#FFffffff"
         android:textSize="28sp"
         android:visibility="visible"
-        tools:text="A"/>
+        tools:text="A" />
 
     <ImageView
         android:id="@+id/fastscroller_handle"
@@ -23,6 +23,6 @@
         android:paddingLeft="3dp"
         android:paddingStart="3dp"
         android:src="@drawable/recycler_view_fast_scroller_handle"
-        tools:ignore="RtlSymmetry"/>
+        tools:ignore="RtlSymmetry" />
 
 </merge>

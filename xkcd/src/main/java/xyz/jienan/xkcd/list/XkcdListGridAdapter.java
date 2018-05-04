@@ -27,11 +27,11 @@ import io.reactivex.schedulers.Schedulers;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.XkcdApplication;
 import xyz.jienan.xkcd.XkcdPic;
+import xyz.jienan.xkcd.base.network.NetworkService;
 import xyz.jienan.xkcd.home.activity.MainActivity;
-import xyz.jienan.xkcd.network.NetworkService;
 
 import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NEW_INTENT;
-import static xyz.jienan.xkcd.network.NetworkService.XKCD_BROWSE_LIST;
+import static xyz.jienan.xkcd.base.network.NetworkService.XKCD_BROWSE_LIST;
 
 public class XkcdListGridAdapter extends RecyclerView.Adapter<XkcdListGridAdapter.XkcdViewHolder> implements RecyclerViewFastScroller.BubbleTextGetter {
 
@@ -67,7 +67,6 @@ public class XkcdListGridAdapter extends RecyclerView.Adapter<XkcdListGridAdapte
     public int getItemCount() {
         return pics == null ? 0 : pics.size();
     }
-
 
 
     public List<XkcdPic> getPics() {

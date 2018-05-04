@@ -2,41 +2,50 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/action_left"
-        android:title="@string/action_left"
+    <item
+        android:id="@+id/action_left"
         android:icon="@drawable/ic_action_left"
+        android:title="@string/action_left"
         app:showAsAction="always" />
-    <item android:id="@+id/action_search"
-        android:title="@string/action_search"
+    <item
+        android:id="@+id/action_search"
         android:icon="@drawable/ic_action_search"
-        app:showAsAction="collapseActionView|always"
-        app:actionViewClass="android.support.v7.widget.SearchView" />
-    <item android:id="@+id/action_right"
-        android:title="@string/action_right"
+        android:title="@string/action_search"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="collapseActionView|always" />
+    <item
+        android:id="@+id/action_right"
         android:icon="@drawable/ic_action_right"
+        android:title="@string/action_right"
         app:showAsAction="always" />
-    <item android:id="@+id/action_share"
-        android:title="@string/action_share"
+    <item
+        android:id="@+id/action_share"
         android:icon="@drawable/ic_action_share"
+        android:title="@string/action_share"
         app:showAsAction="always" />
-    <item android:id="@+id/action_xkcd_list"
+    <item
+        android:id="@+id/action_xkcd_list"
         android:title="@string/action_xkcd_list"
         app:showAsAction="never" />
-    <item android:id="@+id/action_specific"
+    <item
+        android:id="@+id/action_specific"
         android:title="@string/action_specific"
         app:showAsAction="never" />
 
     <group>
-        <item android:id="@+id/action_go_xkcd"
+        <item
+            android:id="@+id/action_go_xkcd"
             android:title="@string/action_xkcd"
             app:showAsAction="never" />
-        <item android:id="@+id/action_go_explain"
+        <item
+            android:id="@+id/action_go_explain"
             android:title="@string/action_explain"
             app:showAsAction="never" />
     </group>
 
-    <item android:id="@+id/action_settings"
+    <item
+        android:id="@+id/action_settings"
         android:title="@string/settings"
-        app:showAsAction="never"/>
+        app:showAsAction="never" />
 
 </menu>

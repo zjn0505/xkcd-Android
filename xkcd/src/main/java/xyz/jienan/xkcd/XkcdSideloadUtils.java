@@ -22,9 +22,9 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
-import xyz.jienan.xkcd.network.NetworkService;
+import xyz.jienan.xkcd.base.network.NetworkService;
 
-import static xyz.jienan.xkcd.network.NetworkService.XKCD_SPECIAL_LIST;
+import static xyz.jienan.xkcd.base.network.NetworkService.XKCD_SPECIAL_LIST;
 
 /**
  * Created by Jienan on 2018/3/2.

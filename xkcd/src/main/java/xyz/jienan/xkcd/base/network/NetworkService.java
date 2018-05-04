@@ -1,4 +1,4 @@
-package xyz.jienan.xkcd.network;
+package xyz.jienan.xkcd.base.network;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -28,7 +28,6 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 import okhttp3.TlsVersion;
 import okhttp3.logging.HttpLoggingInterceptor;
-import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -44,7 +43,6 @@ import timber.log.Timber;
 import xyz.jienan.xkcd.BuildConfig;
 import xyz.jienan.xkcd.XkcdApplication;
 import xyz.jienan.xkcd.XkcdPic;
-import xyz.jienan.xkcd.base.network.TLSSocketFactory;
 
 /**
  * Created by Jienan on 2018/3/2.

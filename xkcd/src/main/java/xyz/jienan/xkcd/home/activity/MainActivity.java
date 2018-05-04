@@ -46,10 +46,10 @@ import xyz.jienan.xkcd.XkcdApplication;
 import xyz.jienan.xkcd.XkcdPic;
 import xyz.jienan.xkcd.XkcdPic_;
 import xyz.jienan.xkcd.base.BaseActivity;
+import xyz.jienan.xkcd.base.network.NetworkService;
 import xyz.jienan.xkcd.home.ComicsPagerAdapter;
 import xyz.jienan.xkcd.home.dialog.NumberPickerDialogFragment;
 import xyz.jienan.xkcd.list.XkcdListActivity;
-import xyz.jienan.xkcd.network.NetworkService;
 import xyz.jienan.xkcd.settings.PreferenceActivity;
 import xyz.jienan.xkcd.ui.like.LikeButton;
 import xyz.jienan.xkcd.ui.like.OnLikeListener;
@@ -72,7 +72,7 @@ import static xyz.jienan.xkcd.Const.PREF_ARROW;
 import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NEW_INTENT;
 import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NOTI_INTENT;
 import static xyz.jienan.xkcd.Const.XKCD_LATEST_INDEX;
-import static xyz.jienan.xkcd.network.NetworkService.XKCD_BROWSE_LIST;
+import static xyz.jienan.xkcd.base.network.NetworkService.XKCD_BROWSE_LIST;
 
 public class MainActivity extends BaseActivity implements ShakeDetector.Listener {
 
@@ -581,18 +581,6 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
         return pipeline;
     }
 
-    public static class PicsPipeline {
-        private PublishSubject<XkcdPic> picsPipeline = PublishSubject.create();
-
-        public void send(XkcdPic pic) {
-            picsPipeline.onNext(pic);
-        }
-
-        public Observable<XkcdPic> toObservable() {
-            return picsPipeline;
-        }
-    }
-
     @SuppressLint("CheckResult")
     private void loadList(final int start) {
         final Query<XkcdPic> query = box.query()
@@ -630,6 +618,18 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
                         box.put(xkcdPics);
                     }, e -> Timber.e(e, "load list error: start - %d", start));
             compositeDisposable.add(d);
+        }
+    }
+
+    public static class PicsPipeline {
+        private PublishSubject<XkcdPic> picsPipeline = PublishSubject.create();
+
+        public void send(XkcdPic pic) {
+            picsPipeline.onNext(pic);
+        }
+
+        public Observable<XkcdPic> toObservable() {
+            return picsPipeline;
         }
     }
 }

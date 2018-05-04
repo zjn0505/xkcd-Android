@@ -1,7 +1,6 @@
 package xyz.jienan.xkcd.home.dialog;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;

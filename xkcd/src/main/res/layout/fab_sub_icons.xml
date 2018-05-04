@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:showIn="@layout/activity_main">
 
     <xyz.jienan.xkcd.ui.like.LikeButton
         android:id="@+id/btn_fav"
-        app:icon_type="heart"
-        app:icon_size="24dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingBottom="8dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:contentDescription="@string/add_to_fav"
-        android:visibility="gone" />
+        android:paddingBottom="8dp"
+        android:visibility="gone"
+        app:icon_size="24dp"
+        app:icon_type="heart" />
 
     <xyz.jienan.xkcd.ui.like.LikeButton
         android:id="@+id/btn_thumb"
-        app:icon_type="thumb"
-        app:icon_size="24dp"
-        app:persist_liked="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingBottom="8dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:contentDescription="@string/thumbs_up"
-        android:visibility="gone"/>
+        android:paddingBottom="8dp"
+        android:visibility="gone"
+        app:icon_size="24dp"
+        app:icon_type="thumb"
+        app:persist_liked="true" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
@@ -40,9 +40,9 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
+        android:layout_marginRight="8dp"
         app:backgroundTint="@color/pink"
         app:srcCompat="@drawable/ic_heart_white"
-        app:useCompatPadding="true"
-        android:layout_marginRight="8dp"/>
+        app:useCompatPadding="true" />
 
 </merge>

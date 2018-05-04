@@ -25,6 +25,6 @@
         android:fontFamily="@font/xkcd"
         android:gravity="center_vertical"
         android:textSize="22sp"
-        tools:text="All comics"/>
+        tools:text="All comics" />
 
 </LinearLayout>

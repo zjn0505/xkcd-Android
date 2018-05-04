@@ -1,7 +1,6 @@
 package xyz.jienan.xkcd.list;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -23,14 +22,11 @@ import io.objectbox.Box;
 import io.objectbox.query.Query;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
-import io.reactivex.SingleObserver;
 import io.reactivex.SingleSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
-import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 import xyz.jienan.xkcd.R;
@@ -38,7 +34,7 @@ import xyz.jienan.xkcd.XkcdApplication;
 import xyz.jienan.xkcd.XkcdPic;
 import xyz.jienan.xkcd.XkcdPic_;
 import xyz.jienan.xkcd.base.BaseActivity;
-import xyz.jienan.xkcd.network.NetworkService;
+import xyz.jienan.xkcd.base.network.NetworkService;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_DRAGGING;
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
@@ -48,10 +44,10 @@ import static xyz.jienan.xkcd.Const.FIRE_FILTER_THUMB;
 import static xyz.jienan.xkcd.Const.FIRE_LIST_FILTER_BAR;
 import static xyz.jienan.xkcd.Const.FIRE_SCROLL_TO_END;
 import static xyz.jienan.xkcd.Const.XKCD_LATEST_INDEX;
+import static xyz.jienan.xkcd.base.network.NetworkService.XKCD_BROWSE_LIST;
+import static xyz.jienan.xkcd.base.network.NetworkService.XKCD_TOP;
+import static xyz.jienan.xkcd.base.network.NetworkService.XKCD_TOP_SORT_BY_THUMB_UP;
 import static xyz.jienan.xkcd.list.XkcdListActivity.Selection.ALL_COMICS;
-import static xyz.jienan.xkcd.network.NetworkService.XKCD_BROWSE_LIST;
-import static xyz.jienan.xkcd.network.NetworkService.XKCD_TOP;
-import static xyz.jienan.xkcd.network.NetworkService.XKCD_TOP_SORT_BY_THUMB_UP;
 
 /**
  * Created by jienanzhang on 22/03/2018.

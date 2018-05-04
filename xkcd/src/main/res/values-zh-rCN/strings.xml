@@ -39,7 +39,7 @@
     <string name="settings">设置</string>
     <string name="share_text">一起来看看这张有趣的xkcd漫画吧.</string>
     <string name="toast_more_explain_failed">获取失败，请尝试访问Explainxkcd</string>
-    <string name="title_xkcd_list" >xkcd列表</string>
+    <string name="title_xkcd_list">xkcd列表</string>
 
     <string name="thumbs_up">点赞</string>
     <string name="add_to_fav">收藏</string>

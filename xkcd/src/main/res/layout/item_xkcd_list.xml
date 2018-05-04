@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.percent.PercentFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:layout_margin="2dp"
-    android:padding="1dp"
-    android:background="#e6e6e6">
+    android:background="#e6e6e6"
+    android:padding="1dp">
 
     <ImageView
         android:id="@+id/iv_item_xkcd_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_widthPercent="100%"
         android:scaleType="fitCenter"
-        tools:src="@mipmap/ic_launcher"
-        tools:layout_aspectRatio="178%"/>
+        app:layout_widthPercent="100%"
+        tools:layout_aspectRatio="178%"
+        tools:src="@mipmap/ic_launcher" />
 
     <TextView
         android:id="@+id/tv_item_xkcd_num"
         android:layout_width="36dp"
         android:layout_height="36dp"
-        android:fontFamily="@font/xkcd_script"
-        android:textSize="14sp"
-        android:gravity="center"
-        android:textColor="#FFF"
-        tools:text="1334"
         android:layout_gravity="bottom|end"
         android:layout_margin="1dp"
-        android:background="@drawable/item_num_bg"/>
+        android:background="@drawable/item_num_bg"
+        android:fontFamily="@font/xkcd_script"
+        android:gravity="center"
+        android:textColor="#FFF"
+        android:textSize="14sp"
+        tools:text="1334" />
 
 </android.support.percent.PercentFrameLayout>

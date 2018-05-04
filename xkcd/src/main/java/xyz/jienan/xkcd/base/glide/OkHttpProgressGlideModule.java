@@ -20,7 +20,7 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import xyz.jienan.xkcd.network.NetworkService;
+import xyz.jienan.xkcd.base.network.NetworkService;
 
 /**
  * Created by jienanzhang on 03/03/2018.

@@ -14,33 +14,33 @@
             android:id="@+id/tv_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="25sp"
             android:layout_margin="5dp"
-            tools:text="0. Default Image"
+            android:fontFamily="@font/xkcd"
             android:gravity="center"
+            android:textSize="25sp"
             android:textStyle="bold"
-            android:fontFamily="@font/xkcd"/>
+            tools:text="0. Default Image" />
 
         <ImageView
             android:id="@+id/iv_xkcd_pic"
-            android:contentDescription="@string/xkcd_pic"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
             android:layout_weight="1"
             android:adjustViewBounds="true"
-            android:scaleType="fitCenter"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"/>
+            android:contentDescription="@string/xkcd_pic"
+            android:scaleType="fitCenter" />
 
         <TextView
             android:id="@+id/tv_create_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
-            android:textSize="15sp"
+            android:fontFamily="@font/xkcd"
             android:gravity="start"
-            tools:text="2017.7.2"
-            android:fontFamily="@font/xkcd"/>
+            android:textSize="15sp"
+            tools:text="2017.7.2" />
 
     </LinearLayout>
 
@@ -52,8 +52,8 @@
         android:id="@+id/btn_reload"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/btn_reload"
         android:layout_gravity="center"
-        android:visibility="gone"/>
+        android:text="@string/btn_reload"
+        android:visibility="gone" />
 
 </FrameLayout>
