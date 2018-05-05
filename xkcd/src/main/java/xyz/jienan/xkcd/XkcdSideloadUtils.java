@@ -16,10 +16,6 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.List;
 
-import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 import xyz.jienan.xkcd.base.network.NetworkService;
@@ -36,52 +32,21 @@ public class XkcdSideloadUtils {
 
     @SuppressLint("CheckResult")
     public static void init(final Context context) {
-        Observable.empty().subscribeOn(Schedulers.io()).subscribe(new Consumer<Object>() {
-            @Override
-            public void accept(Object o) throws Exception {
-                try {
-                    initXkcdSideloadMap(context);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        checkRemoteJson();
+        NetworkService.getXkcdAPI()
+                .getSpecialXkcds(XKCD_SPECIAL_LIST)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .doOnSubscribe(ignored -> initXkcdSideloadMap(context))
+                .singleOrError()
+                .subscribe(xkcdPics -> {
+                    for (XkcdPic pic : xkcdPics) {
+                        xkcdSideloadMap.put((int) pic.num, pic);
+                    }
+                }, e -> Timber.e(e, "Failed to init special list"));
     }
 
     public static boolean useLargeImageView(int num) {
-        if (xkcdSideloadMap.containsKey(num)) {
-            return xkcdSideloadMap.get(num).large;
-        }
-        return false;
-    }
-
-    private static void checkRemoteJson() {
-        NetworkService.getXkcdAPI()
-                .getSpecialXkcds(XKCD_SPECIAL_LIST).observeOn(Schedulers.io()).subscribeOn(Schedulers.io())
-                .subscribe(new Observer<List<XkcdPic>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(List<XkcdPic> xkcdPics) {
-                        for (XkcdPic pic : xkcdPics) {
-                            xkcdSideloadMap.put((int) pic.num, pic);
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e, "Failed to get remote special list");
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+        return xkcdSideloadMap.containsKey(num) && xkcdSideloadMap.get(num).large;
     }
 
     public static XkcdPic sideload(XkcdPic xkcdPic) {
