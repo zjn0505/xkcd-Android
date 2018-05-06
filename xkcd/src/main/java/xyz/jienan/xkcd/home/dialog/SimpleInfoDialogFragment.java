@@ -22,14 +22,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.objectbox.Box;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.XkcdApplication;
+import xyz.jienan.xkcd.XkcdExplainUtil;
 import xyz.jienan.xkcd.XkcdPic;
 import xyz.jienan.xkcd.home.activity.ImageDetailPageActivity;
 
@@ -162,8 +160,8 @@ public class SimpleInfoDialogFragment extends DialogFragment {
         ClickableSpan clickable = new ClickableSpan() {
             public void onClick(View view) {
                 String url = span.getURL();
-                if (isXkcdImageLink(url)) {
-                    final long id = getXkcdIdFromImageLink(url);
+                if (XkcdExplainUtil.isXkcdImageLink(url)) {
+                    final long id = XkcdExplainUtil.getXkcdIdFromImageLink(url);
                     XkcdPic xkcdPic = box.get(id);
                     Intent intent = new Intent(getActivity(), ImageDetailPageActivity.class);
                     if (xkcdPic != null) {
@@ -194,21 +192,6 @@ public class SimpleInfoDialogFragment extends DialogFragment {
         }
         text.setText(strBuilder);
         text.setMovementMethod(LinkMovementMethod.getInstance());
-    }
-
-    private boolean isXkcdImageLink(String url) {
-        final String regex = "^https?://www\\.explainxkcd\\.com/wiki/index\\.php/\\d+.*$";
-        return url.matches(regex);
-    }
-
-    private long getXkcdIdFromImageLink(String url) {
-        final String regex = "^https?://www\\.explainxkcd\\.com/wiki/index\\.php/(\\d+).*$";
-        Matcher matcher = Pattern.compile(regex).matcher(url);
-        if (matcher.find()) {
-            return Long.valueOf(matcher.group(1));
-        } else {
-            return 0;
-        }
     }
 
     public interface ISimpleInfoDialogListener {

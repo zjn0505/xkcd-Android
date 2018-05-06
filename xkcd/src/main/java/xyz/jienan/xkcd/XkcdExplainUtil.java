@@ -9,6 +9,8 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import okhttp3.ResponseBody;
 
@@ -67,6 +69,20 @@ public class XkcdExplainUtil {
         return null;
     }
 
+    public static boolean isXkcdImageLink(String url) {
+        final String regex = "^https?://www\\.explainxkcd\\.com/wiki/index\\.php/\\d+.*$";
+        return url.matches(regex);
+    }
+
+    public static long getXkcdIdFromImageLink(String url) {
+        final String regex = "^https?://www\\.explainxkcd\\.com/wiki/index\\.php/(\\d+).*$";
+        Matcher matcher = Pattern.compile(regex).matcher(url);
+        if (matcher.find()) {
+            return Long.valueOf(matcher.group(1));
+        } else {
+            return 0;
+        }
+    }
 
     private static boolean isH2ByType(Element element, String type) {
         if (!"h2".equals(element.nodeName())) {
