@@ -110,7 +110,9 @@ public class SingleComicFragment extends Fragment {
 
         @Override
         public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
-            ivXkcdPic.setOnClickListener(v -> launchDetailPageActivity());
+            if (ivXkcdPic != null) {
+                ivXkcdPic.setOnClickListener(v -> launchDetailPageActivity());
+            }
             if (currentPic != null && (currentPic.width == 0 || currentPic.height == 0) && resource != null) {
                 XkcdPic xkcdPic = box.get(currentPic.num);
                 int width = resource.getWidth();
