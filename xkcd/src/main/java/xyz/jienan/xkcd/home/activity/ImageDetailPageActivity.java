@@ -26,6 +26,7 @@ import io.objectbox.Box;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 import xyz.jienan.xkcd.R;
@@ -132,16 +133,12 @@ public class ImageDetailPageActivity extends Activity {
                 }));
     }
 
-    @SuppressLint("CheckResult")
     private void requestImage() {
-        NetworkService.getXkcdAPI()
+        Disposable d = NetworkService.getXkcdAPI()
                 .getComics(String.valueOf(index))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(disposable -> {
-                    pbLoading.setVisibility(View.VISIBLE);
-                    compositeDisposable.add(disposable);
-                })
+                .doOnSubscribe(ignored -> pbLoading.setVisibility(View.VISIBLE))
                 .subscribe(resXkcdPic -> {
                     XkcdPic xkcdPic = box.get(resXkcdPic.num);
                     if (xkcdPic != null) {
@@ -151,5 +148,6 @@ public class ImageDetailPageActivity extends Activity {
                     box.put(resXkcdPic);
                     renderPic(resXkcdPic.getTargetImg());
                 }, e -> Timber.e(e, "Request pic in detail page error, %d", index));
+        compositeDisposable.add(d);
     }
 }

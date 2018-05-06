@@ -33,13 +33,6 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.bumptech.glide.request.target.Target;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
-import org.jsoup.select.Elements;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -56,6 +49,7 @@ import okhttp3.ResponseBody;
 import timber.log.Timber;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.XkcdApplication;
+import xyz.jienan.xkcd.XkcdExplainUtil;
 import xyz.jienan.xkcd.XkcdPic;
 import xyz.jienan.xkcd.base.glide.ProgressTarget;
 import xyz.jienan.xkcd.base.network.NetworkService;
@@ -157,65 +151,10 @@ public class SingleComicFragment extends Fragment {
             if (((MainActivity) getActivity()).getMaxId() - currentPic.num < 10) {
                 call = NetworkService.getXkcdAPI().getExplainWithShortCache(url);
             }
-            call.subscribeOn(Schedulers.io()).map(responseBody -> {
-                Document doc = Jsoup.parse(responseBody.string());
-                Elements newsHeadlines = doc.select("h2");
-                for (Element headline : newsHeadlines) {
-                    if (isH2ByType(headline, "Explanation")) {
-                        Element element = headline.nextElementSibling();
-                        StringBuilder htmlResult = new StringBuilder();
-                        while (!"h2".equals(element.nodeName())) {
-                            if ("h3".equals(element.nodeName())) {
-                                Elements elements = element.getElementsByClass("editsection");
-                                if (elements != null && elements.size() > 0) {
-                                    elements.remove();
-                                }
-                            }
-                            if (element.tagName().equals("p"))
-                                if (element.toString().contains("<i>citation needed</i>")) {
-                                    List<Node> nodes = new ArrayList<>();
-                                    for (Node node : element.childNodes()) {
-                                        if ("sup".equals(node.nodeName()) && node.toString().contains("<i>citation needed</i>")) {
-                                            nodes.add(node);
-                                        }
-                                    }
-                                    for (Node node : nodes) {
-                                        node.remove();
-                                    }
-                                }
-                            for (Element child : element.getAllElements()) {
-                                if ("a".equals(child.tagName()) && child.hasAttr("href")
-                                        && child.attr("href").startsWith("/wiki")) {
-                                    String href = child.attr("href");
-                                    child.attr("href", "https://www.explainxkcd.com" + href);
-                                }
-                                if ("tbody".equals(child.tagName())) {
-                                    for (Element tableElement : child.children()) {
-                                        tableElement.append("<br />");
-                                    }
-                                }
-                            }
-                            htmlResult.append(element.toString());
-                            Node node = element.nextSibling();
-                            while (!(node instanceof Element)) {
-                                htmlResult.append(node.toString());
-                                node = node.nextSibling();
-                            }
-                            element = (Element) node;
-                        }
-                        if (dialogFragment != null && dialogFragment.isAdded()) {
-                            if (!htmlResult.toString().endsWith("</p>"))
-                                htmlResult.append("<br>");
-                            return htmlResult.toString();
-                        }
-                    }
-                }
-                return null;
-            }).observeOn(AndroidSchedulers.mainThread())
-                    .doOnSubscribe(disposable -> {
-                        logUXEvent(FIRE_MORE_EXPLAIN);
-                        compositeDisposable.add(disposable);
-                    })
+            Disposable d = call.subscribeOn(Schedulers.io())
+                    .map(XkcdExplainUtil::getExplainFromHtml)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnSubscribe(ignored -> logUXEvent(FIRE_MORE_EXPLAIN))
                     .subscribe(result -> {
                         if (!TextUtils.isEmpty(result)) {
                             explainingCallback.explanationLoaded(result);
@@ -223,6 +162,7 @@ public class SingleComicFragment extends Fragment {
                             explainingCallback.explanationFailed();
                         }
                     }, e -> explainingCallback.explanationFailed());
+            compositeDisposable.add(d);
         }
     };
 
@@ -445,13 +385,11 @@ public class SingleComicFragment extends Fragment {
     /**
      * Request current xkcd picture
      */
-    @SuppressLint("CheckResult")
     private void loadXkcdPic() {
         pbLoading.setVisibility(View.VISIBLE);
         Observable<XkcdPic> xkcdPicObservable = NetworkService.getXkcdAPI().getComics(String.valueOf(id));
-        xkcdPicObservable.subscribeOn(Schedulers.io())
+        Disposable d = xkcdPicObservable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(compositeDisposable::add)
                 .subscribe(resXkcdPic -> {
                     renderXkcdPic(resXkcdPic);
                     XkcdPic xkcdPic = box.get(resXkcdPic.num);
@@ -464,6 +402,7 @@ public class SingleComicFragment extends Fragment {
                     Timber.e(e, "load xkcd pic error");
                     pbLoading.setVisibility(View.GONE);
                 });
+        compositeDisposable.add(d);
     }
 
     /**
@@ -489,18 +428,6 @@ public class SingleComicFragment extends Fragment {
             tvDescription.setText(xPic.alt);
         }
 
-    }
-
-    private boolean isH2ByType(Element element, String type) {
-        if (!"h2".equals(element.nodeName())) {
-            return false;
-        }
-        for (Node child : element.childNodes()) {
-            if (type.equals(child.attr("id"))) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private void logUXEvent(String event) {
