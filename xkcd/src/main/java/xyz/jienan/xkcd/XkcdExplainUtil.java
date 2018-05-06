@@ -23,7 +23,7 @@ public class XkcdExplainUtil {
                 Element element = headline.nextElementSibling();
                 StringBuilder htmlResult = new StringBuilder();
                 while (!"h2".equals(element.nodeName())) {
-                    if ("h3".equals(element.nodeName())) {
+                    if ("h3".equals(element.nodeName()) || "h4".equals(element.nodeName())) {
                         Elements elements = element.getElementsByClass("editsection");
                         if (elements != null && elements.size() > 0) {
                             elements.remove();
