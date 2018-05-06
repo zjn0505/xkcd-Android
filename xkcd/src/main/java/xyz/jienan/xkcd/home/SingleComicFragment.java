@@ -95,7 +95,7 @@ public class SingleComicFragment extends Fragment {
             btnReload.setOnClickListener(view -> {
                 pbLoading.clearAnimation();
                 pbLoading.setAnimation(AnimationUtils.loadAnimation(pbLoading.getContext(), R.anim.rotate));
-                Glide.with(getActivity()).load(model).asBitmap().fitCenter()
+                Glide.with(getActivity()).load(currentPic.getImg()).asBitmap().fitCenter()
                         .diskCacheStrategy(DiskCacheStrategy.SOURCE).listener(glideListener).into(target);
                 btnReload.setVisibility(View.GONE);
             });
