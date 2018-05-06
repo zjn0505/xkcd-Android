@@ -132,7 +132,9 @@ public class SingleComicFragment extends Fragment {
         @Override
         public void onNegativeClick() {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.explainxkcd.com/wiki/index.php/" + currentPic.num));
-            startActivity(browserIntent);
+            if (browserIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                startActivity(browserIntent);
+            }
         }
 
         @SuppressLint({"StaticFieldLeak", "CheckResult"})
@@ -150,7 +152,13 @@ public class SingleComicFragment extends Fragment {
                     if (isH2ByType(headline, "Explanation")) {
                         Element element = headline.nextElementSibling();
                         StringBuilder htmlResult = new StringBuilder();
-                        while (!"h2".equals(element.nodeName()) && !"h3".equals(element.nodeName())) {
+                        while (!"h2".equals(element.nodeName())) {
+                            if ("h3".equals(element.nodeName())) {
+                                Elements elements = element.getElementsByClass("editsection");
+                                if (elements != null && elements.size() > 0) {
+                                    elements.remove();
+                                }
+                            }
                             if (element.tagName().equals("p"))
                                 if (element.toString().contains("<i>citation needed</i>")) {
                                     List<Node> nodes = new ArrayList<>();
@@ -168,6 +176,11 @@ public class SingleComicFragment extends Fragment {
                                         && child.attr("href").startsWith("/wiki")) {
                                     String href = child.attr("href");
                                     child.attr("href", "https://www.explainxkcd.com" + href);
+                                }
+                                if ("tbody".equals(child.tagName())) {
+                                    for (Element tableElement : child.children()) {
+                                        tableElement.append("<br />");
+                                    }
                                 }
                             }
                             htmlResult.append(element.toString());
