@@ -171,7 +171,12 @@ public class SingleComicFragment extends Fragment {
                                 }
                             }
                             htmlResult.append(element.toString());
-                            element = element.nextElementSibling();
+                            Node node = element.nextSibling();
+                            while (!(node instanceof Element)) {
+                                htmlResult.append(node.toString());
+                                node = node.nextSibling();
+                            }
+                            element = (Element) node;
                         }
                         if (dialogFragment != null && dialogFragment.isAdded()) {
                             if (!htmlResult.toString().endsWith("</p>"))
