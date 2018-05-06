@@ -25,6 +25,8 @@ import android.widget.Toast;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import io.objectbox.Box;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.XkcdApplication;
@@ -43,8 +45,11 @@ public class SimpleInfoDialogFragment extends DialogFragment {
     private String xkcdContent;
     private String htmlContent;
     private ISimpleInfoDialogListener mListener;
-    private TextView tvExplain;
-    private ProgressBar pbLoading;
+
+    @BindView(R.id.tv_explain)
+    TextView tvExplain;
+    @BindView(R.id.pb_explaining)
+    ProgressBar pbLoading;
     private Button buttonNegative;
     private boolean hasExplainedMore = false;
     private DialogInterface.OnShowListener showListener = new DialogInterface.OnShowListener() {
@@ -128,7 +133,7 @@ public class SimpleInfoDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_explain, null);
-        tvExplain = (TextView) view.findViewById(R.id.tv_explain);
+        ButterKnife.bind(this, view);
         int negativeBtnTextId = R.string.dialog_more_details;
         if (TextUtils.isEmpty(htmlContent)) {
             tvExplain.setText(xkcdContent);
@@ -138,14 +143,10 @@ public class SimpleInfoDialogFragment extends DialogFragment {
             negativeBtnTextId = R.string.go_to_explainxkcd;
             hasExplainedMore = true;
         }
-
-        pbLoading = (ProgressBar) view.findViewById(R.id.pb_explaining);
         builder.setView(view)
-                .setPositiveButton(R.string.dialog_got_it, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        mListener.onPositiveClick();
-                        dismiss();
-                    }
+                .setPositiveButton(R.string.dialog_got_it, (dialog, id) -> {
+                    mListener.onPositiveClick();
+                    dismiss();
                 })
                 .setNegativeButton(negativeBtnTextId, null);
         // Create the AlertDialog object and return it
@@ -173,7 +174,9 @@ public class SimpleInfoDialogFragment extends DialogFragment {
 //                    getActivity().overridePendingTransition(R.anim.fadein, R.anim.fadeout);
                 } else {
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                    startActivity(browserIntent);
+                    if (browserIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                        startActivity(browserIntent);
+                    }
                 }
 
             }

@@ -42,6 +42,10 @@ import org.jsoup.select.Elements;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnLongClick;
+import butterknife.Unbinder;
 import io.objectbox.Box;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -77,17 +81,25 @@ import static xyz.jienan.xkcd.base.network.NetworkService.XKCD_SEARCH_SUGGESTION
 
 public class SingleComicFragment extends Fragment {
 
-    private TextView tvTitle;
-    private ImageView ivXkcdPic;
-    private TextView tvCreateDate;
-    private TextView tvDescription;
-    private ProgressBar pbLoading;
-    private Button btnReload;
+    @BindView(R.id.tv_title)
+    TextView tvTitle;
+    @BindView(R.id.iv_xkcd_pic)
+    ImageView ivXkcdPic;
+    @BindView(R.id.tv_create_date)
+    TextView tvCreateDate;
+    @Nullable
+    @BindView(R.id.tv_description)
+    TextView tvDescription;
+    @BindView(R.id.pb_loading)
+    ProgressBar pbLoading;
+    @BindView(R.id.btn_reload)
+    Button btnReload;
     private SimpleInfoDialogFragment dialogFragment;
     private FirebaseAnalytics mFirebaseAnalytics;
     private int id;
     private XkcdPic currentPic;
     private Box<XkcdPic> box;
+    private Unbinder unbinder;
     private RequestListener glideListener = new RequestListener<String, Bitmap>() {
         @Override
         public boolean onException(Exception e, final String model, final Target<Bitmap> target, boolean isFirstResource) {
@@ -236,26 +248,8 @@ public class SingleComicFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_comic, container, false);
-        pbLoading = view.findViewById(R.id.pb_loading);
+        unbinder = ButterKnife.bind(this, view);
         pbLoading.setAnimation(AnimationUtils.loadAnimation(pbLoading.getContext(), R.anim.rotate));
-        tvTitle = view.findViewById(R.id.tv_title);
-        ivXkcdPic = view.findViewById(R.id.iv_xkcd_pic);
-        tvCreateDate = view.findViewById(R.id.tv_create_date);
-        tvDescription = view.findViewById(R.id.tv_description);
-        btnReload = view.findViewById(R.id.btn_reload);
-        ivXkcdPic.setOnLongClickListener(v -> {
-            if (currentPic == null) {
-                return false;
-            }
-            dialogFragment = new SimpleInfoDialogFragment();
-            dialogFragment.setPic(currentPic);
-            dialogFragment.setListener(dialogListener);
-            dialogFragment.show(getChildFragmentManager(), "AltInfoDialogFragment");
-            v.performHapticFeedback(LONG_PRESS, FLAG_IGNORE_GLOBAL_SETTING);
-            logUXEvent(FIRE_LONG_PRESS);
-            return true;
-        });
-
         initGlide();
         box = ((XkcdApplication) getActivity().getApplication()).getBoxStore().boxFor(XkcdPic.class);
 //        Query<XkcdPic>  xkcdQuery = box.query().order(XkcdPic_.num).build();
@@ -281,6 +275,7 @@ public class SingleComicFragment extends Fragment {
     @Override
     public void onDestroyView() {
         compositeDisposable.clear();
+        unbinder.unbind();
         super.onDestroyView();
     }
 
@@ -407,6 +402,20 @@ public class SingleComicFragment extends Fragment {
             cursor.addRow(tmp);
         }
         searchAdapter.swapCursor(cursor);
+    }
+
+    @OnLongClick(R.id.iv_xkcd_pic)
+    public boolean showExplainDialog(ImageView v) {
+        if (currentPic == null) {
+            return false;
+        }
+        dialogFragment = new SimpleInfoDialogFragment();
+        dialogFragment.setPic(currentPic);
+        dialogFragment.setListener(dialogListener);
+        dialogFragment.show(getChildFragmentManager(), "AltInfoDialogFragment");
+        v.performHapticFeedback(LONG_PRESS, FLAG_IGNORE_GLOBAL_SETTING);
+        logUXEvent(FIRE_LONG_PRESS);
+        return true;
     }
 
     private void setItemsVisibility(Menu menu, int[] hideItems, boolean visible) {
