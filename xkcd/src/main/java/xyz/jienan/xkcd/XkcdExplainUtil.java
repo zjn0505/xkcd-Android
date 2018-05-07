@@ -1,5 +1,7 @@
 package xyz.jienan.xkcd;
 
+import android.text.TextUtils;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -15,7 +17,7 @@ import java.util.regex.Pattern;
 import okhttp3.ResponseBody;
 
 public class XkcdExplainUtil {
-    public static String getExplainFromHtml(ResponseBody responseBody) throws IOException {
+    public static String getExplainFromHtml(ResponseBody responseBody, String url) throws IOException {
         Document doc = Jsoup.parse(responseBody.string());
         Elements newsHeadlines = doc.select("h2");
         for (Element headline : newsHeadlines) {
@@ -42,10 +44,15 @@ public class XkcdExplainUtil {
                             }
                         }
                     for (Element child : element.getAllElements()) {
-                        if ("a".equals(child.tagName()) && child.hasAttr("href")
-                                && child.attr("href").startsWith("/wiki")) {
+                        if ("a".equals(child.tagName()) && child.hasAttr("href")) {
                             String href = child.attr("href");
-                            child.attr("href", "https://www.explainxkcd.com" + href);
+                            if (!TextUtils.isEmpty(href)) {
+                                if (href.startsWith("/wiki")) {
+                                    child.attr("href", "https://www.explainxkcd.com" + href);
+                                } else if (href.startsWith("#")) {
+                                    child.attr("href", url + href);
+                                }
+                            }
                         }
                         if ("tbody".equals(child.tagName())) {
                             for (Element tableElement : child.children()) {
@@ -70,7 +77,7 @@ public class XkcdExplainUtil {
     }
 
     public static boolean isXkcdImageLink(String url) {
-        final String regex = "^https?://www\\.explainxkcd\\.com/wiki/index\\.php/\\d+.*$";
+        final String regex = "^https?://www\\.explainxkcd\\.com/wiki/index\\.php/\\d+(?!#)[:]?\\w+$";
         return url.matches(regex);
     }
 

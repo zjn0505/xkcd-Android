@@ -169,7 +169,6 @@ public class SimpleInfoDialogFragment extends DialogFragment {
                     }
                     intent.putExtra("ID", id);
                     startActivity(intent);
-//                    getActivity().overridePendingTransition(R.anim.fadein, R.anim.fadeout);
                 } else {
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                     if (browserIntent.resolveActivity(getActivity().getPackageManager()) != null) {

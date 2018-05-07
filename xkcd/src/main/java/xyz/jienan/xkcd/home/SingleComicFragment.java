@@ -154,7 +154,7 @@ public class SingleComicFragment extends Fragment {
                 call = NetworkService.getXkcdAPI().getExplainWithShortCache(url);
             }
             Disposable d = call.subscribeOn(Schedulers.io())
-                    .map(XkcdExplainUtil::getExplainFromHtml)
+                    .map(responseBody -> XkcdExplainUtil.getExplainFromHtml(responseBody, url))
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSubscribe(ignored -> logUXEvent(FIRE_MORE_EXPLAIN))
                     .subscribe(result -> {
