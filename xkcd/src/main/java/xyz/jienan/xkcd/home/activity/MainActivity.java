@@ -26,6 +26,7 @@ import com.squareup.seismic.ShakeDetector;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import butterknife.BindView;
@@ -61,6 +62,8 @@ import static android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING;
 import static xyz.jienan.xkcd.Const.FIRE_BROWSE_LIST_MENU;
 import static xyz.jienan.xkcd.Const.FIRE_FAVORITE_OFF;
 import static xyz.jienan.xkcd.Const.FIRE_FAVORITE_ON;
+import static xyz.jienan.xkcd.Const.FIRE_FROM_NOTIFICATION;
+import static xyz.jienan.xkcd.Const.FIRE_FROM_NOTIFICATION_INDEX;
 import static xyz.jienan.xkcd.Const.FIRE_NEXT_BAR;
 import static xyz.jienan.xkcd.Const.FIRE_PREVIOUS_BAR;
 import static xyz.jienan.xkcd.Const.FIRE_SEARCH;
@@ -406,6 +409,9 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
                 }
                 editor.putInt(XKCD_LATEST_INDEX, latestIndex);
                 editor.apply();
+                Map<String, String> params = new HashMap<>();
+                params.put(FIRE_FROM_NOTIFICATION_INDEX, String.valueOf(notiIndex));
+                logUXEvent(FIRE_FROM_NOTIFICATION, params);
             }
 
         } else {

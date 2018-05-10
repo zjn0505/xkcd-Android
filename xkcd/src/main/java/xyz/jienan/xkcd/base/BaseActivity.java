@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 
+import java.util.Map;
+
 import xyz.jienan.xkcd.R;
 
 import static xyz.jienan.xkcd.Const.FIRE_UX_ACTION;
@@ -35,8 +37,22 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected void logUXEvent(String event) {
+        logUXEvent(event, null);
+    }
+
+    protected void logUXEvent(String event, final Map<String, String> params) {
         Bundle bundle = new Bundle();
         bundle.putString(FIRE_UX_ACTION, event);
-        mFirebaseAnalytics.logEvent(FIRE_UX_ACTION, bundle);
+        if (params != null && params.size() > 0) {
+            for (String key : params.keySet()) {
+                String value = params.get(key);
+                if (value.matches("-?\\d+")) {
+                    bundle.putInt(key, Integer.valueOf(value));
+                } else {
+                    bundle.putString(key, params.get(key));
+                }
+            }
+        }
+        mFirebaseAnalytics.logEvent(event, bundle);
     }
 }
