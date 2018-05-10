@@ -301,7 +301,7 @@ public class SingleComicFragment extends Fragment {
             case R.id.action_share:
                 Intent shareIntent = new Intent();
                 shareIntent.setAction(Intent.ACTION_SEND);
-                shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_text) + currentPic.getTargetImg());
+                shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_text, currentPic.getTargetImg()));
                 shareIntent.setType("text/plain");
                 startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.share_to)));
                 logUXEvent(FIRE_SHARE_BAR);

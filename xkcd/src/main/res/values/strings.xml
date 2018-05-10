@@ -49,7 +49,7 @@
     <string name="arrow_1_value" translatable="false">arrow_1</string>
     <string name="arrow_10_value" translatable="false">arrow_10</string>
     <string name="arrow_30_value" translatable="false">arrow_30</string>
-    <string name="share_text">Come and check this funny image I got from xkcd.</string>
+    <string name="share_text">Come and check this funny image I got from xkcd. %s</string>
     <string name="toast_more_explain_failed">Failed to get more details</string>
     <string name="title_xkcd_list">xkcd list</string>
     <string name="menu_filter">Filter</string>

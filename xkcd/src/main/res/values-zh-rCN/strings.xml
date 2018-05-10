@@ -37,7 +37,7 @@
     <string name="pref_font_xkcd">使用xkcd字体</string>
     <string name="pref_font_normal">使用正常字体</string>
     <string name="settings">设置</string>
-    <string name="share_text">一起来看看这张有趣的xkcd漫画吧.</string>
+    <string name="share_text">一起来看看这张有趣的xkcd漫画吧. %s</string>
     <string name="toast_more_explain_failed">获取失败，请尝试访问Explainxkcd</string>
     <string name="title_xkcd_list">xkcd列表</string>
 
