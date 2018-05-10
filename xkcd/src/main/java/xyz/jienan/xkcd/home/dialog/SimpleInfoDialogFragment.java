@@ -17,6 +17,7 @@ import android.text.style.ClickableSpan;
 import android.text.style.URLSpan;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.webkit.URLUtil;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -25,11 +26,14 @@ import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.objectbox.Box;
+import xyz.jienan.xkcd.BuildConfig;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.XkcdApplication;
 import xyz.jienan.xkcd.XkcdExplainUtil;
 import xyz.jienan.xkcd.XkcdPic;
 import xyz.jienan.xkcd.home.activity.ImageDetailPageActivity;
+
+import static xyz.jienan.xkcd.Const.URI_XKCD_EXPLAIN_EDIT;
 
 /**
  * Created by jienanzhang on 09/07/2017.
@@ -169,13 +173,17 @@ public class SimpleInfoDialogFragment extends DialogFragment {
                     }
                     intent.putExtra("ID", id);
                     startActivity(intent);
-                } else {
+                } else if (URLUtil.isNetworkUrl(url)) {
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                     if (browserIntent.resolveActivity(getActivity().getPackageManager()) != null) {
                         startActivity(browserIntent);
                     }
+                } else if (URI_XKCD_EXPLAIN_EDIT.equals(url)) {
+                    Toast.makeText(getContext(), R.string.uri_hint_explain_edit, Toast.LENGTH_SHORT).show();
                 }
-
+                if (BuildConfig.DEBUG) {
+                    Toast.makeText(getContext(), url, Toast.LENGTH_SHORT).show();
+                }
             }
         };
         strBuilder.setSpan(clickable, start, end, flags);

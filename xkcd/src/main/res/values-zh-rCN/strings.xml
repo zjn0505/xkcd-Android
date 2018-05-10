@@ -44,6 +44,8 @@
     <string name="thumbs_up">点赞</string>
     <string name="add_to_fav">收藏</string>
 
+    <string name="uri_hint_explain_edit">当前这条解释尚不完整，欢迎前去维护</string>
+
     <string-array name="notification_titles">
         <item>有新的xkcd漫画了</item>
         <item>xkcd刚刚更新</item>

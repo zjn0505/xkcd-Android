@@ -16,6 +16,8 @@ import java.util.regex.Pattern;
 
 import okhttp3.ResponseBody;
 
+import static xyz.jienan.xkcd.Const.URI_XKCD_EXPLAIN_EDIT;
+
 public class XkcdExplainUtil {
     public static String getExplainFromHtml(ResponseBody responseBody, String url) throws IOException {
         Document doc = Jsoup.parse(responseBody.string());
@@ -51,6 +53,8 @@ public class XkcdExplainUtil {
                                     child.attr("href", "https://www.explainxkcd.com" + href);
                                 } else if (href.startsWith("#")) {
                                     child.attr("href", url + href);
+                                } else if (href.startsWith("//www.explainxkcd") && href.endsWith("action=edit")) {
+                                    child.attr("href", URI_XKCD_EXPLAIN_EDIT);
                                 }
                             }
                         }

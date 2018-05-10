@@ -39,4 +39,6 @@ public class Const {
     public static final String FIRE_FILTER_THUMB = "filter_thumb";
     public static final String FIRE_SCROLL_TO_END = "scroll_to_end";
     // user actions end
+
+    public static final String URI_XKCD_EXPLAIN_EDIT = "xkcd://explain.edit";
 }
