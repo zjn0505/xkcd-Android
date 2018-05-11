@@ -53,6 +53,6 @@ public abstract class BaseActivity extends AppCompatActivity {
                 }
             }
         }
-        mFirebaseAnalytics.logEvent(event, bundle);
+        mFirebaseAnalytics.logEvent(FIRE_UX_ACTION, bundle);
     }
 }
