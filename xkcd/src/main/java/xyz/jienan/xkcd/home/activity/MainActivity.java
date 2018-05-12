@@ -1,6 +1,7 @@
 package xyz.jienan.xkcd.home.activity;
 
 import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
@@ -59,6 +60,8 @@ import static android.support.v4.view.ViewPager.SCROLL_STATE_DRAGGING;
 import static android.support.v4.view.ViewPager.SCROLL_STATE_IDLE;
 import static android.view.HapticFeedbackConstants.CONTEXT_CLICK;
 import static android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING;
+import static butterknife.OnPageChange.Callback.PAGE_SCROLL_STATE_CHANGED;
+import static butterknife.OnPageChange.Callback.PAGE_SELECTED;
 import static xyz.jienan.xkcd.Const.FIRE_BROWSE_LIST_MENU;
 import static xyz.jienan.xkcd.Const.FIRE_FAVORITE_OFF;
 import static xyz.jienan.xkcd.Const.FIRE_FAVORITE_ON;
@@ -235,6 +238,12 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
     protected void onDestroy() {
         compositeDisposable.dispose();
         sd.stop();
+        viewPager.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+
+            }
+        });
         super.onDestroy();
     }
 
@@ -251,7 +260,7 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
         toggleSubFabs(!isFabsShowing);
     }
 
-    @OnPageChange(R.id.viewpager)
+    @OnPageChange(value = R.id.viewpager, callback = PAGE_SELECTED)
     public void OnPagerSelected(int position) {
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -259,7 +268,7 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
         }
     }
 
-    @OnPageChange(R.id.viewpager)
+    @OnPageChange(value = R.id.viewpager, callback = PAGE_SCROLL_STATE_CHANGED)
     public void onPageScrollStateChanged(int state) {
         if (state == SCROLL_STATE_DRAGGING) {
             fab.hide();
@@ -484,7 +493,7 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
         AnimatorSet animSet = new AnimatorSet();
         animSet.playTogether(thumbMove, thumbAlpha, favMove, favAlpha);
         animSet.setDuration(300);
-        animSet.addListener(new Animator.AnimatorListener() {
+        animSet.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animator) {
                 if (showSubFabs) {
@@ -499,16 +508,6 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
                     btnThumb.setVisibility(View.GONE);
                     btnFav.setVisibility(View.GONE);
                 }
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animator) {
-                // no op
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animator) {
-                // no op
             }
         });
         animSet.start();

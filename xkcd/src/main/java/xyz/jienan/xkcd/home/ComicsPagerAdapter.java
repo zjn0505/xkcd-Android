@@ -8,16 +8,13 @@ import android.view.ViewGroup;
 import java.util.HashMap;
 
 public class ComicsPagerAdapter extends FragmentStatePagerAdapter {
+
     private int length;
+
     private HashMap<Integer, SingleComicFragment> fragmentsMap = new HashMap<>();
 
     public ComicsPagerAdapter(FragmentManager fm) {
         super(fm);
-    }
-
-    public ComicsPagerAdapter(FragmentManager fm, int size) {
-        super(fm);
-        length = size;
     }
 
     public void setSize(int size) {

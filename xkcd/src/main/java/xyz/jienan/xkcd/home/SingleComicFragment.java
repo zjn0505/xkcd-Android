@@ -97,6 +97,9 @@ public class SingleComicFragment extends Fragment {
     private RequestListener glideListener = new RequestListener<String, Bitmap>() {
         @Override
         public boolean onException(Exception e, final String model, final Target<Bitmap> target, boolean isFirstResource) {
+            if (btnReload == null) {
+                return false;
+            }
             btnReload.setVisibility(View.VISIBLE);
             btnReload.setOnClickListener(view -> {
                 pbLoading.clearAnimation();
