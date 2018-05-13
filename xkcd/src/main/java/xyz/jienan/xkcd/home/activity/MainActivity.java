@@ -238,12 +238,6 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
     protected void onDestroy() {
         compositeDisposable.dispose();
         sd.stop();
-        viewPager.setOnScrollChangeListener(new View.OnScrollChangeListener() {
-            @Override
-            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-
-            }
-        });
         super.onDestroy();
     }
 
