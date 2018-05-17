@@ -1,6 +1,5 @@
 package xyz.jienan.xkcd.list;
 
-import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -9,32 +8,16 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.objectbox.Box;
-import io.objectbox.query.Query;
-import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.SingleSource;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
-import timber.log.Timber;
 import xyz.jienan.xkcd.R;
-import xyz.jienan.xkcd.XkcdApplication;
 import xyz.jienan.xkcd.XkcdPic;
-import xyz.jienan.xkcd.XkcdPic_;
 import xyz.jienan.xkcd.base.BaseActivity;
-import xyz.jienan.xkcd.base.network.NetworkService;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_DRAGGING;
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
@@ -44,9 +27,6 @@ import static xyz.jienan.xkcd.Const.FIRE_FILTER_THUMB;
 import static xyz.jienan.xkcd.Const.FIRE_LIST_FILTER_BAR;
 import static xyz.jienan.xkcd.Const.FIRE_SCROLL_TO_END;
 import static xyz.jienan.xkcd.Const.XKCD_LATEST_INDEX;
-import static xyz.jienan.xkcd.base.network.NetworkService.XKCD_BROWSE_LIST;
-import static xyz.jienan.xkcd.base.network.NetworkService.XKCD_TOP;
-import static xyz.jienan.xkcd.base.network.NetworkService.XKCD_TOP_SORT_BY_THUMB_UP;
 import static xyz.jienan.xkcd.list.XkcdListActivity.Selection.ALL_COMICS;
 
 /**
@@ -56,23 +36,28 @@ import static xyz.jienan.xkcd.list.XkcdListActivity.Selection.ALL_COMICS;
 public class XkcdListActivity extends BaseActivity {
 
     private static final int INVALID_ID = 0;
+
     private final static int COUNT_IN_ADV = 10;
-    private final HashMap<Long, XkcdPic> mapAll = new HashMap<Long, XkcdPic>();
+
     @BindView(R.id.rv_list)
     RecyclerView rvList;
+
     @BindView(R.id.rv_scroller)
     RecyclerViewFastScroller scroller;
+
     private XkcdListGridAdapter mAdapter;
-    private Box<XkcdPic> box;
+
     private StaggeredGridLayoutManager sglm;
+
     private int spanCount = 2;
     private boolean loadingMore = false;
-    private boolean inRequest = false;
     private int latestIndex;
     private SharedPreferences sharedPreferences;
     private Selection currentSelection = ALL_COMICS;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
-    private List<XkcdPic> pics = new ArrayList<>();
+
+    private XkcdListActivityPresenter xkcdListActivityPresenter;
+
     private RecyclerView.OnScrollListener rvScrollListener = new RecyclerView.OnScrollListener() {
 
         private static final int FLING_JUMP_LOW_THRESHOLD = 80;
@@ -118,7 +103,7 @@ public class XkcdListActivity extends BaseActivity {
                     && !loadingMore
                     && !lastItemReached()) {
                 loadingMore = true;
-                loadList((int) (pics.get(pics.size() - 1).num + 1));
+                xkcdListActivityPresenter.loadList((int) (mAdapter.getPics().get(mAdapter.getItemCount() - 1).num + 1));
             }
         }
     };
@@ -133,31 +118,8 @@ public class XkcdListActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        Query<XkcdPic> query = box.query().equal(XkcdPic_.isFavorite, true).build();
-        List<XkcdPic> list = query.find();
-        if (!list.isEmpty()) {
+        if (xkcdListActivityPresenter.hasFav()) {
             getMenuInflater().inflate(R.menu.menu_list, menu);
-            Disposable d = Observable.fromIterable(list)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(Schedulers.computation())
-                    .filter(xkcdPic -> xkcdPic == null || xkcdPic.width == 0 || xkcdPic.height == 0)
-                    .toSortedList()
-                    .observeOn(Schedulers.io())
-                    .flatMap((Function<List<XkcdPic>, SingleSource<List<XkcdPic>>>) xkcdPics -> NetworkService.getXkcdAPI()
-                            .getXkcdList(XKCD_BROWSE_LIST, (int) xkcdPics.get(0).num, 0, (int) xkcdPics.get(xkcdPics.size() - 1).num)
-                            .singleOrError())
-                    .subscribe(xkcdPics -> {
-                                for (XkcdPic pic : xkcdPics) {
-                                    XkcdPic xkcdPic = box.get(pic.num);
-                                    if (xkcdPic != null) {
-                                        pic.isFavorite = xkcdPic.isFavorite;
-                                        pic.hasThumbed = xkcdPic.hasThumbed;
-                                    }
-                                }
-                                box.put(xkcdPics);
-                            },
-                            e -> Timber.e(e, "error on get pic info"));
-            compositeDisposable.add(d);
         }
         return true;
     }
@@ -204,34 +166,13 @@ public class XkcdListActivity extends BaseActivity {
     private void reloadList(Selection currentSelection) {
         switch (currentSelection) {
             case ALL_COMICS:
-                loadList(1);
+                xkcdListActivityPresenter.loadList(1);
                 break;
             case MY_FAVORITE:
-                final Query<XkcdPic> queryFav = box.query().equal(XkcdPic_.isFavorite, true).build();
-                List<XkcdPic> listFav = queryFav.find();
-                mAdapter.updateData(listFav);
+                xkcdListActivityPresenter.loadFavList();
                 break;
             case PEOPLES_CHOICE:
-                final Query<XkcdPic> queryAll = box.query().build();
-                final List<XkcdPic> listAll = queryAll.find();
-                if (mapAll.size() != listAll.size()) {
-                    for (XkcdPic xkcdPic : listAll) {
-                        mapAll.put(xkcdPic.num, xkcdPic);
-                    }
-                }
-                Disposable d = NetworkService.getXkcdAPI()
-                        .getTopXkcds(XKCD_TOP, XKCD_TOP_SORT_BY_THUMB_UP)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(xkcdPics -> {
-                            for (XkcdPic xkcdPic : xkcdPics) {
-                                XkcdPic picInBox = mapAll.get(xkcdPic.num);
-                                xkcdPic.isFavorite = picInBox.isFavorite;
-                                xkcdPic.hasThumbed = picInBox.hasThumbed;
-                            }
-                            mAdapter.updateData(xkcdPics);
-                        }, e -> Timber.e(e, "get top xkcd error"));
-                compositeDisposable.add(d);
+                xkcdListActivityPresenter.loadPeopleChoiceList();
                 break;
         }
         rvList.scrollToPosition(0);
@@ -240,12 +181,12 @@ public class XkcdListActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        xkcdListActivityPresenter= new XkcdListActivityPresenter(this);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         setContentView(R.layout.activity_list);
         ButterKnife.bind(this);
         scroller.setRecyclerView(rvList);
         scroller.setViewsToUse(R.layout.rv_scroller, R.id.fastscroller_bubble, R.id.fastscroller_handle);
-        box = ((XkcdApplication) getApplication()).getBoxStore().boxFor(XkcdPic.class);
         mAdapter = new XkcdListGridAdapter(this);
         rvList.setAdapter(mAdapter);
         rvList.setHasFixedSize(true);
@@ -253,6 +194,7 @@ public class XkcdListActivity extends BaseActivity {
         rvList.setLayoutManager(sglm);
         rvList.addOnScrollListener(rvScrollListener);
         latestIndex = PreferenceManager.getDefaultSharedPreferences(this).getInt(XKCD_LATEST_INDEX, INVALID_ID);
+        xkcdListActivityPresenter.updateLatestIndex(latestIndex);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         if (savedInstanceState != null) {
             int selection = savedInstanceState.getInt("Selection", ALL_COMICS.id);
@@ -282,85 +224,16 @@ public class XkcdListActivity extends BaseActivity {
         return false;
     }
 
-    private void loadList(final int start) {
-        Query<XkcdPic> query = box.query().between(XkcdPic_.num, start, start + 399).build();
-        List<XkcdPic> data = query.find();
-        int dataSize = data.size();
-        Timber.d("Load xkcd list request, start from: %d, the response items: %d", start, dataSize);
-        if ((start <= latestIndex - 399 && dataSize != 400 && start != 401) ||
-                (start == 401 && dataSize != 399) ||
-                (start > latestIndex - 399 && start + dataSize - 1 != latestIndex)) {
-            if (inRequest) {
-                return;
-            }
-            NetworkService.getXkcdAPI().getXkcdList(XKCD_BROWSE_LIST, start, 0, 400)
-                    .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Observer<List<XkcdPic>>() {
-                        @Override
-                        public void onSubscribe(Disposable d) {
-                            inRequest = true;
-                        }
-
-                        @Override
-                        public void onNext(List<XkcdPic> xkcdPics) {
-                            appendList(xkcdPics, true);
-                            loadingMore = false;
-                            inRequest = false;
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            inRequest = false;
-                        }
-
-                        @Override
-                        public void onComplete() {
-                            inRequest = false;
-                        }
-                    });
-        } else {
-            appendList(data, false);
-            loadingMore = false;
-        }
+    public void showScroller(int visibility) {
+        scroller.setVisibility(visibility);
     }
 
-    @SuppressLint("CheckResult")
-    public void appendList(final List<XkcdPic> xkcdPics, boolean checkDB) {
-        if (checkDB) {
-            final Query<XkcdPic> query = box.query().between(XkcdPic_.num, xkcdPics.get(0).num, xkcdPics.get(xkcdPics.size() - 1).num).build();
-            final List<XkcdPic> list = query.find();
-            final HashMap<Long, XkcdPic> map = new HashMap<Long, XkcdPic>();
-            for (XkcdPic xkcdPic : list) {
-                map.put(xkcdPic.num, xkcdPic);
-            }
-            Disposable d = Observable.fromArray(xkcdPics.toArray(new XkcdPic[xkcdPics.size()]))
-                    .subscribeOn(Schedulers.io())
-                    .map(xkcdPic -> {
-                        XkcdPic pic = map.get(xkcdPic.num);
-                        if (pic != null) {
-                            xkcdPic.isFavorite = pic.isFavorite;
-                            xkcdPic.hasThumbed = pic.hasThumbed;
-                        }
-                        if (!pics.contains(xkcdPic)) {
-                            pics.add(xkcdPic);
-                        }
-                        return xkcdPic;
-                    }).toList()
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(xkcdPics1 -> {
-                        box.put(xkcdPics1);
-                        scroller.setVisibility(pics.isEmpty() ? View.GONE : View.VISIBLE);
-                        mAdapter.updateData(pics);
-                    }, e -> Timber.e(e, "update xkcd failed"));
-        } else {
-            for (XkcdPic pic : xkcdPics) {
-                if (!pics.contains(pic)) {
-                    pics.add(pic);
-                }
-            }
-            scroller.setVisibility(pics.isEmpty() ? View.GONE : View.VISIBLE);
-            mAdapter.updateData(pics);
-        }
+    public void updateData(List<XkcdPic> pics) {
+        mAdapter.updateData(pics);
+    }
+
+    public void isLoadingMore(boolean loadingMore) {
+        this.loadingMore = loadingMore;
     }
 
     public enum Selection {

@@ -43,8 +43,10 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 import timber.log.Timber;
+import xyz.jienan.xkcd.BoxManager;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.XkcdApplication;
+import xyz.jienan.xkcd.XkcdDAO;
 import xyz.jienan.xkcd.XkcdPic;
 import xyz.jienan.xkcd.XkcdPic_;
 import xyz.jienan.xkcd.base.BaseActivity;
@@ -597,25 +599,9 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
         if ((start <= latestIndex - 399 && dataSize != 400 && start != 401) ||
                 (start == 401 && dataSize != 399) ||
                 (start > latestIndex - 399 && start + dataSize - 1 != latestIndex)) {
-            Disposable d = NetworkService.getXkcdAPI()
-                    .getXkcdList(XKCD_BROWSE_LIST, start, 0, 400)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(Schedulers.computation())
-                    .flatMap(Observable::fromIterable)
-                    .filter(xkcdPic -> {
-                        XkcdPic pic = map.get(xkcdPic.num);
-                        return pic == null || pic.height == 0 || pic.width == 0;
-                    }).toList()
-                    .subscribe(xkcdPics -> {
-                        for (XkcdPic pic : xkcdPics) {
-                            XkcdPic picInBox = map.get(pic.num);
-                            if (picInBox != null) {
-                                pic.isFavorite = picInBox.isFavorite;
-                                pic.hasThumbed = picInBox.hasThumbed;
-                            }
-                        }
-                        box.put(xkcdPics);
-                    }, e -> Timber.e(e, "load list error: start - %d", start));
+            Disposable d = new XkcdDAO(new BoxManager())
+                    .loadRange(start, 400)
+                    .subscribe(ignore -> {}, e -> Timber.e(e, "Error in quick load"));
             compositeDisposable.add(d);
         }
     }
