@@ -1,6 +1,5 @@
 package xyz.jienan.xkcd.home.activity;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;

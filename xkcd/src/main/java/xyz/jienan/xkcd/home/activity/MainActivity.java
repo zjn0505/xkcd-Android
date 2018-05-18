@@ -26,7 +26,6 @@ import android.widget.Toast;
 import com.squareup.seismic.ShakeDetector;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -35,22 +34,14 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnPageChange;
 import io.objectbox.Box;
-import io.objectbox.query.Query;
 import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
-import timber.log.Timber;
-import xyz.jienan.xkcd.BoxManager;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.XkcdApplication;
-import xyz.jienan.xkcd.XkcdDAO;
 import xyz.jienan.xkcd.XkcdPic;
-import xyz.jienan.xkcd.XkcdPic_;
 import xyz.jienan.xkcd.base.BaseActivity;
-import xyz.jienan.xkcd.base.network.NetworkService;
 import xyz.jienan.xkcd.home.ComicsPagerAdapter;
 import xyz.jienan.xkcd.home.dialog.NumberPickerDialogFragment;
 import xyz.jienan.xkcd.list.XkcdListActivity;
@@ -80,7 +71,6 @@ import static xyz.jienan.xkcd.Const.PREF_ARROW;
 import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NEW_INTENT;
 import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NOTI_INTENT;
 import static xyz.jienan.xkcd.Const.XKCD_LATEST_INDEX;
-import static xyz.jienan.xkcd.base.network.NetworkService.XKCD_BROWSE_LIST;
 
 public class MainActivity extends BaseActivity implements ShakeDetector.Listener {
 
@@ -117,6 +107,9 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
     private Box<XkcdPic> box;
     private Toast toast;
     private PicsPipeline pipeline = new PicsPipeline();
+
+    private MainActivityPresenter mainActivityPresenter;
+
     private NumberPickerDialogFragment.INumberPickerDialogListener pickerListener =
             new NumberPickerDialogFragment.INumberPickerDialogListener() {
                 @Override
@@ -129,16 +122,17 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
                     // Do nothing
                 }
             };
+
     private OnLikeListener likeListener = new OnLikeListener() {
         @Override
         public void liked(LikeButton likeButton) {
             switch (likeButton.getId()) {
                 case R.id.btn_fav:
-                    comicFavorited(true);
+                    mainActivityPresenter.comicFavorited(getCurrentIndex(), true);
                     logUXEvent(FIRE_FAVORITE_ON);
                     break;
                 case R.id.btn_thumb:
-                    comicLiked();
+                    mainActivityPresenter.comicLiked(getCurrentIndex());
                     logUXEvent(FIRE_THUMB_UP);
                     break;
                 default:
@@ -150,7 +144,7 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
         public void unLiked(LikeButton likeButton) {
             switch (likeButton.getId()) {
                 case R.id.btn_fav:
-                    comicFavorited(false);
+                    mainActivityPresenter.comicFavorited(getCurrentIndex(), false);
                     logUXEvent(FIRE_FAVORITE_OFF);
                     break;
                 default:
@@ -162,6 +156,7 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mainActivityPresenter = new MainActivityPresenter(this);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         box = ((XkcdApplication) getApplication()).getBoxStore().boxFor(XkcdPic.class);
         setContentView(R.layout.activity_main);
@@ -171,7 +166,7 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
         btnThumb.setOnLikeListener(likeListener);
         adapter = new ComicsPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
-        loadXkcdPic();
+        mainActivityPresenter.loadLatestXkcd();
         if (savedInstanceState != null) {
             savedId = savedInstanceState.getInt(LOADED_XKCD_ID);
             int i = savedInstanceState.getInt(LATEST_XKCD_ID);
@@ -299,6 +294,20 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
         return latestIndex;
     }
 
+    public void latestXkcdLoaded(XkcdPic xkcdPic) {
+        latestIndex = (int) xkcdPic.num;
+        adapter.setSize(latestIndex);
+        if (isFre) {
+            if (savedId != INVALID_ID) {
+                scrollViewPagerToItem(savedId - 1, false);
+                savedId = INVALID_ID;
+            } else {
+                scrollViewPagerToItem(latestIndex - 1, false);
+            }
+        }
+        mainActivityPresenter.fastLoad(latestIndex);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         String skipCount = getString(getResources().getIdentifier(sharedPreferences.getString(PREF_ARROW, "arrow_1"), "string", getPackageName()));
@@ -360,44 +369,6 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
         }
     }
 
-    private void loadXkcdPic() {
-        Disposable d = NetworkService.getXkcdAPI()
-                .getLatest()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(xkcdPic -> {
-                    if (editor == null) {
-                        editor = sharedPreferences.edit();
-                    }
-                    latestIndex = (int) xkcdPic.num;
-                    editor.putInt(XKCD_LATEST_INDEX, latestIndex);
-                    editor.apply();
-                    adapter.setSize(latestIndex);
-                    if (isFre) {
-                        if (savedId != INVALID_ID) {
-                            scrollViewPagerToItem(savedId - 1, false);
-                            savedId = INVALID_ID;
-                        } else {
-                            scrollViewPagerToItem(latestIndex - 1, false);
-                        }
-                    }
-                    saveLatestXkcdDao(xkcdPic);
-                }, e -> Timber.e(e, "load xkcd pic error"));
-        compositeDisposable.add(d);
-    }
-
-    private void saveLatestXkcdDao(XkcdPic resXkcdPic) {
-        XkcdPic xkcdPic = box.get(resXkcdPic.num);
-        if (xkcdPic != null) {
-            resXkcdPic.isFavorite = xkcdPic.isFavorite;
-            resXkcdPic.hasThumbed = xkcdPic.hasThumbed;
-        }
-        box.put(resXkcdPic);
-        for (int i = 0; i <= latestIndex / 400; i++) {
-            loadList(i * 400 + 1);
-        }
-    }
-
     private void updateIndices(Intent intent) {
         if (intent != null && (intent.getIntExtra(XKCD_INDEX_ON_NOTI_INTENT, INVALID_ID) != INVALID_ID
                 || intent.getIntExtra(XKCD_INDEX_ON_NEW_INTENT, INVALID_ID) != INVALID_ID)) {
@@ -427,46 +398,6 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
 
     private int getCurrentIndex() {
         return viewPager.getCurrentItem() + 1;
-    }
-
-    private void comicLiked() {
-        final XkcdPic xkcdPic = box.get(getCurrentIndex());
-        xkcdPic.hasThumbed = true;
-        box.put(xkcdPic);
-        Disposable d = NetworkService.getXkcdAPI()
-                .thumbsUp(NetworkService.XKCD_THUMBS_UP, getCurrentIndex())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribe(resXkcdPic -> {
-                    resXkcdPic.isFavorite = xkcdPic.isFavorite;
-                    resXkcdPic.hasThumbed = xkcdPic.hasThumbed;
-                    box.put(resXkcdPic);
-                    showToast(MainActivity.this, String.valueOf(resXkcdPic.thumbCount));
-                }, e -> Timber.e(e, "Thumbs up failed"));
-        compositeDisposable.add(d);
-    }
-
-    private void comicFavorited(boolean isFav) {
-        final XkcdPic xkcdPic = box.get(getCurrentIndex());
-        if (xkcdPic != null) {
-            xkcdPic.isFavorite = isFav;
-            box.put(xkcdPic);
-            toggleFab(isFav);
-            if (xkcdPic.width == 0 || xkcdPic.height == 0) {
-                Disposable d = NetworkService.getXkcdAPI()
-                        .getXkcdList(XKCD_BROWSE_LIST, (int) xkcdPic.num, 0, 1)
-                        .subscribeOn(Schedulers.io())
-                        .subscribe(xkcdPics -> {
-                            if (xkcdPics != null && xkcdPics.size() == 1) {
-                                XkcdPic xkcdPic1 = xkcdPics.get(0);
-                                XkcdPic xkcdPicBox = box.get(xkcdPic1.num);
-                                xkcdPicBox.width = xkcdPic1.width;
-                                xkcdPicBox.height = xkcdPic1.height;
-                                box.put(xkcdPicBox);
-                            }
-                        }, e -> Timber.e(e, "error on get one pic: %d", xkcdPic.num));
-                compositeDisposable.add(d);
-            }
-        }
     }
 
     private void toggleSubFabs(final boolean showSubFabs) {
@@ -542,7 +473,7 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
     }
 
     @SuppressLint("ObjectAnimatorBinding")
-    private void toggleFab(boolean isFavorite) {
+    public void toggleFab(boolean isFavorite) {
         if (isFavorite) {
             final ObjectAnimator animator = ObjectAnimator.ofInt(fab, "backgroundTint", getResources().getColor(R.color.pink), getResources().getColor(R.color.white));
             animator.setDuration(2000L);
@@ -582,28 +513,8 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
         return pipeline;
     }
 
-    @SuppressLint("CheckResult")
-    private void loadList(final int start) {
-        final Query<XkcdPic> query = box.query()
-                .between(XkcdPic_.num, start, start + 399)
-                .and().greater(XkcdPic_.width, 0).build();
-        final List<XkcdPic> list = query.find();
-        final HashMap<Long, XkcdPic> map = new HashMap<Long, XkcdPic>();
-        for (XkcdPic xkcdPic : list) {
-            map.put(xkcdPic.num, xkcdPic);
-        }
-        List<XkcdPic> data = query.find();
-
-        int dataSize = data.size();
-        Timber.d("Load xkcd list request, start from: %d, the response items: %d", start, dataSize);
-        if ((start <= latestIndex - 399 && dataSize != 400 && start != 401) ||
-                (start == 401 && dataSize != 399) ||
-                (start > latestIndex - 399 && start + dataSize - 1 != latestIndex)) {
-            Disposable d = new XkcdDAO(new BoxManager())
-                    .loadRange(start, 400)
-                    .subscribe(ignore -> {}, e -> Timber.e(e, "Error in quick load"));
-            compositeDisposable.add(d);
-        }
+    public void showThumbUpCount(Long thumbCount) {
+        showToast(MainActivity.this, String.valueOf(thumbCount));
     }
 
     public static class PicsPipeline {

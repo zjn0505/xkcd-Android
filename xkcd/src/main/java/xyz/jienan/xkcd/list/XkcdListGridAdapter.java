@@ -68,7 +68,6 @@ public class XkcdListGridAdapter extends RecyclerView.Adapter<XkcdListGridAdapte
         return pics == null ? 0 : pics.size();
     }
 
-
     public List<XkcdPic> getPics() {
         return pics;
     }
