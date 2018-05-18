@@ -37,7 +37,7 @@ public class XkcdListActivityPresenter {
 
     XkcdListActivityPresenter(XkcdListActivity view) {
         boxManager = new BoxManager();
-        xkcdDAO = new XkcdDAO(boxManager);
+        xkcdDAO = new XkcdDAO();
         this.view = view;
     }
 

@@ -13,8 +13,8 @@ public class XkcdDAO {
 
     private final static int SLICE = 400;
 
-    public XkcdDAO(BoxManager boxManager) {
-        this.boxManager = boxManager;
+    public XkcdDAO() {
+        boxManager = new BoxManager();
     }
 
     public Observable<XkcdPic> loadLatest() {

@@ -24,7 +24,7 @@ public class MainActivityPresenter {
     MainActivityPresenter(MainActivity mainActivity) {
         view = mainActivity;
         boxManager = new BoxManager();
-        xkcdDAO = new XkcdDAO(boxManager);
+        xkcdDAO = new XkcdDAO();
         sharedPrefManager = new SharedPrefManager();
     }
 
