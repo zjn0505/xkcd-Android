@@ -13,6 +13,8 @@ import android.content.res.ColorStateList;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.ColorRes;
+import android.support.annotation.DrawableRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -33,17 +35,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnPageChange;
-import io.objectbox.Box;
-import io.reactivex.Observable;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.subjects.PublishSubject;
 import xyz.jienan.xkcd.R;
-import xyz.jienan.xkcd.XkcdApplication;
 import xyz.jienan.xkcd.XkcdPic;
 import xyz.jienan.xkcd.base.BaseActivity;
 import xyz.jienan.xkcd.home.ComicsPagerAdapter;
+import xyz.jienan.xkcd.home.contract.MainActivityContract;
 import xyz.jienan.xkcd.home.dialog.NumberPickerDialogFragment;
+import xyz.jienan.xkcd.home.presenter.MainActivityPresenter;
 import xyz.jienan.xkcd.list.XkcdListActivity;
 import xyz.jienan.xkcd.settings.PreferenceActivity;
 import xyz.jienan.xkcd.ui.like.LikeButton;
@@ -72,12 +70,14 @@ import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NEW_INTENT;
 import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NOTI_INTENT;
 import static xyz.jienan.xkcd.Const.XKCD_LATEST_INDEX;
 
-public class MainActivity extends BaseActivity implements ShakeDetector.Listener {
+public class MainActivity extends BaseActivity implements MainActivityContract.View, ShakeDetector.Listener {
 
     private final static int REQ_SETTINGS = 101;
+
     private static final String LOADED_XKCD_ID = "xkcd_id";
+
     private static final String LATEST_XKCD_ID = "xkcd_latest_id";
-    private static final String LAST_VIEW_XKCD_ID = "xkcd_last_viewed_id";
+
     private static final int INVALID_ID = 0;
 
     static {
@@ -86,29 +86,36 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
 
     @BindView(R.id.viewpager)
     ViewPager viewPager;
+
     @BindView(R.id.fab)
     FloatingActionButton fab;
+
     @BindView(R.id.btn_fav)
     LikeButton btnFav;
+
     @BindView(R.id.btn_thumb)
     LikeButton btnThumb;
+
     private ComicsPagerAdapter adapter;
+
     // Use this field to record the latest xkcd pic id
     private int latestIndex = INVALID_ID;
-    private int savedId = INVALID_ID;
-    private ShakeDetector sd;
-    private SharedPreferences.Editor editor;
-    private SharedPreferences sharedPreferences;
-    private CompositeDisposable compositeDisposable = new CompositeDisposable();
-    private boolean isFre = true;
-    private boolean isPaused = true;
-    private Disposable fabShowSubscription;
-    private boolean isFabsShowing = false;
-    private Box<XkcdPic> box;
-    private Toast toast;
-    private PicsPipeline pipeline = new PicsPipeline();
 
-    private MainActivityPresenter mainActivityPresenter;
+    private int savedId = INVALID_ID;
+
+    private ShakeDetector sd;
+
+    private SharedPreferences sharedPreferences;
+
+    private boolean isFre = true;
+
+    private boolean isPaused = true;
+
+    private boolean isFabsShowing = false;
+
+    private Toast toast;
+
+    private MainActivityContract.Presenter mainActivityPresenter;
 
     private NumberPickerDialogFragment.INumberPickerDialogListener pickerListener =
             new NumberPickerDialogFragment.INumberPickerDialogListener() {
@@ -158,7 +165,6 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
         super.onCreate(savedInstanceState);
         mainActivityPresenter = new MainActivityPresenter(this);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        box = ((XkcdApplication) getApplication()).getBoxStore().boxFor(XkcdPic.class);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         final ActionBar actionBar = getSupportActionBar();
@@ -223,18 +229,15 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
     protected void onStop() {
         if (viewPager != null && latestIndex > INVALID_ID) {
             int lastViewed = viewPager.getCurrentItem() + 1;
-            if (editor == null) {
-                editor = sharedPreferences.edit();
-            }
-            editor.putInt(LAST_VIEW_XKCD_ID, lastViewed).apply();
+            mainActivityPresenter.setLastViewed(lastViewed);
         }
         super.onStop();
     }
 
     @Override
     protected void onDestroy() {
-        compositeDisposable.dispose();
         sd.stop();
+        mainActivityPresenter.onDestroy();
         super.onDestroy();
     }
 
@@ -265,7 +268,7 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
             fab.hide();
             toggleSubFabs(false);
         } else if (state == SCROLL_STATE_IDLE) {
-            getInfoAndShowFab();
+            mainActivityPresenter.getInfoAndShowFab(getCurrentIndex());
         }
     }
 
@@ -290,10 +293,7 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
         return true;
     }
 
-    public int getMaxId() {
-        return latestIndex;
-    }
-
+    @Override
     public void latestXkcdLoaded(XkcdPic xkcdPic) {
         latestIndex = (int) xkcdPic.num;
         adapter.setSize(latestIndex);
@@ -380,20 +380,71 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
             if (notiIndex != INVALID_ID) {
                 savedId = notiIndex;
                 latestIndex = savedId;
-                if (editor == null) {
-                    editor = sharedPreferences.edit();
-                }
-                editor.putInt(XKCD_LATEST_INDEX, latestIndex);
-                editor.apply();
+                mainActivityPresenter.setLatest(latestIndex);
                 Map<String, String> params = new HashMap<>();
                 params.put(FIRE_FROM_NOTIFICATION_INDEX, String.valueOf(notiIndex));
                 logUXEvent(FIRE_FROM_NOTIFICATION, params);
             }
 
         } else {
-            latestIndex = sharedPreferences.getInt(XKCD_LATEST_INDEX, INVALID_ID);
-            savedId = sharedPreferences.getInt(LAST_VIEW_XKCD_ID, latestIndex);
+            latestIndex = mainActivityPresenter.getLatest();
+            savedId = mainActivityPresenter.getLastViewed(latestIndex);
         }
+    }
+
+    @Override
+    public void showFab(XkcdPic xkcdPic) {
+        toggleFab(xkcdPic.isFavorite);
+        btnFav.setLiked(xkcdPic.isFavorite);
+        btnThumb.setLiked(xkcdPic.hasThumbed);
+        fab.show();
+    }
+
+    @Override
+    public void toggleFab(boolean isFavorite) {
+        if (isFavorite) {
+            fabAnimation(R.color.pink, R.color.white, R.drawable.ic_heart_on);
+        } else {
+            fabAnimation(R.color.white, R.color.pink, R.drawable.ic_heart_white);
+        }
+    }
+
+    @Override
+    public void showThumbUpCount(Long thumbCount) {
+        showToast(MainActivity.this, String.valueOf(thumbCount));
+    }
+
+    private void scrollViewPagerToItem(int id, boolean smoothScroll) {
+        viewPager.setCurrentItem(id, smoothScroll);
+        fab.hide();
+        toggleSubFabs(false);
+        if (!smoothScroll) {
+            mainActivityPresenter.getInfoAndShowFab(getCurrentIndex());
+        }
+    }
+
+    @SuppressLint("ObjectAnimatorBinding")
+    private void fabAnimation(@ColorRes final int startColor, @ColorRes final int endColor, @DrawableRes final int icon) {
+        final ObjectAnimator animator = ObjectAnimator.ofInt(fab, "backgroundTint", getResources().getColor(startColor), getResources().getColor(endColor));
+        animator.setDuration(1800L);
+        animator.setEvaluator(new ArgbEvaluator());
+        animator.setInterpolator(new DecelerateInterpolator(2));
+        animator.addUpdateListener(animation -> {
+            int animatedValue = (int) animation.getAnimatedValue();
+            fab.setBackgroundTintList(ColorStateList.valueOf(animatedValue));
+        });
+        animator.start();
+        fab.setImageResource(icon);
+    }
+
+    private void showToast(Context context, String text) {
+        try {
+            toast.getView().isShown();
+            toast.setText(text);
+        } catch (Exception e) {
+            toast = Toast.makeText(context.getApplicationContext(), text, Toast.LENGTH_SHORT);
+        }
+        toast.show();
     }
 
     private int getCurrentIndex() {
@@ -405,15 +456,15 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
         btnFav.setClickable(showSubFabs);
         ObjectAnimator thumbMove, thumbAlpha, favMove, favAlpha;
         if (showSubFabs) {
-            thumbMove = ObjectAnimator.ofFloat(btnThumb, "translationX", -215);
-            thumbAlpha = ObjectAnimator.ofFloat(btnThumb, "alpha", 1);
-            favMove = ObjectAnimator.ofFloat(btnFav, "translationX", -150, -400);
-            favAlpha = ObjectAnimator.ofFloat(btnFav, "alpha", 1);
+            thumbMove = ObjectAnimator.ofFloat(btnThumb, View.TRANSLATION_X, -215);
+            thumbAlpha = ObjectAnimator.ofFloat(btnThumb, View.ALPHA, 1);
+            favMove = ObjectAnimator.ofFloat(btnFav, View.TRANSLATION_X, -150, -400);
+            favAlpha = ObjectAnimator.ofFloat(btnFav, View.ALPHA, 1);
         } else {
-            thumbMove = ObjectAnimator.ofFloat(btnThumb, "translationX", 0);
-            thumbAlpha = ObjectAnimator.ofFloat(btnThumb, "alpha", 0);
-            favMove = ObjectAnimator.ofFloat(btnFav, "translationX", -150);
-            favAlpha = ObjectAnimator.ofFloat(btnFav, "alpha", 0);
+            thumbMove = ObjectAnimator.ofFloat(btnThumb, View.TRANSLATION_X, 0);
+            thumbAlpha = ObjectAnimator.ofFloat(btnThumb, View.ALPHA, 0);
+            favMove = ObjectAnimator.ofFloat(btnFav, View.TRANSLATION_X, -150);
+            favAlpha = ObjectAnimator.ofFloat(btnFav, View.ALPHA, 0);
         }
 
         isFabsShowing = showSubFabs;
@@ -438,94 +489,5 @@ public class MainActivity extends BaseActivity implements ShakeDetector.Listener
             }
         });
         animSet.start();
-    }
-
-    private void scrollViewPagerToItem(int id, boolean smoothScroll) {
-        viewPager.setCurrentItem(id, smoothScroll);
-        fab.hide();
-        toggleSubFabs(false);
-        if (!smoothScroll) {
-            getInfoAndShowFab();
-        }
-    }
-
-    private void getInfoAndShowFab() {
-        if (fabShowSubscription != null && !fabShowSubscription.isDisposed()) {
-            fabShowSubscription.dispose();
-        }
-        XkcdPic xkcdPic = box.get(getCurrentIndex());
-        if (xkcdPic == null) {
-            fabShowSubscription = getPipeline().toObservable()
-                    .filter(xkcdPic1 -> xkcdPic1.num == getCurrentIndex())
-                    .doOnNext(this::showFab)
-                    .subscribe();
-            compositeDisposable.add(fabShowSubscription);
-        } else {
-            showFab(xkcdPic);
-        }
-    }
-
-    private void showFab(XkcdPic xkcdPic) {
-        toggleFab(xkcdPic.isFavorite);
-        btnFav.setLiked(xkcdPic.isFavorite);
-        btnThumb.setLiked(xkcdPic.hasThumbed);
-        fab.show();
-    }
-
-    @SuppressLint("ObjectAnimatorBinding")
-    public void toggleFab(boolean isFavorite) {
-        if (isFavorite) {
-            final ObjectAnimator animator = ObjectAnimator.ofInt(fab, "backgroundTint", getResources().getColor(R.color.pink), getResources().getColor(R.color.white));
-            animator.setDuration(2000L);
-            animator.setEvaluator(new ArgbEvaluator());
-            animator.setInterpolator(new DecelerateInterpolator(2));
-            animator.addUpdateListener(animation -> {
-                int animatedValue = (int) animation.getAnimatedValue();
-                fab.setBackgroundTintList(ColorStateList.valueOf(animatedValue));
-            });
-            animator.start();
-            fab.setImageResource(R.drawable.ic_heart_on);
-        } else {
-            final ObjectAnimator animator = ObjectAnimator.ofInt(fab, "backgroundTint", getResources().getColor(R.color.white), getResources().getColor(R.color.pink));
-            animator.setDuration(2000L);
-            animator.setEvaluator(new ArgbEvaluator());
-            animator.setInterpolator(new DecelerateInterpolator(2));
-            animator.addUpdateListener(animation -> {
-                int animatedValue = (int) animation.getAnimatedValue();
-                fab.setBackgroundTintList(ColorStateList.valueOf(animatedValue));
-            });
-            animator.start();
-            fab.setImageResource(R.drawable.ic_heart_white);
-        }
-    }
-
-    private void showToast(Context context, String text) {
-        try {
-            toast.getView().isShown();
-            toast.setText(text);
-        } catch (Exception e) {
-            toast = Toast.makeText(context.getApplicationContext(), text, Toast.LENGTH_SHORT);
-        }
-        toast.show();
-    }
-
-    public PicsPipeline getPipeline() {
-        return pipeline;
-    }
-
-    public void showThumbUpCount(Long thumbCount) {
-        showToast(MainActivity.this, String.valueOf(thumbCount));
-    }
-
-    public static class PicsPipeline {
-        private PublishSubject<XkcdPic> picsPipeline = PublishSubject.create();
-
-        public void send(XkcdPic pic) {
-            picsPipeline.onNext(pic);
-        }
-
-        public Observable<XkcdPic> toObservable() {
-            return picsPipeline;
-        }
     }
 }

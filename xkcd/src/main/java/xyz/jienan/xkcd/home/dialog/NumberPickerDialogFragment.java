@@ -63,7 +63,7 @@ public class NumberPickerDialogFragment extends DialogFragment {
         builder.setView(contentView)
                 .setTitle(R.string.dialog_pick_content)
                 .setPositiveButton(R.string.dialog_select, (dialog, id) -> {
-                    int value = 1;
+                    int value;
                     if (editText != null && editText.isFocused()) {
                         value = Integer.valueOf(editText.getText().toString());
                     } else {

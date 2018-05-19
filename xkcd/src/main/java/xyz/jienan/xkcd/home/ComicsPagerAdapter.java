@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 
 import java.util.HashMap;
 
+import xyz.jienan.xkcd.home.fragment.SingleComicFragment;
+
 public class ComicsPagerAdapter extends FragmentStatePagerAdapter {
 
     private int length;
@@ -20,10 +22,6 @@ public class ComicsPagerAdapter extends FragmentStatePagerAdapter {
     public void setSize(int size) {
         length = size;
         notifyDataSetChanged();
-    }
-
-    public SingleComicFragment getFragment(int id) {
-        return fragmentsMap.get(id);
     }
 
     @Override

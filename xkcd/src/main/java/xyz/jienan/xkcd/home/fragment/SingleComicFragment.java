@@ -1,4 +1,4 @@
-package xyz.jienan.xkcd.home;
+package xyz.jienan.xkcd.home.fragment;
 
 import android.annotation.SuppressLint;
 import android.app.SearchManager;
@@ -35,28 +35,22 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.List;
 
+import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnLongClick;
 import butterknife.Unbinder;
-import io.objectbox.Box;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
-import okhttp3.ResponseBody;
 import timber.log.Timber;
 import xyz.jienan.xkcd.R;
-import xyz.jienan.xkcd.XkcdApplication;
-import xyz.jienan.xkcd.XkcdExplainUtil;
 import xyz.jienan.xkcd.XkcdPic;
 import xyz.jienan.xkcd.base.glide.ProgressTarget;
-import xyz.jienan.xkcd.base.network.NetworkService;
+import xyz.jienan.xkcd.home.SearchCursorAdapter;
 import xyz.jienan.xkcd.home.activity.ImageDetailPageActivity;
 import xyz.jienan.xkcd.home.activity.MainActivity;
+import xyz.jienan.xkcd.home.contract.SingleComicContract;
 import xyz.jienan.xkcd.home.dialog.SimpleInfoDialogFragment;
 import xyz.jienan.xkcd.home.dialog.SimpleInfoDialogFragment.ISimpleInfoDialogListener;
+import xyz.jienan.xkcd.home.presenter.SingleComicPresenter;
 
 import static android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING;
 import static android.view.HapticFeedbackConstants.LONG_PRESS;
@@ -67,34 +61,46 @@ import static xyz.jienan.xkcd.Const.FIRE_MORE_EXPLAIN;
 import static xyz.jienan.xkcd.Const.FIRE_SHARE_BAR;
 import static xyz.jienan.xkcd.Const.FIRE_UX_ACTION;
 import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NEW_INTENT;
-import static xyz.jienan.xkcd.base.network.NetworkService.XKCD_SEARCH_SUGGESTION;
 
 /**
  * Created by jienanzhang on 03/03/2018.
  */
 
-public class SingleComicFragment extends Fragment {
+public class SingleComicFragment extends Fragment implements SingleComicContract.View {
 
     @BindView(R.id.tv_title)
     TextView tvTitle;
+
     @BindView(R.id.iv_xkcd_pic)
     ImageView ivXkcdPic;
+
     @BindView(R.id.tv_create_date)
     TextView tvCreateDate;
+
     @Nullable
     @BindView(R.id.tv_description)
     TextView tvDescription;
+
     @BindView(R.id.pb_loading)
     ProgressBar pbLoading;
+
     @BindView(R.id.btn_reload)
     Button btnReload;
+
+    @BindString(R.string.search_hint)
+    String searchHint;
+
     private SimpleInfoDialogFragment dialogFragment;
+
     private FirebaseAnalytics mFirebaseAnalytics;
+
     private int id;
+
     private XkcdPic currentPic;
-    private Box<XkcdPic> box;
+
     private Unbinder unbinder;
-    private RequestListener glideListener = new RequestListener<String, Bitmap>() {
+
+    private RequestListener<String, Bitmap> glideListener = new RequestListener<String, Bitmap>() {
         @Override
         public boolean onException(Exception e, final String model, final Target<Bitmap> target, boolean isFirstResource) {
             if (btnReload == null) {
@@ -116,23 +122,16 @@ public class SingleComicFragment extends Fragment {
             if (ivXkcdPic != null) {
                 ivXkcdPic.setOnClickListener(v -> launchDetailPageActivity());
             }
-            if (currentPic != null && (currentPic.width == 0 || currentPic.height == 0) && resource != null) {
-                XkcdPic xkcdPic = box.get(currentPic.num);
-                int width = resource.getWidth();
-                int height = resource.getHeight();
-                if (xkcdPic != null && width > 0 && height > 0) {
-                    xkcdPic.width = width;
-                    xkcdPic.height = height;
-                    box.put(xkcdPic);
-                }
-            }
+            singleComicPresenter.updateXkcdSize(currentPic, resource);
             return false;
         }
     };
+
     private ProgressTarget<String, Bitmap> target;
+
     private List<XkcdPic> searchSuggestions;
+
     private SearchCursorAdapter searchAdapter;
-    private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     private ISimpleInfoDialogListener dialogListener = new ISimpleInfoDialogListener() {
         @Override
@@ -151,25 +150,27 @@ public class SingleComicFragment extends Fragment {
         @SuppressLint({"StaticFieldLeak", "CheckResult"})
         @Override
         public void onExplainMoreClick(final SimpleInfoDialogFragment.ExplainingCallback explainingCallback) {
-            String url = "https://www.explainxkcd.com/wiki/index.php/" + currentPic.num;
-            Observable<ResponseBody> call = NetworkService.getXkcdAPI().getExplain(url);
-            if (((MainActivity) getActivity()).getMaxId() - currentPic.num < 10) {
-                call = NetworkService.getXkcdAPI().getExplainWithShortCache(url);
-            }
-            Disposable d = call.subscribeOn(Schedulers.io())
-                    .map(responseBody -> XkcdExplainUtil.getExplainFromHtml(responseBody, url))
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .doOnSubscribe(ignored -> logUXEvent(FIRE_MORE_EXPLAIN))
-                    .subscribe(result -> {
-                        if (!TextUtils.isEmpty(result)) {
-                            explainingCallback.explanationLoaded(result);
-                        } else {
-                            explainingCallback.explanationFailed();
-                        }
-                    }, e -> explainingCallback.explanationFailed());
-            compositeDisposable.add(d);
+            SingleComicFragment.this.explainingCallback = explainingCallback;
+            singleComicPresenter.getExplain(currentPic.num);
+            logUXEvent(FIRE_MORE_EXPLAIN);
         }
     };
+
+    private SimpleInfoDialogFragment.ExplainingCallback explainingCallback;
+
+    public void explainLoaded(String result) {
+        if (!TextUtils.isEmpty(result)) {
+            explainingCallback.explanationLoaded(result);
+        } else {
+            explainingCallback.explanationFailed();
+        }
+    }
+
+    public void explainFailed() {
+        explainingCallback.explanationFailed();
+    }
+
+    private SingleComicContract.Presenter singleComicPresenter;
 
     public static SingleComicFragment newInstance(int comicId) {
         SingleComicFragment fragment = new SingleComicFragment();
@@ -183,6 +184,7 @@ public class SingleComicFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
+        singleComicPresenter = new SingleComicPresenter(this);
         Bundle args = getArguments();
         if (args != null)
             id = args.getInt("id");
@@ -196,17 +198,7 @@ public class SingleComicFragment extends Fragment {
         unbinder = ButterKnife.bind(this, view);
         pbLoading.setAnimation(AnimationUtils.loadAnimation(pbLoading.getContext(), R.anim.rotate));
         initGlide();
-        box = ((XkcdApplication) getActivity().getApplication()).getBoxStore().boxFor(XkcdPic.class);
-//        Query<XkcdPic>  xkcdQuery = box.query().order(XkcdPic_.num).build();
-        XkcdPic xkcdPic = box.get(id);
-        if (xkcdPic != null) {
-            renderXkcdPic(xkcdPic);
-            if (((MainActivity) getActivity()).getMaxId() - xkcdPic.num < 10) {
-                loadXkcdPic();
-            }
-        } else {
-            loadXkcdPic();
-        }
+        singleComicPresenter.loadXkcd(id);
 
         if (savedInstanceState != null) {
             dialogFragment = (SimpleInfoDialogFragment) getChildFragmentManager().findFragmentByTag("AltInfoDialogFragment");
@@ -219,8 +211,8 @@ public class SingleComicFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-        compositeDisposable.clear();
         unbinder.unbind();
+        singleComicPresenter.onDestroy();
         super.onDestroyView();
     }
 
@@ -233,7 +225,7 @@ public class SingleComicFragment extends Fragment {
         if (searchView == null) {
             return;
         }
-        searchView.setQueryHint(getString(R.string.search_hint));
+        searchView.setQueryHint(searchHint);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
         if (searchAdapter == null) {
             searchAdapter = new SearchCursorAdapter(getActivity(), null, 0);
@@ -269,14 +261,7 @@ public class SingleComicFragment extends Fragment {
                 if (TextUtils.isEmpty(newText)) {
                     return true;
                 }
-                Disposable d = NetworkService.getXkcdAPI().getXkcdsSearchResult(XKCD_SEARCH_SUGGESTION, newText)
-                        .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(xkcdPics -> {
-                            if (xkcdPics != null && xkcdPics.size() > 0) {
-                                renderXkcdSearch(xkcdPics);
-                            }
-                        }, e -> Timber.e(e, "search error"));
-                compositeDisposable.add(d);
+                singleComicPresenter.searchXkcd(newText);
                 return true;
             }
         });
@@ -325,16 +310,8 @@ public class SingleComicFragment extends Fragment {
         return false;
     }
 
-    private void renderXkcdSearch(List<XkcdPic> xkcdPics) {
+    public void renderXkcdSearch(List<XkcdPic> xkcdPics) {
         searchSuggestions = xkcdPics;
-        for (XkcdPic pic : xkcdPics) {
-            XkcdPic xkcdPic = box.get(pic.num);
-            if (xkcdPic != null) {
-                pic.isFavorite = xkcdPic.isFavorite;
-                pic.hasThumbed = xkcdPic.hasThumbed;
-            }
-        }
-        box.put(xkcdPics);
         String[] columns = {BaseColumns._ID,
                 SearchManager.SUGGEST_COLUMN_TEXT_1,
                 SearchManager.SUGGEST_COLUMN_TEXT_2,
@@ -364,8 +341,8 @@ public class SingleComicFragment extends Fragment {
     }
 
     private void setItemsVisibility(Menu menu, int[] hideItems, boolean visible) {
-        for (int i = 0; i < hideItems.length; i++) {
-            menu.findItem(hideItems[i]).setVisible(visible);
+        for (int hideItem : hideItems) {
+            menu.findItem(hideItem).setVisible(visible);
         }
     }
 
@@ -387,27 +364,12 @@ public class SingleComicFragment extends Fragment {
         getActivity().overridePendingTransition(R.anim.fadein, R.anim.fadeout);
     }
 
-    /**
-     * Request current xkcd picture
-     */
-    private void loadXkcdPic() {
-        pbLoading.setVisibility(View.VISIBLE);
-        Observable<XkcdPic> xkcdPicObservable = NetworkService.getXkcdAPI().getComics(String.valueOf(id));
-        Disposable d = xkcdPicObservable.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(resXkcdPic -> {
-                    renderXkcdPic(resXkcdPic);
-                    XkcdPic xkcdPic = box.get(resXkcdPic.num);
-                    if (xkcdPic != null) {
-                        resXkcdPic.isFavorite = xkcdPic.isFavorite;
-                        resXkcdPic.hasThumbed = xkcdPic.hasThumbed;
-                    }
-                    box.put(resXkcdPic);
-                }, e -> {
-                    Timber.e(e, "load xkcd pic error");
-                    pbLoading.setVisibility(View.GONE);
-                });
-        compositeDisposable.add(d);
+    public void setLoading(boolean isLoading) {
+        if (isLoading) {
+            pbLoading.setVisibility(View.VISIBLE);
+        } else {
+            pbLoading.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -415,11 +377,10 @@ public class SingleComicFragment extends Fragment {
      *
      * @param xPic
      */
-    private void renderXkcdPic(final XkcdPic xPic) {
+    public void renderXkcdPic(final XkcdPic xPic) {
         if (getActivity() == null || getActivity().isFinishing()) {
             return;
         }
-        ((MainActivity) getActivity()).getPipeline().send(xPic);
         if (TextUtils.isEmpty(target.getModel())) {
             target.setModel(xPic.getTargetImg());
             Glide.with(getActivity()).load(xPic.getTargetImg()).asBitmap().fitCenter().diskCacheStrategy(DiskCacheStrategy.SOURCE).listener(glideListener).into(target);

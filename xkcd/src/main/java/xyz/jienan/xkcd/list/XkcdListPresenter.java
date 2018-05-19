@@ -8,32 +8,33 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import timber.log.Timber;
-import xyz.jienan.xkcd.XkcdDAO;
+import xyz.jienan.xkcd.SharedPrefManager;
+import xyz.jienan.xkcd.XkcdModel;
 import xyz.jienan.xkcd.XkcdPic;
 
-public class XkcdListActivityPresenter {
+public class XkcdListPresenter implements XkcdListContract.Presenter {
 
     private boolean inRequest = false;
 
-    private int latestIndex;
+    private XkcdListContract.View view;
 
-    private XkcdListActivity view;
-
-    private XkcdDAO xkcdDAO;
+    private final XkcdModel xkcdModel = XkcdModel.getInstance();
 
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
-    XkcdListActivityPresenter(XkcdListActivity view) {
-        xkcdDAO = new XkcdDAO();
+    private final SharedPrefManager sharedPrefManager = new SharedPrefManager();
+
+    XkcdListPresenter(XkcdListContract.View view) {
         this.view = view;
     }
 
-    public void updateLatestIndex(int latestIndex) {
-        this.latestIndex = latestIndex;
-    }
-
+    @Override
     public void loadList(final int start) {
-        List<XkcdPic> data = xkcdDAO.loadXkcdFromDB(start, start + 399);
+        if (start == 1) {
+            view.setLoading(true);
+        }
+        long latestIndex = sharedPrefManager.getLatest();
+        List<XkcdPic> data = xkcdModel.loadXkcdFromDB(start, start + 399);
         int dataSize = data.size();
         Timber.d("Load xkcd list request, start from: %d, the response items: %d", start, dataSize);
         if ((start <= latestIndex - 399 && dataSize != 400 && start != 401) ||
@@ -43,38 +44,41 @@ public class XkcdListActivityPresenter {
                 return;
             }
             inRequest = true;
-            Disposable d = xkcdDAO.loadRange(start, 400)
+            Disposable d = xkcdModel.loadRange(start, 400)
                     .observeOn(AndroidSchedulers.mainThread())
                     .map(list -> list.get(list.size() - 1).num)
-                    .doOnNext(ignore -> inRequest = false)
-                    .subscribe(this::updateView, e -> {
-                        Timber.e(e, "update xkcd failed");
-                        inRequest = false;
-                    }, () -> inRequest = false);
+                    .doOnDispose(() -> inRequest = false)
+                    .singleOrError()
+                    .subscribe(this::updateView,
+                            e -> Timber.e(e, "update xkcd failed"));
             compositeDisposable.add(d);
-        } else {
+        } else if (dataSize > 0){
             updateView(data.get(dataSize -1).num);
         }
     }
 
+    @Override
     public void loadFavList() {
-        view.updateData(xkcdDAO.getFavXkcd());
+        view.updateData(xkcdModel.getFavXkcd());
+        view.setLoading(false);
     }
 
+    @Override
     public void loadPeopleChoiceList(){
-        view.setLoading(true);
-        Disposable d = xkcdDAO.getThumbUpList()
+        Disposable d = xkcdModel.getThumbUpList()
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(ignored -> view.setLoading(true))
                 .doOnNext(ignored -> view.setLoading(false))
                 .subscribe(view::updateData,
                         e -> Timber.e(e, "get top xkcd error"));
         compositeDisposable.add(d);
     }
 
+    @Override
     public boolean hasFav() {
-        List<XkcdPic> list = xkcdDAO.getFavXkcd();
+        List<XkcdPic> list = xkcdModel.getFavXkcd();
         if (!list.isEmpty()) {
-            Disposable d = xkcdDAO.validateXkcdList(list)
+            Disposable d = xkcdModel.validateXkcdList(list)
                     .subscribe(ignore -> {},
                             e -> Timber.e(e, "error on get pic info"));
             compositeDisposable.add(d);
@@ -82,10 +86,21 @@ public class XkcdListActivityPresenter {
         return !list.isEmpty();
     }
 
+    @Override
+    public void onDestroy() {
+        compositeDisposable.dispose();
+    }
+
+    @Override
+    public boolean lastItemReached(long index) {
+        return index >= sharedPrefManager.getLatest();
+    }
+
     private void updateView(long lastIndex) {
-        List<XkcdPic> xkcdPics = xkcdDAO.loadXkcdFromDB(1, lastIndex);
+        List<XkcdPic> xkcdPics = xkcdModel.loadXkcdFromDB(1, lastIndex);
         view.showScroller(xkcdPics.isEmpty() ? View.GONE : View.VISIBLE);
         view.updateData(xkcdPics);
         view.isLoadingMore(false);
+        view.setLoading(false);
     }
 }

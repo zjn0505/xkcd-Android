@@ -20,14 +20,6 @@ import xyz.jienan.xkcd.R;
 
 public class SearchCursorAdapter extends CursorAdapter {
 
-    public SearchCursorAdapter(Context context, Cursor c) {
-        super(context, c);
-    }
-
-    public SearchCursorAdapter(Context context, Cursor c, boolean autoRequery) {
-        super(context, c, autoRequery);
-    }
-
     public SearchCursorAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
     }
@@ -43,7 +35,9 @@ public class SearchCursorAdapter extends CursorAdapter {
         Glide.with(context).load(url).diskCacheStrategy(DiskCacheStrategy.SOURCE).into(ivThumbnail);
 
         ((TextView) view.findViewById(R.id.tv_xkcd_title))
-                .setText(context.getResources().getString(R.string.item_search_title, cursor.getString(3), cursor.getString(2)));
+                .setText(context.getResources().getString(R.string.item_search_title,
+                        cursor.getString(3),
+                        cursor.getString(2)));
 
 
         return view;
@@ -56,6 +50,8 @@ public class SearchCursorAdapter extends CursorAdapter {
         Glide.with(context).load(url).asBitmap().diskCacheStrategy(DiskCacheStrategy.SOURCE).into(ivThumbnail);
 
         ((TextView) view.findViewById(R.id.tv_xkcd_title))
-                .setText(context.getResources().getString(R.string.item_search_title, cursor.getString(3), cursor.getString(2)));
+                .setText(context.getResources().getString(R.string.item_search_title,
+                        cursor.getString(3),
+                        cursor.getString(2)));
     }
 }

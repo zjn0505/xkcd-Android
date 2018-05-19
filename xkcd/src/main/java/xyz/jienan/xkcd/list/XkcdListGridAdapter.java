@@ -1,5 +1,6 @@
 package xyz.jienan.xkcd.list;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -20,30 +21,24 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.objectbox.Box;
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
+import timber.log.Timber;
 import xyz.jienan.xkcd.R;
-import xyz.jienan.xkcd.XkcdApplication;
+import xyz.jienan.xkcd.XkcdModel;
 import xyz.jienan.xkcd.XkcdPic;
-import xyz.jienan.xkcd.base.network.NetworkService;
 import xyz.jienan.xkcd.home.activity.MainActivity;
 
 import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NEW_INTENT;
-import static xyz.jienan.xkcd.base.network.NetworkService.XKCD_BROWSE_LIST;
 
 public class XkcdListGridAdapter extends RecyclerView.Adapter<XkcdListGridAdapter.XkcdViewHolder> implements RecyclerViewFastScroller.BubbleTextGetter {
 
     private Context mContext;
     private RequestManager glide;
     private List<XkcdPic> pics = new ArrayList<>();
-    private Box<XkcdPic> box;
+    private XkcdModel xkcdModel = XkcdModel.getInstance();
 
     public XkcdListGridAdapter(Context context) {
         mContext = context;
         glide = Glide.with(context);
-        box = ((XkcdApplication) context.getApplicationContext()).getBoxStore().boxFor(XkcdPic.class);
     }
 
     public RequestManager getGlide() {
@@ -90,13 +85,14 @@ public class XkcdListGridAdapter extends RecyclerView.Adapter<XkcdListGridAdapte
         private ImageView itemXkcdImageView;
         private TextView itemXkcdImageNum;
 
-        public XkcdViewHolder(View itemView) {
+        XkcdViewHolder(View itemView) {
             super(itemView);
             itemXkcdImageView = itemView.findViewById(R.id.iv_item_xkcd_list);
             itemXkcdImageNum = itemView.findViewById(R.id.tv_item_xkcd_num);
         }
 
-        public void bind(final XkcdPic pic) {
+        @SuppressLint("CheckResult")
+        void bind(final XkcdPic pic) {
             PercentFrameLayout.LayoutParams layoutParams =
                     (PercentFrameLayout.LayoutParams) itemXkcdImageView.getLayoutParams();
             PercentLayoutHelper.PercentLayoutInfo info = layoutParams.getPercentLayoutInfo();
@@ -121,34 +117,12 @@ public class XkcdListGridAdapter extends RecyclerView.Adapter<XkcdListGridAdapte
                 mContext.startActivity(intent);
             });
             if (width == 0 || height == 0) {
-                NetworkService.getXkcdAPI().getXkcdList(XKCD_BROWSE_LIST, (int) pic.num, 0, 1)
-                        .subscribeOn(Schedulers.io()).observeOn(Schedulers.io()).subscribe(new Observer<List<XkcdPic>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(List<XkcdPic> xkcdPics) {
-                        if (xkcdPics != null && xkcdPics.size() == 1) {
-                            XkcdPic xkcdPic = xkcdPics.get(0);
-                            XkcdPic xkcdPicBox = box.get(pic.num);
-                            xkcdPicBox.width = xkcdPic.width;
-                            xkcdPicBox.height = xkcdPic.height;
-                            box.put(xkcdPicBox);
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+                xkcdModel.loadXkcd(pic.num)
+                        .subscribe(xkcdPic -> {
+                            if (xkcdPic != null) {
+                                xkcdModel.updateSize(xkcdPic.num, xkcdPic.width, xkcdPic.height);
+                            }
+                        }, e -> Timber.e(e, "reload size error"));
             }
         }
     }

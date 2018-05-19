@@ -21,18 +21,14 @@ import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.objectbox.Box;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 import xyz.jienan.xkcd.R;
-import xyz.jienan.xkcd.XkcdApplication;
-import xyz.jienan.xkcd.XkcdPic;
 import xyz.jienan.xkcd.XkcdSideloadUtils;
-import xyz.jienan.xkcd.base.network.NetworkService;
+import xyz.jienan.xkcd.home.contract.ImageDetailPageContract;
+import xyz.jienan.xkcd.home.presenter.ImageDetailPagePresenter;
 
 import static xyz.jienan.xkcd.Const.FIRE_COMIC_ID;
 import static xyz.jienan.xkcd.Const.FIRE_COMIC_URL;
@@ -43,32 +39,39 @@ import static xyz.jienan.xkcd.Const.FIRE_LARGE_IMAGE;
  * Created by jienanzhang on 09/07/2017.
  */
 
-public class ImageDetailPageActivity extends Activity {
+public class ImageDetailPageActivity extends Activity implements ImageDetailPageContract.View {
+
     @BindView(R.id.photo_view)
     PhotoView photoView;
+
     @BindView(R.id.big_image_view)
     BigImageView bigImageView;
+
     @BindView(R.id.pb_loading)
     ProgressBar pbLoading;
+
     private int index;
-    private Box<XkcdPic> box;
+
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
+
     private FirebaseAnalytics mFirebaseAnalytics;
+
+    private ImageDetailPageContract.Presenter imageDetailPagePresenter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        imageDetailPagePresenter = new ImageDetailPagePresenter(this);
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         setContentView(R.layout.activity_image_detail);
         ButterKnife.bind(this);
-        box = ((XkcdApplication) getApplication()).getBoxStore().boxFor(XkcdPic.class);
         String url = getIntent().getStringExtra("URL");
         index = (int) getIntent().getLongExtra("ID", 0L);
         photoView.setMaximumScale(10);
         if (!TextUtils.isEmpty(url)) {
             renderPic(url);
         } else if (index != 0) {
-            requestImage();
+            imageDetailPagePresenter.requestImage(index);
         } else {
             Timber.e("No valid info for detail page");
             finish();
@@ -86,11 +89,13 @@ public class ImageDetailPageActivity extends Activity {
         if (photoView.getVisibility() == View.VISIBLE) {
             Glide.clear(photoView);
         }
+        imageDetailPagePresenter.onDestroy();
         compositeDisposable.dispose();
         super.onDestroy();
     }
 
-    private void renderPic(String url) {
+    @Override
+    public void renderPic(String url) {
         Bundle bundle = new Bundle();
         if (XkcdSideloadUtils.useLargeImageView(index)) {
             bigImageView.showImage(Uri.parse(url));
@@ -132,21 +137,12 @@ public class ImageDetailPageActivity extends Activity {
                 }));
     }
 
-    private void requestImage() {
-        Disposable d = NetworkService.getXkcdAPI()
-                .getComics(String.valueOf(index))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(ignored -> pbLoading.setVisibility(View.VISIBLE))
-                .subscribe(resXkcdPic -> {
-                    XkcdPic xkcdPic = box.get(resXkcdPic.num);
-                    if (xkcdPic != null) {
-                        resXkcdPic.isFavorite = xkcdPic.isFavorite;
-                        resXkcdPic.hasThumbed = xkcdPic.hasThumbed;
-                    }
-                    box.put(resXkcdPic);
-                    renderPic(resXkcdPic.getTargetImg());
-                }, e -> Timber.e(e, "Request pic in detail page error, %d", index));
-        compositeDisposable.add(d);
+    @Override
+    public void setLoading(boolean isLoading) {
+        if (isLoading) {
+            pbLoading.setVisibility(View.VISIBLE);
+        } else {
+            pbLoading.setVisibility(View.GONE);
+        }
     }
 }

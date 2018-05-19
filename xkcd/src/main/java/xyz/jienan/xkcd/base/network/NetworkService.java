@@ -56,11 +56,9 @@ public class NetworkService {
     public static final String XKCD_THUMBS_UP = "http://130.211.211.220:3003/xkcd-thumb-up";
     public static final String XKCD_TOP = "http://130.211.211.220:3003/xkcd-top";
     public static final String XKCD_TOP_SORT_BY_THUMB_UP = "thumb-up";
-    public static final String BYPASS_CACHE = "1";
-    public static final String USE_CACHE = "2";
-    public static final String SHORT_CACHE = "3";
+    public static final String XKCD_EXPLAIN_URL = "https://www.explainxkcd.com/wiki/index.php/";
+
     private static final String XKCD_BASE_URL = "https://xkcd.com/";
-    private static final String TAG = "NetworkService";
     private static final int DEFAULT_READ_TIMEOUT = 30; // in seconds
     private static final int DEFAULT_CONNECT_TIMEOUT = 15; // in seconds
     private static final String HEADER_CACHE_CONTROL = "Cache-Control";
@@ -175,7 +173,7 @@ public class NetworkService {
 
         @Headers("cacheable: 600")
         @GET("{comic_id}/info.0.json")
-        Observable<XkcdPic> getComics(@Path("comic_id") String comicId);
+        Observable<XkcdPic> getComics(@Path("comic_id") long comicId);
 
         @Headers("cacheable: 2419200")
         @GET

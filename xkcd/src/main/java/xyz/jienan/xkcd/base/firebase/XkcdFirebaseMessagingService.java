@@ -70,7 +70,6 @@ public class XkcdFirebaseMessagingService extends FirebaseMessagingService {
         intent.putExtra(XKCD_INDEX_ON_NOTI_INTENT, (int) xkcdPic.num);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
-        RemoteMessage.Notification notification = remoteMessage.getNotification(); // notification.getTitle() .getBody() not used
         String[] titles = getResources().getStringArray(R.array.notification_titles);
         int index = new Random().nextInt(titles.length);
         String channelId = getString(R.string.default_notification_channel_id);
@@ -86,7 +85,9 @@ public class XkcdFirebaseMessagingService extends FirebaseMessagingService {
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
+        if (notificationManager == null) {
+            return;
+        }
         // Since android Oreo notification channel is needed.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(channelId,

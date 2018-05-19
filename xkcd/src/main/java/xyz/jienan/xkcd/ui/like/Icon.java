@@ -20,23 +20,11 @@ public class Icon {
         return offIconResourceId;
     }
 
-    public void setOffIconResourceId(@DrawableRes int offIconResourceId) {
-        this.offIconResourceId = offIconResourceId;
-    }
-
     public int getOnIconResourceId() {
         return onIconResourceId;
     }
 
-    public void setOnIconResourceId(@DrawableRes int onIconResourceId) {
-        this.onIconResourceId = onIconResourceId;
-    }
-
     public IconType getIconType() {
         return iconType;
-    }
-
-    public void setIconType(IconType iconType) {
-        this.iconType = iconType;
     }
 }

@@ -375,30 +375,6 @@ public class LikeButton extends FrameLayout implements View.OnClickListener {
     }
 
     /**
-     * Sets the size of the drawable/icon that's being used. The views that generate
-     * the like effect are also updated to reflect the size of the icon.
-     *
-     * @param iconSize
-     */
-
-    public void setIconSizeDp(int iconSize) {
-        setIconSizePx((int) LikeUtils.dipToPixels(getContext(), (float) iconSize));
-    }
-
-    /**
-     * Sets the size of the drawable/icon that's being used. The views that generate
-     * the like effect are also updated to reflect the size of the icon.
-     *
-     * @param iconSize
-     */
-    public void setIconSizePx(int iconSize) {
-        this.iconSize = iconSize;
-        setEffectsViewSize();
-        this.unLikeDrawable = LikeUtils.resizeDrawable(getContext(), unLikeDrawable, iconSize, iconSize);
-        this.likeDrawable = LikeUtils.resizeDrawable(getContext(), likeDrawable, iconSize, iconSize);
-    }
-
-    /**
      * * Parses the specific icon based on string
      * version of its enum.
      * These icons are bundled with the library and

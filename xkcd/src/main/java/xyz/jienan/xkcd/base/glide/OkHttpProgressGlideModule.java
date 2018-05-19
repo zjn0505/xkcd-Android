@@ -10,7 +10,6 @@ import com.bumptech.glide.integration.okhttp3.OkHttpUrlLoader;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.module.GlideModule;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,15 +27,12 @@ import xyz.jienan.xkcd.base.network.NetworkService;
 
 public class OkHttpProgressGlideModule implements GlideModule {
     private static Interceptor createInterceptor(final ResponseProgressListener listener) {
-        return new Interceptor() {
-            @Override
-            public Response intercept(Chain chain) throws IOException {
-                Request request = chain.request();
-                Response response = chain.proceed(request);
-                return response.newBuilder()
-                        .body(new OkHttpProgressResponseBody(request.url(), response.body(), listener))
-                        .build();
-            }
+        return chain -> {
+            Request request = chain.request();
+            Response response = chain.proceed(request);
+            return response.newBuilder()
+                    .body(new OkHttpProgressResponseBody(request.url(), response.body(), listener))
+                    .build();
         };
     }
 
@@ -115,12 +111,7 @@ public class OkHttpProgressGlideModule implements GlideModule {
                 forget(key);
             }
             if (needsDispatch(key, bytesRead, contentLength, listener.getGranualityPercentage())) {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        listener.onProgress(bytesRead, contentLength);
-                    }
-                });
+                handler.post(() -> listener.onProgress(bytesRead, contentLength));
             }
         }
 

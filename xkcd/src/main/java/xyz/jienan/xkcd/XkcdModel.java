@@ -4,37 +4,67 @@ package xyz.jienan.xkcd;
 import java.util.List;
 
 import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 import io.reactivex.Single;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.PublishSubject;
+import okhttp3.ResponseBody;
 import xyz.jienan.xkcd.base.network.NetworkService;
 
 import static xyz.jienan.xkcd.base.network.NetworkService.XKCD_BROWSE_LIST;
+import static xyz.jienan.xkcd.base.network.NetworkService.XKCD_EXPLAIN_URL;
+import static xyz.jienan.xkcd.base.network.NetworkService.XKCD_SEARCH_SUGGESTION;
 import static xyz.jienan.xkcd.base.network.NetworkService.XKCD_TOP;
 import static xyz.jienan.xkcd.base.network.NetworkService.XKCD_TOP_SORT_BY_THUMB_UP;
 
-public class XkcdDAO {
+public class XkcdModel {
 
-    private BoxManager boxManager;
+    private final BoxManager boxManager = new BoxManager();
 
     private final static int SLICE = 400;
 
-    public XkcdDAO() {
-        boxManager = new BoxManager();
+    private final PublishSubject<XkcdPic> picsPipeline = PublishSubject.create();
+
+    private NetworkService.XkcdAPI xkcdApi = NetworkService.getXkcdAPI();
+
+    private XkcdModel() {
+        // no public constructor
+    }
+
+    private static XkcdModel xkcdModel;
+
+    public static XkcdModel getInstance() {
+        if (xkcdModel == null) {
+            xkcdModel = new XkcdModel();
+        }
+        return xkcdModel;
+    }
+
+    public void push(XkcdPic pic) {
+        picsPipeline.onNext(pic);
+    }
+
+    public Observable<XkcdPic> observe() {
+        return picsPipeline;
     }
 
     public Observable<XkcdPic> loadLatest() {
-        return NetworkService.getXkcdAPI()
-                .getLatest()
+        return xkcdApi.getLatest()
                 .subscribeOn(Schedulers.io())
                 .map(boxManager::updateAndSave);
     }
 
     public Observable<XkcdPic> loadXkcd(long index) {
-        return NetworkService.getXkcdAPI()
-                .getXkcdList(XKCD_BROWSE_LIST, (int) index, 0, 1)
+        return xkcdApi.getXkcdList(XKCD_BROWSE_LIST, (int) index, 0, 1)
                 .subscribeOn(Schedulers.io())
-                .map(xkcdPics -> xkcdPics.get(0))
-                .map(boxManager::updateAndSave);
+                .flatMap((Function<List<XkcdPic>, ObservableSource<XkcdPic>>) xkcdPics -> {
+                    if (xkcdPics == null || xkcdPics.isEmpty()) {
+                        return xkcdApi.getComics(index).subscribeOn(Schedulers.io());
+                    } else {
+                        return Observable.just(xkcdPics.get(0));
+                    }
+                }).map(boxManager::updateAndSave);
     }
 
     /**
@@ -65,8 +95,7 @@ public class XkcdDAO {
     }
 
     public Observable<List<XkcdPic>> getThumbUpList() {
-        return NetworkService.getXkcdAPI()
-                .getTopXkcds(XKCD_TOP, XKCD_TOP_SORT_BY_THUMB_UP)
+        return xkcdApi.getTopXkcds(XKCD_TOP, XKCD_TOP_SORT_BY_THUMB_UP)
                 .subscribeOn(Schedulers.io())
                 .map(boxManager::updateAndSave);
     }
@@ -78,8 +107,7 @@ public class XkcdDAO {
      * @return last index.
      */
     public Observable<List<XkcdPic>> loadRange(long start, long range) {
-        return NetworkService.getXkcdAPI()
-                .getXkcdList(XKCD_BROWSE_LIST, (int) start, 0, (int) range)
+        return xkcdApi.getXkcdList(XKCD_BROWSE_LIST, (int) start, 0, (int) range)
                 .subscribeOn(Schedulers.io())
                 .map(boxManager::updateAndSave);
     }
@@ -90,8 +118,7 @@ public class XkcdDAO {
      * @return thumb up count
      */
     public Observable<Long> thumbsUp(long index) {
-        return NetworkService.getXkcdAPI()
-                .thumbsUp(NetworkService.XKCD_THUMBS_UP, (int) index)
+        return xkcdApi.thumbsUp(NetworkService.XKCD_THUMBS_UP, (int) index)
                 .subscribeOn(Schedulers.io())
                 .doOnSubscribe(ignored -> boxManager.like(index))
                 .map(boxManager::updateAndSave)
@@ -117,16 +144,46 @@ public class XkcdDAO {
         return boxManager.getFavXkcd();
     }
 
+    public XkcdPic loadXkcdFromDB(long index) {
+        return boxManager.getXkcd(index);
+    }
+
     public List<XkcdPic> loadXkcdFromDB(long start, long end) {
         return boxManager.getXkcdInRange(start, end);
     }
 
+    public XkcdPic updateSize(long index, int width, int height) {
+        XkcdPic xkcdPic = boxManager.getXkcd(index);
+        if (xkcdPic != null && width > 0 && height > 0) {
+            xkcdPic.width = width;
+            xkcdPic.height = height;
+            boxManager.saveXkcd(xkcdPic);
+        }
+        return xkcdPic;
+    }
+
     public Observable<XkcdPic> fav(long index, boolean isFav) {
-        XkcdPic xkcdPicInBox = boxManager.fav(index, isFav);
+        final XkcdPic xkcdPicInBox = boxManager.fav(index, isFav);
         if (xkcdPicInBox.width == 0 || xkcdPicInBox.height == 0) {
             return loadXkcd(index);
         } else {
             return Observable.just(xkcdPicInBox);
         }
+    }
+
+    public Observable<List<XkcdPic>> search(String query) {
+        return xkcdApi.getXkcdsSearchResult(XKCD_SEARCH_SUGGESTION, query)
+                .subscribeOn(Schedulers.io())
+                .map(boxManager::updateAndSave);
+    }
+
+    public Observable<String> loadExplain(long index, long latestIndex) {
+        final String url = XKCD_EXPLAIN_URL + index;
+        final Observable<ResponseBody> observable = latestIndex - index < 10 ?
+                xkcdApi.getExplainWithShortCache(url)
+                : xkcdApi.getExplain(url);
+
+        return observable.subscribeOn(Schedulers.io())
+                .map(responseBody -> XkcdExplainUtil.getExplainFromHtml(responseBody, url));
     }
 }

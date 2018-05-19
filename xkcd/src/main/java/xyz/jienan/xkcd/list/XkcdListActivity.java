@@ -3,6 +3,7 @@ package xyz.jienan.xkcd.list;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -16,7 +17,6 @@ import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.disposables.CompositeDisposable;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.XkcdPic;
 import xyz.jienan.xkcd.base.BaseActivity;
@@ -28,16 +28,13 @@ import static xyz.jienan.xkcd.Const.FIRE_FILTER_FAV;
 import static xyz.jienan.xkcd.Const.FIRE_FILTER_THUMB;
 import static xyz.jienan.xkcd.Const.FIRE_LIST_FILTER_BAR;
 import static xyz.jienan.xkcd.Const.FIRE_SCROLL_TO_END;
-import static xyz.jienan.xkcd.Const.XKCD_LATEST_INDEX;
 import static xyz.jienan.xkcd.list.XkcdListActivity.Selection.ALL_COMICS;
 
 /**
  * Created by jienanzhang on 22/03/2018.
  */
 
-public class XkcdListActivity extends BaseActivity {
-
-    private static final int INVALID_ID = 0;
+public class XkcdListActivity extends BaseActivity implements XkcdListContract.View{
 
     private final static int COUNT_IN_ADV = 10;
 
@@ -55,13 +52,14 @@ public class XkcdListActivity extends BaseActivity {
     private StaggeredGridLayoutManager sglm;
 
     private int spanCount = 2;
-    private boolean loadingMore = false;
-    private int latestIndex;
-    private SharedPreferences sharedPreferences;
-    private Selection currentSelection = ALL_COMICS;
-    private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
-    private XkcdListActivityPresenter xkcdListActivityPresenter;
+    private boolean loadingMore = false;
+
+    private SharedPreferences sharedPreferences;
+
+    private Selection currentSelection = ALL_COMICS;
+
+    private XkcdListContract.Presenter xkcdListPresenter;
 
     private RecyclerView.OnScrollListener rvScrollListener = new RecyclerView.OnScrollListener() {
 
@@ -108,7 +106,7 @@ public class XkcdListActivity extends BaseActivity {
                     && !loadingMore
                     && !lastItemReached()) {
                 loadingMore = true;
-                xkcdListActivityPresenter.loadList((int) (mAdapter.getPics().get(mAdapter.getItemCount() - 1).num + 1));
+                xkcdListPresenter.loadList((int) (mAdapter.getPics().get(mAdapter.getItemCount() - 1).num + 1));
             }
         }
     };
@@ -123,7 +121,7 @@ public class XkcdListActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (xkcdListActivityPresenter.hasFav()) {
+        if (xkcdListPresenter.hasFav()) {
             getMenuInflater().inflate(R.menu.menu_list, menu);
         }
         return true;
@@ -168,16 +166,16 @@ public class XkcdListActivity extends BaseActivity {
         return true;
     }
 
-    private void reloadList(Selection currentSelection) {
+    private void reloadList(@NonNull Selection currentSelection) {
         switch (currentSelection) {
             case ALL_COMICS:
-                xkcdListActivityPresenter.loadList(1);
+                xkcdListPresenter.loadList(1);
                 break;
             case MY_FAVORITE:
-                xkcdListActivityPresenter.loadFavList();
+                xkcdListPresenter.loadFavList();
                 break;
             case PEOPLES_CHOICE:
-                xkcdListActivityPresenter.loadPeopleChoiceList();
+                xkcdListPresenter.loadPeopleChoiceList();
                 break;
         }
         rvList.scrollToPosition(0);
@@ -186,7 +184,7 @@ public class XkcdListActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        xkcdListActivityPresenter= new XkcdListActivityPresenter(this);
+        xkcdListPresenter = new XkcdListPresenter(this);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         setContentView(R.layout.activity_list);
         ButterKnife.bind(this);
@@ -198,8 +196,6 @@ public class XkcdListActivity extends BaseActivity {
         sglm = new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL);
         rvList.setLayoutManager(sglm);
         rvList.addOnScrollListener(rvScrollListener);
-        latestIndex = PreferenceManager.getDefaultSharedPreferences(this).getInt(XKCD_LATEST_INDEX, INVALID_ID);
-        xkcdListActivityPresenter.updateLatestIndex(latestIndex);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         if (savedInstanceState != null) {
             int selection = savedInstanceState.getInt("Selection", ALL_COMICS.id);
@@ -223,7 +219,7 @@ public class XkcdListActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         rvList.removeOnScrollListener(rvScrollListener);
-        compositeDisposable.clear();
+        xkcdListPresenter.onDestroy();
         super.onDestroy();
     }
 
@@ -234,7 +230,7 @@ public class XkcdListActivity extends BaseActivity {
                 return false;
             }
             XkcdPic lastPic = pics.get(pics.size() - 1);
-            return lastPic.num >= latestIndex;
+            return xkcdListPresenter.lastItemReached(lastPic.num);
         }
         return false;
     }
@@ -268,7 +264,7 @@ public class XkcdListActivity extends BaseActivity {
                     return selection;
                 }
             }
-            return null;
+            return ALL_COMICS;
         }
     }
 }

@@ -72,6 +72,10 @@ public class BoxManager {
             if (xkcdPicInBox != null) {
                 pic.isFavorite = xkcdPicInBox.isFavorite;
                 pic.hasThumbed = xkcdPicInBox.hasThumbed;
+                if (pic.width == 0 && xkcdPicInBox.width != 0) {
+                    pic.width = xkcdPicInBox.width;
+                    pic.height = xkcdPicInBox.height;
+                }
             }
         }
         box.put(xkcdPics);
