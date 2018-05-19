@@ -4,26 +4,14 @@ import android.view.View;
 
 import java.util.List;
 
-import io.reactivex.Observable;
-import io.reactivex.SingleSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
-import xyz.jienan.xkcd.BoxManager;
 import xyz.jienan.xkcd.XkcdDAO;
 import xyz.jienan.xkcd.XkcdPic;
-import xyz.jienan.xkcd.base.network.NetworkService;
-
-import static xyz.jienan.xkcd.base.network.NetworkService.XKCD_BROWSE_LIST;
-import static xyz.jienan.xkcd.base.network.NetworkService.XKCD_TOP;
-import static xyz.jienan.xkcd.base.network.NetworkService.XKCD_TOP_SORT_BY_THUMB_UP;
 
 public class XkcdListActivityPresenter {
-
-    private final BoxManager boxManager;
 
     private boolean inRequest = false;
 
@@ -36,7 +24,6 @@ public class XkcdListActivityPresenter {
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     XkcdListActivityPresenter(XkcdListActivity view) {
-        boxManager = new BoxManager();
         xkcdDAO = new XkcdDAO();
         this.view = view;
     }
@@ -46,7 +33,7 @@ public class XkcdListActivityPresenter {
     }
 
     public void loadList(final int start) {
-        List<XkcdPic> data = boxManager.getXkcdInRange(start, start + 399);
+        List<XkcdPic> data = xkcdDAO.loadXkcdFromDB(start, start + 399);
         int dataSize = data.size();
         Timber.d("Load xkcd list request, start from: %d, the response items: %d", start, dataSize);
         if ((start <= latestIndex - 399 && dataSize != 400 && start != 401) ||
@@ -58,6 +45,7 @@ public class XkcdListActivityPresenter {
             inRequest = true;
             Disposable d = xkcdDAO.loadRange(start, 400)
                     .observeOn(AndroidSchedulers.mainThread())
+                    .map(list -> list.get(list.size() - 1).num)
                     .doOnNext(ignore -> inRequest = false)
                     .subscribe(this::updateView, e -> {
                         Timber.e(e, "update xkcd failed");
@@ -70,41 +58,32 @@ public class XkcdListActivityPresenter {
     }
 
     public void loadFavList() {
-        List<XkcdPic> listFav = boxManager.getFavXkcd();
-        view.updateData(listFav);
+        view.updateData(xkcdDAO.getFavXkcd());
     }
 
     public void loadPeopleChoiceList(){
-        Disposable d = NetworkService.getXkcdAPI()
-                .getTopXkcds(XKCD_TOP, XKCD_TOP_SORT_BY_THUMB_UP)
-                .subscribeOn(Schedulers.io())
+        view.setLoading(true);
+        Disposable d = xkcdDAO.getThumbUpList()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(xkcdPics -> {
-                    boxManager.updateAndSave(xkcdPics);
-                    view.updateData(xkcdPics);
-                }, e -> Timber.e(e, "get top xkcd error"));
+                .doOnNext(ignored -> view.setLoading(false))
+                .subscribe(view::updateData,
+                        e -> Timber.e(e, "get top xkcd error"));
         compositeDisposable.add(d);
     }
 
     public boolean hasFav() {
-        List<XkcdPic> list = boxManager.getFavXkcd();
-        Disposable d = Observable.fromIterable(list)
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.computation())
-                .filter(xkcdPic -> xkcdPic == null || xkcdPic.width == 0 || xkcdPic.height == 0)
-                .toSortedList()
-                .observeOn(Schedulers.io())
-                .flatMap((Function<List<XkcdPic>, SingleSource<List<XkcdPic>>>) xkcdPics -> NetworkService.getXkcdAPI()
-                        .getXkcdList(XKCD_BROWSE_LIST, (int) xkcdPics.get(0).num, 0, (int) xkcdPics.get(xkcdPics.size() - 1).num)
-                        .singleOrError())
-                .subscribe(boxManager::updateAndSave,
-                        e -> Timber.e(e, "error on get pic info"));
-        compositeDisposable.add(d);
+        List<XkcdPic> list = xkcdDAO.getFavXkcd();
+        if (!list.isEmpty()) {
+            Disposable d = xkcdDAO.validateXkcdList(list)
+                    .subscribe(ignore -> {},
+                            e -> Timber.e(e, "error on get pic info"));
+            compositeDisposable.add(d);
+        }
         return !list.isEmpty();
     }
 
     private void updateView(long lastIndex) {
-        List<XkcdPic> xkcdPics = boxManager.getXkcdInRange(1, lastIndex);
+        List<XkcdPic> xkcdPics = xkcdDAO.loadXkcdFromDB(1, lastIndex);
         view.showScroller(xkcdPics.isEmpty() ? View.GONE : View.VISIBLE);
         view.updateData(xkcdPics);
         view.isLoadingMore(false);

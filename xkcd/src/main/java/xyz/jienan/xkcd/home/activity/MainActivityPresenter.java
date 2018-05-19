@@ -4,14 +4,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import timber.log.Timber;
-import xyz.jienan.xkcd.BoxManager;
 import xyz.jienan.xkcd.SharedPrefManager;
 import xyz.jienan.xkcd.XkcdDAO;
-import xyz.jienan.xkcd.XkcdPic;
 
 public class MainActivityPresenter {
-
-    private final BoxManager boxManager;
 
     private final SharedPrefManager sharedPrefManager;
 
@@ -23,7 +19,6 @@ public class MainActivityPresenter {
 
     MainActivityPresenter(MainActivity mainActivity) {
         view = mainActivity;
-        boxManager = new BoxManager();
         xkcdDAO = new XkcdDAO();
         sharedPrefManager = new SharedPrefManager();
     }
@@ -43,7 +38,6 @@ public class MainActivityPresenter {
         if (index < 1) {
             return;
         }
-        boxManager.like(index);
         Disposable d = xkcdDAO.thumbsUp(index)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(view::showThumbUpCount,
@@ -55,14 +49,10 @@ public class MainActivityPresenter {
         if (index < 1) {
             return;
         }
-        XkcdPic xkcdPicInBox = boxManager.fav(index, isFav);
+        Disposable d = xkcdDAO.fav(index, isFav).subscribe(xkcdPic -> {},
+                e -> Timber.e(e, "error on get one pic: %d", index));
+        compositeDisposable.add(d);
         view.toggleFab(isFav);
-        if (xkcdPicInBox.width == 0 || xkcdPicInBox.height == 0) {
-            Disposable d = xkcdDAO.loadXkcd(index)
-                    .subscribe(xkcdPic -> {},
-                            e -> Timber.e(e, "error on get one pic: %d", xkcdPicInBox.num));
-            compositeDisposable.add(d);
-        }
     }
 
     void fastLoad(int latestIndex) {

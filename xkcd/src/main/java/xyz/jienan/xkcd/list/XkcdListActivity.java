@@ -8,6 +8,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import java.util.List;
 import java.util.Objects;
@@ -44,6 +46,9 @@ public class XkcdListActivity extends BaseActivity {
 
     @BindView(R.id.rv_scroller)
     RecyclerViewFastScroller scroller;
+
+    @BindView(R.id.pb_loading)
+    ProgressBar pbLoading;
 
     private XkcdListGridAdapter mAdapter;
 
@@ -203,6 +208,16 @@ public class XkcdListActivity extends BaseActivity {
             sharedPreferences.edit().putInt("FILTER_SELECTION", ALL_COMICS.id).apply();
         }
         reloadList(currentSelection);
+    }
+
+    public void setLoading(boolean isLoading) {
+        if (isLoading) {
+            pbLoading.setVisibility(View.VISIBLE);
+            rvList.setVisibility(View.GONE);
+        } else {
+            pbLoading.setVisibility(View.GONE);
+            rvList.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
