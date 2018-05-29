@@ -22,7 +22,7 @@ public class XkcdModel {
 
     private final BoxManager boxManager = new BoxManager();
 
-    private final static int SLICE = 400;
+    private static final int SLICE = 400;
 
     private final PublishSubject<XkcdPic> picsPipeline = PublishSubject.create();
 
