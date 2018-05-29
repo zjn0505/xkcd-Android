@@ -19,6 +19,11 @@ import okhttp3.ResponseBody;
 import static xyz.jienan.xkcd.Const.URI_XKCD_EXPLAIN_EDIT;
 
 public class XkcdExplainUtil {
+
+    private XkcdExplainUtil() {
+        // no public constructor
+    }
+
     public static String getExplainFromHtml(ResponseBody responseBody, String url) throws IOException {
         Document doc = Jsoup.parse(responseBody.string());
         Elements newsHeadlines = doc.select("h2");
@@ -29,9 +34,8 @@ public class XkcdExplainUtil {
                 while (!"h2".equals(element.nodeName())) {
                     if ("h3".equals(element.nodeName()) || "h4".equals(element.nodeName())) {
                         Elements elements = element.getElementsByClass("editsection");
-                        if (elements != null && elements.size() > 0) {
-                            elements.remove();
-                        }
+                        elements.addAll(element.getElementsByClass("mw-editsection"));
+                        elements.remove();
                     }
                     if (element.tagName().equals("p"))
                         if (element.toString().contains("<i>citation needed</i>")) {
