@@ -23,6 +23,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.squareup.seismic.ShakeDetector;
@@ -290,6 +291,50 @@ public class MainActivity extends BaseActivity implements MainActivityContract.V
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        MenuItem itemRight = menu.findItem(R.id.action_right);
+        ImageButton imageButtonRight = new ImageButton(this);
+        imageButtonRight.setImageResource(R.drawable.ic_action_right);
+        imageButtonRight.setBackground(null);
+
+        itemRight.setActionView(imageButtonRight);
+        imageButtonRight.setOnLongClickListener(v -> {
+            scrollViewPagerToItem(latestIndex - 1, true);
+            logUXEvent(FIRE_NEXT_BAR);
+            return true;
+        });
+        imageButtonRight.setOnClickListener(v -> {
+            String skipCount = getString(getResources().getIdentifier(sharedPreferences.getString(PREF_ARROW, "arrow_1"), "string", getPackageName()));
+            int skip = Integer.parseInt(skipCount);
+            if (skip == 1) {
+                scrollViewPagerToItem(viewPager.getCurrentItem() + skip, true);
+            } else {
+                scrollViewPagerToItem(viewPager.getCurrentItem() + skip, false);
+            }
+            logUXEvent(FIRE_NEXT_BAR);
+        });
+
+        MenuItem itemLeft = menu.findItem(R.id.action_left);
+        ImageButton imageButtonLeft = new ImageButton(this);
+        imageButtonLeft.setImageResource(R.drawable.ic_action_left);
+        imageButtonLeft.setBackground(null);
+
+        itemLeft.setActionView(imageButtonLeft);
+        imageButtonLeft.setOnLongClickListener(v -> {
+            scrollViewPagerToItem(0, true);
+            logUXEvent(FIRE_PREVIOUS_BAR);
+            return true;
+        });
+        imageButtonLeft.setOnClickListener(v -> {
+            String skipCount = getString(getResources().getIdentifier(sharedPreferences.getString(PREF_ARROW, "arrow_1"), "string", getPackageName()));
+            int skip = Integer.parseInt(skipCount);
+            if (skip == 1) {
+                scrollViewPagerToItem(viewPager.getCurrentItem() - skip, true);
+            } else {
+                scrollViewPagerToItem(viewPager.getCurrentItem() - skip, false);
+            }
+            logUXEvent(FIRE_PREVIOUS_BAR);
+        });
         return true;
     }
 
@@ -310,26 +355,8 @@ public class MainActivity extends BaseActivity implements MainActivityContract.V
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        String skipCount = getString(getResources().getIdentifier(sharedPreferences.getString(PREF_ARROW, "arrow_1"), "string", getPackageName()));
-        int skip = Integer.valueOf(skipCount);
         int id = item.getItemId();
         switch (id) {
-            case R.id.action_left:
-                if (skip == 1) {
-                    scrollViewPagerToItem(viewPager.getCurrentItem() - skip, true);
-                } else {
-                    scrollViewPagerToItem(viewPager.getCurrentItem() - skip, false);
-                }
-                logUXEvent(FIRE_PREVIOUS_BAR);
-                break;
-            case R.id.action_right:
-                if (skip == 1) {
-                    scrollViewPagerToItem(viewPager.getCurrentItem() + skip, true);
-                } else {
-                    scrollViewPagerToItem(viewPager.getCurrentItem() + skip, false);
-                }
-                logUXEvent(FIRE_NEXT_BAR);
-                break;
             case R.id.action_search:
                 logUXEvent(FIRE_SEARCH);
                 break;
