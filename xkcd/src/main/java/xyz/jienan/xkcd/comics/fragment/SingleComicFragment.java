@@ -46,7 +46,7 @@ import xyz.jienan.xkcd.XkcdPic;
 import xyz.jienan.xkcd.base.glide.ProgressTarget;
 import xyz.jienan.xkcd.home.SearchCursorAdapter;
 import xyz.jienan.xkcd.home.activity.ImageDetailPageActivity;
-import xyz.jienan.xkcd.home.activity.MainActivity;
+import xyz.jienan.xkcd.home.MainActivity;
 import xyz.jienan.xkcd.home.contract.SingleComicContract;
 import xyz.jienan.xkcd.home.dialog.SimpleInfoDialogFragment;
 import xyz.jienan.xkcd.home.dialog.SimpleInfoDialogFragment.ISimpleInfoDialogListener;
@@ -194,7 +194,7 @@ public class SingleComicFragment extends Fragment implements SingleComicContract
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_comic, container, false);
+        View view = inflater.inflate(R.layout.fragment_comic_single, container, false);
         unbinder = ButterKnife.bind(this, view);
         pbLoading.setAnimation(AnimationUtils.loadAnimation(pbLoading.getContext(), R.anim.rotate));
         initGlide();

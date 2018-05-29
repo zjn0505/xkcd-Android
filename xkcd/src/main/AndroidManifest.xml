@@ -14,8 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="xyz.jienan.xkcd.home.activity.MainActivity"
+            android:name="xyz.jienan.xkcd.home.MainActivity"
             android:configChanges="screenSize|keyboardHidden"
+            android:theme="@style/CustomActionBarTheme"
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

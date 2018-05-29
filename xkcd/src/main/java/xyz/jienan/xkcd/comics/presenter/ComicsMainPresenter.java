@@ -1,4 +1,4 @@
-package xyz.jienan.xkcd.home.presenter;
+package xyz.jienan.xkcd.comics.presenter;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -7,13 +7,13 @@ import timber.log.Timber;
 import xyz.jienan.xkcd.SharedPrefManager;
 import xyz.jienan.xkcd.XkcdModel;
 import xyz.jienan.xkcd.XkcdPic;
-import xyz.jienan.xkcd.home.contract.MainActivityContract;
+import xyz.jienan.xkcd.comics.contract.ComicsMainContract;
 
-public class MainActivityPresenter implements MainActivityContract.Presenter {
+public class ComicsMainPresenter implements ComicsMainContract.Presenter {
 
     private final SharedPrefManager sharedPrefManager = new SharedPrefManager();
 
-    private MainActivityContract.View view;
+    private ComicsMainContract.View view;
 
     private final XkcdModel xkcdModel = XkcdModel.getInstance();
 
@@ -21,7 +21,7 @@ public class MainActivityPresenter implements MainActivityContract.Presenter {
 
     private Disposable fabShowDisposable;
 
-    public MainActivityPresenter(MainActivityContract.View view) {
+    public ComicsMainPresenter(ComicsMainContract.View view) {
         this.view = view;
     }
 

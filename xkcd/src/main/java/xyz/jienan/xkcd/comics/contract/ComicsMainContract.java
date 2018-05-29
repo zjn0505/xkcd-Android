@@ -1,10 +1,10 @@
-package xyz.jienan.xkcd.home.contract;
+package xyz.jienan.xkcd.comics.contract;
 
 import xyz.jienan.xkcd.XkcdPic;
 import xyz.jienan.xkcd.base.BasePresenter;
 import xyz.jienan.xkcd.base.BaseView;
 
-public interface MainActivityContract {
+public interface ComicsMainContract {
 
     interface View extends BaseView<Presenter> {
 

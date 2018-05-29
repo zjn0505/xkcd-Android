@@ -43,9 +43,4 @@
             app:showAsAction="never" />
     </group>
 
-    <item
-        android:id="@+id/action_settings"
-        android:title="@string/settings"
-        app:showAsAction="never" />
-
 </menu>

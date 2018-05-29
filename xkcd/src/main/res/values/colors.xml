@@ -11,6 +11,8 @@
     <color name="pink">#e91e63</color>
     <color name="white">#FFF</color>
     <color name="blue">#2196f3</color>
+    <color name="primary_text_default_material_light">#DE000000</color>
+    <color name="hint_text_color">#DEffffff</color>
 
     <color name="like_btn_bg">#ffffff</color>
 </resources>

@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name" translatable="false">xkcd</string>
 
+    <string name="menu_xkcd" translatable="false">xkcd</string>
+    <string name="menu_whatif" translatable="false">what if</string>
+
     <string name="action_share">Share this xkcd</string>
     <string name="action_left">Previous</string>
     <string name="action_right">Next</string>

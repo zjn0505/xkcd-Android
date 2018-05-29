@@ -1,44 +1,24 @@
 package xyz.jienan.xkcd.base;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.Map;
 
-import xyz.jienan.xkcd.R;
-import xyz.jienan.xkcd.home.MainActivity;
-
 import static xyz.jienan.xkcd.Const.FIRE_UX_ACTION;
-import static xyz.jienan.xkcd.Const.PREF_FONT;
 
-/**
- * Created by Jienan on 2018/3/9.
- */
+public class BaseFragment extends Fragment {
 
-public abstract class BaseActivity extends AppCompatActivity {
 
     protected FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-        boolean fontPref = sharedPreferences.getBoolean(PREF_FONT, false);
-        if (fontPref) {
-            if (this instanceof MainActivity) {
-                setTheme(R.style.CustomActionBarTheme);
-            } else {
-                setTheme(R.style.AppBarTheme);
-            }
-        } else {
-            setTheme(R.style.AppTheme);
-        }
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
     }
 
     protected void logUXEvent(String event) {

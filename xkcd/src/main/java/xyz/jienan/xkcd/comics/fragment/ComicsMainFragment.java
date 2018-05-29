@@ -1,4 +1,4 @@
-package xyz.jienan.xkcd.home.activity;
+package xyz.jienan.xkcd.comics.fragment;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -15,17 +15,24 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatDelegate;
+import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.squareup.seismic.ShakeDetector;
 
 import java.util.HashMap;
@@ -36,18 +43,20 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnPageChange;
+import butterknife.Unbinder;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.XkcdPic;
-import xyz.jienan.xkcd.base.BaseActivity;
-import xyz.jienan.xkcd.home.ComicsPagerAdapter;
-import xyz.jienan.xkcd.home.contract.MainActivityContract;
+import xyz.jienan.xkcd.base.BaseFragment;
+import xyz.jienan.xkcd.comics.ComicsPagerAdapter;
+import xyz.jienan.xkcd.comics.contract.ComicsMainContract;
+import xyz.jienan.xkcd.comics.presenter.ComicsMainPresenter;
 import xyz.jienan.xkcd.home.dialog.NumberPickerDialogFragment;
-import xyz.jienan.xkcd.home.presenter.MainActivityPresenter;
 import xyz.jienan.xkcd.list.XkcdListActivity;
 import xyz.jienan.xkcd.settings.PreferenceActivity;
 import xyz.jienan.xkcd.ui.like.LikeButton;
 import xyz.jienan.xkcd.ui.like.OnLikeListener;
 
+import static android.content.Context.SENSOR_SERVICE;
 import static android.support.v4.view.ViewPager.SCROLL_STATE_DRAGGING;
 import static android.support.v4.view.ViewPager.SCROLL_STATE_IDLE;
 import static android.view.HapticFeedbackConstants.CONTEXT_CLICK;
@@ -66,24 +75,19 @@ import static xyz.jienan.xkcd.Const.FIRE_SETTING_MENU;
 import static xyz.jienan.xkcd.Const.FIRE_SHAKE;
 import static xyz.jienan.xkcd.Const.FIRE_SPECIFIC_MENU;
 import static xyz.jienan.xkcd.Const.FIRE_THUMB_UP;
+import static xyz.jienan.xkcd.Const.FIRE_UX_ACTION;
 import static xyz.jienan.xkcd.Const.PREF_ARROW;
 import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NEW_INTENT;
 import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NOTI_INTENT;
 import static xyz.jienan.xkcd.Const.XKCD_LATEST_INDEX;
 
-public class MainActivity extends BaseActivity implements MainActivityContract.View, ShakeDetector.Listener {
-
-    private final static int REQ_SETTINGS = 101;
+public class ComicsMainFragment extends BaseFragment implements ComicsMainContract.View, ShakeDetector.Listener {
 
     private static final String LOADED_XKCD_ID = "xkcd_id";
 
     private static final String LATEST_XKCD_ID = "xkcd_latest_id";
 
     private static final int INVALID_ID = 0;
-
-    static {
-        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
-    }
 
     @BindView(R.id.viewpager)
     ViewPager viewPager;
@@ -99,14 +103,18 @@ public class MainActivity extends BaseActivity implements MainActivityContract.V
 
     private ComicsPagerAdapter adapter;
 
+    private Unbinder unbinder;
+
+    private ShakeDetector sd;
+
+    private SharedPreferences sharedPreferences;
+
     // Use this field to record the latest xkcd pic id
     private int latestIndex = INVALID_ID;
 
     private int savedId = INVALID_ID;
 
-    private ShakeDetector sd;
-
-    private SharedPreferences sharedPreferences;
+    private ComicsMainContract.Presenter comicsMainPresenter;
 
     private boolean isFre = true;
 
@@ -115,8 +123,6 @@ public class MainActivity extends BaseActivity implements MainActivityContract.V
     private boolean isFabsShowing = false;
 
     private Toast toast;
-
-    private MainActivityContract.Presenter mainActivityPresenter;
 
     private NumberPickerDialogFragment.INumberPickerDialogListener pickerListener =
             new NumberPickerDialogFragment.INumberPickerDialogListener() {
@@ -136,11 +142,11 @@ public class MainActivity extends BaseActivity implements MainActivityContract.V
         public void liked(LikeButton likeButton) {
             switch (likeButton.getId()) {
                 case R.id.btn_fav:
-                    mainActivityPresenter.comicFavorited(getCurrentIndex(), true);
+                    comicsMainPresenter.comicFavorited(getCurrentIndex(), true);
                     logUXEvent(FIRE_FAVORITE_ON);
                     break;
                 case R.id.btn_thumb:
-                    mainActivityPresenter.comicLiked(getCurrentIndex());
+                    comicsMainPresenter.comicLiked(getCurrentIndex());
                     logUXEvent(FIRE_THUMB_UP);
                     break;
                 default:
@@ -152,7 +158,7 @@ public class MainActivity extends BaseActivity implements MainActivityContract.V
         public void unLiked(LikeButton likeButton) {
             switch (likeButton.getId()) {
                 case R.id.btn_fav:
-                    mainActivityPresenter.comicFavorited(getCurrentIndex(), false);
+                    comicsMainPresenter.comicFavorited(getCurrentIndex(), false);
                     logUXEvent(FIRE_FAVORITE_OFF);
                     break;
                 default:
@@ -161,19 +167,21 @@ public class MainActivity extends BaseActivity implements MainActivityContract.V
         }
     };
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mainActivityPresenter = new MainActivityPresenter(this);
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
-        final ActionBar actionBar = getSupportActionBar();
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_comic_main, container, false);
+        unbinder = ButterKnife.bind(this, view);
+        setHasOptionsMenu(true);
+        comicsMainPresenter = new ComicsMainPresenter(this);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         btnFav.setOnLikeListener(likeListener);
         btnThumb.setOnLikeListener(likeListener);
-        adapter = new ComicsPagerAdapter(getSupportFragmentManager());
+        adapter = new ComicsPagerAdapter(getChildFragmentManager());
         viewPager.setAdapter(adapter);
-        mainActivityPresenter.loadLatestXkcd();
+        comicsMainPresenter.loadLatestXkcd();
+        final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        actionBar.setTitle(R.string.menu_xkcd);
         if (savedInstanceState != null) {
             savedId = savedInstanceState.getInt(LOADED_XKCD_ID);
             int i = savedInstanceState.getInt(LATEST_XKCD_ID);
@@ -184,93 +192,140 @@ public class MainActivity extends BaseActivity implements MainActivityContract.V
                 latestIndex = i;
             }
             NumberPickerDialogFragment pickerDialog =
-                    (NumberPickerDialogFragment) getSupportFragmentManager().findFragmentByTag("IdPickerDialogFragment");
+                    (NumberPickerDialogFragment) getChildFragmentManager().findFragmentByTag("IdPickerDialogFragment");
             if (pickerDialog != null) {
                 pickerDialog.setListener(pickerListener);
             }
             latestIndex = sharedPreferences.getInt(XKCD_LATEST_INDEX, INVALID_ID);
 
         } else {
-            updateIndices(getIntent());
+            updateIndices(getActivity().getIntent());
         }
         isFre = latestIndex == INVALID_ID;
         if (latestIndex > INVALID_ID) {
             adapter.setSize(latestIndex);
             scrollViewPagerToItem(savedId > INVALID_ID ? savedId - 1 : latestIndex - 1, false);
         }
-        SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        SensorManager sensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
         sd = new ShakeDetector(this);
         sd.start(sensorManager);
+        return view;
+
     }
 
     @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        updateIndices(intent);
-        isFre = latestIndex == INVALID_ID;
-        if (latestIndex > INVALID_ID) {
-            adapter.setSize(latestIndex);
-            scrollViewPagerToItem(savedId > INVALID_ID ? savedId - 1 : latestIndex - 1, false);
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        isPaused = false;
-    }
-
-    @Override
-    protected void onPause() {
-        isPaused = true;
-        super.onPause();
-    }
-
-    @Override
-    protected void onStop() {
-        if (viewPager != null && latestIndex > INVALID_ID) {
-            int lastViewed = viewPager.getCurrentItem() + 1;
-            mainActivityPresenter.setLastViewed(lastViewed);
-        }
-        super.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        sd.stop();
-        mainActivityPresenter.onDestroy();
-        super.onDestroy();
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         if (viewPager != null && viewPager.getCurrentItem() >= 0)
             outState.putInt(LOADED_XKCD_ID, viewPager.getCurrentItem() + 1);
         outState.putInt(LATEST_XKCD_ID, latestIndex);
     }
 
-    @OnClick(R.id.fab)
-    public void OnFABClicked() {
-        toggleSubFabs(!isFabsShowing);
+    @Override
+    public void onResume() {
+        super.onResume();
+        isPaused = false;
     }
 
-    @OnPageChange(value = R.id.viewpager, callback = PAGE_SELECTED)
-    public void OnPagerSelected(int position) {
-        final ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setSubtitle(String.valueOf(position + 1));
-        }
+    @Override
+    public void onPause() {
+        isPaused = true;
+        super.onPause();
     }
 
-    @OnPageChange(value = R.id.viewpager, callback = PAGE_SCROLL_STATE_CHANGED)
-    public void onPageScrollStateChanged(int state) {
-        if (state == SCROLL_STATE_DRAGGING) {
-            fab.hide();
-            toggleSubFabs(false);
-        } else if (state == SCROLL_STATE_IDLE) {
-            mainActivityPresenter.getInfoAndShowFab(getCurrentIndex());
+    @Override
+    public void onStop() {
+        if (viewPager != null && latestIndex > INVALID_ID) {
+            int lastViewed = viewPager.getCurrentItem() + 1;
+            comicsMainPresenter.setLastViewed(lastViewed);
         }
+        super.onStop();
+    }
+
+    @Override
+    public void onDestroyView() {
+        unbinder.unbind();
+        sd.stop();
+        comicsMainPresenter.onDestroy();
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_main, menu);
+
+        MenuItem itemRight = menu.findItem(R.id.action_right);
+        ImageButton imageButtonRight = new ImageButton(getContext());
+        imageButtonRight.setImageResource(R.drawable.ic_action_right);
+        imageButtonRight.setBackground(null);
+
+        itemRight.setActionView(imageButtonRight);
+        imageButtonRight.setOnLongClickListener(v -> {
+            scrollViewPagerToItem(latestIndex - 1, true);
+            logUXEvent(FIRE_NEXT_BAR);
+            return true;
+        });
+        imageButtonRight.setOnClickListener(v -> {
+            String skipCount = getString(getResources().getIdentifier(sharedPreferences.getString(PREF_ARROW, "arrow_1"), "string", getActivity().getPackageName()));
+            int skip = Integer.parseInt(skipCount);
+            if (skip == 1) {
+                scrollViewPagerToItem(viewPager.getCurrentItem() + skip, true);
+            } else {
+                scrollViewPagerToItem(viewPager.getCurrentItem() + skip, false);
+            }
+            logUXEvent(FIRE_NEXT_BAR);
+        });
+
+        MenuItem itemLeft = menu.findItem(R.id.action_left);
+        ImageButton imageButtonLeft = new ImageButton(getContext());
+        imageButtonLeft.setImageResource(R.drawable.ic_action_left);
+        imageButtonLeft.setBackground(null);
+
+        itemLeft.setActionView(imageButtonLeft);
+        imageButtonLeft.setOnLongClickListener(v -> {
+            scrollViewPagerToItem(0, true);
+            logUXEvent(FIRE_PREVIOUS_BAR);
+            return true;
+        });
+        imageButtonLeft.setOnClickListener(v -> {
+            String skipCount = getString(getResources().getIdentifier(sharedPreferences.getString(PREF_ARROW, "arrow_1"), "string", getActivity().getPackageName()));
+            int skip = Integer.parseInt(skipCount);
+            if (skip == 1) {
+                scrollViewPagerToItem(viewPager.getCurrentItem() - skip, true);
+            } else {
+                scrollViewPagerToItem(viewPager.getCurrentItem() - skip, false);
+            }
+            logUXEvent(FIRE_PREVIOUS_BAR);
+        });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.action_search:
+                logUXEvent(FIRE_SEARCH);
+                break;
+            case R.id.action_xkcd_list:
+                Intent intent = new Intent(getActivity(), XkcdListActivity.class);
+                startActivity(intent);
+                logUXEvent(FIRE_BROWSE_LIST_MENU);
+                break;
+            case R.id.action_specific:
+                if (latestIndex == INVALID_ID) {
+                    break;
+                }
+                NumberPickerDialogFragment pickerDialogFragment = new NumberPickerDialogFragment();
+                pickerDialogFragment.setNumberRange(1, latestIndex);
+                pickerDialogFragment.setListener(pickerListener);
+                pickerDialogFragment.show(getChildFragmentManager(), "IdPickerDialogFragment");
+                logUXEvent(FIRE_SPECIFIC_MENU);
+                break;
+            default:
+                break;
+        }
+        return false;
     }
 
     @Override
@@ -284,59 +339,33 @@ public class MainActivity extends BaseActivity implements MainActivityContract.V
             int randomId = random.nextInt(latestIndex + 1);
             scrollViewPagerToItem(randomId - 1, false);
         }
-        getWindow().getDecorView().performHapticFeedback(CONTEXT_CLICK, FLAG_IGNORE_GLOBAL_SETTING);
+        getActivity().getWindow().getDecorView().performHapticFeedback(CONTEXT_CLICK, FLAG_IGNORE_GLOBAL_SETTING);
         logUXEvent(FIRE_SHAKE);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-
-        MenuItem itemRight = menu.findItem(R.id.action_right);
-        ImageButton imageButtonRight = new ImageButton(this);
-        imageButtonRight.setImageResource(R.drawable.ic_action_right);
-        imageButtonRight.setBackground(null);
-
-        itemRight.setActionView(imageButtonRight);
-        imageButtonRight.setOnLongClickListener(v -> {
-            scrollViewPagerToItem(latestIndex - 1, true);
-            logUXEvent(FIRE_NEXT_BAR);
-            return true;
-        });
-        imageButtonRight.setOnClickListener(v -> {
-            String skipCount = getString(getResources().getIdentifier(sharedPreferences.getString(PREF_ARROW, "arrow_1"), "string", getPackageName()));
-            int skip = Integer.parseInt(skipCount);
-            if (skip == 1) {
-                scrollViewPagerToItem(viewPager.getCurrentItem() + skip, true);
-            } else {
-                scrollViewPagerToItem(viewPager.getCurrentItem() + skip, false);
-            }
-            logUXEvent(FIRE_NEXT_BAR);
-        });
-
-        MenuItem itemLeft = menu.findItem(R.id.action_left);
-        ImageButton imageButtonLeft = new ImageButton(this);
-        imageButtonLeft.setImageResource(R.drawable.ic_action_left);
-        imageButtonLeft.setBackground(null);
-
-        itemLeft.setActionView(imageButtonLeft);
-        imageButtonLeft.setOnLongClickListener(v -> {
-            scrollViewPagerToItem(0, true);
-            logUXEvent(FIRE_PREVIOUS_BAR);
-            return true;
-        });
-        imageButtonLeft.setOnClickListener(v -> {
-            String skipCount = getString(getResources().getIdentifier(sharedPreferences.getString(PREF_ARROW, "arrow_1"), "string", getPackageName()));
-            int skip = Integer.parseInt(skipCount);
-            if (skip == 1) {
-                scrollViewPagerToItem(viewPager.getCurrentItem() - skip, true);
-            } else {
-                scrollViewPagerToItem(viewPager.getCurrentItem() - skip, false);
-            }
-            logUXEvent(FIRE_PREVIOUS_BAR);
-        });
-        return true;
+    @OnClick(R.id.fab)
+    public void OnFABClicked() {
+        toggleSubFabs(!isFabsShowing);
     }
+
+    @OnPageChange(value = R.id.viewpager, callback = PAGE_SELECTED)
+    public void OnPagerSelected(int position) {
+        final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setSubtitle(String.valueOf(position + 1));
+        }
+    }
+
+    @OnPageChange(value = R.id.viewpager, callback = PAGE_SCROLL_STATE_CHANGED)
+    public void onPageScrollStateChanged(int state) {
+        if (state == SCROLL_STATE_DRAGGING) {
+            fab.hide();
+            toggleSubFabs(false);
+        } else if (state == SCROLL_STATE_IDLE) {
+            comicsMainPresenter.getInfoAndShowFab(getCurrentIndex());
+        }
+    }
+
 
     @Override
     public void latestXkcdLoaded(XkcdPic xkcdPic) {
@@ -350,50 +379,7 @@ public class MainActivity extends BaseActivity implements MainActivityContract.V
                 scrollViewPagerToItem(latestIndex - 1, false);
             }
         }
-        mainActivityPresenter.fastLoad(latestIndex);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        switch (id) {
-            case R.id.action_search:
-                logUXEvent(FIRE_SEARCH);
-                break;
-            case R.id.action_xkcd_list:
-                Intent intent = new Intent(this, XkcdListActivity.class);
-                startActivity(intent);
-                logUXEvent(FIRE_BROWSE_LIST_MENU);
-                break;
-            case R.id.action_specific:
-                if (latestIndex == INVALID_ID) {
-                    break;
-                }
-                NumberPickerDialogFragment pickerDialogFragment = new NumberPickerDialogFragment();
-                pickerDialogFragment.setNumberRange(1, latestIndex);
-                pickerDialogFragment.setListener(pickerListener);
-                pickerDialogFragment.show(getSupportFragmentManager(), "IdPickerDialogFragment");
-                logUXEvent(FIRE_SPECIFIC_MENU);
-                break;
-            case R.id.action_settings:
-                Intent settingsIntent = new Intent(this, PreferenceActivity.class);
-                startActivityForResult(settingsIntent, REQ_SETTINGS);
-                logUXEvent(FIRE_SETTING_MENU);
-                break;
-            default:
-                break;
-        }
-        return false;
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQ_SETTINGS) {
-            if (resultCode == RESULT_OK) {
-                recreate();
-            }
-        }
+        comicsMainPresenter.fastLoad(latestIndex);
     }
 
     private void updateIndices(Intent intent) {
@@ -407,15 +393,15 @@ public class MainActivity extends BaseActivity implements MainActivityContract.V
             if (notiIndex != INVALID_ID) {
                 savedId = notiIndex;
                 latestIndex = savedId;
-                mainActivityPresenter.setLatest(latestIndex);
+                comicsMainPresenter.setLatest(latestIndex);
                 Map<String, String> params = new HashMap<>();
                 params.put(FIRE_FROM_NOTIFICATION_INDEX, String.valueOf(notiIndex));
                 logUXEvent(FIRE_FROM_NOTIFICATION, params);
             }
 
         } else {
-            latestIndex = mainActivityPresenter.getLatest();
-            savedId = mainActivityPresenter.getLastViewed(latestIndex);
+            latestIndex = comicsMainPresenter.getLatest();
+            savedId = comicsMainPresenter.getLastViewed(latestIndex);
         }
     }
 
@@ -436,20 +422,6 @@ public class MainActivity extends BaseActivity implements MainActivityContract.V
         }
     }
 
-    @Override
-    public void showThumbUpCount(Long thumbCount) {
-        showToast(MainActivity.this, String.valueOf(thumbCount));
-    }
-
-    private void scrollViewPagerToItem(int id, boolean smoothScroll) {
-        viewPager.setCurrentItem(id, smoothScroll);
-        fab.hide();
-        toggleSubFabs(false);
-        if (!smoothScroll) {
-            mainActivityPresenter.getInfoAndShowFab(getCurrentIndex());
-        }
-    }
-
     @SuppressLint("ObjectAnimatorBinding")
     private void fabAnimation(@ColorRes final int startColor, @ColorRes final int endColor, @DrawableRes final int icon) {
         final ObjectAnimator animator = ObjectAnimator.ofInt(fab, "backgroundTint", getResources().getColor(startColor), getResources().getColor(endColor));
@@ -458,7 +430,9 @@ public class MainActivity extends BaseActivity implements MainActivityContract.V
         animator.setInterpolator(new DecelerateInterpolator(2));
         animator.addUpdateListener(animation -> {
             int animatedValue = (int) animation.getAnimatedValue();
-            fab.setBackgroundTintList(ColorStateList.valueOf(animatedValue));
+            if (fab != null) {
+                fab.setBackgroundTintList(ColorStateList.valueOf(animatedValue));
+            }
         });
         animator.start();
         fab.setImageResource(icon);
@@ -516,5 +490,20 @@ public class MainActivity extends BaseActivity implements MainActivityContract.V
             }
         });
         animSet.start();
+    }
+
+
+    @Override
+    public void showThumbUpCount(Long thumbCount) {
+        showToast(getContext(), String.valueOf(thumbCount));
+    }
+
+    private void scrollViewPagerToItem(int id, boolean smoothScroll) {
+        viewPager.setCurrentItem(id, smoothScroll);
+        fab.hide();
+        toggleSubFabs(false);
+        if (!smoothScroll) {
+            comicsMainPresenter.getInfoAndShowFab(getCurrentIndex());
+        }
     }
 }
