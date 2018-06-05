@@ -64,7 +64,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             navigationView.setItemIconTintList(null);
         }
-        fragmentManager.beginTransaction().add(R.id.container, new ComicsMainFragment(), "comics").commit();
+        fragmentManager.beginTransaction().replace(R.id.container, new ComicsMainFragment(), "comics").commit();
     }
 
 //    @Override

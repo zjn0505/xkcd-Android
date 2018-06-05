@@ -33,11 +33,16 @@ public abstract class BaseActivity extends AppCompatActivity {
             if (this instanceof MainActivity) {
                 setTheme(R.style.CustomActionBarTheme);
             } else {
-                setTheme(R.style.AppBarTheme);
+                setTheme(R.style.AppNoBarTheme);
             }
         } else {
-            setTheme(R.style.AppTheme);
+            if (this instanceof MainActivity) {
+                setTheme(R.style.CustomActionBarFontTheme);
+            } else {
+                setTheme(R.style.AppNoBarFontTheme);
+            }
         }
+
         super.onCreate(savedInstanceState);
     }
 

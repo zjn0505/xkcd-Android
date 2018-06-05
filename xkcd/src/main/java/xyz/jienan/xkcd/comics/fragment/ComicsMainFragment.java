@@ -475,7 +475,7 @@ public class ComicsMainFragment extends BaseFragment implements ComicsMainContra
         animSet.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animator) {
-                if (showSubFabs) {
+                if (btnThumb != null && btnFav != null && showSubFabs) {
                     btnThumb.setVisibility(View.VISIBLE);
                     btnFav.setVisibility(View.VISIBLE);
                 }
@@ -483,7 +483,7 @@ public class ComicsMainFragment extends BaseFragment implements ComicsMainContra
 
             @Override
             public void onAnimationEnd(Animator animator) {
-                if (!showSubFabs) {
+                if (btnThumb != null && btnFav != null && !showSubFabs) {
                     btnThumb.setVisibility(View.GONE);
                     btnFav.setVisibility(View.GONE);
                 }

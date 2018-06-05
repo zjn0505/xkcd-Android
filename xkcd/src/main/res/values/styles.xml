@@ -1,7 +1,11 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="AppBarTheme">
+    <style name="AppNoBarFontTheme" parent="AppNoBarTheme">
+        <item name="android:textViewStyle">@style/MyTextViewStyle</item>
+    </style>
+
+    <style name="CustomActionBarFontTheme" parent="CustomActionBarTheme">
         <item name="android:textViewStyle">@style/MyTextViewStyle</item>
     </style>
 
@@ -12,7 +16,7 @@
         <item name="actionBarStyle">@style/Toolbar</item>
     </style>
 
-    <style name="AppBarTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppNoBarTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
