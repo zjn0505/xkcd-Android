@@ -1,11 +1,11 @@
-package xyz.jienan.xkcd.home.presenter;
+package xyz.jienan.xkcd.comics.presenter;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import timber.log.Timber;
-import xyz.jienan.xkcd.XkcdModel;
-import xyz.jienan.xkcd.home.contract.ImageDetailPageContract;
+import xyz.jienan.xkcd.model.XkcdModel;
+import xyz.jienan.xkcd.comics.contract.ImageDetailPageContract;
 
 public class ImageDetailPagePresenter implements ImageDetailPageContract.Presenter {
 

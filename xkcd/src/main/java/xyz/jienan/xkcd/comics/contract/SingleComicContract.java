@@ -1,10 +1,10 @@
-package xyz.jienan.xkcd.home.contract;
+package xyz.jienan.xkcd.comics.contract;
 
 import android.graphics.Bitmap;
 
 import java.util.List;
 
-import xyz.jienan.xkcd.XkcdPic;
+import xyz.jienan.xkcd.model.XkcdPic;
 import xyz.jienan.xkcd.base.BasePresenter;
 import xyz.jienan.xkcd.base.BaseView;
 

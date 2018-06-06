@@ -1,4 +1,4 @@
-package xyz.jienan.xkcd;
+package xyz.jienan.xkcd.model.persist;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -8,52 +8,69 @@ import java.util.List;
 
 import io.objectbox.Box;
 import io.objectbox.query.Query;
+import xyz.jienan.xkcd.XkcdApplication;
+import xyz.jienan.xkcd.model.XkcdPic_;
+import xyz.jienan.xkcd.model.WhatIfArticle;
+import xyz.jienan.xkcd.model.XkcdPic;
 
 public class BoxManager {
 
-    private Box<XkcdPic> box;
+    private Box<XkcdPic> xkcdBox;
+    private Box<WhatIfArticle> whatIfBox;
 
-    public BoxManager() {
-        box = XkcdApplication.getInstance().getBoxStore().boxFor(XkcdPic.class);
+    private static BoxManager boxManager;
+
+    public static BoxManager getInstance() {
+        if (boxManager == null) {
+            boxManager = new BoxManager();
+        }
+        return boxManager;
     }
+
+    private BoxManager() {
+        xkcdBox = XkcdApplication.getInstance().getBoxStore().boxFor(XkcdPic.class);
+        whatIfBox = XkcdApplication.getInstance().getBoxStore().boxFor(WhatIfArticle.class);
+    }
+
+    /********** xkcd **********/
 
     @Nullable
     public XkcdPic getXkcd(long index) {
-        return box.get(index);
+        return xkcdBox.get(index);
     }
 
     public void saveXkcd(XkcdPic xkcdPic) {
-        box.put(xkcdPic);
+        xkcdBox.put(xkcdPic);
     }
 
     @Nullable
     public XkcdPic like(long index) {
-        final XkcdPic xkcdPic = box.get(index);
+        final XkcdPic xkcdPic = xkcdBox.get(index);
         if (xkcdPic != null) {
             xkcdPic.hasThumbed = true;
-            box.put(xkcdPic);
+            xkcdBox.put(xkcdPic);
         }
         return xkcdPic;
     }
 
     public XkcdPic fav(long index, boolean isFav) {
-        final XkcdPic xkcdPic = box.get(index);
+        final XkcdPic xkcdPic = xkcdBox.get(index);
         if (xkcdPic != null) {
             xkcdPic.isFavorite = isFav;
-            box.put(xkcdPic);
+            xkcdBox.put(xkcdPic);
         }
         return xkcdPic;
     }
 
     @NonNull
     public List<XkcdPic> getXkcdInRange(long start, long end) {
-        final Query<XkcdPic> query = box.query().between(XkcdPic_.num, start, end).build();
+        final Query<XkcdPic> query = xkcdBox.query().between(XkcdPic_.num, start, end).build();
         return query.find();
     }
 
     @NonNull
     public List<XkcdPic> getValidXkcdInRange(long start, long end) {
-        final Query<XkcdPic> query = box.query()
+        final Query<XkcdPic> query = xkcdBox.query()
                 .between(XkcdPic_.num, start, end)
                 .and().greater(XkcdPic_.width, 0).build();
         return query.find();
@@ -61,14 +78,14 @@ public class BoxManager {
 
     @NonNull
     public List<XkcdPic> getFavXkcd() {
-        final Query<XkcdPic> queryFav = box.query().equal(XkcdPic_.isFavorite, true).build();
+        final Query<XkcdPic> queryFav = xkcdBox.query().equal(XkcdPic_.isFavorite, true).build();
         return queryFav.find();
     }
 
     @NonNull
     public List<XkcdPic> updateAndSave(@NonNull List<XkcdPic> xkcdPics) {
         for (XkcdPic pic : xkcdPics) {
-            XkcdPic xkcdPicInBox = box.get(pic.num);
+            XkcdPic xkcdPicInBox = xkcdBox.get(pic.num);
             if (xkcdPicInBox != null) {
                 pic.isFavorite = xkcdPicInBox.isFavorite;
                 pic.hasThumbed = xkcdPicInBox.hasThumbed;
@@ -78,12 +95,20 @@ public class BoxManager {
                 }
             }
         }
-        box.put(xkcdPics);
+        xkcdBox.put(xkcdPics);
         return xkcdPics;
     }
 
     @NonNull
     public XkcdPic updateAndSave(@NonNull XkcdPic xkcdPic) {
         return updateAndSave(Collections.singletonList(xkcdPic)).get(0);
+    }
+
+    /********** what if **********/
+
+    @NonNull
+    public List<WhatIfArticle> updateAndSaveWhatIf(@NonNull List<WhatIfArticle> whatIfArticles) {
+
+        return whatIfArticles;
     }
 }

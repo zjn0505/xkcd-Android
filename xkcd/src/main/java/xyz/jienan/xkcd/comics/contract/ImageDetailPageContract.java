@@ -1,4 +1,4 @@
-package xyz.jienan.xkcd.home.contract;
+package xyz.jienan.xkcd.comics.contract;
 
 import xyz.jienan.xkcd.base.BasePresenter;
 import xyz.jienan.xkcd.base.BaseView;

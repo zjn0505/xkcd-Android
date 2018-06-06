@@ -1,4 +1,4 @@
-package xyz.jienan.xkcd;
+package xyz.jienan.xkcd.model.util;
 
 import android.text.TextUtils;
 
@@ -26,10 +26,10 @@ public class XkcdExplainUtil {
 
     public static String getExplainFromHtml(ResponseBody responseBody, String url) throws IOException {
         Document doc = Jsoup.parse(responseBody.string());
-        Elements newsHeadlines = doc.select("h2");
-        for (Element headline : newsHeadlines) {
-            if (isH2ByType(headline, "Explanation")) {
-                Element element = headline.nextElementSibling();
+        Elements h2 = doc.select("h2");
+        for (Element h2Children : h2) {
+            if (isH2ByType(h2Children, "Explanation")) {
+                Element element = h2Children.nextElementSibling();
                 StringBuilder htmlResult = new StringBuilder();
                 while (!"h2".equals(element.nodeName())) {
                     if ("h3".equals(element.nodeName()) || "h4".equals(element.nodeName())) {

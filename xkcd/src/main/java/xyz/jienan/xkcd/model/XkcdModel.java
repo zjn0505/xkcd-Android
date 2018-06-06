@@ -1,4 +1,4 @@
-package xyz.jienan.xkcd;
+package xyz.jienan.xkcd.model;
 
 
 import java.util.List;
@@ -11,6 +11,9 @@ import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 import okhttp3.ResponseBody;
 import xyz.jienan.xkcd.base.network.NetworkService;
+import xyz.jienan.xkcd.base.network.XkcdAPI;
+import xyz.jienan.xkcd.model.persist.BoxManager;
+import xyz.jienan.xkcd.model.util.XkcdExplainUtil;
 
 import static xyz.jienan.xkcd.base.network.NetworkService.XKCD_BROWSE_LIST;
 import static xyz.jienan.xkcd.base.network.NetworkService.XKCD_EXPLAIN_URL;
@@ -20,13 +23,13 @@ import static xyz.jienan.xkcd.base.network.NetworkService.XKCD_TOP_SORT_BY_THUMB
 
 public class XkcdModel {
 
-    private final BoxManager boxManager = new BoxManager();
+    private final BoxManager boxManager = BoxManager.getInstance();
 
     private static final int SLICE = 400;
 
     private final PublishSubject<XkcdPic> picsPipeline = PublishSubject.create();
 
-    private NetworkService.XkcdAPI xkcdApi = NetworkService.getXkcdAPI();
+    private final XkcdAPI xkcdApi = NetworkService.getXkcdAPI();
 
     private XkcdModel() {
         // no public constructor

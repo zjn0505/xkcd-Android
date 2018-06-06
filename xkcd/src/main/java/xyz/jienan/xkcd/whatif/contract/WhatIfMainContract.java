@@ -1,16 +1,16 @@
-package xyz.jienan.xkcd.comics.contract;
+package xyz.jienan.xkcd.whatif.contract;
 
-import xyz.jienan.xkcd.model.XkcdPic;
 import xyz.jienan.xkcd.base.BasePresenter;
 import xyz.jienan.xkcd.base.BaseView;
+import xyz.jienan.xkcd.model.WhatIfArticle;
 
-public interface ComicsMainContract {
+public interface WhatIfMainContract {
 
     interface View extends BaseView<Presenter> {
 
-        void latestXkcdLoaded(XkcdPic xkcdPic);
+        void latestWhatIfLoaded(WhatIfArticle whatIfArticle);
 
-        void showFab(XkcdPic xkcdPic);
+        void showFab(WhatIfArticle whatIfArticle);
 
         void toggleFab(boolean isFavorite);
 
@@ -19,9 +19,9 @@ public interface ComicsMainContract {
 
     interface Presenter extends BasePresenter {
 
-        void comicFavorited(long currentIndex, boolean isFav);
+        void whatIfFavorited(long currentIndex, boolean isFav);
 
-        void comicLiked(long currentIndex);
+        void whatIfLiked(long currentIndex);
 
         void setLastViewed(int lastViewed);
 
@@ -35,6 +35,6 @@ public interface ComicsMainContract {
 
         int getLastViewed(int latestIndex);
 
-        void loadLatestXkcd();
+        void loadLatestWhatIf();
     }
 }

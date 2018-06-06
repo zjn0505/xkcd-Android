@@ -1,4 +1,4 @@
-package xyz.jienan.xkcd;
+package xyz.jienan.xkcd.model.util;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -18,7 +18,9 @@ import java.util.List;
 
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
+import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.base.network.NetworkService;
+import xyz.jienan.xkcd.model.XkcdPic;
 
 import static xyz.jienan.xkcd.base.network.NetworkService.XKCD_SPECIAL_LIST;
 

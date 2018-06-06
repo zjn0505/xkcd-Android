@@ -1,4 +1,4 @@
-package xyz.jienan.xkcd.home.dialog;
+package xyz.jienan.xkcd.comics.dialog;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -29,9 +29,9 @@ import io.objectbox.Box;
 import xyz.jienan.xkcd.BuildConfig;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.XkcdApplication;
-import xyz.jienan.xkcd.XkcdExplainUtil;
-import xyz.jienan.xkcd.XkcdPic;
-import xyz.jienan.xkcd.home.activity.ImageDetailPageActivity;
+import xyz.jienan.xkcd.model.util.XkcdExplainUtil;
+import xyz.jienan.xkcd.model.XkcdPic;
+import xyz.jienan.xkcd.comics.activity.ImageDetailPageActivity;
 
 import static xyz.jienan.xkcd.Const.URI_XKCD_EXPLAIN_EDIT;
 

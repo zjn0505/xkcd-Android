@@ -1,4 +1,4 @@
-package xyz.jienan.xkcd.home.activity;
+package xyz.jienan.xkcd.comics.activity;
 
 import android.app.Activity;
 import android.net.Uri;
@@ -26,9 +26,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import timber.log.Timber;
 import xyz.jienan.xkcd.R;
-import xyz.jienan.xkcd.XkcdSideloadUtils;
-import xyz.jienan.xkcd.home.contract.ImageDetailPageContract;
-import xyz.jienan.xkcd.home.presenter.ImageDetailPagePresenter;
+import xyz.jienan.xkcd.model.util.XkcdSideloadUtils;
+import xyz.jienan.xkcd.comics.contract.ImageDetailPageContract;
+import xyz.jienan.xkcd.comics.presenter.ImageDetailPagePresenter;
 
 import static xyz.jienan.xkcd.Const.FIRE_COMIC_ID;
 import static xyz.jienan.xkcd.Const.FIRE_COMIC_URL;

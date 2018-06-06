@@ -8,9 +8,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import timber.log.Timber;
-import xyz.jienan.xkcd.SharedPrefManager;
-import xyz.jienan.xkcd.XkcdModel;
-import xyz.jienan.xkcd.XkcdPic;
+import xyz.jienan.xkcd.model.persist.SharedPrefManager;
+import xyz.jienan.xkcd.model.XkcdModel;
+import xyz.jienan.xkcd.model.XkcdPic;
 
 public class XkcdListPresenter implements XkcdListContract.Presenter {
 
@@ -33,7 +33,7 @@ public class XkcdListPresenter implements XkcdListContract.Presenter {
         if (start == 1) {
             view.setLoading(true);
         }
-        long latestIndex = sharedPrefManager.getLatest();
+        long latestIndex = sharedPrefManager.getLatestXkcd();
         List<XkcdPic> data = xkcdModel.loadXkcdFromDB(start, start + 399);
         int dataSize = data.size();
         Timber.d("Load xkcd list request, start from: %d, the response items: %d", start, dataSize);
@@ -93,7 +93,7 @@ public class XkcdListPresenter implements XkcdListContract.Presenter {
 
     @Override
     public boolean lastItemReached(long index) {
-        return index >= sharedPrefManager.getLatest();
+        return index >= sharedPrefManager.getLatestXkcd();
     }
 
     private void updateView(long lastIndex) {

@@ -2,7 +2,7 @@ package xyz.jienan.xkcd.list;
 
 import java.util.List;
 
-import xyz.jienan.xkcd.XkcdPic;
+import xyz.jienan.xkcd.model.XkcdPic;
 import xyz.jienan.xkcd.base.BasePresenter;
 import xyz.jienan.xkcd.base.BaseView;
 

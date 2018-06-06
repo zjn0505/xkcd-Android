@@ -4,9 +4,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import timber.log.Timber;
-import xyz.jienan.xkcd.SharedPrefManager;
-import xyz.jienan.xkcd.XkcdModel;
-import xyz.jienan.xkcd.XkcdPic;
+import xyz.jienan.xkcd.model.persist.SharedPrefManager;
+import xyz.jienan.xkcd.model.XkcdModel;
+import xyz.jienan.xkcd.model.XkcdPic;
 import xyz.jienan.xkcd.comics.contract.ComicsMainContract;
 
 public class ComicsMainPresenter implements ComicsMainContract.Presenter {
@@ -31,7 +31,7 @@ public class ComicsMainPresenter implements ComicsMainContract.Presenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(xkcdPic -> {
                     long latestIndex = xkcdPic.num;
-                    sharedPrefManager.setLatest(latestIndex);
+                    sharedPrefManager.setLatestXkcd(latestIndex);
                     view.latestXkcdLoaded(xkcdPic);
                 }, e -> Timber.e(e, "load xkcd pic error"));
         compositeDisposable.add(d);
@@ -90,22 +90,22 @@ public class ComicsMainPresenter implements ComicsMainContract.Presenter {
 
     @Override
     public void setLatest(int latestIndex) {
-        sharedPrefManager.setLatest(latestIndex);
+        sharedPrefManager.setLatestXkcd(latestIndex);
     }
 
     @Override
     public int getLatest() {
-        return (int) sharedPrefManager.getLatest();
+        return (int) sharedPrefManager.getLatestXkcd();
     }
 
     @Override
     public void setLastViewed(int lastViewed) {
-        sharedPrefManager.setLastViewed(lastViewed);
+        sharedPrefManager.setLastViewedXkcd(lastViewed);
     }
 
     @Override
     public int getLastViewed(int latestIndex) {
-        return (int) sharedPrefManager.getLastViewed(latestIndex);
+        return (int) sharedPrefManager.getLastViewedXkcd(latestIndex);
     }
 
     @Override

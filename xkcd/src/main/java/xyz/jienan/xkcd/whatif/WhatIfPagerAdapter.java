@@ -1,21 +1,20 @@
-package xyz.jienan.xkcd.comics;
+package xyz.jienan.xkcd.whatif;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
 import xyz.jienan.xkcd.base.BaseStatePagerAdapter;
-import xyz.jienan.xkcd.comics.fragment.SingleComicFragment;
+import xyz.jienan.xkcd.whatif.fragment.SingleWhatIfFragment;
 
-public class ComicsPagerAdapter extends BaseStatePagerAdapter {
+public class WhatIfPagerAdapter extends BaseStatePagerAdapter {
 
-
-    public ComicsPagerAdapter(FragmentManager fm) {
+    public WhatIfPagerAdapter(FragmentManager fm) {
         super(fm);
     }
 
     @Override
     public Fragment getItem(int position) {
-        SingleComicFragment fragment = SingleComicFragment.newInstance(position + 1);
+        SingleWhatIfFragment fragment = SingleWhatIfFragment.newInstance(position + 1);
         fragmentsMap.put(position + 1, fragment);
         return fragment;
     }

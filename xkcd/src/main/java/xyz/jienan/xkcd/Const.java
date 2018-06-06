@@ -5,9 +5,9 @@ package xyz.jienan.xkcd;
  */
 
 public class Const {
-    public final static String XKCD_LATEST_INDEX = "xkcd_last_index";
-    public final static String PREF_ARROW = "pref_arrow";
-    public final static String PREF_FONT = "pref_font";
+    public static final String XKCD_LATEST_INDEX = "xkcd_last_index";
+    public static final String PREF_ARROW = "pref_arrow";
+    public static final String PREF_FONT = "pref_font";
     public static final String XKCD_INDEX_ON_NOTI_INTENT = "xkcd_index_on_noti_intent";
     public static final String XKCD_INDEX_ON_NEW_INTENT = "xkcd_index_on_new_intent";
 
@@ -43,4 +43,8 @@ public class Const {
     // user actions end
 
     public static final String URI_XKCD_EXPLAIN_EDIT = "xkcd://explain.edit";
+
+
+    public static final String WHAT_IF_LATEST_INDEX = "what_if_last_index";
+
 }

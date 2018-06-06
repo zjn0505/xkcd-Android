@@ -1,4 +1,4 @@
-package xyz.jienan.xkcd.home.dialog;
+package xyz.jienan.xkcd.comics.dialog;
 
 import android.app.Dialog;
 import android.content.res.Resources;

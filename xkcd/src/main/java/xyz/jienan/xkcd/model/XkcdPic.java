@@ -1,8 +1,9 @@
-package xyz.jienan.xkcd;
+package xyz.jienan.xkcd.model;
 
 
 import io.objectbox.annotation.Entity;
 import io.objectbox.annotation.Id;
+import xyz.jienan.xkcd.model.util.XkcdSideloadUtils;
 
 /**
  * Created by jienanzhang on 09/07/2017.
@@ -61,6 +62,7 @@ public class XkcdPic {
         clone.alt = alt;
         return clone;
     }
+
 
     @Override
     public boolean equals(Object obj) {

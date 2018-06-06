@@ -23,8 +23,8 @@ import java.util.List;
 
 import timber.log.Timber;
 import xyz.jienan.xkcd.R;
-import xyz.jienan.xkcd.XkcdModel;
-import xyz.jienan.xkcd.XkcdPic;
+import xyz.jienan.xkcd.model.XkcdModel;
+import xyz.jienan.xkcd.model.XkcdPic;
 import xyz.jienan.xkcd.home.MainActivity;
 
 import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NEW_INTENT;

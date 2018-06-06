@@ -18,7 +18,7 @@ import java.util.Objects;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import xyz.jienan.xkcd.R;
-import xyz.jienan.xkcd.XkcdPic;
+import xyz.jienan.xkcd.model.XkcdPic;
 import xyz.jienan.xkcd.base.BaseActivity;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_DRAGGING;

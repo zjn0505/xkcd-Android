@@ -18,7 +18,6 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -32,7 +31,6 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.squareup.seismic.ShakeDetector;
 
 import java.util.HashMap;
@@ -40,19 +38,16 @@ import java.util.Map;
 import java.util.Random;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnPageChange;
-import butterknife.Unbinder;
 import xyz.jienan.xkcd.R;
-import xyz.jienan.xkcd.XkcdPic;
+import xyz.jienan.xkcd.model.XkcdPic;
 import xyz.jienan.xkcd.base.BaseFragment;
 import xyz.jienan.xkcd.comics.ComicsPagerAdapter;
 import xyz.jienan.xkcd.comics.contract.ComicsMainContract;
 import xyz.jienan.xkcd.comics.presenter.ComicsMainPresenter;
-import xyz.jienan.xkcd.home.dialog.NumberPickerDialogFragment;
+import xyz.jienan.xkcd.comics.dialog.NumberPickerDialogFragment;
 import xyz.jienan.xkcd.list.XkcdListActivity;
-import xyz.jienan.xkcd.settings.PreferenceActivity;
 import xyz.jienan.xkcd.ui.like.LikeButton;
 import xyz.jienan.xkcd.ui.like.OnLikeListener;
 
@@ -71,11 +66,9 @@ import static xyz.jienan.xkcd.Const.FIRE_FROM_NOTIFICATION_INDEX;
 import static xyz.jienan.xkcd.Const.FIRE_NEXT_BAR;
 import static xyz.jienan.xkcd.Const.FIRE_PREVIOUS_BAR;
 import static xyz.jienan.xkcd.Const.FIRE_SEARCH;
-import static xyz.jienan.xkcd.Const.FIRE_SETTING_MENU;
 import static xyz.jienan.xkcd.Const.FIRE_SHAKE;
 import static xyz.jienan.xkcd.Const.FIRE_SPECIFIC_MENU;
 import static xyz.jienan.xkcd.Const.FIRE_THUMB_UP;
-import static xyz.jienan.xkcd.Const.FIRE_UX_ACTION;
 import static xyz.jienan.xkcd.Const.PREF_ARROW;
 import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NEW_INTENT;
 import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NOTI_INTENT;
@@ -102,8 +95,6 @@ public class ComicsMainFragment extends BaseFragment implements ComicsMainContra
     LikeButton btnThumb;
 
     private ComicsPagerAdapter adapter;
-
-    private Unbinder unbinder;
 
     private ShakeDetector sd;
 
@@ -167,11 +158,15 @@ public class ComicsMainFragment extends BaseFragment implements ComicsMainContra
         }
     };
 
+    @Override
+    protected int getLayoutResId() {
+        return R.layout.fragment_comic_main;
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_comic_main, container, false);
-        unbinder = ButterKnife.bind(this, view);
+        View view = super.onCreateView(inflater,container, savedInstanceState);
         setHasOptionsMenu(true);
         comicsMainPresenter = new ComicsMainPresenter(this);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -181,7 +176,9 @@ public class ComicsMainFragment extends BaseFragment implements ComicsMainContra
         viewPager.setAdapter(adapter);
         comicsMainPresenter.loadLatestXkcd();
         final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-        actionBar.setTitle(R.string.menu_xkcd);
+        if (actionBar != null) {
+            actionBar.setTitle(R.string.menu_xkcd);
+        }
         if (savedInstanceState != null) {
             savedId = savedInstanceState.getInt(LOADED_XKCD_ID);
             int i = savedInstanceState.getInt(LATEST_XKCD_ID);
@@ -210,7 +207,6 @@ public class ComicsMainFragment extends BaseFragment implements ComicsMainContra
         sd = new ShakeDetector(this);
         sd.start(sensorManager);
         return view;
-
     }
 
     @Override
@@ -244,7 +240,6 @@ public class ComicsMainFragment extends BaseFragment implements ComicsMainContra
 
     @Override
     public void onDestroyView() {
-        unbinder.unbind();
         sd.stop();
         comicsMainPresenter.onDestroy();
         super.onDestroyView();

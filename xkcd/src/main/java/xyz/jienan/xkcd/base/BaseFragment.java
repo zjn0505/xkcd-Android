@@ -1,24 +1,44 @@
 package xyz.jienan.xkcd.base;
 
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.Map;
 
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
 import static xyz.jienan.xkcd.Const.FIRE_UX_ACTION;
 
-public class BaseFragment extends Fragment {
-
+public abstract class BaseFragment extends Fragment {
 
     protected FirebaseAnalytics mFirebaseAnalytics;
+
+    protected Unbinder unbinder;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
+    }
+
+    @LayoutRes
+    protected abstract int getLayoutResId();
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        final View view = inflater.inflate(getLayoutResId(), container, false);
+        unbinder = ButterKnife.bind(this, view);
+        return view;
     }
 
     protected void logUXEvent(String event) {
@@ -39,5 +59,13 @@ public class BaseFragment extends Fragment {
             }
         }
         mFirebaseAnalytics.logEvent(FIRE_UX_ACTION, bundle);
+    }
+
+    @Override
+    public void onDestroyView() {
+        if (unbinder != null) {
+            unbinder.unbind();
+        }
+        super.onDestroyView();
     }
 }

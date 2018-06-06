@@ -1,4 +1,4 @@
-package xyz.jienan.xkcd.home.presenter;
+package xyz.jienan.xkcd.comics.presenter;
 
 import android.graphics.Bitmap;
 
@@ -6,10 +6,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import timber.log.Timber;
-import xyz.jienan.xkcd.SharedPrefManager;
-import xyz.jienan.xkcd.XkcdModel;
-import xyz.jienan.xkcd.XkcdPic;
-import xyz.jienan.xkcd.home.contract.SingleComicContract;
+import xyz.jienan.xkcd.model.persist.SharedPrefManager;
+import xyz.jienan.xkcd.model.XkcdModel;
+import xyz.jienan.xkcd.model.XkcdPic;
+import xyz.jienan.xkcd.comics.contract.SingleComicContract;
 
 public class SingleComicPresenter implements SingleComicContract.Presenter {
 
@@ -27,7 +27,7 @@ public class SingleComicPresenter implements SingleComicContract.Presenter {
 
     @Override
     public void getExplain(long index) {
-        final long latestIndex = sharedPrefManager.getLatest();
+        final long latestIndex = sharedPrefManager.getLatestXkcd();
 
         final Disposable d = xkcdModel.loadExplain(index, latestIndex)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -50,7 +50,7 @@ public class SingleComicPresenter implements SingleComicContract.Presenter {
 
     @Override
     public void loadXkcd(int index) {
-        final long latestIndex = sharedPrefManager.getLatest();
+        final long latestIndex = sharedPrefManager.getLatestXkcd();
         XkcdPic xkcdPicInDB = xkcdModel.loadXkcdFromDB(index);
 
         boolean shouldQueryNetwork = false;

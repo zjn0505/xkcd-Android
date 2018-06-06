@@ -1,4 +1,4 @@
-package xyz.jienan.xkcd.home.fragment;
+package xyz.jienan.xkcd.comics.fragment;
 
 import android.annotation.SuppressLint;
 import android.app.SearchManager;
@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -31,26 +30,24 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.bumptech.glide.request.target.Target;
-import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.List;
 
 import butterknife.BindString;
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnLongClick;
-import butterknife.Unbinder;
 import timber.log.Timber;
 import xyz.jienan.xkcd.R;
-import xyz.jienan.xkcd.XkcdPic;
+import xyz.jienan.xkcd.model.XkcdPic;
+import xyz.jienan.xkcd.base.BaseFragment;
 import xyz.jienan.xkcd.base.glide.ProgressTarget;
-import xyz.jienan.xkcd.home.SearchCursorAdapter;
-import xyz.jienan.xkcd.home.activity.ImageDetailPageActivity;
+import xyz.jienan.xkcd.comics.SearchCursorAdapter;
+import xyz.jienan.xkcd.comics.activity.ImageDetailPageActivity;
+import xyz.jienan.xkcd.comics.contract.SingleComicContract;
+import xyz.jienan.xkcd.comics.dialog.SimpleInfoDialogFragment;
+import xyz.jienan.xkcd.comics.dialog.SimpleInfoDialogFragment.ISimpleInfoDialogListener;
+import xyz.jienan.xkcd.comics.presenter.SingleComicPresenter;
 import xyz.jienan.xkcd.home.MainActivity;
-import xyz.jienan.xkcd.home.contract.SingleComicContract;
-import xyz.jienan.xkcd.home.dialog.SimpleInfoDialogFragment;
-import xyz.jienan.xkcd.home.dialog.SimpleInfoDialogFragment.ISimpleInfoDialogListener;
-import xyz.jienan.xkcd.home.presenter.SingleComicPresenter;
 
 import static android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING;
 import static android.view.HapticFeedbackConstants.LONG_PRESS;
@@ -59,14 +56,13 @@ import static xyz.jienan.xkcd.Const.FIRE_GO_XKCD_MENU;
 import static xyz.jienan.xkcd.Const.FIRE_LONG_PRESS;
 import static xyz.jienan.xkcd.Const.FIRE_MORE_EXPLAIN;
 import static xyz.jienan.xkcd.Const.FIRE_SHARE_BAR;
-import static xyz.jienan.xkcd.Const.FIRE_UX_ACTION;
 import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NEW_INTENT;
 
 /**
  * Created by jienanzhang on 03/03/2018.
  */
 
-public class SingleComicFragment extends Fragment implements SingleComicContract.View {
+public class SingleComicFragment extends BaseFragment implements SingleComicContract.View {
 
     @BindView(R.id.tv_title)
     TextView tvTitle;
@@ -92,13 +88,9 @@ public class SingleComicFragment extends Fragment implements SingleComicContract
 
     private SimpleInfoDialogFragment dialogFragment;
 
-    private FirebaseAnalytics mFirebaseAnalytics;
-
     private int id;
 
     private XkcdPic currentPic;
-
-    private Unbinder unbinder;
 
     private RequestListener<String, Bitmap> glideListener = new RequestListener<String, Bitmap>() {
         @Override
@@ -183,7 +175,6 @@ public class SingleComicFragment extends Fragment implements SingleComicContract
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
         singleComicPresenter = new SingleComicPresenter(this);
         Bundle args = getArguments();
         if (args != null)
@@ -191,11 +182,15 @@ public class SingleComicFragment extends Fragment implements SingleComicContract
         setHasOptionsMenu(true);
     }
 
+    @Override
+    protected int getLayoutResId() {
+        return R.layout.fragment_comic_single;
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_comic_single, container, false);
-        unbinder = ButterKnife.bind(this, view);
+        View view = super.onCreateView(inflater,container, savedInstanceState);
         pbLoading.setAnimation(AnimationUtils.loadAnimation(pbLoading.getContext(), R.anim.rotate));
         initGlide();
         singleComicPresenter.loadXkcd(id);
@@ -211,7 +206,6 @@ public class SingleComicFragment extends Fragment implements SingleComicContract
 
     @Override
     public void onDestroyView() {
-        unbinder.unbind();
         singleComicPresenter.onDestroy();
         super.onDestroyView();
     }
@@ -394,12 +388,6 @@ public class SingleComicFragment extends Fragment implements SingleComicContract
             tvDescription.setText(xPic.alt);
         }
 
-    }
-
-    private void logUXEvent(String event) {
-        Bundle bundle = new Bundle();
-        bundle.putString(FIRE_UX_ACTION, event);
-        mFirebaseAnalytics.logEvent(FIRE_UX_ACTION, bundle);
     }
 
     private static class MyProgressTarget<Z> extends ProgressTarget<String, Z> {
