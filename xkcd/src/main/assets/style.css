@@ -1,10 +1,9 @@
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,pre,a,abbr,acronym,address,big,cite,code,del,dfn,img,ins,kbd,q,s,samp,small,strike,tt,var,b,u,i,center,dl,dt,dd,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{margin:0;padding:0;border:0;font-size:100%;font:inherit;vertical-align:baseline}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}body{line-height:1}ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}table{border-collapse:collapse;border-spacing:0}.centered{margin:0 auto;min-width:960px}.clearfix:after{content:".";display:block;clear:both;visibility:hidden;line-height:0;height:0}.clearfix{display:inline-block}html[xmlns] .clearfix{display:block}* html .clearfix{height:1%}
 
 body {
-    font-size: 2.5em;
     line-height: 1.1em;
     font-weight: 700;
-    background: url('file:///android_asset/graph-tile.png');
+    background: url('file:///android_asset/graph_tile.png');
     padding: 1em;
 }
 
@@ -26,16 +25,20 @@ li {
 
 p {
     font-size: 1.5em;
-    font-family: Georgia, Times, serif;
+    font-family: Helvetica, Times, serif;
     padding: .75em 0;
     line-height: 1.7em;
-    color: #000;
+    color: #333333;
+    overflow: auto;
+}
+
+a > h1 {
+    font-size: 1.5em;
 }
 
 blockquote {
     font-style: italic;
 }
-
 
 #news, .entry h1, .date-stamp, #question, .nav-buttons, footer p, footer a:link {
     font-family: Verdana, Helvetica, Arial, sans-serif;
@@ -90,8 +93,8 @@ a:visited {
 }
 
 .illustration {
+    width: 70%;
     display: block;
-    max-width: 100%;
     margin: 0 auto;
     padding: 0.7em 0;
 }
@@ -109,6 +112,7 @@ a:visited {
 .ref {
     position: relative;
     vertical-align: baseline;
+
    }
 
 .refnum {
@@ -138,6 +142,7 @@ a:visited {
     word-wrap: break-word;
     z-index: 9999;
     overflow: auto;
+    visibility: hidden;
 }
 
 /* the archive style starts here */
@@ -285,19 +290,8 @@ a:visited .archive-image {
 
 /* Mobile Portrait Size to Mobile Landscape Size (devices and browsers) */
 @media only screen and (max-device-width: 480px) {
-   header img {
-       width: 100%;
-       height: 100%;
-   }
 
    .refbody { min-width: 0}
-
-   .logo {
-       display: block;
-       max-width: 100%;
-       margin: 0 auto;
-       padding: 3em 0 1em 0;
-       }
 
    #news {
        font-size: .8em;
@@ -307,7 +301,6 @@ a:visited .archive-image {
    body {
        font-size: 2em;
    }
-
 
    #book-wrapper {
        padding: 0;

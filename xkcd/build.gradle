@@ -85,5 +85,6 @@ dependencies {
     implementation "io.objectbox:objectbox-android:$objectboxVersion"
     annotationProcessor "io.objectbox:objectbox-processor:$objectboxVersion"
     implementation 'com.jakewharton.timber:timber:4.7.0'
+    implementation 'com.jakewharton.rxbinding2:rxbinding-design:2.1.1'
 }
 apply plugin: 'com.google.gms.google-services'
