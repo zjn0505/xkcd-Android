@@ -28,6 +28,10 @@ public abstract class BaseStatePagerAdapter extends FragmentStatePagerAdapter {
         super.destroyItem(container, position, object);
     }
 
+    public Fragment getItemFromMap(int position) {
+        return fragmentsMap.get(position);
+    }
+
     @Override
     public int getCount() {
         return length;

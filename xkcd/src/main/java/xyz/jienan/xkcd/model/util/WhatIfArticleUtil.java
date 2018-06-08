@@ -44,14 +44,14 @@ public class WhatIfArticleUtil {
     }
 
     public static Document getArticleFromHtml(ResponseBody responseBody) throws IOException {
-        Document doc = Jsoup.parse(responseBody.string(), BASE_URI);
-        Elements elements = doc.select("article.entry");
+        final Document doc = Jsoup.parse(responseBody.string(), BASE_URI);
+        final Elements elements = doc.select("article.entry");
         elements.remove(elements.get(0).children().first());
-        Elements imageElements = doc.select("img.illustration");
+        final Elements imageElements = doc.select("img.illustration");
         for (Element element : imageElements) {
             element.attr("src", element.absUrl("src"));
         }
-        Elements pElements = doc.select("p");
+        final Elements pElements = doc.select("p");
         for (Element element : pElements) {
             if (element.html().split("\\[").length > 1) {
                 element.attr("class", "latex");
@@ -61,7 +61,7 @@ public class WhatIfArticleUtil {
         doc.head().appendElement("link").attr("rel", "stylesheet").attr("type", "text/css").attr("href", "style.css");
         doc.head().appendElement("script").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/latest.js?config=TeX-MML-AM_CHTML").attr("async", "");
         doc.head().appendElement("script").attr("src", "LatexInterface.js");
-        doc.body().html(elements.html());
+        doc.body().html(elements.html()).appendElement("p");
         return doc;
     }
 }

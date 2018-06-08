@@ -112,6 +112,8 @@ public class WhatIfMainFragment extends BaseFragment implements WhatIfMainContra
             fab.hide();
             toggleSubFabs(false);
         } else if (state == SCROLL_STATE_IDLE) {
+            SingleWhatIfFragment fragment = (SingleWhatIfFragment) adapter.getItemFromMap(viewPager.getCurrentItem() + 1);
+            fragment.updateFab();
 //            comicsMainPresenter.getInfoAndShowFab(getCurrentIndex());
         }
     }

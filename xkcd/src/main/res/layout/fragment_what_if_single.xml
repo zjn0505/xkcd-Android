@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="xyz.jienan.xkcd.home.MainActivity" >
+    tools:context="xyz.jienan.xkcd.home.MainActivity"
+    android:background="@drawable/what_if_webview_bg">
 
     <xyz.jienan.xkcd.ui.WhatIfWebView
         android:id="@+id/webview_what_if"

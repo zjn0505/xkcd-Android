@@ -91,4 +91,12 @@ public class SingleWhatIfFragment extends BaseFragment implements WhatIfWebView.
             }
         }
     }
+
+    public void updateFab() {
+        if (webView.distanceToEnd() < 200) {
+            scrolledToTheEnd(true);
+        } else if (webView.distanceToEnd() > 250) {
+            scrolledToTheEnd(false);
+        }
+    }
 }

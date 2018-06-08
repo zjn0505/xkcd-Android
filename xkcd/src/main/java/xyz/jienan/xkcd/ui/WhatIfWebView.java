@@ -1,6 +1,7 @@
 package xyz.jienan.xkcd.ui;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.webkit.WebView;
 
@@ -22,10 +23,17 @@ public class WhatIfWebView extends WebView {
 
     public WhatIfWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        this.setBackgroundColor(Color.TRANSPARENT);
     }
 
     public void setCallback(ScrollToEndCallback callback) {
         this.callback = callback;
+    }
+
+    public int distanceToEnd() {
+        int height = (int) Math.floor(this.getContentHeight() * this.getScale());
+        int webViewHeight = this.getMeasuredHeight();
+        return height - getScrollY() - webViewHeight;
     }
 
     @Override
@@ -67,11 +75,5 @@ public class WhatIfWebView extends WebView {
         } else {
             return offset < range - 1;
         }
-    }
-
-    private int distanceToEnd() {
-        int height = (int) Math.floor(this.getContentHeight() * this.getScale());
-        int webViewHeight = this.getMeasuredHeight();
-        return height - getScrollY() - webViewHeight;
     }
 }
