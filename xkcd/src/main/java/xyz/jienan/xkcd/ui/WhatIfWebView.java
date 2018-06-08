@@ -49,10 +49,24 @@ public class WhatIfWebView extends WebView {
     }
 
     public boolean canScrollHor(int direction) {
+        if (zoomScroll(direction)) {
+            return true;
+        }
         if (latexScrollInterface != null) {
             return !latexScrollInterface.canScrollHor();
         }
-        return true;
+        return zoomScroll(direction);
+    }
+
+    private boolean zoomScroll(int direction) {
+        final int offset = computeHorizontalScrollOffset();
+        final int range = computeHorizontalScrollRange() - computeHorizontalScrollExtent();
+        if (range == 0) return false;
+        if (direction < 0) {
+            return offset > 0;
+        } else {
+            return offset < range - 1;
+        }
     }
 
     private int distanceToEnd() {
