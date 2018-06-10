@@ -22,8 +22,8 @@ import java.util.Random;
 
 import timber.log.Timber;
 import xyz.jienan.xkcd.R;
-import xyz.jienan.xkcd.model.XkcdPic;
 import xyz.jienan.xkcd.home.MainActivity;
+import xyz.jienan.xkcd.model.XkcdPic;
 
 import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NOTI_INTENT;
 import static xyz.jienan.xkcd.Const.XKCD_LATEST_INDEX;

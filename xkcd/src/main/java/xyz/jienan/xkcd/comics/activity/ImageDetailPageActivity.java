@@ -26,9 +26,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import timber.log.Timber;
 import xyz.jienan.xkcd.R;
-import xyz.jienan.xkcd.model.util.XkcdSideloadUtils;
 import xyz.jienan.xkcd.comics.contract.ImageDetailPageContract;
 import xyz.jienan.xkcd.comics.presenter.ImageDetailPagePresenter;
+import xyz.jienan.xkcd.model.util.XkcdSideloadUtils;
 
 import static xyz.jienan.xkcd.Const.FIRE_COMIC_ID;
 import static xyz.jienan.xkcd.Const.FIRE_COMIC_URL;

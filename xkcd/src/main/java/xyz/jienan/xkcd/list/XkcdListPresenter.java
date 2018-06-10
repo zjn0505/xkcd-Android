@@ -8,9 +8,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import timber.log.Timber;
-import xyz.jienan.xkcd.model.persist.SharedPrefManager;
 import xyz.jienan.xkcd.model.XkcdModel;
 import xyz.jienan.xkcd.model.XkcdPic;
+import xyz.jienan.xkcd.model.persist.SharedPrefManager;
 
 public class XkcdListPresenter implements XkcdListContract.Presenter {
 

@@ -4,8 +4,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import timber.log.Timber;
-import xyz.jienan.xkcd.model.XkcdModel;
 import xyz.jienan.xkcd.comics.contract.ImageDetailPageContract;
+import xyz.jienan.xkcd.model.XkcdModel;
 
 public class ImageDetailPagePresenter implements ImageDetailPageContract.Presenter {
 

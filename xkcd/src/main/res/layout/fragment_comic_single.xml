@@ -33,10 +33,10 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:adjustViewBounds="true"
-                tools:src="@drawable/ic_heart_on"
                 android:layout_gravity="center"
                 android:contentDescription="@string/xkcd_pic"
-                android:scaleType="fitCenter" />
+                android:scaleType="fitCenter"
+                tools:src="@drawable/ic_heart_on" />
 
         </FrameLayout>
 
