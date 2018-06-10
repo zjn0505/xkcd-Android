@@ -6,10 +6,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import timber.log.Timber;
-import xyz.jienan.xkcd.model.persist.SharedPrefManager;
+import xyz.jienan.xkcd.comics.contract.SingleComicContract;
 import xyz.jienan.xkcd.model.XkcdModel;
 import xyz.jienan.xkcd.model.XkcdPic;
-import xyz.jienan.xkcd.comics.contract.SingleComicContract;
+import xyz.jienan.xkcd.model.persist.SharedPrefManager;
 
 public class SingleComicPresenter implements SingleComicContract.Presenter {
 
@@ -35,16 +35,6 @@ public class SingleComicPresenter implements SingleComicContract.Presenter {
                     view.explainFailed();
                     Timber.e(e, "Load explain failed");
                 });
-        compositeDisposable.add(d);
-    }
-
-    @Override
-    public void searchXkcd(String query) {
-        final Disposable d = xkcdModel.search(query)
-                .observeOn(AndroidSchedulers.mainThread())
-                .filter(xkcdPics -> xkcdPics != null && !xkcdPics.isEmpty())
-                .subscribe(view::renderXkcdSearch,
-                        e -> Timber.e(e, "search error"));
         compositeDisposable.add(d);
     }
 

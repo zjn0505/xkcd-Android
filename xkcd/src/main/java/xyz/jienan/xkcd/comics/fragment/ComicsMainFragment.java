@@ -6,13 +6,16 @@ import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
+import android.database.MatrixCursor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.BaseColumns;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
@@ -21,6 +24,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -34,20 +39,23 @@ import android.widget.Toast;
 import com.squareup.seismic.ShakeDetector;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.OnPageChange;
 import xyz.jienan.xkcd.R;
-import xyz.jienan.xkcd.model.XkcdPic;
 import xyz.jienan.xkcd.base.BaseFragment;
 import xyz.jienan.xkcd.comics.ComicsPagerAdapter;
+import xyz.jienan.xkcd.comics.SearchCursorAdapter;
 import xyz.jienan.xkcd.comics.contract.ComicsMainContract;
-import xyz.jienan.xkcd.comics.presenter.ComicsMainPresenter;
 import xyz.jienan.xkcd.comics.dialog.NumberPickerDialogFragment;
+import xyz.jienan.xkcd.comics.presenter.ComicsMainPresenter;
 import xyz.jienan.xkcd.list.XkcdListActivity;
+import xyz.jienan.xkcd.model.XkcdPic;
 import xyz.jienan.xkcd.ui.like.LikeButton;
 import xyz.jienan.xkcd.ui.like.OnLikeListener;
 
@@ -94,6 +102,9 @@ public class ComicsMainFragment extends BaseFragment implements ComicsMainContra
     @BindView(R.id.btn_thumb)
     LikeButton btnThumb;
 
+    @BindString(R.string.search_hint)
+    String searchHint;
+
     private ComicsPagerAdapter adapter;
 
     private ShakeDetector sd;
@@ -112,6 +123,10 @@ public class ComicsMainFragment extends BaseFragment implements ComicsMainContra
     private boolean isPaused = true;
 
     private boolean isFabsShowing = false;
+
+    private List<XkcdPic> searchSuggestions;
+
+    private SearchCursorAdapter searchAdapter;
 
     private Toast toast;
 
@@ -293,6 +308,8 @@ public class ComicsMainFragment extends BaseFragment implements ComicsMainContra
             }
             logUXEvent(FIRE_PREVIOUS_BAR);
         });
+
+        setupComicsSearch(menu);
     }
 
     @Override
@@ -493,12 +510,94 @@ public class ComicsMainFragment extends BaseFragment implements ComicsMainContra
         showToast(getContext(), String.valueOf(thumbCount));
     }
 
+    @Override
+    public void renderXkcdSearch(List<XkcdPic> xkcdPics) {
+        searchSuggestions = xkcdPics;
+        String[] columns = {BaseColumns._ID,
+                SearchManager.SUGGEST_COLUMN_TEXT_1,
+                SearchManager.SUGGEST_COLUMN_TEXT_2,
+                SearchManager.SUGGEST_COLUMN_INTENT_DATA,
+        };
+        MatrixCursor cursor = new MatrixCursor(columns);
+        for (int i = 0; i < searchSuggestions.size(); i++) {
+            XkcdPic xkcdPic = searchSuggestions.get(i);
+            String[] tmp = {Integer.toString(i), xkcdPic.getTargetImg(), xkcdPic.getTitle(), String.valueOf(xkcdPic.num)};
+            cursor.addRow(tmp);
+        }
+        searchAdapter.swapCursor(cursor);
+    }
+
     private void scrollViewPagerToItem(int id, boolean smoothScroll) {
         viewPager.setCurrentItem(id, smoothScroll);
         fab.hide();
         toggleSubFabs(false);
         if (!smoothScroll) {
             comicsMainPresenter.getInfoAndShowFab(getCurrentIndex());
+        }
+    }
+
+
+    private void setupComicsSearch(Menu menu) {
+        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+        final MenuItem searchItem = menu.findItem(R.id.action_search);
+        final SearchView searchView = (SearchView) searchItem.getActionView();
+        if (searchView == null) {
+            return;
+        }
+        searchView.setQueryHint(searchHint);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+        if (searchAdapter == null) {
+            searchAdapter = new SearchCursorAdapter(getActivity(), null, 0);
+        }
+        searchView.setSuggestionsAdapter(searchAdapter);
+        searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
+            @Override
+            public boolean onSuggestionSelect(int position) {
+                return false;
+            }
+
+            @Override
+            public boolean onSuggestionClick(int position) {
+                XkcdPic xkcd = searchSuggestions.get(position);
+                searchView.clearFocus();
+                searchItem.collapseActionView();
+                scrollViewPagerToItem((int) (xkcd.num - 1), false);
+                return true;
+            }
+        });
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (TextUtils.isEmpty(newText)) {
+                    return true;
+                }
+                comicsMainPresenter.searchXkcd(newText);
+                return true;
+            }
+        });
+        searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem menuItem) {
+                setItemsVisibility(menu, new int[]{R.id.action_left, R.id.action_right, R.id.action_share}, false);
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem menuItem) {
+                setItemsVisibility(menu, new int[]{R.id.action_left, R.id.action_right, R.id.action_share}, true);
+                return true;
+            }
+        });
+    }
+
+    private void setItemsVisibility(Menu menu, int[] hideItems, boolean visible) {
+        for (int hideItem : hideItems) {
+            menu.findItem(hideItem).setVisible(visible);
         }
     }
 }
