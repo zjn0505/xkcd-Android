@@ -9,9 +9,9 @@ import java.util.List;
 import io.objectbox.Box;
 import io.objectbox.query.Query;
 import xyz.jienan.xkcd.XkcdApplication;
-import xyz.jienan.xkcd.model.XkcdPic_;
 import xyz.jienan.xkcd.model.WhatIfArticle;
 import xyz.jienan.xkcd.model.XkcdPic;
+import xyz.jienan.xkcd.model.XkcdPic_;
 
 public class BoxManager {
 

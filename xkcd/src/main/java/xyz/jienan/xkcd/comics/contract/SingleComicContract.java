@@ -2,11 +2,9 @@ package xyz.jienan.xkcd.comics.contract;
 
 import android.graphics.Bitmap;
 
-import java.util.List;
-
-import xyz.jienan.xkcd.model.XkcdPic;
 import xyz.jienan.xkcd.base.BasePresenter;
 import xyz.jienan.xkcd.base.BaseView;
+import xyz.jienan.xkcd.model.XkcdPic;
 
 public interface SingleComicContract {
 
@@ -15,8 +13,6 @@ public interface SingleComicContract {
         void explainLoaded(String result);
 
         void explainFailed();
-
-        void renderXkcdSearch(List<XkcdPic> xkcdPics);
 
         void renderXkcdPic(XkcdPic xkcdPicInDB);
 
@@ -30,7 +26,5 @@ public interface SingleComicContract {
         void getExplain(long index);
 
         void updateXkcdSize(XkcdPic currentPic, Bitmap resource);
-
-        void searchXkcd(String query);
     }
 }

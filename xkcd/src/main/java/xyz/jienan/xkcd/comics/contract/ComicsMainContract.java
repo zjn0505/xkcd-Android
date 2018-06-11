@@ -1,8 +1,10 @@
 package xyz.jienan.xkcd.comics.contract;
 
-import xyz.jienan.xkcd.model.XkcdPic;
+import java.util.List;
+
 import xyz.jienan.xkcd.base.BasePresenter;
 import xyz.jienan.xkcd.base.BaseView;
+import xyz.jienan.xkcd.model.XkcdPic;
 
 public interface ComicsMainContract {
 
@@ -15,6 +17,8 @@ public interface ComicsMainContract {
         void toggleFab(boolean isFavorite);
 
         void showThumbUpCount(Long thumbCount);
+
+        void renderXkcdSearch(List<XkcdPic> xkcdPics);
     }
 
     interface Presenter extends BasePresenter {
@@ -36,5 +40,7 @@ public interface ComicsMainContract {
         int getLastViewed(int latestIndex);
 
         void loadLatestXkcd();
+
+        void searchXkcd(String query);
     }
 }

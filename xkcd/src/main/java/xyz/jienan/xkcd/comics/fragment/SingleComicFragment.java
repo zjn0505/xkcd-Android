@@ -1,21 +1,14 @@
 package xyz.jienan.xkcd.comics.fragment;
 
 import android.annotation.SuppressLint;
-import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
-import android.database.MatrixCursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.BaseColumns;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,23 +24,18 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.bumptech.glide.request.target.Target;
 
-import java.util.List;
-
-import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.OnLongClick;
 import timber.log.Timber;
 import xyz.jienan.xkcd.R;
-import xyz.jienan.xkcd.model.XkcdPic;
 import xyz.jienan.xkcd.base.BaseFragment;
 import xyz.jienan.xkcd.base.glide.ProgressTarget;
-import xyz.jienan.xkcd.comics.SearchCursorAdapter;
 import xyz.jienan.xkcd.comics.activity.ImageDetailPageActivity;
 import xyz.jienan.xkcd.comics.contract.SingleComicContract;
 import xyz.jienan.xkcd.comics.dialog.SimpleInfoDialogFragment;
 import xyz.jienan.xkcd.comics.dialog.SimpleInfoDialogFragment.ISimpleInfoDialogListener;
 import xyz.jienan.xkcd.comics.presenter.SingleComicPresenter;
-import xyz.jienan.xkcd.home.MainActivity;
+import xyz.jienan.xkcd.model.XkcdPic;
 
 import static android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING;
 import static android.view.HapticFeedbackConstants.LONG_PRESS;
@@ -56,7 +44,6 @@ import static xyz.jienan.xkcd.Const.FIRE_GO_XKCD_MENU;
 import static xyz.jienan.xkcd.Const.FIRE_LONG_PRESS;
 import static xyz.jienan.xkcd.Const.FIRE_MORE_EXPLAIN;
 import static xyz.jienan.xkcd.Const.FIRE_SHARE_BAR;
-import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NEW_INTENT;
 
 /**
  * Created by jienanzhang on 03/03/2018.
@@ -82,9 +69,6 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
 
     @BindView(R.id.btn_reload)
     Button btnReload;
-
-    @BindString(R.string.search_hint)
-    String searchHint;
 
     private SimpleInfoDialogFragment dialogFragment;
 
@@ -120,10 +104,6 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
     };
 
     private ProgressTarget<String, Bitmap> target;
-
-    private List<XkcdPic> searchSuggestions;
-
-    private SearchCursorAdapter searchAdapter;
 
     private ISimpleInfoDialogListener dialogListener = new ISimpleInfoDialogListener() {
         @Override
@@ -211,70 +191,6 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
     }
 
     @Override
-    public void onCreateOptionsMenu(final Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-        final MenuItem searchItem = menu.findItem(R.id.action_search);
-        final SearchView searchView = (SearchView) searchItem.getActionView();
-        if (searchView == null) {
-            return;
-        }
-        searchView.setQueryHint(searchHint);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
-        if (searchAdapter == null) {
-            searchAdapter = new SearchCursorAdapter(getActivity(), null, 0);
-        }
-        searchView.setSuggestionsAdapter(searchAdapter);
-        searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
-            @Override
-            public boolean onSuggestionSelect(int position) {
-                return false;
-            }
-
-            @Override
-            public boolean onSuggestionClick(int position) {
-                XkcdPic xkcd = searchSuggestions.get(position);
-                // searchView.setQuery(xkcd, true);
-                searchView.clearFocus();
-                Intent intent = new Intent(getActivity(), MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.putExtra(XKCD_INDEX_ON_NEW_INTENT, (int) xkcd.num);
-                startActivity(intent);
-                searchItem.collapseActionView();
-                return true;
-            }
-        });
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                if (TextUtils.isEmpty(newText)) {
-                    return true;
-                }
-                singleComicPresenter.searchXkcd(newText);
-                return true;
-            }
-        });
-        searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
-            @Override
-            public boolean onMenuItemActionExpand(MenuItem menuItem) {
-                setItemsVisibility(menu, new int[]{R.id.action_left, R.id.action_right, R.id.action_share}, false);
-                return true;
-            }
-
-            @Override
-            public boolean onMenuItemActionCollapse(MenuItem menuItem) {
-                setItemsVisibility(menu, new int[]{R.id.action_left, R.id.action_right, R.id.action_share}, true);
-                return true;
-            }
-        });
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (currentPic == null) {
             return false;
@@ -304,22 +220,6 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
         return false;
     }
 
-    public void renderXkcdSearch(List<XkcdPic> xkcdPics) {
-        searchSuggestions = xkcdPics;
-        String[] columns = {BaseColumns._ID,
-                SearchManager.SUGGEST_COLUMN_TEXT_1,
-                SearchManager.SUGGEST_COLUMN_TEXT_2,
-                SearchManager.SUGGEST_COLUMN_INTENT_DATA,
-        };
-        MatrixCursor cursor = new MatrixCursor(columns);
-        for (int i = 0; i < searchSuggestions.size(); i++) {
-            XkcdPic xkcdPic = searchSuggestions.get(i);
-            String[] tmp = {Integer.toString(i), xkcdPic.getTargetImg(), xkcdPic.getTitle(), String.valueOf(xkcdPic.num)};
-            cursor.addRow(tmp);
-        }
-        searchAdapter.swapCursor(cursor);
-    }
-
     @OnLongClick(R.id.iv_xkcd_pic)
     public boolean showExplainDialog(ImageView v) {
         if (currentPic == null) {
@@ -332,12 +232,6 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
         v.performHapticFeedback(LONG_PRESS, FLAG_IGNORE_GLOBAL_SETTING);
         logUXEvent(FIRE_LONG_PRESS);
         return true;
-    }
-
-    private void setItemsVisibility(Menu menu, int[] hideItems, boolean visible) {
-        for (int hideItem : hideItems) {
-            menu.findItem(hideItem).setVisible(visible);
-        }
     }
 
     private void initGlide() {
