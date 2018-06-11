@@ -8,7 +8,7 @@
     <string name="action_specific">选择指定xkcd</string>
     <string name="action_xkcd">访问xkcd.com</string>
     <string name="action_explain">访问Explainxkcd</string>
-    <string name="search_hint">搜索xkcd</string>
+    <string name="search_hint_xkcd">搜索xkcd</string>
 
     <string name="dialog_got_it">了解</string>
     <string name="dialog_more_details">更多解释</string>
@@ -57,4 +57,5 @@
 
     <string name="action_what_if_list">浏览what if列表</string>
     <string name="action_specific_what_if">选择指定what if</string>
+    <string name="search_hint_what_if">搜索what if</string>
 </resources>

@@ -12,7 +12,7 @@
     <string name="action_specific">Specific xkcd</string>
     <string name="action_xkcd">Go to xkcd.com</string>
     <string name="action_explain">Go to explainxkcd</string>
-    <string name="search_hint">Search xkcd</string>
+    <string name="search_hint_xkcd">Search xkcd</string>
 
     <string name="dialog_got_it">Got it</string>
     <string name="dialog_more_details">More details</string>
@@ -81,4 +81,5 @@
 
     <string name="action_what_if_list">Browse what if</string>
     <string name="action_specific_what_if">Specific what if</string>
+    <string name="search_hint_what_if">Search what if</string>
 </resources>

@@ -1,4 +1,4 @@
-package xyz.jienan.xkcd.base;
+package xyz.jienan.xkcd.home.base;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

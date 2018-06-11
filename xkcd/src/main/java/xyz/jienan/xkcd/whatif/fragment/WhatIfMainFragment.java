@@ -4,7 +4,10 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.app.SearchManager;
+import android.database.MatrixCursor;
 import android.os.Bundle;
+import android.provider.BaseColumns;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -19,12 +22,15 @@ import android.view.ViewGroup;
 
 import com.jakewharton.rxbinding2.view.RxView;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.OnPageChange;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.base.BaseFragment;
+import xyz.jienan.xkcd.home.base.ContentMainBaseFragment;
 import xyz.jienan.xkcd.model.WhatIfArticle;
 import xyz.jienan.xkcd.ui.like.LikeButton;
 import xyz.jienan.xkcd.whatif.WhatIfPagerAdapter;
@@ -36,57 +42,41 @@ import static android.support.v4.view.ViewPager.SCROLL_STATE_IDLE;
 import static butterknife.OnPageChange.Callback.PAGE_SCROLL_STATE_CHANGED;
 import static butterknife.OnPageChange.Callback.PAGE_SELECTED;
 
-public class WhatIfMainFragment extends BaseFragment implements WhatIfMainContract.View {
-
-    private static final String LOADED_WHAT_IF_ID = "what_if_id";
-
-    private static final String LATEST_WHAT_IF_ID = "what_if_latest_id";
-
-    @BindView(R.id.viewpager)
-    ViewPager viewPager;
-
-    @BindView(R.id.fab)
-    FloatingActionButton fab;
-
-    @BindView(R.id.btn_fav)
-    LikeButton btnFav;
-
-    @BindView(R.id.btn_thumb)
-    LikeButton btnThumb;
+public class WhatIfMainFragment extends ContentMainBaseFragment implements WhatIfMainContract.View {
 
 
-    private WhatIfPagerAdapter adapter;
+    @BindString(R.string.menu_whatif)
+    String titleText;
 
-    private WhatIfMainContract.Presenter presenter;
+    @BindString(R.string.search_hint_what_if)
+    String searchHint;
 
-    private boolean isFabsShowing = false;
+    private List<WhatIfArticle> searchSuggestions;
 
     @Override
     protected int getLayoutResId() {
         return R.layout.fragment_comic_main;
     }
 
+    @Override
+    protected void suggestionClicked(int position) {
+        WhatIfArticle article = searchSuggestions.get(position);
+        scrollViewPagerToItem((int) (article.num - 1), false);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = super.onCreateView(inflater, container, savedInstanceState);
-        setHasOptionsMenu(true);
-        if (getActivity() != null) {
-            final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-            if (actionBar != null) {
-                actionBar.setTitle(R.string.menu_whatif);
-            }
-        }
         adapter = new WhatIfPagerAdapter(getChildFragmentManager());
-        viewPager.setAdapter(adapter);
-
         presenter = new WhatIfMainPresenter(this);
-
-        presenter.loadLatestWhatIf();
-
+        View view = super.onCreateView(inflater, container, savedInstanceState);
         RxView.attaches(fab).delay(100, TimeUnit.MILLISECONDS).subscribe(ignored -> fab.hide());
-
         return view;
+    }
+
+    @Override
+    protected String getTitleTextRes() {
+        return titleText;
     }
 
     @Override
@@ -97,24 +87,14 @@ public class WhatIfMainFragment extends BaseFragment implements WhatIfMainContra
 
     @Override
     public void latestWhatIfLoaded(WhatIfArticle whatIfArticle) {
-        adapter.setSize((int) whatIfArticle.num);
-        adapter.notifyDataSetChanged();
-    }
-
-    @OnPageChange(value = R.id.viewpager, callback = PAGE_SELECTED)
-    public void OnPagerSelected(int position) {
-        final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setSubtitle(String.valueOf(position + 1));
-        }
+        latestIndex = (int) whatIfArticle.num;
+        super.latestLoaded();
     }
 
     @OnPageChange(value = R.id.viewpager, callback = PAGE_SCROLL_STATE_CHANGED)
     public void onPageScrollStateChanged(int state) {
-        if (state == SCROLL_STATE_DRAGGING) {
-            fab.hide();
-            toggleSubFabs(false);
-        } else if (state == SCROLL_STATE_IDLE) {
+        super.onPageScrollStateChanged(state);
+        if (state == SCROLL_STATE_IDLE) {
             SingleWhatIfFragment fragment = (SingleWhatIfFragment) adapter.getItemFromMap(viewPager.getCurrentItem() + 1);
             if (fragment != null) {
                 fragment.updateFab();
@@ -138,43 +118,25 @@ public class WhatIfMainFragment extends BaseFragment implements WhatIfMainContra
 
     }
 
-    private void toggleSubFabs(final boolean showSubFabs) {
-        btnThumb.setClickable(showSubFabs);
-        btnFav.setClickable(showSubFabs);
-        ObjectAnimator thumbMove, thumbAlpha, favMove, favAlpha;
-        if (showSubFabs) {
-            thumbMove = ObjectAnimator.ofFloat(btnThumb, View.TRANSLATION_X, -215);
-            thumbAlpha = ObjectAnimator.ofFloat(btnThumb, View.ALPHA, 1);
-            favMove = ObjectAnimator.ofFloat(btnFav, View.TRANSLATION_X, -150, -400);
-            favAlpha = ObjectAnimator.ofFloat(btnFav, View.ALPHA, 1);
-        } else {
-            thumbMove = ObjectAnimator.ofFloat(btnThumb, View.TRANSLATION_X, 0);
-            thumbAlpha = ObjectAnimator.ofFloat(btnThumb, View.ALPHA, 0);
-            favMove = ObjectAnimator.ofFloat(btnFav, View.TRANSLATION_X, -150);
-            favAlpha = ObjectAnimator.ofFloat(btnFav, View.ALPHA, 0);
+    @Override
+    public void renderWhatIfSearch(List<WhatIfArticle> articles) {
+        searchSuggestions = articles;
+        String[] columns = {BaseColumns._ID,
+                SearchManager.SUGGEST_COLUMN_TEXT_1,
+                SearchManager.SUGGEST_COLUMN_TEXT_2,
+                SearchManager.SUGGEST_COLUMN_INTENT_DATA,
+        };
+        MatrixCursor cursor = new MatrixCursor(columns);
+        for (int i = 0; i < searchSuggestions.size(); i++) {
+            WhatIfArticle article = searchSuggestions.get(i);
+            String[] tmp = {Integer.toString(i), article.featureImg, article.title, String.valueOf(article.num)};
+            cursor.addRow(tmp);
         }
+        searchAdapter.swapCursor(cursor);
+    }
 
-        isFabsShowing = showSubFabs;
-        AnimatorSet animSet = new AnimatorSet();
-        animSet.playTogether(thumbMove, thumbAlpha, favMove, favAlpha);
-        animSet.setDuration(300);
-        animSet.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationStart(Animator animator) {
-                if (btnThumb != null && btnFav != null && showSubFabs) {
-                    btnThumb.setVisibility(View.VISIBLE);
-                    btnFav.setVisibility(View.VISIBLE);
-                }
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animator) {
-                if (btnThumb != null && btnFav != null && !showSubFabs) {
-                    btnThumb.setVisibility(View.GONE);
-                    btnFav.setVisibility(View.GONE);
-                }
-            }
-        });
-        animSet.start();
+    @Override
+    protected CharSequence getSearchHint() {
+        return searchHint;
     }
 }

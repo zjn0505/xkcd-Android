@@ -27,12 +27,12 @@ public class WhatIfMainPresenter implements WhatIfMainContract.Presenter {
     }
 
     @Override
-    public void whatIfFavorited(long currentIndex, boolean isFav) {
+    public void favorited(long currentIndex, boolean isFav) {
 
     }
 
     @Override
-    public void whatIfLiked(long currentIndex) {
+    public void liked(long currentIndex) {
 
     }
 
@@ -43,11 +43,6 @@ public class WhatIfMainPresenter implements WhatIfMainContract.Presenter {
 
     @Override
     public void getInfoAndShowFab(int currentIndex) {
-
-    }
-
-    @Override
-    public void fastLoad(int latestIndex) {
 
     }
 
@@ -67,7 +62,7 @@ public class WhatIfMainPresenter implements WhatIfMainContract.Presenter {
     }
 
     @Override
-    public void loadLatestWhatIf() {
+    public void loadLatest() {
         Disposable d = whatIfModel.loadLatest()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(whatIfArticle -> {
@@ -75,6 +70,15 @@ public class WhatIfMainPresenter implements WhatIfMainContract.Presenter {
                     sharedPrefManager.setLatestWhatIf(latestIndex);
                     view.latestWhatIfLoaded(whatIfArticle);
                 }, e -> Timber.e(e, "load what if article error"));
+        compositeDisposable.add(d);
+    }
+
+    @Override
+    public void searchContent(String query) {
+        Disposable d = whatIfModel.searchWhatIf(query)
+                .observeOn(AndroidSchedulers.mainThread())
+                .filter(whatIfArticles -> whatIfArticles != null && !whatIfArticles.isEmpty())
+                .subscribe(view::renderWhatIfSearch);
         compositeDisposable.add(d);
     }
 

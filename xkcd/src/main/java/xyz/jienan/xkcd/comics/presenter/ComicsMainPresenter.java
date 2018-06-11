@@ -26,7 +26,7 @@ public class ComicsMainPresenter implements ComicsMainContract.Presenter {
     }
 
     @Override
-    public void loadLatestXkcd() {
+    public void loadLatest() {
         Disposable d = xkcdModel.loadLatest()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(xkcdPic -> {
@@ -38,7 +38,7 @@ public class ComicsMainPresenter implements ComicsMainContract.Presenter {
     }
 
     @Override
-    public void comicLiked(long index) {
+    public void liked(long index) {
         if (index < 1) {
             return;
         }
@@ -50,7 +50,7 @@ public class ComicsMainPresenter implements ComicsMainContract.Presenter {
     }
 
     @Override
-    public void comicFavorited(long index, boolean isFav) {
+    public void favorited(long index, boolean isFav) {
         if (index < 1) {
             return;
         }
@@ -115,7 +115,7 @@ public class ComicsMainPresenter implements ComicsMainContract.Presenter {
 
 
     @Override
-    public void searchXkcd(String query) {
+    public void searchContent(String query) {
         final Disposable d = xkcdModel.search(query)
                 .observeOn(AndroidSchedulers.mainThread())
                 .filter(xkcdPics -> xkcdPics != null && !xkcdPics.isEmpty())

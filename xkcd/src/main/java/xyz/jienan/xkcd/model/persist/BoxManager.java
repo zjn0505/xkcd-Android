@@ -3,13 +3,17 @@ package xyz.jienan.xkcd.model.persist;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.google.android.gms.common.util.NumberUtils;
+
 import java.util.Collections;
 import java.util.List;
 
 import io.objectbox.Box;
 import io.objectbox.query.Query;
+import io.objectbox.query.QueryBuilder;
 import xyz.jienan.xkcd.XkcdApplication;
 import xyz.jienan.xkcd.model.WhatIfArticle;
+import xyz.jienan.xkcd.model.WhatIfArticle_;
 import xyz.jienan.xkcd.model.XkcdPic;
 import xyz.jienan.xkcd.model.XkcdPic_;
 
@@ -108,7 +112,23 @@ public class BoxManager {
 
     @NonNull
     public List<WhatIfArticle> updateAndSaveWhatIf(@NonNull List<WhatIfArticle> whatIfArticles) {
-
+        for (WhatIfArticle article : whatIfArticles) {
+            WhatIfArticle articleInBox = whatIfBox.get(article.num);
+            if (articleInBox != null) {
+                article.isFavorite = articleInBox.isFavorite;
+                article.hasThumbed = articleInBox.hasThumbed;
+            }
+        }
+        whatIfBox.put(whatIfArticles);
         return whatIfArticles;
+    }
+
+    @NonNull
+    public List<WhatIfArticle> searchWhatIf(@NonNull String query) {
+        QueryBuilder<WhatIfArticle> builder = whatIfBox.query().contains(WhatIfArticle_.title, query);
+        if (NumberUtils.isNumeric(query)) {
+            builder = builder.or().equal(WhatIfArticle_.num, Long.valueOf(query));
+        }
+        return builder.build().find();
     }
 }

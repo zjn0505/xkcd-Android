@@ -2,6 +2,9 @@ package xyz.jienan.xkcd.model;
 
 import org.jsoup.nodes.Element;
 
+import java.util.List;
+
+import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -45,5 +48,11 @@ public class WhatIfModel {
                 .map(WhatIfArticleUtil::getArticleFromHtml)
                 .map(Element::html)
                 .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Single<List<WhatIfArticle>> searchWhatIf(String query) {
+        return Observable.just(boxManager.searchWhatIf(query))
+                .subscribeOn(Schedulers.io())
+                .singleOrError();
     }
 }
