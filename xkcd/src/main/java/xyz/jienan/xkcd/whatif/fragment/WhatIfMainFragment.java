@@ -38,6 +38,10 @@ import static butterknife.OnPageChange.Callback.PAGE_SELECTED;
 
 public class WhatIfMainFragment extends BaseFragment implements WhatIfMainContract.View {
 
+    private static final String LOADED_WHAT_IF_ID = "what_if_id";
+
+    private static final String LATEST_WHAT_IF_ID = "what_if_latest_id";
+
     @BindView(R.id.viewpager)
     ViewPager viewPager;
 
@@ -88,7 +92,7 @@ public class WhatIfMainFragment extends BaseFragment implements WhatIfMainContra
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_main, menu);
+        inflater.inflate(R.menu.menu_what_if, menu);
     }
 
     @Override
@@ -112,7 +116,9 @@ public class WhatIfMainFragment extends BaseFragment implements WhatIfMainContra
             toggleSubFabs(false);
         } else if (state == SCROLL_STATE_IDLE) {
             SingleWhatIfFragment fragment = (SingleWhatIfFragment) adapter.getItemFromMap(viewPager.getCurrentItem() + 1);
-            fragment.updateFab();
+            if (fragment != null) {
+                fragment.updateFab();
+            }
 //            comicsMainPresenter.getInfoAndShowFab(getCurrentIndex());
         }
     }

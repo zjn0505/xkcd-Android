@@ -1,5 +1,6 @@
 package xyz.jienan.xkcd.list;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -20,6 +21,7 @@ import butterknife.ButterKnife;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.base.BaseActivity;
 import xyz.jienan.xkcd.model.XkcdPic;
+import xyz.jienan.xkcd.ui.RecyclerItemClickListener;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_DRAGGING;
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
@@ -28,6 +30,7 @@ import static xyz.jienan.xkcd.Const.FIRE_FILTER_FAV;
 import static xyz.jienan.xkcd.Const.FIRE_FILTER_THUMB;
 import static xyz.jienan.xkcd.Const.FIRE_LIST_FILTER_BAR;
 import static xyz.jienan.xkcd.Const.FIRE_SCROLL_TO_END;
+import static xyz.jienan.xkcd.Const.INTENT_TARGET_XKCD_ID;
 import static xyz.jienan.xkcd.list.XkcdListActivity.Selection.ALL_COMICS;
 
 /**
@@ -193,6 +196,22 @@ public class XkcdListActivity extends BaseActivity implements XkcdListContract.V
         mAdapter = new XkcdListGridAdapter(this);
         rvList.setAdapter(mAdapter);
         rvList.setHasFixedSize(true);
+        rvList.addOnItemTouchListener(new RecyclerItemClickListener(this, rvList, new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                if (position >= 0) {
+                    Intent intent = new Intent();
+                    intent.putExtra(INTENT_TARGET_XKCD_ID, position + 1);
+                    setResult(RESULT_OK, intent);
+                    finish();
+                }
+            }
+
+            @Override
+            public void onLongItemClick(View view, int position) {
+                // no-ops
+            }
+        }));
         sglm = new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL);
         rvList.setLayoutManager(sglm);
         rvList.addOnScrollListener(rvScrollListener);

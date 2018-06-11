@@ -5,16 +5,13 @@ import android.preference.PreferenceManager;
 
 import xyz.jienan.xkcd.XkcdApplication;
 
+import static xyz.jienan.xkcd.Const.INVALID_ID;
+import static xyz.jienan.xkcd.Const.LAST_VIEW_WHAT_IF_ID;
+import static xyz.jienan.xkcd.Const.LAST_VIEW_XKCD_ID;
 import static xyz.jienan.xkcd.Const.WHAT_IF_LATEST_INDEX;
 import static xyz.jienan.xkcd.Const.XKCD_LATEST_INDEX;
 
 public class SharedPrefManager {
-
-    private static final int INVALID_ID = 0;
-
-    private static final String LAST_VIEW_XKCD_ID = "xkcd_last_viewed_id";
-
-    private static final String LAST_VIEW_WHAT_IF_ID = "what_if_last_viewed_id";
 
     private final SharedPreferences sharedPreferences;
 

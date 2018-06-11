@@ -5,11 +5,11 @@ package xyz.jienan.xkcd;
  */
 
 public class Const {
-    public static final String XKCD_LATEST_INDEX = "xkcd_last_index";
+
+    public static final int INVALID_ID = 0;
+
     public static final String PREF_ARROW = "pref_arrow";
     public static final String PREF_FONT = "pref_font";
-    public static final String XKCD_INDEX_ON_NOTI_INTENT = "xkcd_index_on_noti_intent";
-    public static final String XKCD_INDEX_ON_NEW_INTENT = "xkcd_index_on_new_intent";
 
     public static final String FIRE_LARGE_IMAGE = "large_image";
     public static final String FIRE_COMIC_ID = "comic_id";
@@ -44,7 +44,12 @@ public class Const {
 
     public static final String URI_XKCD_EXPLAIN_EDIT = "xkcd://explain.edit";
 
+    public static final String XKCD_INDEX_ON_NOTI_INTENT = "xkcd_index_on_noti_intent";
+
+    public static final String XKCD_LATEST_INDEX = "xkcd_last_index";
+    public static final String LAST_VIEW_XKCD_ID = "xkcd_last_viewed_id";
+    public static final String INTENT_TARGET_XKCD_ID = "intent_target_xkcd_id";
 
     public static final String WHAT_IF_LATEST_INDEX = "what_if_last_index";
-
+    public static final String LAST_VIEW_WHAT_IF_ID = "what_if_last_viewed_id";
 }

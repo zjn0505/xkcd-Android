@@ -12,6 +12,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 
@@ -28,6 +29,12 @@ import xyz.jienan.xkcd.whatif.fragment.WhatIfMainFragment;
 import static xyz.jienan.xkcd.Const.FIRE_SETTING_MENU;
 
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+    private static final String OUTSTATE_FRAGMENT_TYPE = "outstate_fragment_type";
+
+    private static final String TAG_XKCD = "comics";
+
+    private static final String TAG_WHAT_IF = "whatif";
 
     static {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
@@ -62,10 +69,23 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             navigationView.setItemIconTintList(null);
         }
-        fragmentManager.beginTransaction().replace(R.id.container, new ComicsMainFragment(), "comics").commit();
+        if (savedInstanceState == null) {
+            fragmentManager.beginTransaction().replace(R.id.container, new ComicsMainFragment(), TAG_XKCD).commit();
+        }
     }
 
 //    @Override
+//    protected void onSaveInstanceState(Bundle outState) {
+//        super.onSaveInstanceState(outState);
+//        Fragment fragment = getVisibleFragment();
+//        if (fragment instanceof ComicsMainFragment) {
+//            outState.putString(OUTSTATE_FRAGMENT_TYPE, TAG_XKCD);
+//        } else if (fragment instanceof WhatIfMainFragment) {
+//            outState.putString(OUTSTATE_FRAGMENT_TYPE, TAG_WHAT_IF);
+//        }
+//    }
+
+    //    @Override
 //    protected void onNewIntent(Intent intent) {
 //        super.onNewIntent(intent);
 //        updateIndices(intent);
@@ -96,21 +116,29 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         Fragment targetFragment = null;
+        String tag = "";
         switch (item.getItemId()) {
             case R.id.nav_comics:
-                targetFragment = fragmentManager.findFragmentByTag("comics");
+                targetFragment = fragmentManager.findFragmentByTag(TAG_XKCD);
                 if (targetFragment == null) {
                     targetFragment = new ComicsMainFragment();
+                    tag = TAG_XKCD;
                 }
                 break;
             case R.id.nav_whatif:
-                targetFragment = fragmentManager.findFragmentByTag("whatif");
+                targetFragment = fragmentManager.findFragmentByTag(TAG_WHAT_IF);
                 if (targetFragment == null) {
                     targetFragment = new WhatIfMainFragment();
+                    tag = TAG_WHAT_IF;
                 }
                 break;
             case R.id.nav_setting:
@@ -120,7 +148,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 return true;
         }
         if (getVisibleFragment() != targetFragment) {
-            fragmentManager.beginTransaction().replace(R.id.container, targetFragment).commit();
+            fragmentManager.beginTransaction().replace(R.id.container, targetFragment, tag).commit();
         }
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;

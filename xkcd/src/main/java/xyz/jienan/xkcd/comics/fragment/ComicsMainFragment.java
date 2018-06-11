@@ -59,6 +59,7 @@ import xyz.jienan.xkcd.model.XkcdPic;
 import xyz.jienan.xkcd.ui.like.LikeButton;
 import xyz.jienan.xkcd.ui.like.OnLikeListener;
 
+import static android.app.Activity.RESULT_OK;
 import static android.content.Context.SENSOR_SERVICE;
 import static android.support.v4.view.ViewPager.SCROLL_STATE_DRAGGING;
 import static android.support.v4.view.ViewPager.SCROLL_STATE_IDLE;
@@ -77,18 +78,15 @@ import static xyz.jienan.xkcd.Const.FIRE_SEARCH;
 import static xyz.jienan.xkcd.Const.FIRE_SHAKE;
 import static xyz.jienan.xkcd.Const.FIRE_SPECIFIC_MENU;
 import static xyz.jienan.xkcd.Const.FIRE_THUMB_UP;
+import static xyz.jienan.xkcd.Const.INTENT_TARGET_XKCD_ID;
+import static xyz.jienan.xkcd.Const.INVALID_ID;
+import static xyz.jienan.xkcd.Const.LAST_VIEW_XKCD_ID;
 import static xyz.jienan.xkcd.Const.PREF_ARROW;
-import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NEW_INTENT;
 import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NOTI_INTENT;
-import static xyz.jienan.xkcd.Const.XKCD_LATEST_INDEX;
 
 public class ComicsMainFragment extends BaseFragment implements ComicsMainContract.View, ShakeDetector.Listener {
 
-    private static final String LOADED_XKCD_ID = "xkcd_id";
-
-    private static final String LATEST_XKCD_ID = "xkcd_latest_id";
-
-    private static final int INVALID_ID = 0;
+    private static final int REQ_LIST_ACTIVITY = 10;
 
     @BindView(R.id.viewpager)
     ViewPager viewPager;
@@ -114,7 +112,7 @@ public class ComicsMainFragment extends BaseFragment implements ComicsMainContra
     // Use this field to record the latest xkcd pic id
     private int latestIndex = INVALID_ID;
 
-    private int savedId = INVALID_ID;
+    private int lastViewdId = INVALID_ID;
 
     private ComicsMainContract.Presenter comicsMainPresenter;
 
@@ -195,28 +193,36 @@ public class ComicsMainFragment extends BaseFragment implements ComicsMainContra
             actionBar.setTitle(R.string.menu_xkcd);
         }
         if (savedInstanceState != null) {
-            savedId = savedInstanceState.getInt(LOADED_XKCD_ID);
-            int i = savedInstanceState.getInt(LATEST_XKCD_ID);
             if (actionBar != null) {
-                actionBar.setSubtitle(String.valueOf(savedId));
-            }
-            if (i > INVALID_ID) {
-                latestIndex = i;
+                actionBar.setSubtitle(String.valueOf(lastViewdId));
             }
             NumberPickerDialogFragment pickerDialog =
                     (NumberPickerDialogFragment) getChildFragmentManager().findFragmentByTag("IdPickerDialogFragment");
             if (pickerDialog != null) {
                 pickerDialog.setListener(pickerListener);
             }
-            latestIndex = sharedPreferences.getInt(XKCD_LATEST_INDEX, INVALID_ID);
-
         } else {
-            updateIndices(getActivity().getIntent());
+            Intent intent = getActivity().getIntent();
+            if (intent != null) {
+                int notiIndex = intent.getIntExtra(XKCD_INDEX_ON_NOTI_INTENT, INVALID_ID);
+
+                if (notiIndex != INVALID_ID) {
+                    lastViewdId = notiIndex;
+                    latestIndex = lastViewdId;
+                    comicsMainPresenter.setLatest(latestIndex);
+                    Map<String, String> params = new HashMap<>();
+                    params.put(FIRE_FROM_NOTIFICATION_INDEX, String.valueOf(notiIndex));
+                    logUXEvent(FIRE_FROM_NOTIFICATION, params);
+                }
+                getActivity().setIntent(null);
+            }
         }
+        latestIndex = comicsMainPresenter.getLatest();
+        lastViewdId = comicsMainPresenter.getLastViewed(latestIndex);
         isFre = latestIndex == INVALID_ID;
         if (latestIndex > INVALID_ID) {
             adapter.setSize(latestIndex);
-            scrollViewPagerToItem(savedId > INVALID_ID ? savedId - 1 : latestIndex - 1, false);
+            scrollViewPagerToItem(lastViewdId > INVALID_ID ? lastViewdId - 1 : latestIndex - 1, false);
         }
         SensorManager sensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
         sd = new ShakeDetector(this);
@@ -228,8 +234,7 @@ public class ComicsMainFragment extends BaseFragment implements ComicsMainContra
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         if (viewPager != null && viewPager.getCurrentItem() >= 0)
-            outState.putInt(LOADED_XKCD_ID, viewPager.getCurrentItem() + 1);
-        outState.putInt(LATEST_XKCD_ID, latestIndex);
+            outState.putInt(LAST_VIEW_XKCD_ID, viewPager.getCurrentItem() + 1);
     }
 
     @Override
@@ -263,7 +268,7 @@ public class ComicsMainFragment extends BaseFragment implements ComicsMainContra
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_main, menu);
+        inflater.inflate(R.menu.menu_xkcd, menu);
 
         MenuItem itemRight = menu.findItem(R.id.action_right);
         ImageButton imageButtonRight = new ImageButton(getContext());
@@ -321,7 +326,7 @@ public class ComicsMainFragment extends BaseFragment implements ComicsMainContra
                 break;
             case R.id.action_xkcd_list:
                 Intent intent = new Intent(getActivity(), XkcdListActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, REQ_LIST_ACTIVITY);
                 logUXEvent(FIRE_BROWSE_LIST_MENU);
                 break;
             case R.id.action_specific:
@@ -345,10 +350,9 @@ public class ComicsMainFragment extends BaseFragment implements ComicsMainContra
         if (isPaused) {
             return;
         }
-        latestIndex = sharedPreferences.getInt(XKCD_LATEST_INDEX, INVALID_ID);
+        latestIndex = comicsMainPresenter.getLatest();
         if (latestIndex != INVALID_ID) {
-            Random random = new Random();
-            int randomId = random.nextInt(latestIndex + 1);
+            int randomId = new Random().nextInt(latestIndex + 1);
             scrollViewPagerToItem(randomId - 1, false);
         }
         getActivity().getWindow().getDecorView().performHapticFeedback(CONTEXT_CLICK, FLAG_IGNORE_GLOBAL_SETTING);
@@ -384,37 +388,10 @@ public class ComicsMainFragment extends BaseFragment implements ComicsMainContra
         latestIndex = (int) xkcdPic.num;
         adapter.setSize(latestIndex);
         if (isFre) {
-            if (savedId != INVALID_ID) {
-                scrollViewPagerToItem(savedId - 1, false);
-                savedId = INVALID_ID;
-            } else {
-                scrollViewPagerToItem(latestIndex - 1, false);
-            }
+            scrollViewPagerToItem(latestIndex - 1, false);
         }
+        comicsMainPresenter.setLatest(latestIndex);
         comicsMainPresenter.fastLoad(latestIndex);
-    }
-
-    private void updateIndices(Intent intent) {
-        if (intent != null && (intent.getIntExtra(XKCD_INDEX_ON_NOTI_INTENT, INVALID_ID) != INVALID_ID
-                || intent.getIntExtra(XKCD_INDEX_ON_NEW_INTENT, INVALID_ID) != INVALID_ID)) {
-            int newIntentIndex = intent.getIntExtra(XKCD_INDEX_ON_NEW_INTENT, INVALID_ID);
-            int notiIndex = intent.getIntExtra(XKCD_INDEX_ON_NOTI_INTENT, INVALID_ID);
-            if (newIntentIndex != INVALID_ID) {
-                savedId = newIntentIndex;
-            }
-            if (notiIndex != INVALID_ID) {
-                savedId = notiIndex;
-                latestIndex = savedId;
-                comicsMainPresenter.setLatest(latestIndex);
-                Map<String, String> params = new HashMap<>();
-                params.put(FIRE_FROM_NOTIFICATION_INDEX, String.valueOf(notiIndex));
-                logUXEvent(FIRE_FROM_NOTIFICATION, params);
-            }
-
-        } else {
-            latestIndex = comicsMainPresenter.getLatest();
-            savedId = comicsMainPresenter.getLastViewed(latestIndex);
-        }
     }
 
     @Override
@@ -448,6 +425,17 @@ public class ComicsMainFragment extends BaseFragment implements ComicsMainContra
         });
         animator.start();
         fab.setImageResource(icon);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQ_LIST_ACTIVITY && resultCode == RESULT_OK && data != null) {
+            int targetId = data.getIntExtra(INTENT_TARGET_XKCD_ID, INVALID_ID);
+            if (targetId != INVALID_ID) {
+                scrollViewPagerToItem(targetId - 1, false);
+            }
+        }
     }
 
     private void showToast(Context context, String text) {

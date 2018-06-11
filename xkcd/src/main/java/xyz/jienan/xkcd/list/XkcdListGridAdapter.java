@@ -2,7 +2,6 @@ package xyz.jienan.xkcd.list;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.percent.PercentFrameLayout;
 import android.support.percent.PercentLayoutHelper;
@@ -23,11 +22,8 @@ import java.util.List;
 
 import timber.log.Timber;
 import xyz.jienan.xkcd.R;
-import xyz.jienan.xkcd.home.MainActivity;
 import xyz.jienan.xkcd.model.XkcdModel;
 import xyz.jienan.xkcd.model.XkcdPic;
-
-import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NEW_INTENT;
 
 public class XkcdListGridAdapter extends RecyclerView.Adapter<XkcdListGridAdapter.XkcdViewHolder> implements RecyclerViewFastScroller.BubbleTextGetter {
 
@@ -110,12 +106,6 @@ public class XkcdListGridAdapter extends RecyclerView.Adapter<XkcdListGridAdapte
             } else {
                 itemXkcdImageNum.setBackground(mContext.getResources().getDrawable(R.drawable.item_num_bg));
             }
-            itemView.setOnClickListener(view -> {
-                Intent intent = new Intent(mContext, MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.putExtra(XKCD_INDEX_ON_NEW_INTENT, (int) pic.num);
-                mContext.startActivity(intent);
-            });
             if (width == 0 || height == 0) {
                 xkcdModel.loadXkcd(pic.num)
                         .subscribe(xkcdPic -> {

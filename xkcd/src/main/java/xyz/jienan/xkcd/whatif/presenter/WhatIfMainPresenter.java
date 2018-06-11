@@ -72,7 +72,7 @@ public class WhatIfMainPresenter implements WhatIfMainContract.Presenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(whatIfArticle -> {
                     long latestIndex = whatIfArticle.num;
-                    sharedPrefManager.setLatestXkcd(latestIndex);
+                    sharedPrefManager.setLatestWhatIf(latestIndex);
                     view.latestWhatIfLoaded(whatIfArticle);
                 }, e -> Timber.e(e, "load what if article error"));
         compositeDisposable.add(d);

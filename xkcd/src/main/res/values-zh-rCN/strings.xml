@@ -54,4 +54,7 @@
     <string name="filter_all_comics">全部漫画</string>
     <string name="filter_my_fav">我的最爱</string>
     <string name="filter_people_choice">人民之选</string>
+
+    <string name="action_what_if_list">浏览what if列表</string>
+    <string name="action_specific_what_if">选择指定what if</string>
 </resources>
