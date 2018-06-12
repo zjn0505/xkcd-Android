@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import butterknife.BindView;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.Disposables;
 import timber.log.Timber;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.base.BaseFragment;
@@ -33,6 +35,8 @@ public class SingleWhatIfFragment extends BaseFragment implements WhatIfWebView.
     private WhatIfMainFragment parentFragment;
 
     private LatexInterface latexInterface = new LatexInterface();
+
+    private Disposable disposable = Disposables.disposed();
 
     public static SingleWhatIfFragment newInstance(int articleId) {
         SingleWhatIfFragment fragment = new SingleWhatIfFragment();
@@ -65,15 +69,15 @@ public class SingleWhatIfFragment extends BaseFragment implements WhatIfWebView.
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setDisplayZoomControls(false);
         webView.getSettings().setLoadWithOverviewMode(true);
-        WhatIfModel.getInstance()
-                .loadArticle(id)
-                .subscribe(articleHtml -> {
+        final WhatIfModel model = WhatIfModel.getInstance();
+        disposable = model.loadArticle(id)
+                .doOnSuccess(model::push)
+                .subscribe(article -> {
                             if (webView != null) {
-                                webView.loadDataWithBaseURL("file:///android_asset/", articleHtml, "text/html", "UTF-8", null);
+                                webView.loadDataWithBaseURL("file:///android_asset/", article.content, "text/html", "UTF-8", null);
                             }
                         },
-                        e -> Timber.e(e)
-                );
+                        Timber::e);
         webView.setCallback(this);
         webView.setLatexScrollInterface(latexInterface);
         webView.addJavascriptInterface(latexInterface, "AndroidLatex");
@@ -85,11 +89,17 @@ public class SingleWhatIfFragment extends BaseFragment implements WhatIfWebView.
     public void scrolledToTheEnd(boolean isTheEnd) {
         if (parentFragment != null) {
             if (!parentFragment.fab.isShown() && isTheEnd) {
-                parentFragment.fab.show();
+                parentFragment.showOrHideFabWithInfo(true);
             } else if (parentFragment.fab.isShown() && !isTheEnd) {
-                parentFragment.fab.hide();
+                parentFragment.showOrHideFabWithInfo(false);
             }
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        disposable.dispose();
+        super.onDestroyView();
     }
 
     public void updateFab() {

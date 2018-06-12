@@ -1,5 +1,7 @@
 package xyz.jienan.xkcd.model;
 
+import android.text.TextUtils;
+
 import org.jsoup.nodes.Element;
 
 import java.util.List;
@@ -8,6 +10,7 @@ import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.PublishSubject;
 import xyz.jienan.xkcd.base.network.NetworkService;
 import xyz.jienan.xkcd.base.network.WhatIfAPI;
 import xyz.jienan.xkcd.model.persist.BoxManager;
@@ -21,6 +24,8 @@ public class WhatIfModel {
 
     private final BoxManager boxManager = BoxManager.getInstance();
 
+    private final PublishSubject<WhatIfArticle> picsPipeline = PublishSubject.create();
+
     private WhatIfModel() {
         // no public constructor
     }
@@ -32,6 +37,14 @@ public class WhatIfModel {
         return whatIfModel;
     }
 
+    public void push(WhatIfArticle article) {
+        picsPipeline.onNext(article);
+    }
+
+    public Observable<WhatIfArticle> observe() {
+        return picsPipeline;
+    }
+
     public Single<WhatIfArticle> loadLatest() {
         return whatIfAPI.getArchive()
                 .subscribeOn(Schedulers.io())
@@ -41,18 +54,36 @@ public class WhatIfModel {
                 .map(articleList -> articleList.get(articleList.size() - 1));
     }
 
-    public Single<String> loadArticle(long id) {
-        return whatIfAPI.getArticle(id)
-                .subscribeOn(Schedulers.io())
+    public Single<WhatIfArticle> loadArticle(long id) {
+        return loadArticleContentFromDB(id)
+                .switchIfEmpty(loadArticleFromAPI(id))
                 .singleOrError()
-                .map(WhatIfArticleUtil::getArticleFromHtml)
-                .map(Element::html)
                 .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public WhatIfArticle loadArticleFromDB(long id) {
+        return boxManager.getWhatIf(id);
     }
 
     public Single<List<WhatIfArticle>> searchWhatIf(String query) {
         return Observable.just(boxManager.searchWhatIf(query))
-                .subscribeOn(Schedulers.io())
                 .singleOrError();
+    }
+
+    public Observable<WhatIfArticle> fav(long index, boolean isFav) {
+        return Observable.just(boxManager.favWhatIf(index, isFav));
+    }
+
+    private Observable<WhatIfArticle> loadArticleFromAPI(long id) {
+        return whatIfAPI.getArticle(id)
+                .subscribeOn(Schedulers.io())
+                .map(WhatIfArticleUtil::getArticleFromHtml)
+                .map(Element::html)
+                .map(content -> boxManager.updateAndSaveWhatIf(id, content));
+    }
+
+    private Observable<WhatIfArticle> loadArticleContentFromDB(long id) {
+        WhatIfArticle article = boxManager.getWhatIf(id);
+        return (article == null || TextUtils.isEmpty(article.content)) ? Observable.empty() : Observable.just(article);
     }
 }

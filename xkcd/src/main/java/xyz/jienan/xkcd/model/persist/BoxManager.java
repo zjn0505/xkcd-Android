@@ -48,7 +48,7 @@ public class BoxManager {
     }
 
     @Nullable
-    public XkcdPic like(long index) {
+    public XkcdPic likeXkcd(long index) {
         final XkcdPic xkcdPic = xkcdBox.get(index);
         if (xkcdPic != null) {
             xkcdPic.hasThumbed = true;
@@ -57,7 +57,7 @@ public class BoxManager {
         return xkcdPic;
     }
 
-    public XkcdPic fav(long index, boolean isFav) {
+    public XkcdPic favXkcd(long index, boolean isFav) {
         final XkcdPic xkcdPic = xkcdBox.get(index);
         if (xkcdPic != null) {
             xkcdPic.isFavorite = isFav;
@@ -110,6 +110,11 @@ public class BoxManager {
 
     /********** what if **********/
 
+    @Nullable
+    public WhatIfArticle getWhatIf(long index) {
+        return whatIfBox.get(index);
+    }
+
     @NonNull
     public List<WhatIfArticle> updateAndSaveWhatIf(@NonNull List<WhatIfArticle> whatIfArticles) {
         for (WhatIfArticle article : whatIfArticles) {
@@ -123,6 +128,15 @@ public class BoxManager {
         return whatIfArticles;
     }
 
+    public WhatIfArticle updateAndSaveWhatIf(long index, String content) {
+        final WhatIfArticle article = whatIfBox.get(index);
+        if (article != null) {
+            article.content = content;
+            whatIfBox.put(article);
+        }
+        return article;
+    }
+
     @NonNull
     public List<WhatIfArticle> searchWhatIf(@NonNull String query) {
         QueryBuilder<WhatIfArticle> builder = whatIfBox.query().contains(WhatIfArticle_.title, query);
@@ -130,5 +144,24 @@ public class BoxManager {
             builder = builder.or().equal(WhatIfArticle_.num, Long.valueOf(query));
         }
         return builder.build().find();
+    }
+
+    @Nullable
+    public WhatIfArticle likeWhatIf(long index) {
+        final WhatIfArticle article = whatIfBox.get(index);
+        if (article != null) {
+            article.hasThumbed = true;
+            whatIfBox.put(article);
+        }
+        return article;
+    }
+
+    public WhatIfArticle favWhatIf(long index, boolean isFav) {
+        final WhatIfArticle article = whatIfBox.get(index);
+        if (article != null) {
+            article.isFavorite = isFav;
+            whatIfBox.put(article);
+        }
+        return article;
     }
 }

@@ -72,7 +72,6 @@ import static xyz.jienan.xkcd.Const.FIRE_SHAKE;
 import static xyz.jienan.xkcd.Const.FIRE_SPECIFIC_MENU;
 import static xyz.jienan.xkcd.Const.FIRE_THUMB_UP;
 import static xyz.jienan.xkcd.Const.INVALID_ID;
-import static xyz.jienan.xkcd.Const.LAST_VIEW_XKCD_ID;
 import static xyz.jienan.xkcd.Const.PREF_ARROW;
 import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NOTI_INTENT;
 
@@ -115,6 +114,8 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
     protected SearchCursorAdapter searchAdapter;
 
     protected abstract void suggestionClicked(int position);
+
+    protected abstract String getTitleTextRes();
 
     private OnLikeListener likeListener = new OnLikeListener() {
         @Override
@@ -172,6 +173,8 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
 
         viewPager.setAdapter(adapter);
         presenter.loadLatest();
+        latestIndex = presenter.getLatest();
+        lastViewdId = presenter.getLastViewed(latestIndex);
         final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle(getTitleTextRes());
@@ -201,8 +204,6 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
                 getActivity().setIntent(null);
             }
         }
-        latestIndex = presenter.getLatest();
-        lastViewdId = presenter.getLastViewed(latestIndex);
         isFre = latestIndex == INVALID_ID;
         if (latestIndex > INVALID_ID) {
             adapter.setSize(latestIndex);
@@ -213,16 +214,6 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
         sd.start(sensorManager);
 
         return view;
-    }
-
-    protected abstract String getTitleTextRes();
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if (viewPager != null && viewPager.getCurrentItem() >= 0) {
-            outState.putInt(LAST_VIEW_XKCD_ID, viewPager.getCurrentItem() + 1);
-        }
     }
 
     @Override
@@ -252,7 +243,6 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
         }
         super.onStop();
     }
-
 
     @SuppressLint("ObjectAnimatorBinding")
     protected void fabAnimation(@ColorRes final int startColor, @ColorRes final int endColor, @DrawableRes final int icon) {
@@ -360,7 +350,6 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
         logUXEvent(FIRE_SHAKE);
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -397,7 +386,6 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
             presenter.getInfoAndShowFab(getCurrentIndex());
         }
     }
-
 
     protected void toggleSubFabs(final boolean showSubFabs) {
         btnThumb.setClickable(showSubFabs);
@@ -501,7 +489,7 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
                     return true;
                 }
                 presenter.searchContent(newText);
-                return true;
+                return false;
             }
         });
         searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {

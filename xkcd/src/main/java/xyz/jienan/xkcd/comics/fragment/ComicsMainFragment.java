@@ -15,15 +15,16 @@ import java.util.List;
 
 import butterknife.BindString;
 import xyz.jienan.xkcd.R;
-import xyz.jienan.xkcd.home.base.ContentMainBaseFragment;
 import xyz.jienan.xkcd.comics.ComicsPagerAdapter;
 import xyz.jienan.xkcd.comics.contract.ComicsMainContract;
 import xyz.jienan.xkcd.comics.presenter.ComicsMainPresenter;
+import xyz.jienan.xkcd.home.base.ContentMainBaseFragment;
 import xyz.jienan.xkcd.model.XkcdPic;
 
 import static android.app.Activity.RESULT_OK;
 import static xyz.jienan.xkcd.Const.INTENT_TARGET_XKCD_ID;
 import static xyz.jienan.xkcd.Const.INVALID_ID;
+import static xyz.jienan.xkcd.Const.LAST_VIEW_XKCD_ID;
 
 public class ComicsMainFragment extends ContentMainBaseFragment implements ComicsMainContract.View {
 
@@ -45,8 +46,7 @@ public class ComicsMainFragment extends ContentMainBaseFragment implements Comic
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         presenter = new ComicsMainPresenter(this);
         adapter = new ComicsPagerAdapter(getChildFragmentManager());
-        View view = super.onCreateView(inflater, container, savedInstanceState);
-        return view;
+        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     @Override
@@ -90,6 +90,14 @@ public class ComicsMainFragment extends ContentMainBaseFragment implements Comic
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (viewPager != null && viewPager.getCurrentItem() >= 0) {
+            outState.putInt(LAST_VIEW_XKCD_ID, viewPager.getCurrentItem() + 1);
+        }
+    }
+
+    @Override
     public void showThumbUpCount(Long thumbCount) {
         showToast(getContext(), String.valueOf(thumbCount));
     }
@@ -107,7 +115,7 @@ public class ComicsMainFragment extends ContentMainBaseFragment implements Comic
                 SearchManager.SUGGEST_COLUMN_TEXT_2,
                 SearchManager.SUGGEST_COLUMN_INTENT_DATA,
         };
-        MatrixCursor cursor = new MatrixCursor(columns);
+        MatrixCursor cursor = new MatrixCursor(columns, xkcdPics.size());
         for (int i = 0; i < searchSuggestions.size(); i++) {
             XkcdPic xkcdPic = searchSuggestions.get(i);
             String[] tmp = {Integer.toString(i), xkcdPic.getTargetImg(), xkcdPic.getTitle(), String.valueOf(xkcdPic.num)};

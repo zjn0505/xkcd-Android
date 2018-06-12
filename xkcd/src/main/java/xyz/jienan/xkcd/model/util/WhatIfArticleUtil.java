@@ -10,6 +10,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import okhttp3.ResponseBody;
 import xyz.jienan.xkcd.model.WhatIfArticle;
@@ -35,7 +36,7 @@ public class WhatIfArticleUtil {
 
             Element c = element.selectFirst("h2.archive-date");
             String archiveDate = c.html();
-            SimpleDateFormat sdf = new SimpleDateFormat("MMMMM d, yyyy");
+            SimpleDateFormat sdf = new SimpleDateFormat("MMMMM d, yyyy", Locale.ENGLISH);
             article.date = sdf.parse(archiveDate).getTime();
 
             articles.add(article);

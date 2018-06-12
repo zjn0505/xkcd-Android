@@ -123,7 +123,7 @@ public class XkcdModel {
     public Observable<Long> thumbsUp(long index) {
         return xkcdApi.thumbsUp(NetworkService.XKCD_THUMBS_UP, (int) index)
                 .subscribeOn(Schedulers.io())
-                .doOnSubscribe(ignored -> boxManager.like(index))
+                .doOnSubscribe(ignored -> boxManager.likeXkcd(index))
                 .map(boxManager::updateAndSave)
                 .map(xkcdPic -> xkcdPic.thumbCount);
     }
@@ -166,7 +166,7 @@ public class XkcdModel {
     }
 
     public Observable<XkcdPic> fav(long index, boolean isFav) {
-        final XkcdPic xkcdPicInBox = boxManager.fav(index, isFav);
+        final XkcdPic xkcdPicInBox = boxManager.favXkcd(index, isFav);
         if (xkcdPicInBox.width == 0 || xkcdPicInBox.height == 0) {
             return loadXkcd(index);
         } else {
