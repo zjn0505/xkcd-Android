@@ -40,7 +40,7 @@
             android:launchMode="singleTask" />
 
         <activity
-            android:name=".list.XkcdListActivity"
+            android:name=".list.activity.XkcdListActivity"
             android:configChanges="screenSize|orientation|keyboardHidden"
             android:label="@string/title_xkcd_list" />
 

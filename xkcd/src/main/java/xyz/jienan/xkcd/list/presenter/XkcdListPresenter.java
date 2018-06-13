@@ -1,4 +1,4 @@
-package xyz.jienan.xkcd.list;
+package xyz.jienan.xkcd.list.presenter;
 
 import android.view.View;
 
@@ -8,6 +8,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import timber.log.Timber;
+import xyz.jienan.xkcd.list.contract.XkcdListContract;
 import xyz.jienan.xkcd.model.XkcdModel;
 import xyz.jienan.xkcd.model.XkcdPic;
 import xyz.jienan.xkcd.model.persist.SharedPrefManager;
@@ -24,7 +25,7 @@ public class XkcdListPresenter implements XkcdListContract.Presenter {
 
     private final SharedPrefManager sharedPrefManager = new SharedPrefManager();
 
-    XkcdListPresenter(XkcdListContract.View view) {
+    public XkcdListPresenter(XkcdListContract.View view) {
         this.view = view;
     }
 

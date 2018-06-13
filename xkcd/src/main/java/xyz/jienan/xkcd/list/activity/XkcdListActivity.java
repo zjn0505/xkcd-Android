@@ -1,4 +1,4 @@
-package xyz.jienan.xkcd.list;
+package xyz.jienan.xkcd.list.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,6 +20,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.base.BaseActivity;
+import xyz.jienan.xkcd.list.ListFilterDialogFragment;
+import xyz.jienan.xkcd.list.RecyclerViewFastScroller;
+import xyz.jienan.xkcd.list.contract.XkcdListContract;
+import xyz.jienan.xkcd.list.XkcdListGridAdapter;
+import xyz.jienan.xkcd.list.presenter.XkcdListPresenter;
 import xyz.jienan.xkcd.model.XkcdPic;
 import xyz.jienan.xkcd.ui.RecyclerItemClickListener;
 
@@ -31,13 +36,13 @@ import static xyz.jienan.xkcd.Const.FIRE_FILTER_THUMB;
 import static xyz.jienan.xkcd.Const.FIRE_LIST_FILTER_BAR;
 import static xyz.jienan.xkcd.Const.FIRE_SCROLL_TO_END;
 import static xyz.jienan.xkcd.Const.INTENT_TARGET_XKCD_ID;
-import static xyz.jienan.xkcd.list.XkcdListActivity.Selection.ALL_COMICS;
+import static xyz.jienan.xkcd.list.activity.XkcdListActivity.Selection.ALL_COMICS;
 
 /**
  * Created by jienanzhang on 22/03/2018.
  */
 
-public class XkcdListActivity extends BaseActivity implements XkcdListContract.View{
+public class XkcdListActivity extends BaseActivity implements XkcdListContract.View {
 
     private final static int COUNT_IN_ADV = 10;
 

@@ -20,6 +20,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import timber.log.Timber;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.model.XkcdModel;
@@ -78,13 +80,13 @@ public class XkcdListGridAdapter extends RecyclerView.Adapter<XkcdListGridAdapte
     }
 
     class XkcdViewHolder extends RecyclerView.ViewHolder {
-        private ImageView itemXkcdImageView;
-        private TextView itemXkcdImageNum;
+
+        @BindView(R.id.iv_item_xkcd_list) ImageView itemXkcdImageView;
+        @BindView(R.id.tv_item_xkcd_num) TextView itemXkcdImageNum;
 
         XkcdViewHolder(View itemView) {
             super(itemView);
-            itemXkcdImageView = itemView.findViewById(R.id.iv_item_xkcd_list);
-            itemXkcdImageNum = itemView.findViewById(R.id.tv_item_xkcd_num);
+            ButterKnife.bind(this, itemView);
         }
 
         @SuppressLint("CheckResult")

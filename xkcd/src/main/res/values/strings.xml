@@ -82,4 +82,5 @@
     <string name="action_what_if_list">Browse what if</string>
     <string name="action_specific_what_if">Specific what if</string>
     <string name="search_hint_what_if">Search what if</string>
+    <string name="item_what_if_list_title" translatable="false">%d - %s</string>
 </resources>

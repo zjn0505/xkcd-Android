@@ -37,7 +37,6 @@ import android.widget.Toast;
 import com.squareup.seismic.ShakeDetector;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -48,14 +47,12 @@ import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.base.BaseFragment;
 import xyz.jienan.xkcd.comics.SearchCursorAdapter;
 import xyz.jienan.xkcd.comics.dialog.NumberPickerDialogFragment;
-import xyz.jienan.xkcd.list.XkcdListActivity;
-import xyz.jienan.xkcd.model.XkcdPic;
+import xyz.jienan.xkcd.list.activity.XkcdListActivity;
 import xyz.jienan.xkcd.ui.like.LikeButton;
 import xyz.jienan.xkcd.ui.like.OnLikeListener;
 
 import static android.content.Context.SENSOR_SERVICE;
 import static android.support.v4.view.ViewPager.SCROLL_STATE_DRAGGING;
-import static android.support.v4.view.ViewPager.SCROLL_STATE_IDLE;
 import static android.view.HapticFeedbackConstants.CONTEXT_CLICK;
 import static android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING;
 import static butterknife.OnPageChange.Callback.PAGE_SCROLL_STATE_CHANGED;

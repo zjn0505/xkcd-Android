@@ -1,4 +1,4 @@
-package xyz.jienan.xkcd.list;
+package xyz.jienan.xkcd.list.contract;
 
 import java.util.List;
 

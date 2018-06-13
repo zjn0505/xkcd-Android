@@ -16,6 +16,9 @@ import xyz.jienan.xkcd.base.network.WhatIfAPI;
 import xyz.jienan.xkcd.model.persist.BoxManager;
 import xyz.jienan.xkcd.model.util.WhatIfArticleUtil;
 
+import static xyz.jienan.xkcd.base.network.NetworkService.XKCD_TOP;
+import static xyz.jienan.xkcd.base.network.NetworkService.XKCD_TOP_SORT_BY_THUMB_UP;
+
 public class WhatIfModel {
 
     private static WhatIfModel whatIfModel;
@@ -45,12 +48,16 @@ public class WhatIfModel {
         return picsPipeline;
     }
 
-    public Single<WhatIfArticle> loadLatest() {
+    public Single<List<WhatIfArticle>> loadAllWhatIf() {
         return whatIfAPI.getArchive()
                 .subscribeOn(Schedulers.io())
                 .singleOrError()
                 .map(WhatIfArticleUtil::getArticlesFromArchive)
-                .map(boxManager::updateAndSaveWhatIf)
+                .map(boxManager::updateAndSaveWhatIf);
+    }
+
+    public Single<WhatIfArticle> loadLatest() {
+        return loadAllWhatIf()
                 .map(articleList -> articleList.get(articleList.size() - 1));
     }
 
@@ -59,6 +66,10 @@ public class WhatIfModel {
                 .switchIfEmpty(loadArticleFromAPI(id))
                 .singleOrError()
                 .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public List<WhatIfArticle> loadArticlesFromDB() {
+        return boxManager.getWhatIfArchive();
     }
 
     public WhatIfArticle loadArticleFromDB(long id) {
@@ -85,5 +96,16 @@ public class WhatIfModel {
     private Observable<WhatIfArticle> loadArticleContentFromDB(long id) {
         WhatIfArticle article = boxManager.getWhatIf(id);
         return (article == null || TextUtils.isEmpty(article.content)) ? Observable.empty() : Observable.just(article);
+    }
+
+    public List<WhatIfArticle> getFavWhatIf() {
+        return boxManager.getFavWhatIf();
+    }
+
+    public Observable<List<WhatIfArticle>> getThumbUpList() {
+//        return xkcdApi.getTopXkcds(XKCD_TOP, XKCD_TOP_SORT_BY_THUMB_UP)
+//                .subscribeOn(Schedulers.io())
+//                .map(boxManager::updateAndSave);
+        return Observable.empty();
     }
 }

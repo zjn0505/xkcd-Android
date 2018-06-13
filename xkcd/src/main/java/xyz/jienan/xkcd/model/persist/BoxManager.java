@@ -111,6 +111,11 @@ public class BoxManager {
     /********** what if **********/
 
     @Nullable
+    public List<WhatIfArticle> getWhatIfArchive() {
+        return whatIfBox.getAll();
+    }
+
+    @Nullable
     public WhatIfArticle getWhatIf(long index) {
         return whatIfBox.get(index);
     }
@@ -163,5 +168,10 @@ public class BoxManager {
             whatIfBox.put(article);
         }
         return article;
+    }
+
+    public List<WhatIfArticle> getFavWhatIf() {
+        final Query<WhatIfArticle> queryFav = whatIfBox.query().equal(WhatIfArticle_.isFavorite, true).build();
+        return queryFav.find();
     }
 }
