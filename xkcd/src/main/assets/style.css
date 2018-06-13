@@ -30,6 +30,7 @@ p {
     line-height: 1.7em;
     color: #333333;
     overflow: auto;
+    font-weight: 500;
 }
 
 a > h1 {
@@ -93,7 +94,10 @@ a:visited {
 }
 
 .illustration {
-    width: 70%;
+    max-width: 95%;
+    min-height: 15em;
+    width: auto !important;
+    object-fit: contain;
     display: block;
     margin: 0 auto;
     padding: 0.7em 0;
