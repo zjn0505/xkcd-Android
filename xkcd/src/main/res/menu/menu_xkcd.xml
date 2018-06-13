@@ -11,4 +11,10 @@
         android:title="@string/action_specific"
         android:orderInCategory="2"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_go_explain"
+        android:title="@string/action_explain"
+        app:showAsAction="never"
+        android:orderInCategory="11"/>
 </menu>

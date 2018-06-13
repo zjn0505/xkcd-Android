@@ -24,17 +24,9 @@
         android:title="@string/action_share"
         app:showAsAction="always" />
 
-
-    <group
-        android:orderInCategory="10">
-        <item
-            android:id="@+id/action_go_xkcd"
-            android:title="@string/action_xkcd"
-            app:showAsAction="never" />
-        <item
-            android:id="@+id/action_go_explain"
-            android:title="@string/action_explain"
-            app:showAsAction="never" />
-    </group>
-
+    <item
+        android:id="@+id/action_go_xkcd"
+        android:title="@string/action_xkcd"
+        app:showAsAction="never"
+        android:orderInCategory="10"/>
 </menu>

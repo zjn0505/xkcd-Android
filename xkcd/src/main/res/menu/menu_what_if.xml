@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_xkcd_list"
-        android:title="@string/action_xkcd_list"
+        android:title="@string/action_what_if_list"
         android:orderInCategory="1"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_specific"
-        android:title="@string/action_specific"
+        android:title="@string/action_specific_what_if"
         android:orderInCategory="2"
         app:showAsAction="never" />
 </menu>

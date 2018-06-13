@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="action_share">分享xkcd</string>
+    <string name="action_share">分享 xkcd</string>
     <string name="action_left">向前</string>
     <string name="action_right">向后</string>
     <string name="action_search">搜索</string>
-    <string name="action_xkcd_list">浏览xkcd列表</string>
-    <string name="action_specific">选择指定xkcd</string>
-    <string name="action_xkcd">访问xkcd.com</string>
-    <string name="action_explain">访问Explainxkcd</string>
+    <string name="action_xkcd_list">浏览 xkcd 列表</string>
+    <string name="action_specific">选择指定 xkcd</string>
+    <string name="action_xkcd">访问 xkcd.com</string>
+    <string name="action_explain">访问 Explainxkcd</string>
     <string name="search_hint_xkcd">搜索xkcd</string>
 
     <string name="dialog_got_it">了解</string>
     <string name="dialog_more_details">更多解释</string>
 
-    <string name="dialog_pick_title">指定xkcd</string>
-    <string name="dialog_pick_content">选择指定xkcd id</string>
+    <string name="dialog_pick_title">指定 xkcd</string>
+    <string name="dialog_pick_content">选择指定 xkcd id</string>
     <string name="dialog_select">选择</string>
     <string name="dialog_cancel">取消</string>
 
-    <string name="share_to">分享这篇xkcd至</string>
+    <string name="share_to">分享这篇 xkcd 至</string>
 
     <string name="toast_first">没有更早的漫画了</string>
     <string name="toast_last">已经是最新的漫画了</string>
@@ -34,11 +34,11 @@
 
     <string name="pref_arrow_content">选择快速切换的数量</string>
     <string name="pref_font">增加可读性</string>
-    <string name="pref_font_xkcd">使用xkcd字体</string>
+    <string name="pref_font_xkcd">使用 xkcd 字体</string>
     <string name="pref_font_normal">使用正常字体</string>
     <string name="settings">设置</string>
-    <string name="share_text">一起来看看这张有趣的xkcd漫画吧. %s</string>
-    <string name="toast_more_explain_failed">获取失败，请尝试访问Explainxkcd</string>
+    <string name="share_text">一起来看看这张有趣的 xkcd 漫画吧. %s</string>
+    <string name="toast_more_explain_failed">获取失败，请尝试访问 Explainxkcd</string>
     <string name="title_xkcd_list">xkcd列表</string>
 
     <string name="thumbs_up">点赞</string>
@@ -47,15 +47,15 @@
     <string name="uri_hint_explain_edit">当前这条解释尚不完整，欢迎前去维护</string>
 
     <string-array name="notification_titles">
-        <item>有新的xkcd漫画了</item>
-        <item>xkcd刚刚更新</item>
+        <item>有新的 xkcd 漫画了</item>
+        <item>xkcd 刚刚更新</item>
     </string-array>
     <string name="menu_filter">筛选</string>
     <string name="filter_all_comics">全部漫画</string>
     <string name="filter_my_fav">我的最爱</string>
     <string name="filter_people_choice">人民之选</string>
 
-    <string name="action_what_if_list">浏览what if列表</string>
-    <string name="action_specific_what_if">选择指定what if</string>
-    <string name="search_hint_what_if">搜索what if</string>
+    <string name="action_what_if_list">浏览 what if 列表</string>
+    <string name="action_specific_what_if">选择指定 what if</string>
+    <string name="search_hint_what_if">搜索 what if</string>
 </resources>

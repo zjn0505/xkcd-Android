@@ -263,7 +263,7 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_xkcd, menu);
+        inflater.inflate(R.menu.menu_main, menu);
 
         MenuItem itemRight = menu.findItem(R.id.action_right);
         ImageButton imageButtonRight = new ImageButton(getContext());
