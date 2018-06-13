@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import java.util.List;
 
 import butterknife.BindString;
+import butterknife.OnPageChange;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.comics.ComicsPagerAdapter;
 import xyz.jienan.xkcd.comics.contract.ComicsMainContract;
@@ -22,6 +23,9 @@ import xyz.jienan.xkcd.home.base.ContentMainBaseFragment;
 import xyz.jienan.xkcd.model.XkcdPic;
 
 import static android.app.Activity.RESULT_OK;
+import static android.support.v4.view.ViewPager.SCROLL_STATE_DRAGGING;
+import static android.support.v4.view.ViewPager.SCROLL_STATE_IDLE;
+import static butterknife.OnPageChange.Callback.PAGE_SCROLL_STATE_CHANGED;
 import static xyz.jienan.xkcd.Const.INTENT_TARGET_XKCD_ID;
 import static xyz.jienan.xkcd.Const.INVALID_ID;
 import static xyz.jienan.xkcd.Const.LAST_VIEW_XKCD_ID;
@@ -94,6 +98,14 @@ public class ComicsMainFragment extends ContentMainBaseFragment implements Comic
         super.onSaveInstanceState(outState);
         if (viewPager != null && viewPager.getCurrentItem() >= 0) {
             outState.putInt(LAST_VIEW_XKCD_ID, viewPager.getCurrentItem() + 1);
+        }
+    }
+
+    @OnPageChange(value = R.id.viewpager, callback = PAGE_SCROLL_STATE_CHANGED)
+    public void onPageScrollStateChanged(int state) {
+        super.onPageScrollStateChanged(state);
+        if (state == SCROLL_STATE_IDLE) {
+            presenter.getInfoAndShowFab(getCurrentIndex());
         }
     }
 

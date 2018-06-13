@@ -331,8 +331,6 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
         if (state == SCROLL_STATE_DRAGGING) {
             fab.hide();
             toggleSubFabs(false);
-        } else if (state == SCROLL_STATE_IDLE) {
-            presenter.getInfoAndShowFab(getCurrentIndex());
         }
     }
 
