@@ -1,5 +1,7 @@
 package xyz.jienan.xkcd.model.util;
 
+import android.text.Html;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -59,6 +61,15 @@ public class WhatIfArticleUtil {
                 element.attr("class", "latex");
             }
         }
+        final Elements refElements = doc.select("span.refnum");
+        for (int i = 0; i < refElements.size(); i++) {
+            Element element = refElements.get(i);
+//            element.attr("content", doc.select("span.refbody").get(i).html());
+            element.attr("onclick", "ref.performClick(" + Html.fromHtml(doc.select("span.refbody").get(i).html()) + ")");
+
+        }
+
+
         doc.head().html("");
         doc.head().appendElement("link").attr("rel", "stylesheet").attr("type", "text/css").attr("href", "style.css");
         doc.head().appendElement("script").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/latest.js?config=TeX-MML-AM_CHTML").attr("async", "");

@@ -21,6 +21,7 @@ import xyz.jienan.xkcd.model.WhatIfModel;
 import xyz.jienan.xkcd.ui.WhatIfWebView;
 import xyz.jienan.xkcd.whatif.ImgInterface;
 import xyz.jienan.xkcd.whatif.LatexInterface;
+import xyz.jienan.xkcd.whatif.RefInterface;
 
 import static android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING;
 import static android.view.HapticFeedbackConstants.LONG_PRESS;
@@ -90,6 +91,7 @@ public class SingleWhatIfFragment extends BaseFragment implements WhatIfWebView.
         webView.setLatexScrollInterface(latexInterface);
         webView.addJavascriptInterface(latexInterface, "AndroidLatex");
         webView.addJavascriptInterface(new ImgInterface(this), "AndroidImg");
+        webView.addJavascriptInterface(new RefInterface(), "ref");
         parentFragment = ((WhatIfMainFragment) getParentFragment());
         return view;
     }
