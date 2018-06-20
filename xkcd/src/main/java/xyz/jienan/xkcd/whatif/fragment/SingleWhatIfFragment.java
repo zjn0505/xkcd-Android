@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
 
 import butterknife.BindView;
 import io.reactivex.disposables.Disposable;
@@ -69,6 +70,9 @@ public class SingleWhatIfFragment extends BaseFragment implements WhatIfWebView.
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setDisplayZoomControls(false);
         webView.getSettings().setLoadWithOverviewMode(true);
+        webView.getSettings().setAllowFileAccess(true);
+        webView.getSettings().setAppCacheEnabled(true);
+        webView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
         final WhatIfModel model = WhatIfModel.getInstance();
         disposable = model.loadArticle(id)
                 .doOnSuccess(model::push)
