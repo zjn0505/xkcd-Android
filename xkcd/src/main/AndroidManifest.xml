@@ -44,6 +44,11 @@
             android:configChanges="screenSize|orientation|keyboardHidden"
             android:label="@string/title_xkcd_list" />
 
+        <activity
+            android:name=".list.activity.WhatIfListActivity"
+            android:configChanges="screenSize|orientation|keyboardHidden"
+            android:label="@string/title_what_if_list" />
+
         <service android:name=".base.firebase.XkcdFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

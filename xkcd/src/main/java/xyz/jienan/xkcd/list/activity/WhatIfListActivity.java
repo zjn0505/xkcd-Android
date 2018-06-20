@@ -24,7 +24,6 @@ import xyz.jienan.xkcd.list.ListFilterDialogFragment;
 import xyz.jienan.xkcd.list.RecyclerViewFastScroller;
 import xyz.jienan.xkcd.list.WhatIfListAdapter;
 import xyz.jienan.xkcd.list.contract.WhatIfListContract;
-import xyz.jienan.xkcd.list.contract.XkcdListContract;
 import xyz.jienan.xkcd.list.presenter.WhatIfListPresenter;
 import xyz.jienan.xkcd.model.WhatIfArticle;
 import xyz.jienan.xkcd.ui.RecyclerItemClickListener;
@@ -163,7 +162,7 @@ public class WhatIfListActivity extends BaseActivity implements WhatIfListContra
     private void reloadList(@NonNull Selection currentSelection) {
         switch (currentSelection) {
             case ALL_WHAT_IF:
-                whatIfListPresenter.loadList(1);
+                whatIfListPresenter.loadList();
                 break;
             case MY_FAVORITE:
                 whatIfListPresenter.loadFavList();

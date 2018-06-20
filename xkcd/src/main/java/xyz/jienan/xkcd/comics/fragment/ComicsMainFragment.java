@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -22,12 +23,14 @@ import xyz.jienan.xkcd.comics.ComicsPagerAdapter;
 import xyz.jienan.xkcd.comics.contract.ComicsMainContract;
 import xyz.jienan.xkcd.comics.presenter.ComicsMainPresenter;
 import xyz.jienan.xkcd.home.base.ContentMainBaseFragment;
+import xyz.jienan.xkcd.list.activity.XkcdListActivity;
 import xyz.jienan.xkcd.model.XkcdPic;
 
 import static android.app.Activity.RESULT_OK;
 import static android.support.v4.view.ViewPager.SCROLL_STATE_DRAGGING;
 import static android.support.v4.view.ViewPager.SCROLL_STATE_IDLE;
 import static butterknife.OnPageChange.Callback.PAGE_SCROLL_STATE_CHANGED;
+import static xyz.jienan.xkcd.Const.FIRE_BROWSE_LIST_MENU;
 import static xyz.jienan.xkcd.Const.INTENT_TARGET_XKCD_ID;
 import static xyz.jienan.xkcd.Const.INVALID_ID;
 import static xyz.jienan.xkcd.Const.LAST_VIEW_XKCD_ID;
@@ -85,17 +88,6 @@ public class ComicsMainFragment extends ContentMainBaseFragment implements Comic
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQ_LIST_ACTIVITY && resultCode == RESULT_OK && data != null) {
-            int targetId = data.getIntExtra(INTENT_TARGET_XKCD_ID, INVALID_ID);
-            if (targetId != INVALID_ID) {
-                scrollViewPagerToItem(targetId - 1, false);
-            }
-        }
-    }
-
-    @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         if (viewPager != null && viewPager.getCurrentItem() >= 0) {
@@ -115,6 +107,19 @@ public class ComicsMainFragment extends ContentMainBaseFragment implements Comic
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_xkcd, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.action_xkcd_list:
+                Intent intent = new Intent(getActivity(), XkcdListActivity.class);
+                startActivityForResult(intent, REQ_LIST_ACTIVITY);
+                logUXEvent(FIRE_BROWSE_LIST_MENU);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

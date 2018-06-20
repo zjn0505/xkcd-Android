@@ -58,4 +58,5 @@
     <string name="action_what_if_list">浏览 what if 列表</string>
     <string name="action_specific_what_if">选择指定 what if</string>
     <string name="search_hint_what_if">搜索 what if</string>
+    <string name="title_what_if_list">what if 列表</string>
 </resources>

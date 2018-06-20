@@ -36,7 +36,7 @@ public class WhatIfListPresenter implements WhatIfListContract.Presenter {
             Disposable d = whatIfModel.loadAllWhatIf()
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(this::updateView,
-                            e -> Timber.e(e, "update xkcd failed"));
+                            e -> Timber.e(e, "update what if failed"));
             compositeDisposable.add(d);
         } else {
             updateView(data);
@@ -56,7 +56,7 @@ public class WhatIfListPresenter implements WhatIfListContract.Presenter {
                 .doOnSubscribe(ignored -> view.setLoading(true))
                 .doOnNext(ignored -> view.setLoading(false))
                 .subscribe(view::updateData,
-                        e -> Timber.e(e, "get top xkcd error"));
+                        e -> Timber.e(e, "get top what if error"));
         compositeDisposable.add(d);
     }
 

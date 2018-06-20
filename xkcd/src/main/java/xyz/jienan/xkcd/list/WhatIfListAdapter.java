@@ -41,7 +41,7 @@ public class WhatIfListAdapter extends RecyclerView.Adapter<WhatIfListAdapter.Wh
     @NonNull
     @Override
     public WhatIfViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.item_xkcd_list, parent, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.item_what_if_list, parent, false);
         return new WhatIfViewHolder(view);
     }
 
@@ -88,7 +88,11 @@ public class WhatIfListAdapter extends RecyclerView.Adapter<WhatIfListAdapter.Wh
         @SuppressLint("CheckResult")
         void bind(final WhatIfArticle article) {
             glide.load(article.featureImg)
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE).priority(Priority.HIGH).fitCenter().into(itemWhatIfImageView);
+                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                    .priority(Priority.HIGH)
+                    .error(R.drawable.ic_megan)
+                    .fitCenter()
+                    .into(itemWhatIfImageView);
             itemWhatIfTitle.setText(mContext.getString(R.string.item_what_if_list_title, article.num, article.title));
             if (article.isFavorite) {
                 itemWhatIfFav.setVisibility(View.VISIBLE);

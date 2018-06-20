@@ -8,6 +8,7 @@ import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
@@ -130,7 +131,12 @@ public class RecyclerViewFastScroller extends LinearLayout {
             else
                 proportion = y / (float) height;
             final int targetPos = getValueInRange(0, itemCount - 1, (int) (proportion * (float) itemCount));
-            ((StaggeredGridLayoutManager) recyclerView.getLayoutManager()).scrollToPositionWithOffset(targetPos, 0);
+            RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+            if (layoutManager instanceof StaggeredGridLayoutManager) {
+                ((StaggeredGridLayoutManager) layoutManager).scrollToPositionWithOffset(targetPos, 0);
+            } else if (layoutManager instanceof LinearLayoutManager) {
+                ((LinearLayoutManager) layoutManager).scrollToPositionWithOffset(targetPos, 0);
+            }
             final String bubbleText = ((BubbleTextGetter) recyclerView.getAdapter()).getTextToShowInBubble(targetPos);
             if (bubble != null)
                 bubble.setText(bubbleText);

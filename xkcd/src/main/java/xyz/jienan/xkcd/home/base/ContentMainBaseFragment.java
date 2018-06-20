@@ -51,6 +51,7 @@ import xyz.jienan.xkcd.list.activity.XkcdListActivity;
 import xyz.jienan.xkcd.ui.like.LikeButton;
 import xyz.jienan.xkcd.ui.like.OnLikeListener;
 
+import static android.app.Activity.RESULT_OK;
 import static android.content.Context.SENSOR_SERVICE;
 import static android.support.v4.view.ViewPager.SCROLL_STATE_DRAGGING;
 import static android.view.HapticFeedbackConstants.CONTEXT_CLICK;
@@ -68,6 +69,7 @@ import static xyz.jienan.xkcd.Const.FIRE_SEARCH;
 import static xyz.jienan.xkcd.Const.FIRE_SHAKE;
 import static xyz.jienan.xkcd.Const.FIRE_SPECIFIC_MENU;
 import static xyz.jienan.xkcd.Const.FIRE_THUMB_UP;
+import static xyz.jienan.xkcd.Const.INTENT_TARGET_XKCD_ID;
 import static xyz.jienan.xkcd.Const.INVALID_ID;
 import static xyz.jienan.xkcd.Const.PREF_ARROW;
 import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NOTI_INTENT;
@@ -241,6 +243,17 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
         super.onStop();
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQ_LIST_ACTIVITY && resultCode == RESULT_OK && data != null) {
+            int targetId = data.getIntExtra(INTENT_TARGET_XKCD_ID, INVALID_ID);
+            if (targetId != INVALID_ID) {
+                scrollViewPagerToItem(targetId - 1, false);
+            }
+        }
+    }
+
     @SuppressLint("ObjectAnimatorBinding")
     protected void fabAnimation(@ColorRes final int startColor, @ColorRes final int endColor, @DrawableRes final int icon) {
         final ObjectAnimator animator = ObjectAnimator.ofInt(fab, "backgroundTint", getResources().getColor(startColor), getResources().getColor(endColor));
@@ -351,11 +364,6 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
         switch (id) {
             case R.id.action_search:
                 logUXEvent(FIRE_SEARCH);
-                break;
-            case R.id.action_xkcd_list:
-                Intent intent = new Intent(getActivity(), XkcdListActivity.class);
-                startActivityForResult(intent, REQ_LIST_ACTIVITY);
-                logUXEvent(FIRE_BROWSE_LIST_MENU);
                 break;
             case R.id.action_specific:
                 if (latestIndex == INVALID_ID) {

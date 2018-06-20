@@ -20,7 +20,7 @@ public class WhatIfArticleUtil {
     private static final String BASE_URI = "https://what-if.xkcd.com/";
 
     public static List<WhatIfArticle> getArticlesFromArchive(ResponseBody responseBody) throws IOException, ParseException {
-        Document doc = Jsoup.parse(responseBody.string());
+        Document doc = Jsoup.parse(responseBody.string(), BASE_URI);
         Elements divArchive = doc.select("div#archive-wrapper");
         List<WhatIfArticle> articles = new ArrayList<>();
         for (Element element : divArchive.first().children()) {
