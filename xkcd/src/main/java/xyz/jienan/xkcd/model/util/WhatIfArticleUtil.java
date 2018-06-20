@@ -51,6 +51,7 @@ public class WhatIfArticleUtil {
         final Elements imageElements = doc.select("img.illustration");
         for (Element element : imageElements) {
             element.attr("src", element.absUrl("src"));
+            element.attr("onclick", element.absUrl("src"));
         }
         final Elements pElements = doc.select("p");
         for (Element element : pElements) {
@@ -62,6 +63,7 @@ public class WhatIfArticleUtil {
         doc.head().appendElement("link").attr("rel", "stylesheet").attr("type", "text/css").attr("href", "style.css");
         doc.head().appendElement("script").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/latest.js?config=TeX-MML-AM_CHTML").attr("async", "");
         doc.head().appendElement("script").attr("src", "LatexInterface.js");
+        doc.head().appendElement("script").attr("src", "ImgInterface.js");
         doc.body().html(elements.html()).appendElement("p");
         return doc;
     }

@@ -4,6 +4,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,18 +19,21 @@ import xyz.jienan.xkcd.base.BaseFragment;
 import xyz.jienan.xkcd.comics.dialog.SimpleInfoDialogFragment;
 import xyz.jienan.xkcd.model.WhatIfModel;
 import xyz.jienan.xkcd.ui.WhatIfWebView;
+import xyz.jienan.xkcd.whatif.ImgInterface;
 import xyz.jienan.xkcd.whatif.LatexInterface;
+
+import static android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING;
+import static android.view.HapticFeedbackConstants.LONG_PRESS;
+import static xyz.jienan.xkcd.Const.FIRE_LONG_PRESS;
 
 /**
  * Created by jienanzhang on 03/03/2018.
  */
 
-public class SingleWhatIfFragment extends BaseFragment implements WhatIfWebView.ScrollToEndCallback {
+public class SingleWhatIfFragment extends BaseFragment implements WhatIfWebView.ScrollToEndCallback, ImgInterface.ImgCallback {
 
     @BindView(R.id.webview_what_if)
     WhatIfWebView webView;
-
-    private SimpleInfoDialogFragment dialogFragment;
 
     private int id;
 
@@ -85,6 +89,7 @@ public class SingleWhatIfFragment extends BaseFragment implements WhatIfWebView.
         webView.setCallback(this);
         webView.setLatexScrollInterface(latexInterface);
         webView.addJavascriptInterface(latexInterface, "AndroidLatex");
+        webView.addJavascriptInterface(new ImgInterface(this), "AndroidImg");
         parentFragment = ((WhatIfMainFragment) getParentFragment());
         return view;
     }
@@ -112,5 +117,14 @@ public class SingleWhatIfFragment extends BaseFragment implements WhatIfWebView.
         } else if (webView.distanceToEnd() > 250) {
             scrolledToTheEnd(false);
         }
+    }
+
+    @Override
+    public void onImgLongClick(String title) {
+        AlertDialog dialog = new AlertDialog.Builder(getContext()).create();
+        dialog.setMessage(title);
+        dialog.show();
+        this.getView().performHapticFeedback(LONG_PRESS, FLAG_IGNORE_GLOBAL_SETTING);
+        logUXEvent(FIRE_LONG_PRESS);
     }
 }
