@@ -1,8 +1,6 @@
-package xyz.jienan.xkcd.whatif;
+package xyz.jienan.xkcd.whatif.interfaces;
 
 import android.webkit.JavascriptInterface;
-
-import timber.log.Timber;
 
 public class ImgInterface {
 
@@ -14,8 +12,9 @@ public class ImgInterface {
 
     @JavascriptInterface
     public void doLongPress(String title) {
-        imgCallback.onImgLongClick(title);
-        Timber.d("do long press " + title);
+        if (imgCallback != null) {
+            imgCallback.onImgLongClick(title);
+        }
     }
 
     public interface ImgCallback {

@@ -5,7 +5,7 @@ import android.graphics.Color;
 import android.util.AttributeSet;
 import android.webkit.WebView;
 
-import xyz.jienan.xkcd.whatif.LatexInterface;
+import xyz.jienan.xkcd.whatif.interfaces.LatexInterface;
 
 public class WhatIfWebView extends WebView {
 

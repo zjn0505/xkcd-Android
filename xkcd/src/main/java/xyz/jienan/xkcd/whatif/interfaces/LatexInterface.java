@@ -1,4 +1,4 @@
-package xyz.jienan.xkcd.whatif;
+package xyz.jienan.xkcd.whatif.interfaces;
 
 import android.webkit.JavascriptInterface;
 
