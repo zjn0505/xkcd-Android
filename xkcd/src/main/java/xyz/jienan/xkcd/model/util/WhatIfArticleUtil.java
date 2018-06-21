@@ -1,7 +1,5 @@
 package xyz.jienan.xkcd.model.util;
 
-import android.text.Html;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -50,15 +48,22 @@ public class WhatIfArticleUtil {
         final Document doc = Jsoup.parse(responseBody.string(), BASE_URI);
         final Elements elements = doc.select("article.entry");
         elements.remove(elements.get(0).children().first());
+
         final Elements imageElements = doc.select("img.illustration");
         for (Element element : imageElements) {
             element.attr("src", element.absUrl("src"));
         }
+
         final Elements pElements = doc.select("p");
         for (Element element : pElements) {
             if (element.html().split("\\[").length > 1) {
                 element.attr("class", "latex");
             }
+        }
+
+        final Elements aElements = doc.select("a");
+        for (Element element : aElements) {
+            element.attr("href", element.absUrl("href"));
         }
 
         doc.head().html("");
