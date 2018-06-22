@@ -177,6 +177,7 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
         final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle(getTitleTextRes());
+            actionBar.setSubtitle(null);
         }
         if (savedInstanceState != null) {
             if (actionBar != null) {

@@ -8,7 +8,6 @@ import xyz.jienan.xkcd.comics.fragment.SingleComicFragment;
 
 public class ComicsPagerAdapter extends BaseStatePagerAdapter {
 
-
     public ComicsPagerAdapter(FragmentManager fm) {
         super(fm);
     }
