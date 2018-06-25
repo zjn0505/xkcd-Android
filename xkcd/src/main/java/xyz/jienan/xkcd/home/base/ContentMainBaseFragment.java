@@ -367,6 +367,7 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
                 logUXEvent(FIRE_SEARCH);
                 break;
             case R.id.action_specific:
+            case R.id.action_what_if_specific:
                 if (latestIndex == INVALID_ID) {
                     break;
                 }

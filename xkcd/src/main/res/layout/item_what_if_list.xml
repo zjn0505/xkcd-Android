@@ -42,6 +42,8 @@
         android:fontFamily="@font/xkcd_script"
         android:gravity="center_vertical"
         android:textSize="22sp"
+        android:paddingLeft="10dp"
+        android:paddingStart="10dp"
         tools:text="Electrofishing for Whales" />
 
 </RelativeLayout>

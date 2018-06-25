@@ -1,5 +1,7 @@
 package xyz.jienan.xkcd.whatif.fragment;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -8,6 +10,7 @@ import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebSettings;
@@ -26,10 +29,10 @@ import butterknife.BindView;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposables;
 import timber.log.Timber;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.base.BaseFragment;
+import xyz.jienan.xkcd.list.activity.WhatIfListActivity;
 import xyz.jienan.xkcd.model.WhatIfModel;
 import xyz.jienan.xkcd.ui.WhatIfWebView;
 import xyz.jienan.xkcd.whatif.interfaces.ImgInterface;
@@ -39,6 +42,8 @@ import xyz.jienan.xkcd.whatif.interfaces.RefInterface;
 import static android.view.HapticFeedbackConstants.CONTEXT_CLICK;
 import static android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING;
 import static android.view.HapticFeedbackConstants.LONG_PRESS;
+import static xyz.jienan.xkcd.Const.FIRE_BROWSE_LIST_MENU;
+import static xyz.jienan.xkcd.Const.FIRE_GO_WHAT_IF_MENU;
 
 /**
  * Created by jienanzhang on 03/03/2018.
@@ -56,6 +61,8 @@ public class SingleWhatIfFragment extends BaseFragment implements WhatIfWebView.
     private LatexInterface latexInterface = new LatexInterface();
 
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
+
+    private AlertDialog dialog = null;
 
     public static SingleWhatIfFragment newInstance(int articleId) {
         SingleWhatIfFragment fragment = new SingleWhatIfFragment();
@@ -77,6 +84,7 @@ public class SingleWhatIfFragment extends BaseFragment implements WhatIfWebView.
         if (args != null)
             id = args.getInt("id");
         setHasOptionsMenu(true);
+        setRetainInstance(true);
     }
 
     @Nullable
@@ -106,6 +114,7 @@ public class SingleWhatIfFragment extends BaseFragment implements WhatIfWebView.
         webView.addJavascriptInterface(new ImgInterface(this), "AndroidImg");
         webView.addJavascriptInterface(new RefInterface(this), "AndroidRef");
         parentFragment = ((WhatIfMainFragment) getParentFragment());
+        setHasOptionsMenu(true);
         return view;
     }
 
@@ -122,8 +131,23 @@ public class SingleWhatIfFragment extends BaseFragment implements WhatIfWebView.
 
     @Override
     public void onDestroyView() {
+        if (dialog != null) {
+            dialog.dismiss();
+        }
         compositeDisposable.dispose();
         super.onDestroyView();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_go_xkcd:
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://whatif.xkcd.com/" + id));
+                startActivity(browserIntent);
+                logUXEvent(FIRE_GO_WHAT_IF_MENU);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public void updateFab() {
@@ -151,7 +175,7 @@ public class SingleWhatIfFragment extends BaseFragment implements WhatIfWebView.
     }
 
     private void showSimpleInfoDialog(String content) {
-        AlertDialog dialog = new AlertDialog.Builder(getContext()).create();
+        dialog = new AlertDialog.Builder(getContext()).create();
         LinearLayout view = (LinearLayout) getLayoutInflater().inflate(R.layout.dialog_explain, null);
         TextView textView = view.findViewById(R.id.tv_explain);
         Document document = Jsoup.parse(content);
