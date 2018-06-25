@@ -44,6 +44,7 @@ import static android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING;
 import static android.view.HapticFeedbackConstants.LONG_PRESS;
 import static xyz.jienan.xkcd.Const.FIRE_BROWSE_LIST_MENU;
 import static xyz.jienan.xkcd.Const.FIRE_GO_WHAT_IF_MENU;
+import static xyz.jienan.xkcd.Const.FIRE_SHARE_BAR;
 
 /**
  * Created by jienanzhang on 03/03/2018.
@@ -141,6 +142,14 @@ public class SingleWhatIfFragment extends BaseFragment implements WhatIfWebView.
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.action_share:
+                Intent shareIntent = new Intent();
+                shareIntent.setAction(Intent.ACTION_SEND);
+                shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_text_what_if, "https://whatif.xkcd.com/" + id));
+                shareIntent.setType("text/plain");
+                startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.share_to)));
+                logUXEvent(FIRE_SHARE_BAR);
+                return true;
             case R.id.action_go_xkcd:
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://whatif.xkcd.com/" + id));
                 startActivity(browserIntent);
