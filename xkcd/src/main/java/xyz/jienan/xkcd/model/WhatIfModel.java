@@ -16,7 +16,8 @@ import xyz.jienan.xkcd.base.network.WhatIfAPI;
 import xyz.jienan.xkcd.model.persist.BoxManager;
 import xyz.jienan.xkcd.model.util.WhatIfArticleUtil;
 
-import static xyz.jienan.xkcd.base.network.NetworkService.XKCD_TOP;
+import static xyz.jienan.xkcd.base.network.NetworkService.WHAT_IF_THUMBS_UP;
+import static xyz.jienan.xkcd.base.network.NetworkService.WHAT_IF_TOP;
 import static xyz.jienan.xkcd.base.network.NetworkService.XKCD_TOP_SORT_BY_THUMB_UP;
 
 public class WhatIfModel {
@@ -85,6 +86,27 @@ public class WhatIfModel {
         return Observable.just(boxManager.favWhatIf(index, isFav));
     }
 
+    public List<WhatIfArticle> getFavWhatIf() {
+        return boxManager.getFavWhatIf();
+    }
+
+    public Observable<List<WhatIfArticle>> getThumbUpList() {
+        return whatIfAPI.getTopWhatIfs(WHAT_IF_TOP, XKCD_TOP_SORT_BY_THUMB_UP)
+                .subscribeOn(Schedulers.io());
+    }
+
+    /**
+     *
+     * @param index
+     * @return thumb up count
+     */
+    public Observable<Long> thumbsUp(long index) {
+        return whatIfAPI.thumbsUpWhatIf(WHAT_IF_THUMBS_UP, (int) index)
+                .subscribeOn(Schedulers.io())
+                .doOnSubscribe(ignored -> boxManager.likeWhatIf(index))
+                .map(whatIfArticle -> whatIfArticle.thumbCount);
+    }
+
     private Observable<WhatIfArticle> loadArticleFromAPI(long id) {
         return whatIfAPI.getArticle(id)
                 .subscribeOn(Schedulers.io())
@@ -98,14 +120,4 @@ public class WhatIfModel {
         return (article == null || TextUtils.isEmpty(article.content)) ? Observable.empty() : Observable.just(article);
     }
 
-    public List<WhatIfArticle> getFavWhatIf() {
-        return boxManager.getFavWhatIf();
-    }
-
-    public Observable<List<WhatIfArticle>> getThumbUpList() {
-//        return xkcdApi.getTopXkcds(XKCD_TOP, XKCD_TOP_SORT_BY_THUMB_UP)
-//                .subscribeOn(Schedulers.io())
-//                .map(boxManager::updateAndSave);
-        return Observable.empty();
-    }
 }

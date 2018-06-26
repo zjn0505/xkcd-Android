@@ -1,9 +1,7 @@
 package xyz.jienan.xkcd.list;
 
 import android.app.Dialog;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
@@ -24,13 +22,12 @@ public class ListFilterDialogFragment extends DialogFragment {
 
     private List<HashMap<String, String>> list;
     private int selection;
+    private OnItemSelectListener itemSelectListener;
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        selection = sharedPreferences.getInt("FILTER_SELECTION", 0);
         final String[] filter = {getString(R.string.filter_all_comics), getString(R.string.filter_my_fav), getString(R.string.filter_people_choice)};
         final int[] icons = {R.mipmap.ic_launcher_round, R.drawable.ic_heart_on, R.drawable.ic_thumb_on};
         list = new ArrayList<>();
@@ -43,11 +40,25 @@ public class ListFilterDialogFragment extends DialogFragment {
         FilterAdapter adapter = new FilterAdapter();
 
         builder.setAdapter(adapter, (dialog, which) -> {
-            sharedPreferences.edit().putInt("FILTER_SELECTION", which).apply();
+            if (itemSelectListener != null) {
+                itemSelectListener.onItemSelected(which);
+            }
             dialog.dismiss();
         });
 
         return builder.create();
+    }
+
+    public void setItemSelectListener(OnItemSelectListener itemSelectListener) {
+        this.itemSelectListener = itemSelectListener;
+    }
+
+    public void setSelection(int selection) {
+        this.selection = selection;
+    }
+
+    public interface OnItemSelectListener {
+        void onItemSelected(int which);
     }
 
     private class FilterAdapter extends BaseAdapter {

@@ -40,10 +40,12 @@ import xyz.jienan.xkcd.XkcdApplication;
 public class NetworkService {
 
     public static final String XKCD_SPECIAL_LIST = "https://raw.githubusercontent.com/zjn0505/Xkcd-Android/master/xkcd/src/main/res/raw/xkcd_special.json";
-    public static final String XKCD_SEARCH_SUGGESTION = "http://130.211.211.220:3003/xkcd-suggest";
-    public static final String XKCD_BROWSE_LIST = "http://130.211.211.220:3003/xkcd-list";
-    public static final String XKCD_THUMBS_UP = "http://130.211.211.220:3003/xkcd-thumb-up";
-    public static final String XKCD_TOP = "http://130.211.211.220:3003/xkcd-top";
+    public static final String XKCD_SEARCH_SUGGESTION = "https://api.jienan.xyz/xkcd/xkcd-suggest";
+    public static final String XKCD_BROWSE_LIST = "https://api.jienan.xyz/xkcd/xkcd-list";
+    public static final String XKCD_THUMBS_UP = "https://api.jienan.xyz/xkcd/xkcd-thumb-up";
+    public static final String XKCD_TOP = "https://api.jienan.xyz/xkcd/xkcd-top";
+    public static final String WHAT_IF_THUMBS_UP = "https://api.jienan.xyz/xkcd/what-if-thumb-up";
+    public static final String WHAT_IF_TOP = "https://api.jienan.xyz/xkcd/what-if-top";
     public static final String XKCD_TOP_SORT_BY_THUMB_UP = "thumb-up";
     public static final String XKCD_EXPLAIN_URL = "https://www.explainxkcd.com/wiki/index.php/";
 

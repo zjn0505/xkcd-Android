@@ -4,9 +4,15 @@ import android.view.View;
 
 import java.util.List;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.Single;
+import io.reactivex.SingleSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import timber.log.Timber;
 import xyz.jienan.xkcd.list.contract.WhatIfListContract;
 import xyz.jienan.xkcd.model.WhatIfArticle;
@@ -54,6 +60,11 @@ public class WhatIfListPresenter implements WhatIfListContract.Presenter {
         Disposable d = whatIfModel.getThumbUpList()
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(ignored -> view.setLoading(true))
+                .flatMapSingle(whatIfArticles -> Observable.fromIterable(whatIfArticles)
+                        .map(article -> article.num)
+                        .filter(num -> num <= sharedPrefManager.getLatestWhatIf())
+                        .map(whatIfModel::loadArticleFromDB)
+                        .toList())
                 .doOnNext(ignored -> view.setLoading(false))
                 .subscribe(view::updateData,
                         e -> Timber.e(e, "get top what if error"));
@@ -62,7 +73,7 @@ public class WhatIfListPresenter implements WhatIfListContract.Presenter {
 
     @Override
     public boolean hasFav() {
-        return whatIfModel.getFavWhatIf().isEmpty();
+        return !whatIfModel.getFavWhatIf().isEmpty();
     }
 
     @Override

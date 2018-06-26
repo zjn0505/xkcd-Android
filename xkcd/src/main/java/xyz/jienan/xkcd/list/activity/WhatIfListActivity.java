@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
@@ -42,7 +43,7 @@ import static xyz.jienan.xkcd.list.activity.WhatIfListActivity.Selection.ALL_WHA
  * Created by jienanzhang on 22/03/2018.
  */
 
-public class WhatIfListActivity extends BaseActivity implements WhatIfListContract.View {
+public class WhatIfListActivity extends BaseActivity implements WhatIfListContract.View, ListFilterDialogFragment.OnItemSelectListener {
 
     @BindView(R.id.rv_list)
     RecyclerView rvList;
@@ -127,33 +128,17 @@ public class WhatIfListActivity extends BaseActivity implements WhatIfListContra
                 onBackPressed();
                 break;
             case R.id.action_filter:
-                item.setEnabled(false);
-                ListFilterDialogFragment filterDialog = new ListFilterDialogFragment();
-                filterDialog.show(getSupportFragmentManager(), "filter");
-                getSupportFragmentManager().executePendingTransactions();
-                filterDialog.getDialog().setOnDismissListener(dialog -> {
-                    item.setEnabled(true);
-                    int selection = sharedPreferences.getInt("FILTER_SELECTION", 0);
-                    if (currentSelection.ordinal() != selection) {
-                        currentSelection = Selection.fromValue(selection);
-                        reloadList(currentSelection);
-                        switch (currentSelection) {
-                            case ALL_WHAT_IF:
-                                logUXEvent(FIRE_FILTER_ALL);
-                                break;
-                            case MY_FAVORITE:
-                                logUXEvent(FIRE_FILTER_FAV);
-                                break;
-                            case PEOPLES_CHOICE:
-                                logUXEvent(FIRE_FILTER_THUMB);
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                });
-                logUXEvent(FIRE_LIST_FILTER_BAR);
-
+                final FragmentManager fragmentManager = getSupportFragmentManager();
+                ListFilterDialogFragment filterDialog = (ListFilterDialogFragment) fragmentManager.findFragmentByTag("filter");
+                if (filterDialog == null) {
+                    filterDialog = new ListFilterDialogFragment();
+                }
+                if (!filterDialog.isAdded()) {
+                    filterDialog.show(getSupportFragmentManager(), "filter");
+                    filterDialog.setItemSelectListener(this);
+                    filterDialog.setSelection(currentSelection.ordinal());
+                    logUXEvent(FIRE_LIST_FILTER_BAR);
+                }
                 break;
         }
         return true;
@@ -250,6 +235,27 @@ public class WhatIfListActivity extends BaseActivity implements WhatIfListContra
 
     public void updateData(List<WhatIfArticle> articles) {
         mAdapter.updateData(articles);
+    }
+
+    @Override
+    public void onItemSelected(int which) {
+        if (currentSelection.ordinal() != which) {
+            currentSelection = Selection.fromValue(which);
+            reloadList(currentSelection);
+            switch (currentSelection) {
+                case ALL_WHAT_IF:
+                    logUXEvent(FIRE_FILTER_ALL);
+                    break;
+                case MY_FAVORITE:
+                    logUXEvent(FIRE_FILTER_FAV);
+                    break;
+                case PEOPLES_CHOICE:
+                    logUXEvent(FIRE_FILTER_THUMB);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     public enum Selection {

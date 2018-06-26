@@ -42,7 +42,15 @@ public class WhatIfMainPresenter implements WhatIfMainContract.Presenter {
 
     @Override
     public void liked(long currentIndex) {
-
+        if (currentIndex < 1) {
+            return;
+        }
+        compositeDisposable.add(
+                whatIfModel
+                        .thumbsUp(currentIndex)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(view::showThumbUpCount,
+                                e -> Timber.e(e, "Thumbs up failed")));
     }
 
     @Override
