@@ -186,21 +186,18 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
             if (pickerDialog != null) {
                 pickerDialog.setListener(pickerListener);
             }
-        } else {
-            Intent intent = getActivity().getIntent();
-            if (intent != null) {
-                int notiIndex = intent.getIntExtra(INDEX_ON_NOTI_INTENT, INVALID_ID);
+        } else if (getActivity().getIntent() != null) {
+            int notiIndex = getActivity().getIntent().getIntExtra(INDEX_ON_NOTI_INTENT, INVALID_ID);
 
-                if (notiIndex != INVALID_ID) {
-                    lastViewdId = notiIndex;
-                    latestIndex = lastViewdId;
-                    presenter.setLatest(latestIndex);
-                    Map<String, String> params = new HashMap<>();
-                    params.put(FIRE_FROM_NOTIFICATION_INDEX, String.valueOf(notiIndex));
-                    logUXEvent(FIRE_FROM_NOTIFICATION, params);
-                }
-                getActivity().setIntent(null);
+            if (notiIndex != INVALID_ID) {
+                lastViewdId = notiIndex;
+                latestIndex = lastViewdId;
+                presenter.setLatest(latestIndex);
+                Map<String, String> params = new HashMap<>();
+                params.put(FIRE_FROM_NOTIFICATION_INDEX, String.valueOf(notiIndex));
+                logUXEvent(FIRE_FROM_NOTIFICATION, params);
             }
+            getActivity().setIntent(null);
         }
         isFre = latestIndex == INVALID_ID;
         if (latestIndex > INVALID_ID) {
