@@ -38,7 +38,9 @@ a > h1 {
 }
 
 blockquote {
+    font-size: 1.2em;
     font-style: italic;
+    line-height: 1.2em;
 }
 
 #news, .entry h1, .date-stamp, #question, .nav-buttons, footer p, footer a:link {
