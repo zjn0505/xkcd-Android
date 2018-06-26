@@ -47,8 +47,8 @@
     <string name="uri_hint_explain_edit">当前这条解释尚不完整，欢迎前去维护</string>
 
     <string-array name="notification_titles">
-        <item>有新的 xkcd 漫画了</item>
-        <item>xkcd 刚刚更新</item>
+        <item>有新的 %s 了</item>
+        <item>%s 刚刚更新</item>
     </string-array>
     <string name="menu_filter">筛选</string>
     <string name="filter_all_comics">全部漫画</string>

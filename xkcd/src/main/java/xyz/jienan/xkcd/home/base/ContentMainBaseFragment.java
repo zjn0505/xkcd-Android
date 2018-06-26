@@ -47,7 +47,6 @@ import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.base.BaseFragment;
 import xyz.jienan.xkcd.comics.SearchCursorAdapter;
 import xyz.jienan.xkcd.comics.dialog.NumberPickerDialogFragment;
-import xyz.jienan.xkcd.list.activity.XkcdListActivity;
 import xyz.jienan.xkcd.ui.like.LikeButton;
 import xyz.jienan.xkcd.ui.like.OnLikeListener;
 
@@ -58,7 +57,6 @@ import static android.view.HapticFeedbackConstants.CONTEXT_CLICK;
 import static android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING;
 import static butterknife.OnPageChange.Callback.PAGE_SCROLL_STATE_CHANGED;
 import static butterknife.OnPageChange.Callback.PAGE_SELECTED;
-import static xyz.jienan.xkcd.Const.FIRE_BROWSE_LIST_MENU;
 import static xyz.jienan.xkcd.Const.FIRE_FAVORITE_OFF;
 import static xyz.jienan.xkcd.Const.FIRE_FAVORITE_ON;
 import static xyz.jienan.xkcd.Const.FIRE_FROM_NOTIFICATION;
@@ -69,10 +67,10 @@ import static xyz.jienan.xkcd.Const.FIRE_SEARCH;
 import static xyz.jienan.xkcd.Const.FIRE_SHAKE;
 import static xyz.jienan.xkcd.Const.FIRE_SPECIFIC_MENU;
 import static xyz.jienan.xkcd.Const.FIRE_THUMB_UP;
+import static xyz.jienan.xkcd.Const.INDEX_ON_NOTI_INTENT;
 import static xyz.jienan.xkcd.Const.INTENT_TARGET_XKCD_ID;
 import static xyz.jienan.xkcd.Const.INVALID_ID;
 import static xyz.jienan.xkcd.Const.PREF_ARROW;
-import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NOTI_INTENT;
 
 public abstract class ContentMainBaseFragment extends BaseFragment implements ShakeDetector.Listener {
 
@@ -191,7 +189,7 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
         } else {
             Intent intent = getActivity().getIntent();
             if (intent != null) {
-                int notiIndex = intent.getIntExtra(XKCD_INDEX_ON_NOTI_INTENT, INVALID_ID);
+                int notiIndex = intent.getIntExtra(INDEX_ON_NOTI_INTENT, INVALID_ID);
 
                 if (notiIndex != INVALID_ID) {
                     lastViewdId = notiIndex;

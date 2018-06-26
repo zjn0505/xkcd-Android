@@ -67,8 +67,8 @@
     <string name="uri_hint_explain_edit">This explain is to be updated, help if you can.</string>
 
     <string-array name="notification_titles">
-        <item>new xkcd is coming</item>
-        <item>new xkcd on the way</item>
+        <item>new %s is coming</item>
+        <item>new %s on the way</item>
     </string-array>
 
     <string name="heart" translatable="false">

@@ -41,6 +41,7 @@ public class XkcdApplication extends Application {
         boxStore = MyObjectBox.builder().androidContext(this).build();
         XkcdSideloadUtils.init(this);
         FirebaseMessaging.getInstance().subscribeToTopic("new_comics");
+        FirebaseMessaging.getInstance().subscribeToTopic("new_what_if");
         BigImageViewer.initialize(GlideImageLoader.with(getApplicationContext()));
     }
 

@@ -45,7 +45,7 @@ public class Const {
 
     public static final String URI_XKCD_EXPLAIN_EDIT = "xkcd://explain.edit";
 
-    public static final String XKCD_INDEX_ON_NOTI_INTENT = "xkcd_index_on_noti_intent";
+    public static final String INDEX_ON_NOTI_INTENT = "index_on_noti_intent";
 
     public static final String XKCD_LATEST_INDEX = "xkcd_last_index";
     public static final String LAST_VIEW_XKCD_ID = "xkcd_last_viewed_id";
@@ -53,4 +53,8 @@ public class Const {
 
     public static final String WHAT_IF_LATEST_INDEX = "what_if_last_index";
     public static final String LAST_VIEW_WHAT_IF_ID = "what_if_last_viewed_id";
+
+    public static final String LANDING_TYPE = "landing_type";
+    public static final String LANDING_TYPE_XKCD = "landing_type_xkcd";
+    public static final String LANDING_TYPE_WHAT_IF = "landing_type_what_if";
 }
