@@ -74,6 +74,10 @@ public class WhatIfListAdapter extends RecyclerView.Adapter<WhatIfListAdapter.Wh
         notifyDataSetChanged();
     }
 
+    public WhatIfArticle getArticle(int position) {
+        return articles.get(position);
+    }
+
     class WhatIfViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.iv_item_what_if_list)

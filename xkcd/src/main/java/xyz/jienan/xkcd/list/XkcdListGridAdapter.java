@@ -79,6 +79,10 @@ public class XkcdListGridAdapter extends RecyclerView.Adapter<XkcdListGridAdapte
         notifyDataSetChanged();
     }
 
+    public XkcdPic getPic(int position) {
+        return pics.get(position);
+    }
+
     class XkcdViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.iv_item_xkcd_list)

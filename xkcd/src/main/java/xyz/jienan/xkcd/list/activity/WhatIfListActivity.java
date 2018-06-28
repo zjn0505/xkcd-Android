@@ -177,7 +177,7 @@ public class WhatIfListActivity extends BaseActivity implements WhatIfListContra
             public void onItemClick(View view, int position) {
                 if (position >= 0) {
                     Intent intent = new Intent();
-                    intent.putExtra(INTENT_TARGET_XKCD_ID, position + 1);
+                    intent.putExtra(INTENT_TARGET_XKCD_ID, (int) mAdapter.getArticle(position).num);
                     setResult(RESULT_OK, intent);
                     finish();
                 }
