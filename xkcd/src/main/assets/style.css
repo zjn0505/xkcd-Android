@@ -19,6 +19,15 @@ sup {
     margin-left: 3em;
 }
 
+ul {
+    font-size: 1.5em;
+}
+
+ol {
+    font-size: 1.5em;
+    padding-left: 150px;
+}
+
 li {
     line-height: 1.4;
 }
@@ -37,7 +46,7 @@ a > h1 {
     font-size: 1.5em;
 }
 
-blockquote {
+blockquote, blockquote > p {
     font-size: 1.2em;
     font-style: italic;
     line-height: 1.2em;
