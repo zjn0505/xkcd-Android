@@ -2,8 +2,6 @@ package xyz.jienan.xkcd.whatif.interfaces;
 
 import android.webkit.JavascriptInterface;
 
-import timber.log.Timber;
-
 public class LatexInterface {
 
     private boolean canParentScroll = true;

@@ -22,18 +22,19 @@ import butterknife.ButterKnife;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.base.BaseActivity;
 import xyz.jienan.xkcd.comics.fragment.ComicsMainFragment;
+import xyz.jienan.xkcd.model.persist.SharedPrefManager;
 import xyz.jienan.xkcd.settings.PreferenceActivity;
 import xyz.jienan.xkcd.whatif.fragment.WhatIfMainFragment;
 
 import static xyz.jienan.xkcd.Const.FIRE_SETTING_MENU;
+import static xyz.jienan.xkcd.Const.INDEX_ON_NOTI_INTENT;
+import static xyz.jienan.xkcd.Const.LANDING_TYPE;
+import static xyz.jienan.xkcd.Const.TAG_WHAT_IF;
+import static xyz.jienan.xkcd.Const.TAG_XKCD;
 
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String OUTSTATE_FRAGMENT_TYPE = "outstate_fragment_type";
-
-    private static final String TAG_XKCD = "comics";
-
-    private static final String TAG_WHAT_IF = "whatif";
 
     static {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
@@ -55,6 +56,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     private FragmentManager fragmentManager = getSupportFragmentManager();
 
+    private final SharedPrefManager sharedPrefManager = new SharedPrefManager();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,11 +72,15 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             navigationView.setItemIconTintList(null);
         }
         if (savedInstanceState == null) {
-            fragmentManager.beginTransaction().replace(R.id.container, new ComicsMainFragment(), TAG_XKCD).commit();
+            String fragmentTag = sharedPrefManager.getLandingType();
+            if (getIntent() != null && getIntent().getIntExtra(INDEX_ON_NOTI_INTENT, 0) != 0) {
+                fragmentTag = getIntent().getStringExtra(LANDING_TYPE);
+            }
+            openFragment(fragmentTag);
         }
     }
 
-//    @Override
+    //    @Override
 //    protected void onSaveInstanceState(Bundle outState) {
 //        super.onSaveInstanceState(outState);
 //        Fragment fragment = getVisibleFragment();
@@ -117,31 +124,18 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        Fragment targetFragment = null;
-        String tag = "";
         switch (item.getItemId()) {
             case R.id.nav_comics:
-                targetFragment = fragmentManager.findFragmentByTag(TAG_XKCD);
-                if (targetFragment == null) {
-                    targetFragment = new ComicsMainFragment();
-                    tag = TAG_XKCD;
-                }
+                openFragment(TAG_XKCD);
                 break;
             case R.id.nav_whatif:
-                targetFragment = fragmentManager.findFragmentByTag(TAG_WHAT_IF);
-                if (targetFragment == null) {
-                    targetFragment = new WhatIfMainFragment();
-                    tag = TAG_WHAT_IF;
-                }
+                openFragment(TAG_WHAT_IF);
                 break;
             case R.id.nav_setting:
                 Intent settingsIntent = new Intent(this, PreferenceActivity.class);
                 startActivityForResult(settingsIntent, REQ_SETTINGS);
                 logUXEvent(FIRE_SETTING_MENU);
-                return true;
-        }
-        if (getVisibleFragment() != targetFragment) {
-            fragmentManager.beginTransaction().replace(R.id.container, targetFragment, tag).commit();
+                break;
         }
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
@@ -153,6 +147,21 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             drawerLayout.closeDrawers();
         } else {
             super.onBackPressed();
+        }
+    }
+
+    private void openFragment(String fragmentTag) {
+        Fragment targetFragment = fragmentManager.findFragmentByTag(fragmentTag);
+        if (targetFragment == null) {
+            if (TAG_WHAT_IF.equals(fragmentTag)) {
+                targetFragment = new WhatIfMainFragment();
+            } else {
+                targetFragment = new ComicsMainFragment();
+            }
+        }
+        sharedPrefManager.setLandingType(fragmentTag);
+        if (getVisibleFragment() != targetFragment) {
+            fragmentManager.beginTransaction().replace(R.id.container, targetFragment, fragmentTag).commit();
         }
     }
 

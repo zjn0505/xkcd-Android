@@ -145,7 +145,7 @@ public class NetworkService {
         return whatIfAPI;
     }
 
-    public static boolean isNetworkAvailable() {
+    private static boolean isNetworkAvailable() {
         Context context = XkcdApplication.getInstance();
         ConnectivityManager connectivity = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 

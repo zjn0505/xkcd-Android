@@ -3,8 +3,8 @@ package xyz.jienan.xkcd.comics;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
-import xyz.jienan.xkcd.home.base.BaseStatePagerAdapter;
 import xyz.jienan.xkcd.comics.fragment.SingleComicFragment;
+import xyz.jienan.xkcd.home.base.BaseStatePagerAdapter;
 
 public class ComicsPagerAdapter extends BaseStatePagerAdapter {
 

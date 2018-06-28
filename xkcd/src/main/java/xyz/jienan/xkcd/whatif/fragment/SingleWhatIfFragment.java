@@ -32,7 +32,6 @@ import io.reactivex.disposables.CompositeDisposable;
 import timber.log.Timber;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.base.BaseFragment;
-import xyz.jienan.xkcd.list.activity.WhatIfListActivity;
 import xyz.jienan.xkcd.model.WhatIfModel;
 import xyz.jienan.xkcd.ui.WhatIfWebView;
 import xyz.jienan.xkcd.whatif.interfaces.ImgInterface;
@@ -42,7 +41,6 @@ import xyz.jienan.xkcd.whatif.interfaces.RefInterface;
 import static android.view.HapticFeedbackConstants.CONTEXT_CLICK;
 import static android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING;
 import static android.view.HapticFeedbackConstants.LONG_PRESS;
-import static xyz.jienan.xkcd.Const.FIRE_BROWSE_LIST_MENU;
 import static xyz.jienan.xkcd.Const.FIRE_GO_WHAT_IF_MENU;
 import static xyz.jienan.xkcd.Const.FIRE_SHARE_BAR;
 

@@ -26,13 +26,9 @@ import xyz.jienan.xkcd.home.base.ContentMainBaseFragment;
 import xyz.jienan.xkcd.list.activity.XkcdListActivity;
 import xyz.jienan.xkcd.model.XkcdPic;
 
-import static android.app.Activity.RESULT_OK;
-import static android.support.v4.view.ViewPager.SCROLL_STATE_DRAGGING;
 import static android.support.v4.view.ViewPager.SCROLL_STATE_IDLE;
 import static butterknife.OnPageChange.Callback.PAGE_SCROLL_STATE_CHANGED;
 import static xyz.jienan.xkcd.Const.FIRE_BROWSE_LIST_MENU;
-import static xyz.jienan.xkcd.Const.INTENT_TARGET_XKCD_ID;
-import static xyz.jienan.xkcd.Const.INVALID_ID;
 import static xyz.jienan.xkcd.Const.LAST_VIEW_XKCD_ID;
 
 public class ComicsMainFragment extends ContentMainBaseFragment implements ComicsMainContract.View {

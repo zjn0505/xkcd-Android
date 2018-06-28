@@ -2,7 +2,6 @@ package xyz.jienan.xkcd.comics.contract;
 
 import java.util.List;
 
-import xyz.jienan.xkcd.base.BasePresenter;
 import xyz.jienan.xkcd.base.BaseView;
 import xyz.jienan.xkcd.home.base.ContentMainBasePresenter;
 import xyz.jienan.xkcd.model.XkcdPic;

@@ -28,8 +28,8 @@ import xyz.jienan.xkcd.model.XkcdPic;
 
 import static xyz.jienan.xkcd.Const.INDEX_ON_NOTI_INTENT;
 import static xyz.jienan.xkcd.Const.LANDING_TYPE;
-import static xyz.jienan.xkcd.Const.LANDING_TYPE_WHAT_IF;
-import static xyz.jienan.xkcd.Const.LANDING_TYPE_XKCD;
+import static xyz.jienan.xkcd.Const.TAG_WHAT_IF;
+import static xyz.jienan.xkcd.Const.TAG_XKCD;
 import static xyz.jienan.xkcd.Const.WHAT_IF_LATEST_INDEX;
 import static xyz.jienan.xkcd.Const.XKCD_LATEST_INDEX;
 
@@ -79,7 +79,7 @@ public class XkcdFirebaseMessagingService extends FirebaseMessagingService {
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra(INDEX_ON_NOTI_INTENT, (int) xkcdPic.num);
-        intent.putExtra(LANDING_TYPE, LANDING_TYPE_XKCD);
+        intent.putExtra(LANDING_TYPE, TAG_XKCD);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
         String[] titles = getResources().getStringArray(R.array.notification_titles);
@@ -118,7 +118,7 @@ public class XkcdFirebaseMessagingService extends FirebaseMessagingService {
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra(INDEX_ON_NOTI_INTENT, (int) whatIfArticle.num);
-        intent.putExtra(LANDING_TYPE, LANDING_TYPE_WHAT_IF);
+        intent.putExtra(LANDING_TYPE, TAG_WHAT_IF);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
         String[] titles = getResources().getStringArray(R.array.notification_titles);

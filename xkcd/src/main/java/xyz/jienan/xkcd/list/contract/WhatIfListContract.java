@@ -5,7 +5,6 @@ import java.util.List;
 import xyz.jienan.xkcd.base.BasePresenter;
 import xyz.jienan.xkcd.base.BaseView;
 import xyz.jienan.xkcd.model.WhatIfArticle;
-import xyz.jienan.xkcd.model.XkcdPic;
 
 public interface WhatIfListContract {
 

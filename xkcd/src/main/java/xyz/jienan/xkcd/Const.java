@@ -8,6 +8,9 @@ public class Const {
 
     public static final int INVALID_ID = 0;
 
+    public static final String TAG_XKCD = "xkcd";
+    public static final String TAG_WHAT_IF = "whatif";
+
     public static final String PREF_ARROW = "pref_arrow";
     public static final String PREF_FONT = "pref_font";
 
@@ -55,6 +58,4 @@ public class Const {
     public static final String LAST_VIEW_WHAT_IF_ID = "what_if_last_viewed_id";
 
     public static final String LANDING_TYPE = "landing_type";
-    public static final String LANDING_TYPE_XKCD = "landing_type_xkcd";
-    public static final String LANDING_TYPE_WHAT_IF = "landing_type_what_if";
 }

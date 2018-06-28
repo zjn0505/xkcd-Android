@@ -6,8 +6,10 @@ import android.preference.PreferenceManager;
 import xyz.jienan.xkcd.XkcdApplication;
 
 import static xyz.jienan.xkcd.Const.INVALID_ID;
+import static xyz.jienan.xkcd.Const.LANDING_TYPE;
 import static xyz.jienan.xkcd.Const.LAST_VIEW_WHAT_IF_ID;
 import static xyz.jienan.xkcd.Const.LAST_VIEW_XKCD_ID;
+import static xyz.jienan.xkcd.Const.TAG_XKCD;
 import static xyz.jienan.xkcd.Const.WHAT_IF_LATEST_INDEX;
 import static xyz.jienan.xkcd.Const.XKCD_LATEST_INDEX;
 
@@ -20,6 +22,14 @@ public class SharedPrefManager {
     public SharedPrefManager() {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(XkcdApplication.getInstance());
         editor = sharedPreferences.edit();
+    }
+
+    public void setLandingType(String landingType) {
+        editor.putString(LANDING_TYPE, landingType).apply();
+    }
+
+    public String getLandingType() {
+        return sharedPreferences.getString(LANDING_TYPE, TAG_XKCD);
     }
 
     public void setLatestXkcd(long latestIndex) {
