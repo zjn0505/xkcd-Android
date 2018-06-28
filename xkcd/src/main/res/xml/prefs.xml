@@ -13,5 +13,10 @@
         android:summaryOff="@string/pref_font_xkcd"
         android:summaryOn="@string/pref_font_normal"
         android:title="@string/pref_font" />
-
+    <ListPreference
+        android:defaultValue="zoom_100"
+        android:key="pref_zoom"
+        android:entries="@array/zoom_value"
+        android:entryValues="@array/zoom"
+        android:title="@string/pref_what_if_zoom" />
 </PreferenceScreen>

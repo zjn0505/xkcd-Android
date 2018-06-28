@@ -12,6 +12,7 @@ import static xyz.jienan.xkcd.Const.INVALID_ID;
 import static xyz.jienan.xkcd.Const.LANDING_TYPE;
 import static xyz.jienan.xkcd.Const.LAST_VIEW_WHAT_IF_ID;
 import static xyz.jienan.xkcd.Const.LAST_VIEW_XKCD_ID;
+import static xyz.jienan.xkcd.Const.PREF_ZOOM;
 import static xyz.jienan.xkcd.Const.SHARED_PREF_KEY_PRE_QUOTE;
 import static xyz.jienan.xkcd.Const.TAG_XKCD;
 import static xyz.jienan.xkcd.Const.WHAT_IF_LATEST_INDEX;
@@ -77,5 +78,10 @@ public class SharedPrefManager {
 
     public void saveNewQuote(Quote quote) {
         editor.putString(SHARED_PREF_KEY_PRE_QUOTE, gson.toJson(quote)).apply();
+    }
+
+    public int getWhatIfZoom() {
+        String zoom = sharedPreferences.getString(PREF_ZOOM, "zoom_100");
+        return Integer.valueOf(zoom.substring(5));
     }
 }

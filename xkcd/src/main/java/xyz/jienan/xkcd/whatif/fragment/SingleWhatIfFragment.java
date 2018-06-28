@@ -33,6 +33,7 @@ import timber.log.Timber;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.base.BaseFragment;
 import xyz.jienan.xkcd.model.WhatIfModel;
+import xyz.jienan.xkcd.model.persist.SharedPrefManager;
 import xyz.jienan.xkcd.ui.WhatIfWebView;
 import xyz.jienan.xkcd.whatif.interfaces.ImgInterface;
 import xyz.jienan.xkcd.whatif.interfaces.LatexInterface;
@@ -66,6 +67,8 @@ public class SingleWhatIfFragment extends BaseFragment implements WhatIfWebView.
 
     private AlertDialog dialog = null;
 
+    private SharedPrefManager sharedPref = new SharedPrefManager();
+
     public static SingleWhatIfFragment newInstance(int articleId) {
         SingleWhatIfFragment fragment = new SingleWhatIfFragment();
         Bundle args = new Bundle();
@@ -73,6 +76,7 @@ public class SingleWhatIfFragment extends BaseFragment implements WhatIfWebView.
         fragment.setArguments(args);
         return fragment;
     }
+
 
     @Override
     protected int getLayoutResId() {
@@ -101,6 +105,7 @@ public class SingleWhatIfFragment extends BaseFragment implements WhatIfWebView.
         webView.getSettings().setAllowFileAccess(true);
         webView.getSettings().setAppCacheEnabled(true);
         webView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
+        webView.getSettings().setTextZoom(sharedPref.getWhatIfZoom());
         final WhatIfModel model = WhatIfModel.getInstance();
         compositeDisposable.add(model.loadArticle(id)
                 .doOnSuccess(model::push)

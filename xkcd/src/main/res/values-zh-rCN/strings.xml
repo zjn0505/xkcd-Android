@@ -31,6 +31,7 @@
         <item quantity="one">点击标题栏箭头，切换 %s 页</item>
         <item quantity="other">点击标题栏箭头，切换 %s 页</item>
     </plurals>
+    <string name="pref_what_if_zoom">what if 字体缩放</string>
 
     <string name="pref_arrow_content">选择快速切换的数量</string>
     <string name="pref_font">增加可读性</string>

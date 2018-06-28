@@ -39,6 +39,7 @@
         <item quantity="one">Switch %s page when action bar arrow clicked</item>
         <item quantity="other">Switch %s pages when action bar arrow clicked</item>
     </plurals>
+    <string name="pref_what_if_zoom">Text scale in what if</string>
 
     <string name="pref_arrow_content">Set the number of comics to skip when arrow clicked</string>
     <string name="pref_font">Increase legibility</string>
