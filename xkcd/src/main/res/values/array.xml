@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <string-array name="arrow_switch_by">
         <item>@string/arrow_1</item>
@@ -13,13 +13,13 @@
     </string-array>
 
 
-    <string-array name="zoom">
+    <string-array name="zoom" tools:ignore="MissingTranslation">
         <item>zoom_40</item>
         <item>zoom_60</item>
         <item>zoom_80</item>
         <item>zoom_100</item>
     </string-array>
-    <string-array name="zoom_value">
+    <string-array name="zoom_value" tools:ignore="MissingTranslation">
         <item>40\uff05</item>
         <item>60\uff05</item>
         <item>80\uff05</item>
