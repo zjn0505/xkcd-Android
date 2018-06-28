@@ -157,8 +157,9 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
         super.onCreate(savedInstanceState);
         singleComicPresenter = new SingleComicPresenter(this);
         Bundle args = getArguments();
-        if (args != null)
+        if (args != null) {
             id = args.getInt("id");
+        }
         setHasOptionsMenu(true);
     }
 

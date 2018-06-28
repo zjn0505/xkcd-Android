@@ -41,33 +41,26 @@ public class SingleComicPresenter implements SingleComicContract.Presenter {
     @Override
     public void loadXkcd(int index) {
         final long latestIndex = sharedPrefManager.getLatestXkcd();
-        XkcdPic xkcdPicInDB = xkcdModel.loadXkcdFromDB(index);
-
-        boolean shouldQueryNetwork = false;
-
-        if (xkcdPicInDB != null) {
-            view.renderXkcdPic(xkcdPicInDB);
-            xkcdModel.push(xkcdPicInDB);
-        } else {
-            shouldQueryNetwork = true;
-        }
-
-        if (latestIndex - index < 10) {
-            shouldQueryNetwork = true;
-        }
+        final XkcdPic xkcdPicInDB = xkcdModel.loadXkcdFromDB(index);
+        final boolean shouldQueryNetwork = latestIndex - index < 10;
 
         if (shouldQueryNetwork) {
             final Disposable d = xkcdModel.loadXkcd(index)
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSubscribe(ignored -> view.setLoading(true))
+                    .doOnNext(ignored -> view.setLoading(false))
                     .subscribe(xkcdPic -> {
-                        view.renderXkcdPic(xkcdPic);
-                        xkcdModel.push(xkcdPic);
-                    }, e -> {
-                        Timber.e(e, "load xkcd pic error");
-                        view.setLoading(false);
-                    });
+                        if (xkcdPicInDB == null) {
+                            view.renderXkcdPic(xkcdPic);
+                            xkcdModel.push(xkcdPic);
+                        }
+                    }, e -> Timber.e(e, "load xkcd pic error"));
             compositeDisposable.add(d);
+        }
+
+        if (xkcdPicInDB != null) {
+            view.renderXkcdPic(xkcdPicInDB);
+            xkcdModel.push(xkcdPicInDB);
         }
     }
 

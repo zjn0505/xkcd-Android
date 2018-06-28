@@ -61,7 +61,7 @@ public class XkcdModel {
     public Observable<XkcdPic> loadXkcd(long index) {
         return xkcdApi.getXkcdList(XKCD_BROWSE_LIST, (int) index, 0, 1)
                 .subscribeOn(Schedulers.io())
-                .flatMap((Function<List<XkcdPic>, ObservableSource<XkcdPic>>) xkcdPics -> {
+                .flatMap(xkcdPics -> {
                     if (xkcdPics == null || xkcdPics.isEmpty()) {
                         return xkcdApi.getComics(index).subscribeOn(Schedulers.io());
                     } else {
