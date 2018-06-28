@@ -47,6 +47,7 @@ import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.base.BaseFragment;
 import xyz.jienan.xkcd.comics.SearchCursorAdapter;
 import xyz.jienan.xkcd.comics.dialog.NumberPickerDialogFragment;
+import xyz.jienan.xkcd.comics.fragment.ComicsMainFragment;
 import xyz.jienan.xkcd.ui.like.LikeButton;
 import xyz.jienan.xkcd.ui.like.OnLikeListener;
 
@@ -62,11 +63,14 @@ import static xyz.jienan.xkcd.Const.FIRE_FAVORITE_ON;
 import static xyz.jienan.xkcd.Const.FIRE_FROM_NOTIFICATION;
 import static xyz.jienan.xkcd.Const.FIRE_FROM_NOTIFICATION_INDEX;
 import static xyz.jienan.xkcd.Const.FIRE_NEXT_BAR;
+import static xyz.jienan.xkcd.Const.FIRE_NEXT_BAR_LONG;
 import static xyz.jienan.xkcd.Const.FIRE_PREVIOUS_BAR;
+import static xyz.jienan.xkcd.Const.FIRE_PREVIOUS_BAR_LONG;
 import static xyz.jienan.xkcd.Const.FIRE_SEARCH;
 import static xyz.jienan.xkcd.Const.FIRE_SHAKE;
 import static xyz.jienan.xkcd.Const.FIRE_SPECIFIC_MENU;
 import static xyz.jienan.xkcd.Const.FIRE_THUMB_UP;
+import static xyz.jienan.xkcd.Const.FIRE_WHAT_IF_SUFFIX;
 import static xyz.jienan.xkcd.Const.INDEX_ON_NOTI_INTENT;
 import static xyz.jienan.xkcd.Const.INTENT_TARGET_XKCD_ID;
 import static xyz.jienan.xkcd.Const.INVALID_ID;
@@ -120,11 +124,11 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
             switch (likeButton.getId()) {
                 case R.id.btn_fav:
                     presenter.favorited(getCurrentIndex(), true);
-                    logUXEvent(FIRE_FAVORITE_ON);
+                    logSubUXEvent(FIRE_FAVORITE_ON);
                     break;
                 case R.id.btn_thumb:
                     presenter.liked(getCurrentIndex());
-                    logUXEvent(FIRE_THUMB_UP);
+                    logSubUXEvent(FIRE_THUMB_UP);
                     break;
                 default:
                     break;
@@ -136,7 +140,7 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
             switch (likeButton.getId()) {
                 case R.id.btn_fav:
                     presenter.favorited(getCurrentIndex(), false);
-                    logUXEvent(FIRE_FAVORITE_OFF);
+                    logSubUXEvent(FIRE_FAVORITE_OFF);
                     break;
                 default:
                     break;
@@ -195,7 +199,7 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
                 presenter.setLatest(latestIndex);
                 Map<String, String> params = new HashMap<>();
                 params.put(FIRE_FROM_NOTIFICATION_INDEX, String.valueOf(notiIndex));
-                logUXEvent(FIRE_FROM_NOTIFICATION, params);
+                logSubUXEvent(FIRE_FROM_NOTIFICATION, params);
             }
             getActivity().setIntent(null);
         }
@@ -279,7 +283,7 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
         itemRight.setActionView(imageButtonRight);
         imageButtonRight.setOnLongClickListener(v -> {
             scrollViewPagerToItem(latestIndex - 1, true);
-            logUXEvent(FIRE_NEXT_BAR);
+            logSubUXEvent(FIRE_NEXT_BAR_LONG);
             return true;
         });
         imageButtonRight.setOnClickListener(v -> {
@@ -290,7 +294,7 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
             } else {
                 scrollViewPagerToItem(viewPager.getCurrentItem() + skip, false);
             }
-            logUXEvent(FIRE_NEXT_BAR);
+            logSubUXEvent(FIRE_NEXT_BAR);
         });
 
         MenuItem itemLeft = menu.findItem(R.id.action_left);
@@ -301,7 +305,7 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
         itemLeft.setActionView(imageButtonLeft);
         imageButtonLeft.setOnLongClickListener(v -> {
             scrollViewPagerToItem(0, true);
-            logUXEvent(FIRE_PREVIOUS_BAR);
+            logSubUXEvent(FIRE_PREVIOUS_BAR_LONG);
             return true;
         });
         imageButtonLeft.setOnClickListener(v -> {
@@ -312,7 +316,7 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
             } else {
                 scrollViewPagerToItem(viewPager.getCurrentItem() - skip, false);
             }
-            logUXEvent(FIRE_PREVIOUS_BAR);
+            logSubUXEvent(FIRE_PREVIOUS_BAR);
         });
         setupSearch(menu);
 
@@ -351,7 +355,7 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
             scrollViewPagerToItem(randomId - 1, false);
         }
         getActivity().getWindow().getDecorView().performHapticFeedback(CONTEXT_CLICK, FLAG_IGNORE_GLOBAL_SETTING);
-        logUXEvent(FIRE_SHAKE);
+        logSubUXEvent(FIRE_SHAKE);
     }
 
     @Override
@@ -359,7 +363,7 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
         int id = item.getItemId();
         switch (id) {
             case R.id.action_search:
-                logUXEvent(FIRE_SEARCH);
+                logSubUXEvent(FIRE_SEARCH);
                 break;
             case R.id.action_specific:
             case R.id.action_what_if_specific:
@@ -370,7 +374,7 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
                 pickerDialogFragment.setNumberRange(1, latestIndex);
                 pickerDialogFragment.setListener(pickerListener);
                 pickerDialogFragment.show(getChildFragmentManager(), "IdPickerDialogFragment");
-                logUXEvent(FIRE_SPECIFIC_MENU);
+                logSubUXEvent(FIRE_SPECIFIC_MENU);
                 break;
             default:
                 break;
@@ -515,4 +519,12 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
         }
     }
 
+    private void logSubUXEvent(String event) {
+        logSubUXEvent(event, null);
+    }
+
+    private void logSubUXEvent(String event, Map<String, String> params) {
+        String suffix = this instanceof ComicsMainFragment ? "" : FIRE_WHAT_IF_SUFFIX;
+        logUXEvent(event + suffix, params);
+    }
 }

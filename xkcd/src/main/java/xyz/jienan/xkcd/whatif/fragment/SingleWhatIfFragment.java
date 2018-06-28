@@ -43,6 +43,9 @@ import static android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING;
 import static android.view.HapticFeedbackConstants.LONG_PRESS;
 import static xyz.jienan.xkcd.Const.FIRE_GO_WHAT_IF_MENU;
 import static xyz.jienan.xkcd.Const.FIRE_SHARE_BAR;
+import static xyz.jienan.xkcd.Const.FIRE_WHAT_IF_IMG_LONG;
+import static xyz.jienan.xkcd.Const.FIRE_WHAT_IF_REF;
+import static xyz.jienan.xkcd.Const.FIRE_WHAT_IF_SUFFIX;
 
 /**
  * Created by jienanzhang on 03/03/2018.
@@ -146,7 +149,7 @@ public class SingleWhatIfFragment extends BaseFragment implements WhatIfWebView.
                 shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_text_what_if, "https://whatif.xkcd.com/" + id));
                 shareIntent.setType("text/plain");
                 startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.share_to)));
-                logUXEvent(FIRE_SHARE_BAR);
+                logUXEvent(FIRE_SHARE_BAR + FIRE_WHAT_IF_SUFFIX);
                 return true;
             case R.id.action_go_xkcd:
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://whatif.xkcd.com/" + id));
@@ -171,6 +174,7 @@ public class SingleWhatIfFragment extends BaseFragment implements WhatIfWebView.
         if (this.getView() != null) {
             this.getView().performHapticFeedback(LONG_PRESS, FLAG_IGNORE_GLOBAL_SETTING);
         }
+        logUXEvent(FIRE_WHAT_IF_IMG_LONG);
     }
 
     @Override
@@ -179,6 +183,7 @@ public class SingleWhatIfFragment extends BaseFragment implements WhatIfWebView.
         if (this.getView() != null) {
             this.getView().performHapticFeedback(CONTEXT_CLICK, FLAG_IGNORE_GLOBAL_SETTING);
         }
+        logUXEvent(FIRE_WHAT_IF_REF);
     }
 
     private void showSimpleInfoDialog(String content) {

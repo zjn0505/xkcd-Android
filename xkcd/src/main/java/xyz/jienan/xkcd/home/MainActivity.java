@@ -25,6 +25,8 @@ import xyz.jienan.xkcd.model.persist.SharedPrefManager;
 import xyz.jienan.xkcd.settings.PreferenceActivity;
 import xyz.jienan.xkcd.whatif.fragment.WhatIfMainFragment;
 
+import static xyz.jienan.xkcd.Const.FIRE_NAVI_WHAT_IF;
+import static xyz.jienan.xkcd.Const.FIRE_NAVI_XKCD;
 import static xyz.jienan.xkcd.Const.FIRE_SETTING_MENU;
 import static xyz.jienan.xkcd.Const.INDEX_ON_NOTI_INTENT;
 import static xyz.jienan.xkcd.Const.LANDING_TYPE;
@@ -104,9 +106,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         switch (item.getItemId()) {
             case R.id.nav_comics:
                 openFragment(TAG_XKCD);
+                logUXEvent(FIRE_NAVI_XKCD);
                 break;
             case R.id.nav_whatif:
                 openFragment(TAG_WHAT_IF);
+                logUXEvent(FIRE_NAVI_WHAT_IF);
                 break;
             case R.id.nav_setting:
                 Intent settingsIntent = new Intent(this, PreferenceActivity.class);

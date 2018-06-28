@@ -36,6 +36,7 @@ import static xyz.jienan.xkcd.Const.FIRE_FILTER_FAV;
 import static xyz.jienan.xkcd.Const.FIRE_FILTER_THUMB;
 import static xyz.jienan.xkcd.Const.FIRE_LIST_FILTER_BAR;
 import static xyz.jienan.xkcd.Const.FIRE_SCROLL_TO_END;
+import static xyz.jienan.xkcd.Const.FIRE_WHAT_IF_SUFFIX;
 import static xyz.jienan.xkcd.Const.INTENT_TARGET_XKCD_ID;
 import static xyz.jienan.xkcd.list.activity.WhatIfListActivity.Selection.ALL_WHAT_IF;
 
@@ -83,7 +84,7 @@ public class WhatIfListActivity extends BaseActivity implements WhatIfListContra
             }
 
             if (!rvList.canScrollVertically(1) && lastItemReached() && newState == SCROLL_STATE_IDLE) {
-                logUXEvent(FIRE_SCROLL_TO_END);
+                logUXEvent(FIRE_SCROLL_TO_END + FIRE_WHAT_IF_SUFFIX);
             }
         }
 
@@ -137,7 +138,7 @@ public class WhatIfListActivity extends BaseActivity implements WhatIfListContra
                     filterDialog.show(getSupportFragmentManager(), "filter");
                     filterDialog.setItemSelectListener(this);
                     filterDialog.setSelection(currentSelection.ordinal());
-                    logUXEvent(FIRE_LIST_FILTER_BAR);
+                    logUXEvent(FIRE_LIST_FILTER_BAR + FIRE_WHAT_IF_SUFFIX);
                 }
                 break;
         }
@@ -244,13 +245,13 @@ public class WhatIfListActivity extends BaseActivity implements WhatIfListContra
             reloadList(currentSelection);
             switch (currentSelection) {
                 case ALL_WHAT_IF:
-                    logUXEvent(FIRE_FILTER_ALL);
+                    logUXEvent(FIRE_FILTER_ALL + FIRE_WHAT_IF_SUFFIX);
                     break;
                 case MY_FAVORITE:
-                    logUXEvent(FIRE_FILTER_FAV);
+                    logUXEvent(FIRE_FILTER_FAV + FIRE_WHAT_IF_SUFFIX);
                     break;
                 case PEOPLES_CHOICE:
-                    logUXEvent(FIRE_FILTER_THUMB);
+                    logUXEvent(FIRE_FILTER_THUMB + FIRE_WHAT_IF_SUFFIX);
                     break;
                 default:
                     break;

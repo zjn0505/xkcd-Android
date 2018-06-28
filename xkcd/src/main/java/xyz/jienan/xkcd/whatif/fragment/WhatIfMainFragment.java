@@ -33,6 +33,7 @@ import xyz.jienan.xkcd.whatif.presenter.WhatIfMainPresenter;
 import static android.support.v4.view.ViewPager.SCROLL_STATE_IDLE;
 import static butterknife.OnPageChange.Callback.PAGE_SCROLL_STATE_CHANGED;
 import static xyz.jienan.xkcd.Const.FIRE_BROWSE_LIST_MENU;
+import static xyz.jienan.xkcd.Const.FIRE_WHAT_IF_SUFFIX;
 import static xyz.jienan.xkcd.Const.LAST_VIEW_WHAT_IF_ID;
 
 public class WhatIfMainFragment extends ContentMainBaseFragment implements WhatIfMainContract.View {
@@ -96,7 +97,7 @@ public class WhatIfMainFragment extends ContentMainBaseFragment implements WhatI
             case R.id.action_what_if_list:
                 Intent intent = new Intent(getActivity(), WhatIfListActivity.class);
                 startActivityForResult(intent, REQ_LIST_ACTIVITY);
-                logUXEvent(FIRE_BROWSE_LIST_MENU);
+                logUXEvent(FIRE_BROWSE_LIST_MENU + FIRE_WHAT_IF_SUFFIX);
                 break;
         }
         return super.onOptionsItemSelected(item);

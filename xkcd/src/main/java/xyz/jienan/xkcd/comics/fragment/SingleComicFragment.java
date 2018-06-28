@@ -130,6 +130,7 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
 
     private SimpleInfoDialogFragment.ExplainingCallback explainingCallback;
 
+    @Override
     public void explainLoaded(String result) {
         if (!TextUtils.isEmpty(result)) {
             explainingCallback.explanationLoaded(result);
@@ -138,6 +139,7 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
         }
     }
 
+    @Override
     public void explainFailed() {
         explainingCallback.explanationFailed();
     }
@@ -221,6 +223,15 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
         return false;
     }
 
+    @Override
+    public void setLoading(boolean isLoading) {
+        if (isLoading) {
+            pbLoading.setVisibility(View.VISIBLE);
+        } else {
+            pbLoading.setVisibility(View.GONE);
+        }
+    }
+
     @OnLongClick(R.id.iv_xkcd_pic)
     public boolean showExplainDialog(ImageView v) {
         if (currentPic == null) {
@@ -253,19 +264,12 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
         getActivity().overridePendingTransition(R.anim.fadein, R.anim.fadeout);
     }
 
-    public void setLoading(boolean isLoading) {
-        if (isLoading) {
-            pbLoading.setVisibility(View.VISIBLE);
-        } else {
-            pbLoading.setVisibility(View.GONE);
-        }
-    }
-
     /**
      * Render img, text on the view
      *
      * @param xPic
      */
+    @Override
     public void renderXkcdPic(final XkcdPic xPic) {
         if (getActivity() == null || getActivity().isFinishing()) {
             return;

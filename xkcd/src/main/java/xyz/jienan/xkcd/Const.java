@@ -27,7 +27,9 @@ public class Const {
     public static final String FIRE_THUMB_UP = "thumb_up";
     public static final String FIRE_SEARCH = "search";
     public static final String FIRE_PREVIOUS_BAR = "previous_bar";
+    public static final String FIRE_PREVIOUS_BAR_LONG = "previous_bar_long";
     public static final String FIRE_NEXT_BAR = "next_bar";
+    public static final String FIRE_NEXT_BAR_LONG = "next_bar_long";
     public static final String FIRE_SHARE_BAR = "share_bar";
     public static final String FIRE_SETTING_MENU = "setting_menu";
     public static final String FIRE_BROWSE_LIST_MENU = "browse_list_menu";
@@ -44,6 +46,12 @@ public class Const {
     public static final String FIRE_SCROLL_TO_END = "scroll_to_end";
     public static final String FIRE_FROM_NOTIFICATION = "from_notification";
     public static final String FIRE_FROM_NOTIFICATION_INDEX = "from_notification_index";
+
+    public static final String FIRE_NAVI_XKCD = "fire_navi_xkcd";
+    public static final String FIRE_NAVI_WHAT_IF = "fire_navi_what_if";
+    public static final String FIRE_WHAT_IF_REF = "fire_what_if_ref";
+    public static final String FIRE_WHAT_IF_IMG_LONG = "fire_what_if_img_long";
+    public static final String FIRE_WHAT_IF_SUFFIX = "_what_if";
     // user actions end
 
     public static final String URI_XKCD_EXPLAIN_EDIT = "xkcd://explain.edit";
