@@ -3,12 +3,16 @@ package xyz.jienan.xkcd.model.persist;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.google.gson.Gson;
+
 import xyz.jienan.xkcd.XkcdApplication;
+import xyz.jienan.xkcd.model.Quote;
 
 import static xyz.jienan.xkcd.Const.INVALID_ID;
 import static xyz.jienan.xkcd.Const.LANDING_TYPE;
 import static xyz.jienan.xkcd.Const.LAST_VIEW_WHAT_IF_ID;
 import static xyz.jienan.xkcd.Const.LAST_VIEW_XKCD_ID;
+import static xyz.jienan.xkcd.Const.SHARED_PREF_KEY_PRE_QUOTE;
 import static xyz.jienan.xkcd.Const.TAG_XKCD;
 import static xyz.jienan.xkcd.Const.WHAT_IF_LATEST_INDEX;
 import static xyz.jienan.xkcd.Const.XKCD_LATEST_INDEX;
@@ -18,6 +22,8 @@ public class SharedPrefManager {
     private final SharedPreferences sharedPreferences;
 
     private final SharedPreferences.Editor editor;
+
+    private final Gson gson = new Gson();
 
     public SharedPrefManager() {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(XkcdApplication.getInstance());
@@ -62,5 +68,14 @@ public class SharedPrefManager {
 
     public long getLastViewedWhatIf(long latestIndex) {
         return sharedPreferences.getLong(LAST_VIEW_WHAT_IF_ID, latestIndex);
+    }
+
+    public Quote getPreviousQuote() {
+        String json = sharedPreferences.getString(SHARED_PREF_KEY_PRE_QUOTE, null);
+        return json != null ? gson.fromJson(json, Quote.class) : new Quote();
+    }
+
+    public void saveNewQuote(Quote quote) {
+        editor.putString(SHARED_PREF_KEY_PRE_QUOTE, gson.toJson(quote)).apply();
     }
 }

@@ -65,5 +65,7 @@ public class Const {
     public static final String WHAT_IF_LATEST_INDEX = "what_if_last_index";
     public static final String LAST_VIEW_WHAT_IF_ID = "what_if_last_viewed_id";
 
+    public static final String SHARED_PREF_KEY_PRE_QUOTE = "shared_pref_key_pre_quote";
+
     public static final String LANDING_TYPE = "landing_type";
 }

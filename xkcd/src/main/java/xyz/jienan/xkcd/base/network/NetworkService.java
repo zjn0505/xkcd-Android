@@ -48,6 +48,7 @@ public class NetworkService {
     public static final String WHAT_IF_TOP = "https://api.jienan.xyz/xkcd/what-if-top";
     public static final String XKCD_TOP_SORT_BY_THUMB_UP = "thumb-up";
     public static final String XKCD_EXPLAIN_URL = "https://www.explainxkcd.com/wiki/index.php/";
+    public static final String QUOTE_LIST = "https://raw.githubusercontent.com/zjn0505/Xkcd-Android/master/quotes.json";
 
     private static final String XKCD_BASE_URL = "https://xkcd.com/";
     private static final String WHAT_IF_BASE_URL = "https://what-if.xkcd.com/";
@@ -56,6 +57,7 @@ public class NetworkService {
     private static final String HEADER_CACHE_CONTROL = "Cache-Control";
     private static XkcdAPI xkcdAPI;
     private static WhatIfAPI whatIfAPI;
+    private static QuoteAPI quoteAPI;
 
     private NetworkService() {
         OkHttpClient client = getOkHttpClientBuilder().build();
@@ -66,6 +68,7 @@ public class NetworkService {
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create());
         xkcdAPI = builder.baseUrl(XKCD_BASE_URL).build().create(XkcdAPI.class);
         whatIfAPI = builder.baseUrl(WHAT_IF_BASE_URL).build().create(WhatIfAPI.class);
+        quoteAPI = builder.build().create(QuoteAPI.class);
     }
 
     public static OkHttpClient.Builder getOkHttpClientBuilder() {
@@ -143,6 +146,13 @@ public class NetworkService {
             new NetworkService();
         }
         return whatIfAPI;
+    }
+
+    public static QuoteAPI getQuoteAPI() {
+        if (quoteAPI == null) {
+            new NetworkService();
+        }
+        return quoteAPI;
     }
 
     private static boolean isNetworkAvailable() {

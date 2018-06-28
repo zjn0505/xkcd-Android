@@ -11,16 +11,23 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.base.BaseActivity;
 import xyz.jienan.xkcd.comics.fragment.ComicsMainFragment;
+import xyz.jienan.xkcd.model.Quote;
+import xyz.jienan.xkcd.model.QuoteModel;
 import xyz.jienan.xkcd.model.persist.SharedPrefManager;
 import xyz.jienan.xkcd.settings.PreferenceActivity;
 import xyz.jienan.xkcd.whatif.fragment.WhatIfMainFragment;
@@ -55,9 +62,15 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @BindView(R.id.container)
     FrameLayout container;
 
+    private TextView tvQuote;
+
+    private TextView tvSubQuote;
+
     private FragmentManager fragmentManager = getSupportFragmentManager();
 
     private final SharedPrefManager sharedPrefManager = new SharedPrefManager();
+
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +92,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             }
             openFragment(fragmentTag);
         }
+        tvQuote = navigationView.getHeaderView(0).findViewById(R.id.tv_quote);
+        tvSubQuote = navigationView.getHeaderView(0).findViewById(R.id.tv_quote_sub);
+        getDailyQuote();
     }
 
     @Override
@@ -89,6 +105,12 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 recreate();
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        compositeDisposable.dispose();
+        super.onDestroy();
     }
 
     @Override
@@ -147,7 +169,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     private Fragment getVisibleFragment(){
-        List<Fragment> fragments = fragmentManager.getFragments();
+        final List<Fragment> fragments = fragmentManager.getFragments();
         if(fragments != null){
             for(Fragment fragment : fragments){
                 if(fragment != null && fragment.isVisible())
@@ -155,5 +177,19 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             }
         }
         return null;
+    }
+
+    private void getDailyQuote() {
+        final Quote preQuote = sharedPrefManager.getPreviousQuote();
+        final Disposable d = QuoteModel.getInstance()
+                .getQuoteOfTheDay(preQuote)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(sharedPrefManager::saveNewQuote)
+                .subscribe(quote -> {
+                    tvQuote.setText("\"" + Html.fromHtml(quote.getContent()) + "\"");
+                    final String shortSource = TAG_XKCD.equals(quote.getSource()) ? "x" : "w";
+                    tvSubQuote.setText(getString(R.string.quote_sub_text, quote.getAuthor(), shortSource, quote.getNum()));
+                });
+        compositeDisposable.add(d);
     }
 }
