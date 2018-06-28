@@ -9,9 +9,8 @@ import java.util.HashMap;
 
 public abstract class BaseStatePagerAdapter extends FragmentStatePagerAdapter {
 
-    private int length;
-
     protected HashMap<Integer, Fragment> fragmentsMap = new HashMap<>();
+    private int length;
 
     public BaseStatePagerAdapter(FragmentManager fm) {
         super(fm);

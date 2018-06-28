@@ -9,10 +9,8 @@ import xyz.jienan.xkcd.model.XkcdModel;
 
 public class ImageDetailPagePresenter implements ImageDetailPageContract.Presenter {
 
-    private ImageDetailPageContract.View view;
-
     private final XkcdModel xkcdModel = XkcdModel.getInstance();
-
+    private ImageDetailPageContract.View view;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     public ImageDetailPagePresenter(ImageDetailPageContract.View imageDetailPageActivity) {

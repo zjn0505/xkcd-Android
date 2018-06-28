@@ -26,7 +26,7 @@
 
     <item
         android:id="@+id/action_go_xkcd"
+        android:orderInCategory="10"
         android:title="@string/action_xkcd"
-        app:showAsAction="never"
-        android:orderInCategory="10"/>
+        app:showAsAction="never" />
 </menu>

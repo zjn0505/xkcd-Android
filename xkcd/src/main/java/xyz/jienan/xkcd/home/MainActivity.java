@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -26,6 +27,7 @@ import io.reactivex.disposables.Disposable;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.base.BaseActivity;
 import xyz.jienan.xkcd.comics.fragment.ComicsMainFragment;
+import xyz.jienan.xkcd.home.base.ContentMainBaseFragment;
 import xyz.jienan.xkcd.model.Quote;
 import xyz.jienan.xkcd.model.QuoteModel;
 import xyz.jienan.xkcd.model.persist.SharedPrefManager;
@@ -43,33 +45,24 @@ import static xyz.jienan.xkcd.Const.TAG_XKCD;
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String OUTSTATE_FRAGMENT_TYPE = "outstate_fragment_type";
+    private final static int REQ_SETTINGS = 101;
 
     static {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
     }
 
-    private final static int REQ_SETTINGS = 101;
-
+    private final SharedPrefManager sharedPrefManager = new SharedPrefManager();
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-
     @BindView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
-
     @BindView(R.id.nav_view)
     NavigationView navigationView;
-
     @BindView(R.id.container)
     FrameLayout container;
-
     private TextView tvQuote;
-
     private TextView tvSubQuote;
-
     private FragmentManager fragmentManager = getSupportFragmentManager();
-
-    private final SharedPrefManager sharedPrefManager = new SharedPrefManager();
-
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     @Override
@@ -114,6 +107,21 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        setIntent(intent);
+        super.onNewIntent(intent);
+        if (intent != null && intent.getIntExtra(INDEX_ON_NOTI_INTENT, 0) != 0) {
+            String fragmentTag = intent.getStringExtra(LANDING_TYPE);
+            if (!openFragment(fragmentTag)) {
+                ContentMainBaseFragment fragment = (ContentMainBaseFragment) getVisibleFragment();
+                if (fragment != null) {
+                    fragment.scrollViewPagerToItem(intent.getIntExtra(INDEX_ON_NOTI_INTENT, 0) - 1, false);
+                }
+            }
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -153,7 +161,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         }
     }
 
-    private void openFragment(String fragmentTag) {
+    private boolean openFragment(String fragmentTag) {
         Fragment targetFragment = fragmentManager.findFragmentByTag(fragmentTag);
         if (targetFragment == null) {
             if (TAG_WHAT_IF.equals(fragmentTag)) {
@@ -165,14 +173,16 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         sharedPrefManager.setLandingType(fragmentTag);
         if (getVisibleFragment() != targetFragment) {
             fragmentManager.beginTransaction().replace(R.id.container, targetFragment, fragmentTag).commit();
+            return true;
         }
+        return false;
     }
 
-    private Fragment getVisibleFragment(){
+    private Fragment getVisibleFragment() {
         final List<Fragment> fragments = fragmentManager.getFragments();
-        if(fragments != null){
-            for(Fragment fragment : fragments){
-                if(fragment != null && fragment.isVisible())
+        if (fragments != null) {
+            for (Fragment fragment : fragments) {
+                if (fragment != null && fragment.isVisible())
                     return fragment;
             }
         }
@@ -186,10 +196,23 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(sharedPrefManager::saveNewQuote)
                 .subscribe(quote -> {
-                    tvQuote.setText("\"" + Html.fromHtml(quote.getContent()) + "\"");
-                    final String shortSource = TAG_XKCD.equals(quote.getSource()) ? "x" : "w";
-                    tvSubQuote.setText(getString(R.string.quote_sub_text, quote.getAuthor(), shortSource, quote.getNum()));
+                    View header = navigationView.getHeaderView(0);
+                    if (header != null && tvQuote != null && tvSubQuote != null) {
+                        tvQuote.setText("\"" + Html.fromHtml(quote.getContent()) + "\"");
+                        final String shortSource = TAG_XKCD.equals(quote.getSource()) ? "x" : "w";
+                        tvSubQuote.setText(getString(R.string.quote_sub_text, quote.getAuthor(), shortSource, quote.getNum()));
+                        header.setOnClickListener(view -> {
+                            Intent intent = new Intent(this, MainActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            intent.putExtra(INDEX_ON_NOTI_INTENT, quote.getNum());
+                            intent.putExtra(LANDING_TYPE, quote.getSource());
+                            startActivity(intent);
+                            drawerLayout.closeDrawer(GravityCompat.START);
+                        });
+                    }
+
                 });
         compositeDisposable.add(d);
     }
+
 }

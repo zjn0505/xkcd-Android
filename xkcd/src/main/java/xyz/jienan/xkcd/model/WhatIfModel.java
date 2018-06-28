@@ -96,7 +96,6 @@ public class WhatIfModel {
     }
 
     /**
-     *
      * @param index
      * @return thumb up count
      */

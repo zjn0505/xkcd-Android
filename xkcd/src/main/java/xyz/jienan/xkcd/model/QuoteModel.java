@@ -27,7 +27,7 @@ public class QuoteModel {
     public Observable<Quote> getQuoteOfTheDay(final Quote quote) {
         return Observable.just(1)
                 .flatMap(ignored -> {
-                    if (System.currentTimeMillis() - quote.getTimestamp() <  1000 * 60 * 60 * 24) {
+                    if (System.currentTimeMillis() - quote.getTimestamp() < 1000 * 60 * 60 * 24) {
                         return Observable.just(quote);
                     } else {
                         return queryNewQuote(quote);

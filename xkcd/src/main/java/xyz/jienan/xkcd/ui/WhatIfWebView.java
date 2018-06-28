@@ -13,17 +13,13 @@ public class WhatIfWebView extends WebView {
 
     private LatexInterface latexScrollInterface;
 
-    public void setLatexScrollInterface(LatexInterface latexScrollInterface) {
-        this.latexScrollInterface = latexScrollInterface;
-    }
-
-    public interface ScrollToEndCallback {
-        void scrolledToTheEnd(boolean isTheEnd);
-    }
-
     public WhatIfWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.setBackgroundColor(Color.TRANSPARENT);
+    }
+
+    public void setLatexScrollInterface(LatexInterface latexScrollInterface) {
+        this.latexScrollInterface = latexScrollInterface;
     }
 
     public void setCallback(ScrollToEndCallback callback) {
@@ -75,5 +71,9 @@ public class WhatIfWebView extends WebView {
         } else {
             return offset < range - 1;
         }
+    }
+
+    public interface ScrollToEndCallback {
+        void scrolledToTheEnd(boolean isTheEnd);
     }
 }

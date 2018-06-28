@@ -12,38 +12,38 @@
         android:id="@+id/iv_item_what_if_list"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:scaleType="fitCenter"
         android:layout_centerVertical="true"
+        android:scaleType="fitCenter"
         tools:src="@mipmap/ic_launcher" />
 
     <ImageView
         android:id="@+id/iv_fav_what_if_list"
         android:layout_width="36dp"
         android:layout_height="36dp"
-        android:scaleType="fitCenter"
-        android:layout_centerVertical="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginRight="10dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
         android:layout_marginEnd="10dp"
-        app:srcCompat="@drawable/ic_heart_on"
-        android:visibility="gone" />
+        android:layout_marginRight="10dp"
+        android:scaleType="fitCenter"
+        android:visibility="gone"
+        app:srcCompat="@drawable/ic_heart_on" />
 
     <TextView
         android:id="@+id/tv_item_what_if_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_toRightOf="@id/iv_item_what_if_list"
-        android:layout_toEndOf="@id/iv_item_what_if_list"
-        android:layout_toStartOf="@id/iv_fav_what_if_list"
-        android:layout_toLeftOf="@id/iv_fav_what_if_list"
         android:layout_margin="1dp"
+        android:layout_toEndOf="@id/iv_item_what_if_list"
+        android:layout_toLeftOf="@id/iv_fav_what_if_list"
+        android:layout_toRightOf="@id/iv_item_what_if_list"
+        android:layout_toStartOf="@id/iv_fav_what_if_list"
         android:fontFamily="@font/xkcd_script"
         android:gravity="center_vertical"
-        android:textSize="22sp"
         android:paddingLeft="10dp"
         android:paddingStart="10dp"
+        android:textSize="22sp"
         tools:text="Electrofishing for Whales" />
 
 </RelativeLayout>

@@ -11,12 +11,9 @@ import xyz.jienan.xkcd.whatif.contract.WhatIfMainContract;
 
 public class WhatIfMainPresenter implements WhatIfMainContract.Presenter {
 
-    private WhatIfMainContract.View view;
-
-    private WhatIfModel whatIfModel = WhatIfModel.getInstance();
-
     private final SharedPrefManager sharedPrefManager = new SharedPrefManager();
-
+    private WhatIfMainContract.View view;
+    private WhatIfModel whatIfModel = WhatIfModel.getInstance();
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     private Disposable fabShowDisposable;
@@ -34,7 +31,8 @@ public class WhatIfMainPresenter implements WhatIfMainContract.Presenter {
         if (index < 1) {
             return;
         }
-        Disposable d = whatIfModel.fav(index, isFav).subscribe(xkcdPic -> {},
+        Disposable d = whatIfModel.fav(index, isFav).subscribe(xkcdPic -> {
+                },
                 e -> Timber.e(e, "error on get one pic: %d", index));
         compositeDisposable.add(d);
         view.toggleFab(isFav);
@@ -71,11 +69,6 @@ public class WhatIfMainPresenter implements WhatIfMainContract.Presenter {
     }
 
     @Override
-    public void setLatest(int latestIndex) {
-        sharedPrefManager.setLastViewedWhatIf(latestIndex);
-    }
-
-    @Override
     public void setLastViewed(int lastViewed) {
         sharedPrefManager.setLastViewedWhatIf(lastViewed);
     }
@@ -83,6 +76,11 @@ public class WhatIfMainPresenter implements WhatIfMainContract.Presenter {
     @Override
     public int getLatest() {
         return (int) sharedPrefManager.getLatestWhatIf();
+    }
+
+    @Override
+    public void setLatest(int latestIndex) {
+        sharedPrefManager.setLastViewedWhatIf(latestIndex);
     }
 
     @Override

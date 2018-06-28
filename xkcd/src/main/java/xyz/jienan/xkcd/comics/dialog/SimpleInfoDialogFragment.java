@@ -43,15 +43,14 @@ public class SimpleInfoDialogFragment extends DialogFragment {
 
     private final static String CONTENT = "content";
     private final static String HTML_CONTENT = "html_content";
-    private Box<XkcdPic> box;
-    private String xkcdContent;
-    private String htmlContent;
-    private ISimpleInfoDialogListener mListener;
-
     @BindView(R.id.tv_explain)
     TextView tvExplain;
     @BindView(R.id.pb_explaining)
     ProgressBar pbLoading;
+    private Box<XkcdPic> box;
+    private String xkcdContent;
+    private String htmlContent;
+    private ISimpleInfoDialogListener mListener;
     private Button buttonNegative;
     private boolean hasExplainedMore = false;
     private DialogInterface.OnShowListener showListener = new DialogInterface.OnShowListener() {

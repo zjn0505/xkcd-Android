@@ -76,9 +76,12 @@ public class WhatIfListAdapter extends RecyclerView.Adapter<WhatIfListAdapter.Wh
 
     class WhatIfViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.iv_item_what_if_list) ImageView itemWhatIfImageView;
-        @BindView(R.id.tv_item_what_if_title) TextView itemWhatIfTitle;
-        @BindView(R.id.iv_fav_what_if_list) ImageView itemWhatIfFav;
+        @BindView(R.id.iv_item_what_if_list)
+        ImageView itemWhatIfImageView;
+        @BindView(R.id.tv_item_what_if_title)
+        TextView itemWhatIfTitle;
+        @BindView(R.id.iv_fav_what_if_list)
+        ImageView itemWhatIfFav;
 
         WhatIfViewHolder(View itemView) {
             super(itemView);

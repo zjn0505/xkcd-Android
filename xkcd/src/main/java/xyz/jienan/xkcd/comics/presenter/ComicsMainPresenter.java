@@ -12,11 +12,8 @@ import xyz.jienan.xkcd.model.persist.SharedPrefManager;
 public class ComicsMainPresenter implements ComicsMainContract.Presenter {
 
     private final SharedPrefManager sharedPrefManager = new SharedPrefManager();
-
-    private ComicsMainContract.View view;
-
     private final XkcdModel xkcdModel = XkcdModel.getInstance();
-
+    private ComicsMainContract.View view;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     private Disposable fabShowDisposable;
@@ -54,7 +51,8 @@ public class ComicsMainPresenter implements ComicsMainContract.Presenter {
         if (index < 1) {
             return;
         }
-        Disposable d = xkcdModel.fav(index, isFav).subscribe(xkcdPic -> {},
+        Disposable d = xkcdModel.fav(index, isFav).subscribe(xkcdPic -> {
+                },
                 e -> Timber.e(e, "error on get one pic: %d", index));
         compositeDisposable.add(d);
         view.toggleFab(isFav);
@@ -89,13 +87,13 @@ public class ComicsMainPresenter implements ComicsMainContract.Presenter {
     }
 
     @Override
-    public void setLatest(int latestIndex) {
-        sharedPrefManager.setLatestXkcd(latestIndex);
+    public int getLatest() {
+        return (int) sharedPrefManager.getLatestXkcd();
     }
 
     @Override
-    public int getLatest() {
-        return (int) sharedPrefManager.getLatestXkcd();
+    public void setLatest(int latestIndex) {
+        sharedPrefManager.setLatestXkcd(latestIndex);
     }
 
     @Override

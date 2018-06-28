@@ -79,13 +79,10 @@ import static xyz.jienan.xkcd.Const.PREF_ARROW;
 public abstract class ContentMainBaseFragment extends BaseFragment implements ShakeDetector.Listener {
 
     protected static final int REQ_LIST_ACTIVITY = 10;
-
-    @BindView(R.id.viewpager)
-    protected ViewPager viewPager;
-
     @BindView(R.id.fab)
     public FloatingActionButton fab;
-
+    @BindView(R.id.viewpager)
+    protected ViewPager viewPager;
     @BindView(R.id.btn_fav)
     protected LikeButton btnFav;
 
@@ -95,29 +92,15 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
     protected BaseStatePagerAdapter adapter;
 
     protected ShakeDetector sd;
-
-    private SharedPreferences sharedPreferences;
-
     protected int latestIndex = INVALID_ID;
-
     protected int lastViewdId = INVALID_ID;
-
-    private boolean isFabsShowing = false;
-
-    private Toast toast;
-
     protected boolean isPaused = true;
-
     protected ContentMainBasePresenter presenter;
-
     protected boolean isFre = true;
-
     protected SearchCursorAdapter searchAdapter;
-
-    protected abstract void suggestionClicked(int position);
-
-    protected abstract String getTitleTextRes();
-
+    private SharedPreferences sharedPreferences;
+    private boolean isFabsShowing = false;
+    private Toast toast;
     private OnLikeListener likeListener = new OnLikeListener() {
         @Override
         public void liked(LikeButton likeButton) {
@@ -147,7 +130,6 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
             }
         }
     };
-
     private NumberPickerDialogFragment.INumberPickerDialogListener pickerListener =
             new NumberPickerDialogFragment.INumberPickerDialogListener() {
                 @Override
@@ -161,6 +143,9 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
                 }
             };
 
+    protected abstract void suggestionClicked(int position);
+
+    protected abstract String getTitleTextRes();
 
     @Nullable
     @Override
@@ -176,7 +161,7 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
         presenter.loadLatest();
         latestIndex = presenter.getLatest();
         lastViewdId = presenter.getLastViewed(latestIndex);
-        final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        final ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle(getTitleTextRes());
             actionBar.setSubtitle(null);
@@ -330,7 +315,7 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
 
     @OnPageChange(value = R.id.viewpager, callback = PAGE_SELECTED)
     public void OnPagerSelected(int position) {
-        final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        final ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if (actionBar != null) {
             actionBar.setSubtitle(String.valueOf(position + 1));
         }
@@ -382,7 +367,7 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
         return false;
     }
 
-    protected void scrollViewPagerToItem(int id, boolean smoothScroll) {
+    public void scrollViewPagerToItem(int id, boolean smoothScroll) {
         viewPager.setCurrentItem(id, smoothScroll);
         fab.hide();
         toggleSubFabs(false);

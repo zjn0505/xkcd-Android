@@ -60,5 +60,5 @@
         <item name="progress_end_color">@color/colorAccent</item>
     </style>
 
-    <style name="holo_progressbar" parent="android:Widget.Holo.ProgressBar"/>
+    <style name="holo_progressbar" parent="android:Widget.Holo.ProgressBar" />
 </resources>

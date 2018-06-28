@@ -16,8 +16,8 @@
         <activity
             android:name="xyz.jienan.xkcd.home.MainActivity"
             android:configChanges="screenSize|keyboardHidden"
-            android:theme="@style/CustomActionBarTheme"
-            android:launchMode="singleTask">
+            android:launchMode="singleTop"
+            android:theme="@style/CustomActionBarTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

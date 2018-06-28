@@ -2,8 +2,8 @@
 <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawer_layout"
-    android:layout_height="match_parent"
     android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
     <LinearLayout
@@ -17,23 +17,23 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@color/colorPrimary"
             android:theme="@style/Toolbar"
-            app:subtitleTextAppearance="@style/ToolbarSubtitleAppearance"
-            app:popupTheme="@style/ToolbarPopup" />
+            app:popupTheme="@style/ToolbarPopup"
+            app:subtitleTextAppearance="@style/ToolbarSubtitleAppearance" />
 
         <FrameLayout
             android:id="@+id/container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
     </LinearLayout>
 
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view"
-        android:layout_height="match_parent"
         android:layout_width="wrap_content"
+        android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header"
-        app:menu="@menu/menu_drawer"/>
+        app:menu="@menu/menu_drawer" />
 
 </android.support.v4.widget.DrawerLayout>

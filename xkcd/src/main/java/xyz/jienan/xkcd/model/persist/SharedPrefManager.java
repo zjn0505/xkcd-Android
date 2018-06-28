@@ -30,20 +30,20 @@ public class SharedPrefManager {
         editor = sharedPreferences.edit();
     }
 
-    public void setLandingType(String landingType) {
-        editor.putString(LANDING_TYPE, landingType).apply();
-    }
-
     public String getLandingType() {
         return sharedPreferences.getString(LANDING_TYPE, TAG_XKCD);
     }
 
-    public void setLatestXkcd(long latestIndex) {
-        editor.putInt(XKCD_LATEST_INDEX, (int) latestIndex).apply();
+    public void setLandingType(String landingType) {
+        editor.putString(LANDING_TYPE, landingType).apply();
     }
 
     public long getLatestXkcd() {
         return sharedPreferences.getInt(XKCD_LATEST_INDEX, INVALID_ID);
+    }
+
+    public void setLatestXkcd(long latestIndex) {
+        editor.putInt(XKCD_LATEST_INDEX, (int) latestIndex).apply();
     }
 
     public void setLastViewedXkcd(int lastViewed) {
@@ -54,12 +54,12 @@ public class SharedPrefManager {
         return sharedPreferences.getInt(LAST_VIEW_XKCD_ID, latestIndex);
     }
 
-    public void setLatestWhatIf(long latestIndex) {
-        editor.putLong(WHAT_IF_LATEST_INDEX, latestIndex).apply();
-    }
-
     public long getLatestWhatIf() {
         return sharedPreferences.getLong(WHAT_IF_LATEST_INDEX, INVALID_ID);
+    }
+
+    public void setLatestWhatIf(long latestIndex) {
+        editor.putLong(WHAT_IF_LATEST_INDEX, latestIndex).apply();
     }
 
     public void setLastViewedWhatIf(long lastViewed) {

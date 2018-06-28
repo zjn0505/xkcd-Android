@@ -75,7 +75,9 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
     private int id;
 
     private XkcdPic currentPic;
-
+    private ProgressTarget<String, Bitmap> target;
+    private SimpleInfoDialogFragment.ExplainingCallback explainingCallback;
+    private SingleComicContract.Presenter singleComicPresenter;
     private RequestListener<String, Bitmap> glideListener = new RequestListener<String, Bitmap>() {
         @Override
         public boolean onException(Exception e, final String model, final Target<Bitmap> target, boolean isFirstResource) {
@@ -102,9 +104,6 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
             return false;
         }
     };
-
-    private ProgressTarget<String, Bitmap> target;
-
     private ISimpleInfoDialogListener dialogListener = new ISimpleInfoDialogListener() {
         @Override
         public void onPositiveClick() {
@@ -128,7 +127,13 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
         }
     };
 
-    private SimpleInfoDialogFragment.ExplainingCallback explainingCallback;
+    public static SingleComicFragment newInstance(int comicId) {
+        SingleComicFragment fragment = new SingleComicFragment();
+        Bundle args = new Bundle();
+        args.putInt("id", comicId);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public void explainLoaded(String result) {
@@ -142,16 +147,6 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
     @Override
     public void explainFailed() {
         explainingCallback.explanationFailed();
-    }
-
-    private SingleComicContract.Presenter singleComicPresenter;
-
-    public static SingleComicFragment newInstance(int comicId) {
-        SingleComicFragment fragment = new SingleComicFragment();
-        Bundle args = new Bundle();
-        args.putInt("id", comicId);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
@@ -173,7 +168,7 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = super.onCreateView(inflater,container, savedInstanceState);
+        View view = super.onCreateView(inflater, container, savedInstanceState);
         pbLoading.setAnimation(AnimationUtils.loadAnimation(pbLoading.getContext(), R.anim.rotate));
         initGlide();
         singleComicPresenter.loadXkcd(id);

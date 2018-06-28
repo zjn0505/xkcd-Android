@@ -12,9 +12,9 @@ public interface ContentMainBasePresenter extends BasePresenter {
 
     void getInfoAndShowFab(int currentIndex);
 
-    void setLatest(int latestIndex);
-
     int getLatest();
+
+    void setLatest(int latestIndex);
 
     int getLastViewed(int latestIndex);
 

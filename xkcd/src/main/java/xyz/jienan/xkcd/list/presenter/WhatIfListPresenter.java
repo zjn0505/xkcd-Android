@@ -16,13 +16,10 @@ import xyz.jienan.xkcd.model.persist.SharedPrefManager;
 
 public class WhatIfListPresenter implements WhatIfListContract.Presenter {
 
-    private WhatIfListContract.View view;
-
     private final WhatIfModel whatIfModel = WhatIfModel.getInstance();
-
-    private CompositeDisposable compositeDisposable = new CompositeDisposable();
-
     private final SharedPrefManager sharedPrefManager = new SharedPrefManager();
+    private WhatIfListContract.View view;
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     public WhatIfListPresenter(WhatIfListContract.View view) {
         this.view = view;
@@ -51,7 +48,7 @@ public class WhatIfListPresenter implements WhatIfListContract.Presenter {
     }
 
     @Override
-    public void loadPeopleChoiceList(){
+    public void loadPeopleChoiceList() {
         Disposable d = whatIfModel.getThumbUpList()
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(ignored -> view.setLoading(true))

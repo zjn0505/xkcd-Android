@@ -19,21 +19,20 @@ import xyz.jienan.xkcd.model.XkcdPic_;
 
 public class BoxManager {
 
+    private static BoxManager boxManager;
     private Box<XkcdPic> xkcdBox;
     private Box<WhatIfArticle> whatIfBox;
 
-    private static BoxManager boxManager;
+    private BoxManager() {
+        xkcdBox = XkcdApplication.getInstance().getBoxStore().boxFor(XkcdPic.class);
+        whatIfBox = XkcdApplication.getInstance().getBoxStore().boxFor(WhatIfArticle.class);
+    }
 
     public static BoxManager getInstance() {
         if (boxManager == null) {
             boxManager = new BoxManager();
         }
         return boxManager;
-    }
-
-    private BoxManager() {
-        xkcdBox = XkcdApplication.getInstance().getBoxStore().boxFor(XkcdPic.class);
-        whatIfBox = XkcdApplication.getInstance().getBoxStore().boxFor(WhatIfArticle.class);
     }
 
     /********** xkcd **********/

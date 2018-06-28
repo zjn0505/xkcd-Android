@@ -81,8 +81,10 @@ public class XkcdListGridAdapter extends RecyclerView.Adapter<XkcdListGridAdapte
 
     class XkcdViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.iv_item_xkcd_list) ImageView itemXkcdImageView;
-        @BindView(R.id.tv_item_xkcd_num) TextView itemXkcdImageNum;
+        @BindView(R.id.iv_item_xkcd_list)
+        ImageView itemXkcdImageView;
+        @BindView(R.id.tv_item_xkcd_num)
+        TextView itemXkcdImageNum;
 
         XkcdViewHolder(View itemView) {
             super(itemView);

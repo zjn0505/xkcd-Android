@@ -15,15 +15,11 @@ import xyz.jienan.xkcd.model.persist.SharedPrefManager;
 
 public class XkcdListPresenter implements XkcdListContract.Presenter {
 
-    private boolean inRequest = false;
-
-    private XkcdListContract.View view;
-
     private final XkcdModel xkcdModel = XkcdModel.getInstance();
-
-    private CompositeDisposable compositeDisposable = new CompositeDisposable();
-
     private final SharedPrefManager sharedPrefManager = new SharedPrefManager();
+    private boolean inRequest = false;
+    private XkcdListContract.View view;
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     public XkcdListPresenter(XkcdListContract.View view) {
         this.view = view;
@@ -53,8 +49,8 @@ public class XkcdListPresenter implements XkcdListContract.Presenter {
                     .subscribe(this::updateView,
                             e -> Timber.e(e, "update xkcd failed"));
             compositeDisposable.add(d);
-        } else if (dataSize > 0){
-            updateView(data.get(dataSize -1).num);
+        } else if (dataSize > 0) {
+            updateView(data.get(dataSize - 1).num);
         }
     }
 
@@ -65,7 +61,7 @@ public class XkcdListPresenter implements XkcdListContract.Presenter {
     }
 
     @Override
-    public void loadPeopleChoiceList(){
+    public void loadPeopleChoiceList() {
         Disposable d = xkcdModel.getThumbUpList()
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(ignored -> view.setLoading(true))
@@ -80,7 +76,8 @@ public class XkcdListPresenter implements XkcdListContract.Presenter {
         List<XkcdPic> list = xkcdModel.getFavXkcd();
         if (!list.isEmpty()) {
             Disposable d = xkcdModel.validateXkcdList(list)
-                    .subscribe(ignore -> {},
+                    .subscribe(ignore -> {
+                            },
                             e -> Timber.e(e, "error on get pic info"));
             compositeDisposable.add(d);
         }

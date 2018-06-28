@@ -21,19 +21,15 @@ import static xyz.jienan.xkcd.base.network.NetworkService.XKCD_TOP_SORT_BY_THUMB
 
 public class XkcdModel {
 
-    private final BoxManager boxManager = BoxManager.getInstance();
-
     private static final int SLICE = 400;
-
+    private static XkcdModel xkcdModel;
+    private final BoxManager boxManager = BoxManager.getInstance();
     private final PublishSubject<XkcdPic> picsPipeline = PublishSubject.create();
-
     private final XkcdAPI xkcdApi = NetworkService.getXkcdAPI();
 
     private XkcdModel() {
         // no public constructor
     }
-
-    private static XkcdModel xkcdModel;
 
     public static XkcdModel getInstance() {
         if (xkcdModel == null) {
@@ -70,6 +66,7 @@ public class XkcdModel {
 
     /**
      * fast loading all xkcd pics
+     *
      * @param latestIndex
      * @return
      */
@@ -102,7 +99,6 @@ public class XkcdModel {
     }
 
     /**
-     *
      * @param start
      * @param range
      * @return last index.
@@ -114,7 +110,6 @@ public class XkcdModel {
     }
 
     /**
-     *
      * @param index
      * @return thumb up count
      */

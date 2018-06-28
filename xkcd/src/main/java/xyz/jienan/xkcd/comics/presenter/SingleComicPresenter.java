@@ -13,12 +13,9 @@ import xyz.jienan.xkcd.model.persist.SharedPrefManager;
 
 public class SingleComicPresenter implements SingleComicContract.Presenter {
 
-    private SingleComicContract.View view;
-
     private final XkcdModel xkcdModel = XkcdModel.getInstance();
-
     private final SharedPrefManager sharedPrefManager = new SharedPrefManager();
-
+    private SingleComicContract.View view;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     public SingleComicPresenter(SingleComicContract.View singleComicFragment) {
