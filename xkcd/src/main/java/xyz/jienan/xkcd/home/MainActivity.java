@@ -1,7 +1,6 @@
 package xyz.jienan.xkcd.home;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -65,12 +64,12 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         final ActionBar ab = getSupportActionBar();
-        ab.setHomeAsUpIndicator(R.drawable.ic_menu);
-        ab.setDisplayHomeAsUpEnabled(true);
-        navigationView.setNavigationItemSelectedListener(this);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            navigationView.setItemIconTintList(null);
+        if (ab != null) {
+            ab.setHomeAsUpIndicator(R.drawable.ic_menu);
+            ab.setDisplayHomeAsUpEnabled(true);
         }
+        navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setItemIconTintList(null);
         if (savedInstanceState == null) {
             String fragmentTag = sharedPrefManager.getLandingType();
             if (getIntent() != null && getIntent().getIntExtra(INDEX_ON_NOTI_INTENT, 0) != 0) {
@@ -79,28 +78,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             openFragment(fragmentTag);
         }
     }
-
-    //    @Override
-//    protected void onSaveInstanceState(Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//        Fragment fragment = getVisibleFragment();
-//        if (fragment instanceof ComicsMainFragment) {
-//            outState.putString(OUTSTATE_FRAGMENT_TYPE, TAG_XKCD);
-//        } else if (fragment instanceof WhatIfMainFragment) {
-//            outState.putString(OUTSTATE_FRAGMENT_TYPE, TAG_WHAT_IF);
-//        }
-//    }
-
-    //    @Override
-//    protected void onNewIntent(Intent intent) {
-//        super.onNewIntent(intent);
-//        updateIndices(intent);
-//        isFre = latestIndex == INVALID_ID;
-//        if (latestIndex > INVALID_ID) {
-//            adapter.setSize(latestIndex);
-//            scrollViewPagerToItem(savedId > INVALID_ID ? savedId - 1 : latestIndex - 1, false);
-//        }
-//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
