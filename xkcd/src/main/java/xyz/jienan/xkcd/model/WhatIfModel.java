@@ -30,6 +30,8 @@ public class WhatIfModel {
 
     private final PublishSubject<WhatIfArticle> picsPipeline = PublishSubject.create();
 
+    private final PublishSubject<Integer> zoomPipeline = PublishSubject.create();
+
     private WhatIfModel() {
         // no public constructor
     }
@@ -43,6 +45,14 @@ public class WhatIfModel {
 
     public void push(WhatIfArticle article) {
         picsPipeline.onNext(article);
+    }
+
+    public void setZoom(int zoom) {
+        zoomPipeline.onNext(zoom);
+    }
+
+    public Observable<Integer> observeZoom() {
+        return zoomPipeline;
     }
 
     public Observable<WhatIfArticle> observe() {

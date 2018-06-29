@@ -9,6 +9,7 @@ import android.preference.SwitchPreference;
 import android.support.annotation.Nullable;
 
 import xyz.jienan.xkcd.R;
+import xyz.jienan.xkcd.model.WhatIfModel;
 
 import static xyz.jienan.xkcd.Const.PREF_ARROW;
 import static xyz.jienan.xkcd.Const.PREF_FONT;
@@ -55,6 +56,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
             case PREF_ZOOM:
                 ((ListPreference) preference).setValue(newValue.toString());
                 zoomPref.setSummary(String.valueOf(zoomPref.getEntry()));
+                WhatIfModel.getInstance().setZoom(Integer.valueOf(newValue.toString().substring(5)));
                 break;
         }
         return false;

@@ -122,6 +122,10 @@ public class SingleWhatIfFragment extends BaseFragment implements WhatIfWebView.
         webView.addJavascriptInterface(new RefInterface(this), "AndroidRef");
         parentFragment = ((WhatIfMainFragment) getParentFragment());
         setHasOptionsMenu(true);
+        compositeDisposable.add(WhatIfModel
+                .getInstance()
+                .observeZoom()
+                .subscribe(zoom -> webView.getSettings().setTextZoom(zoom)));
         return view;
     }
 
