@@ -18,31 +18,20 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
-import io.reactivex.Observable;
 import okhttp3.Cache;
 import okhttp3.ConnectionSpec;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
 import okhttp3.TlsVersion;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
-import retrofit2.http.GET;
-import retrofit2.http.Headers;
-import retrofit2.http.POST;
-import retrofit2.http.Path;
-import retrofit2.http.Query;
-import retrofit2.http.Url;
 import timber.log.Timber;
 import xyz.jienan.xkcd.BuildConfig;
 import xyz.jienan.xkcd.XkcdApplication;
-import xyz.jienan.xkcd.XkcdPic;
 
 /**
  * Created by Jienan on 2018/3/2.
@@ -51,29 +40,35 @@ import xyz.jienan.xkcd.XkcdPic;
 public class NetworkService {
 
     public static final String XKCD_SPECIAL_LIST = "https://raw.githubusercontent.com/zjn0505/Xkcd-Android/master/xkcd/src/main/res/raw/xkcd_special.json";
-    public static final String XKCD_SEARCH_SUGGESTION = "http://130.211.211.220:3003/xkcd-suggest";
-    public static final String XKCD_BROWSE_LIST = "http://130.211.211.220:3003/xkcd-list";
-    public static final String XKCD_THUMBS_UP = "http://130.211.211.220:3003/xkcd-thumb-up";
-    public static final String XKCD_TOP = "http://130.211.211.220:3003/xkcd-top";
+    public static final String XKCD_SEARCH_SUGGESTION = "https://api.jienan.xyz/xkcd/xkcd-suggest";
+    public static final String XKCD_BROWSE_LIST = "https://api.jienan.xyz/xkcd/xkcd-list";
+    public static final String XKCD_THUMBS_UP = "https://api.jienan.xyz/xkcd/xkcd-thumb-up";
+    public static final String XKCD_TOP = "https://api.jienan.xyz/xkcd/xkcd-top";
+    public static final String WHAT_IF_THUMBS_UP = "https://api.jienan.xyz/xkcd/what-if-thumb-up";
+    public static final String WHAT_IF_TOP = "https://api.jienan.xyz/xkcd/what-if-top";
     public static final String XKCD_TOP_SORT_BY_THUMB_UP = "thumb-up";
     public static final String XKCD_EXPLAIN_URL = "https://www.explainxkcd.com/wiki/index.php/";
+    public static final String QUOTE_LIST = "https://raw.githubusercontent.com/zjn0505/Xkcd-Android/master/quotes.json";
 
     private static final String XKCD_BASE_URL = "https://xkcd.com/";
+    private static final String WHAT_IF_BASE_URL = "https://what-if.xkcd.com/";
     private static final int DEFAULT_READ_TIMEOUT = 30; // in seconds
     private static final int DEFAULT_CONNECT_TIMEOUT = 15; // in seconds
     private static final String HEADER_CACHE_CONTROL = "Cache-Control";
     private static XkcdAPI xkcdAPI;
+    private static WhatIfAPI whatIfAPI;
+    private static QuoteAPI quoteAPI;
 
     private NetworkService() {
         OkHttpClient client = getOkHttpClientBuilder().build();
 
         Retrofit.Builder builder = new Retrofit.Builder()
-                .baseUrl(XKCD_BASE_URL)
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create());
-        Retrofit retrofit = builder.build();
-        xkcdAPI = retrofit.create(XkcdAPI.class);
+        xkcdAPI = builder.baseUrl(XKCD_BASE_URL).build().create(XkcdAPI.class);
+        whatIfAPI = builder.baseUrl(WHAT_IF_BASE_URL).build().create(WhatIfAPI.class);
+        quoteAPI = builder.build().create(QuoteAPI.class);
     }
 
     public static OkHttpClient.Builder getOkHttpClientBuilder() {
@@ -146,7 +141,21 @@ public class NetworkService {
         return xkcdAPI;
     }
 
-    public static boolean isNetworkAvailable() {
+    public static WhatIfAPI getWhatIfAPI() {
+        if (whatIfAPI == null) {
+            new NetworkService();
+        }
+        return whatIfAPI;
+    }
+
+    public static QuoteAPI getQuoteAPI() {
+        if (quoteAPI == null) {
+            new NetworkService();
+        }
+        return quoteAPI;
+    }
+
+    private static boolean isNetworkAvailable() {
         Context context = XkcdApplication.getInstance();
         ConnectivityManager connectivity = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -163,53 +172,6 @@ public class NetworkService {
             }
         }
         return false;
-    }
-
-
-    public interface XkcdAPI {
-
-        @GET("info.0.json")
-        Observable<XkcdPic> getLatest();
-
-        @Headers("cacheable: 600")
-        @GET("{comic_id}/info.0.json")
-        Observable<XkcdPic> getComics(@Path("comic_id") long comicId);
-
-        @Headers("cacheable: 2419200")
-        @GET
-        Observable<ResponseBody> getExplain(@Url String url);
-
-        @Headers("cacheable: 86400")
-        @GET
-        Observable<ResponseBody> getExplainWithShortCache(@Url String url);
-
-        @GET
-        Observable<List<XkcdPic>> getSpecialXkcds(@Url String url);
-
-        @Headers("cacheable: 600")
-        @GET
-        Observable<List<XkcdPic>> getXkcdsSearchResult(@Url String url, @Query("q") String query);
-
-        /**
-         * Get the xkcd list with paging
-         *
-         * @param url
-         * @param start    the start index of xkcd list
-         * @param reversed 0 not reversed, 1 reversed
-         * @param size     the size of returned xkcd list
-         * @return
-         */
-        @GET
-        Observable<List<XkcdPic>> getXkcdList(@Url String url,
-                                              @Query("start") int start, @Query("reversed") int reversed, @Query("size") int size);
-
-        @FormUrlEncoded
-        @POST
-        Observable<XkcdPic> thumbsUp(@Url String url, @Field("comic_id") int comicId);
-
-        @Headers("cacheable: 60")
-        @GET
-        Observable<List<XkcdPic>> getTopXkcds(@Url String url, @Query("sortby") String sortby);
     }
 
     /**

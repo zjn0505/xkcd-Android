@@ -2,7 +2,6 @@ package xyz.jienan.xkcd.list;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.percent.PercentFrameLayout;
 import android.support.percent.PercentLayoutHelper;
@@ -21,13 +20,12 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import timber.log.Timber;
 import xyz.jienan.xkcd.R;
-import xyz.jienan.xkcd.XkcdModel;
-import xyz.jienan.xkcd.XkcdPic;
-import xyz.jienan.xkcd.home.activity.MainActivity;
-
-import static xyz.jienan.xkcd.Const.XKCD_INDEX_ON_NEW_INTENT;
+import xyz.jienan.xkcd.model.XkcdModel;
+import xyz.jienan.xkcd.model.XkcdPic;
 
 public class XkcdListGridAdapter extends RecyclerView.Adapter<XkcdListGridAdapter.XkcdViewHolder> implements RecyclerViewFastScroller.BubbleTextGetter {
 
@@ -81,14 +79,20 @@ public class XkcdListGridAdapter extends RecyclerView.Adapter<XkcdListGridAdapte
         notifyDataSetChanged();
     }
 
+    public XkcdPic getPic(int position) {
+        return pics.get(position);
+    }
+
     class XkcdViewHolder extends RecyclerView.ViewHolder {
-        private ImageView itemXkcdImageView;
-        private TextView itemXkcdImageNum;
+
+        @BindView(R.id.iv_item_xkcd_list)
+        ImageView itemXkcdImageView;
+        @BindView(R.id.tv_item_xkcd_num)
+        TextView itemXkcdImageNum;
 
         XkcdViewHolder(View itemView) {
             super(itemView);
-            itemXkcdImageView = itemView.findViewById(R.id.iv_item_xkcd_list);
-            itemXkcdImageNum = itemView.findViewById(R.id.tv_item_xkcd_num);
+            ButterKnife.bind(this, itemView);
         }
 
         @SuppressLint("CheckResult")
@@ -110,12 +114,6 @@ public class XkcdListGridAdapter extends RecyclerView.Adapter<XkcdListGridAdapte
             } else {
                 itemXkcdImageNum.setBackground(mContext.getResources().getDrawable(R.drawable.item_num_bg));
             }
-            itemView.setOnClickListener(view -> {
-                Intent intent = new Intent(mContext, MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.putExtra(XKCD_INDEX_ON_NEW_INTENT, (int) pic.num);
-                mContext.startActivity(intent);
-            });
             if (width == 0 || height == 0) {
                 xkcdModel.loadXkcd(pic.num)
                         .subscribe(xkcdPic -> {

@@ -11,6 +11,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import java.util.Map;
 
 import xyz.jienan.xkcd.R;
+import xyz.jienan.xkcd.home.MainActivity;
 
 import static xyz.jienan.xkcd.Const.FIRE_UX_ACTION;
 import static xyz.jienan.xkcd.Const.PREF_FONT;
@@ -29,10 +30,19 @@ public abstract class BaseActivity extends AppCompatActivity {
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         boolean fontPref = sharedPreferences.getBoolean(PREF_FONT, false);
         if (fontPref) {
-            setTheme(R.style.NormalAppTheme);
+            if (this instanceof MainActivity) {
+                setTheme(R.style.CustomActionBarTheme);
+            } else {
+                setTheme(R.style.AppNoBarTheme);
+            }
         } else {
-            setTheme(R.style.AppTheme);
+            if (this instanceof MainActivity) {
+                setTheme(R.style.CustomActionBarFontTheme);
+            } else {
+                setTheme(R.style.AppNoBarFontTheme);
+            }
         }
+
         super.onCreate(savedInstanceState);
     }
 

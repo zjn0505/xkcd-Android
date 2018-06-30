@@ -66,9 +66,53 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "2:5390338631784931612",
+      "lastPropertyId": "9:1803428119984195950",
+      "name": "WhatIfArticle",
+      "properties": [
+        {
+          "id": "1:875740692732188558",
+          "name": "num"
+        },
+        {
+          "id": "2:4663039144198337006",
+          "name": "title"
+        },
+        {
+          "id": "3:4220785221140365380",
+          "name": "featureImg"
+        },
+        {
+          "id": "4:6602345007450202671",
+          "name": "content"
+        },
+        {
+          "id": "5:769080332599008971",
+          "name": "isFavorite"
+        },
+        {
+          "id": "6:5867086381917672500",
+          "name": "hasThumbed"
+        },
+        {
+          "id": "7:1068276546638640699",
+          "name": "thumbCount"
+        },
+        {
+          "id": "8:2512212370237625559",
+          "name": "hasRead"
+        },
+        {
+          "id": "9:1803428119984195950",
+          "name": "date"
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "1:7400301097756525204",
+  "lastEntityId": "2:5390338631784931612",
   "lastIndexId": "0:0",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",

@@ -1,29 +1,49 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="NormalAppTheme">
+    <style name="AppNoBarFontTheme" parent="AppNoBarTheme">
         <item name="android:textViewStyle">@style/MyTextViewStyle</item>
     </style>
 
-    <style name="NormalAppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="CustomActionBarFontTheme" parent="CustomActionBarTheme">
+        <item name="android:textViewStyle">@style/MyTextViewStyle</item>
+    </style>
+
+    <style name="CustomActionBarTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:actionBarStyle">@style/Widget.Holo.ActionBar</item>
+        <item name="actionBarStyle">@style/Toolbar</item>
+    </style>
+
+    <style name="AppNoBarTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
     </style>
 
     <style name="MyTextViewStyle" parent="android:Widget.TextView">
         <item name="android:fontFamily">@font/xkcd</item>
     </style>
 
-    <style name="Widget.Holo.ActionBar" parent="@android:style/Widget.Holo.ActionBar">
-        <item name="android:subtitleTextStyle">
-            @style/TextAppearance.Holo.Widget.ActionBar.Subtitle
-        </item>
+    <style name="Toolbar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/white</item>
+        <item name="android:actionMenuTextColor">@color/white</item>
+        <item name="android:colorBackground">@color/colorPrimary</item>
+        <item name="android:textColorHint">@color/hint_text_color</item>
     </style>
 
-    <style name="TextAppearance.Holo.Widget.ActionBar.Subtitle" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Subtitle">
+
+    <style name="ToolbarSubtitleAppearance" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
         <item name="android:ellipsize">none</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="ToolbarPopup" parent="@style/ThemeOverlay.AppCompat.Light">
+        <item name="android:textColorPrimary">@color/primary_text_default_material_light</item>
+        <item name="android:actionMenuTextColor">@color/white</item>
+        <item name="android:colorBackground">@color/white</item>
     </style>
 
     <style name="image_progress_bar">
@@ -40,5 +60,5 @@
         <item name="progress_end_color">@color/colorAccent</item>
     </style>
 
-    <style name="holo_progressbar" parent="android:Widget.Holo.ProgressBar"/>
+    <style name="holo_progressbar" parent="android:Widget.Holo.ProgressBar" />
 </resources>

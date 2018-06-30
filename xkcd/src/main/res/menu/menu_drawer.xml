@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_comics"
+        android:icon="@drawable/ic_cueball"
+        android:title="@string/menu_xkcd" />
+    <item
+        android:id="@+id/nav_whatif"
+        android:icon="@drawable/ic_megan"
+        android:title="@string/menu_whatif" />
+    <item
+        android:id="@+id/nav_setting"
+        android:icon="@drawable/ic_black_hat"
+        android:title="@string/settings" />
+</menu>

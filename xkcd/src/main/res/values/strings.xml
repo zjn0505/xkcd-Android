@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name" translatable="false">xkcd</string>
 
+    <string name="menu_xkcd" translatable="false">xkcd</string>
+    <string name="menu_whatif" translatable="false">what if</string>
+
     <string name="action_share">Share this xkcd</string>
     <string name="action_left">Previous</string>
     <string name="action_right">Next</string>
@@ -9,7 +12,7 @@
     <string name="action_specific">Specific xkcd</string>
     <string name="action_xkcd">Go to xkcd.com</string>
     <string name="action_explain">Go to explainxkcd</string>
-    <string name="search_hint">Search xkcd</string>
+    <string name="search_hint_xkcd">Search xkcd</string>
 
     <string name="dialog_got_it">Got it</string>
     <string name="dialog_more_details">More details</string>
@@ -33,9 +36,10 @@
     <string name="xkcd_pic">xkcd comics</string>
     <string name="pref_arrow">Quick switch</string>
     <plurals name="pref_arrow_summary">
-        <item quantity="one">Switch %s comic when action bar arrow clicked</item>
-        <item quantity="other">Switch %s comics when action bar arrow clicked</item>
+        <item quantity="one">Switch %s page when action bar arrow clicked</item>
+        <item quantity="other">Switch %s pages when action bar arrow clicked</item>
     </plurals>
+    <string name="pref_what_if_zoom">Text scale in what if</string>
 
     <string name="pref_arrow_content">Set the number of comics to skip when arrow clicked</string>
     <string name="pref_font">Increase legibility</string>
@@ -64,8 +68,8 @@
     <string name="uri_hint_explain_edit">This explain is to be updated, help if you can.</string>
 
     <string-array name="notification_titles">
-        <item>new xkcd is coming</item>
-        <item>new xkcd on the way</item>
+        <item>new %s is coming</item>
+        <item>new %s on the way</item>
     </string-array>
 
     <string name="heart" translatable="false">
@@ -75,4 +79,13 @@
     <string name="thumb" translatable="false">
         M1,21h4L5,9L1,9v12zM23,10c0,-1.1 -0.9,-2 -2,-2h-6.31l0.95,-4.57 0.03,-0.32c0,-0.41 -0.17,-0.79 -0.44,-1.06L14.17,1 7.59,7.59C7.22,7.95 7,8.45 7,9v10c0,1.1 0.9,2 2,2h9c0.83,0 1.54,-0.5 1.84,-1.22l3.02,-7.05c0.09,-0.23 0.14,-0.47 0.14,-0.73v-1.91l-0.01,-0.01L23,10z
     </string>
+
+    <string name="action_what_if_list">Browse what if</string>
+    <string name="action_specific_what_if">Specific what if</string>
+    <string name="search_hint_what_if">Search what if</string>
+    <string name="item_what_if_list_title" translatable="false">%d - %s</string>
+    <string name="title_what_if_list">what if list</string>
+    <string name="share_text_what_if">Come and check this article I got from what if. %s</string>
+
+    <string name="quote_sub_text" translatable="false">- %s %s:%d</string>
 </resources>

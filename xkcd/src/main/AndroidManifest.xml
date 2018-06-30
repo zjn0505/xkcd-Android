@@ -12,11 +12,12 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppNoBarFontTheme">
         <activity
-            android:name="xyz.jienan.xkcd.home.activity.MainActivity"
+            android:name="xyz.jienan.xkcd.home.MainActivity"
             android:configChanges="screenSize|keyboardHidden"
-            android:launchMode="singleTask">
+            android:launchMode="singleTop"
+            android:theme="@style/CustomActionBarTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,7 +29,7 @@
         </activity>
 
         <activity
-            android:name="xyz.jienan.xkcd.home.activity.ImageDetailPageActivity"
+            android:name="xyz.jienan.xkcd.comics.activity.ImageDetailPageActivity"
             android:configChanges="screenSize|orientation|keyboardHidden"
             android:launchMode="singleTask"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
@@ -39,9 +40,14 @@
             android:launchMode="singleTask" />
 
         <activity
-            android:name=".list.XkcdListActivity"
+            android:name=".list.activity.XkcdListActivity"
             android:configChanges="screenSize|orientation|keyboardHidden"
             android:label="@string/title_xkcd_list" />
+
+        <activity
+            android:name=".list.activity.WhatIfListActivity"
+            android:configChanges="screenSize|orientation|keyboardHidden"
+            android:label="@string/title_what_if_list" />
 
         <service android:name=".base.firebase.XkcdFirebaseMessagingService">
             <intent-filter>

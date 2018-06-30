@@ -9,6 +9,8 @@ import com.squareup.leakcanary.LeakCanary;
 import io.objectbox.BoxStore;
 import timber.log.Timber;
 import xyz.jienan.xkcd.base.glide.GlideImageLoader;
+import xyz.jienan.xkcd.model.MyObjectBox;
+import xyz.jienan.xkcd.model.util.XkcdSideloadUtils;
 
 /**
  * Created by Jienan on 2018/3/2.
@@ -39,6 +41,7 @@ public class XkcdApplication extends Application {
         boxStore = MyObjectBox.builder().androidContext(this).build();
         XkcdSideloadUtils.init(this);
         FirebaseMessaging.getInstance().subscribeToTopic("new_comics");
+        FirebaseMessaging.getInstance().subscribeToTopic("new_what_if");
         BigImageViewer.initialize(GlideImageLoader.with(getApplicationContext()));
     }
 
