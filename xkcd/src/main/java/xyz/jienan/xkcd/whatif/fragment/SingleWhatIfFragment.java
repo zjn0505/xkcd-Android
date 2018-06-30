@@ -63,7 +63,7 @@ public class SingleWhatIfFragment extends BaseFragment implements WhatIfWebView.
 
     private LatexInterface latexInterface = new LatexInterface();
 
-    private CompositeDisposable compositeDisposable = new CompositeDisposable();
+    private CompositeDisposable compositeDisposable;
 
     private AlertDialog dialog = null;
 
@@ -97,6 +97,7 @@ public class SingleWhatIfFragment extends BaseFragment implements WhatIfWebView.
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
+        compositeDisposable = new CompositeDisposable();
         webView.getSettings().setBuiltInZoomControls(true);
         webView.getSettings().setUseWideViewPort(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT);
         webView.getSettings().setJavaScriptEnabled(true);
@@ -145,7 +146,9 @@ public class SingleWhatIfFragment extends BaseFragment implements WhatIfWebView.
         if (dialog != null) {
             dialog.dismiss();
         }
-        compositeDisposable.dispose();
+        if (compositeDisposable != null) {
+            compositeDisposable.dispose();
+        }
         super.onDestroyView();
     }
 
