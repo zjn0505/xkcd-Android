@@ -60,6 +60,11 @@ public class ComicsMainFragment extends ContentMainBaseFragment implements Comic
     }
 
     @Override
+    protected int getPickerTitleTextRes() {
+        return R.string.dialog_pick_content;
+    }
+
+    @Override
     public void toggleFab(boolean isFavorite) {
         if (isFavorite) {
             fabAnimation(R.color.pink, R.color.white, R.drawable.ic_heart_on);

@@ -147,6 +147,8 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
 
     protected abstract String getTitleTextRes();
 
+    protected abstract int getPickerTitleTextRes();
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -355,9 +357,14 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
                 if (latestIndex == INVALID_ID) {
                     break;
                 }
-                NumberPickerDialogFragment pickerDialogFragment = new NumberPickerDialogFragment();
+                NumberPickerDialogFragment pickerDialogFragment =
+                        (NumberPickerDialogFragment) getChildFragmentManager().findFragmentByTag("IdPickerDialogFragment");
+                if (pickerDialogFragment == null) {
+                    pickerDialogFragment = new NumberPickerDialogFragment();
+                }
                 pickerDialogFragment.setNumberRange(1, latestIndex);
                 pickerDialogFragment.setListener(pickerListener);
+                pickerDialogFragment.setTitle(getPickerTitleTextRes());
                 pickerDialogFragment.show(getChildFragmentManager(), "IdPickerDialogFragment");
                 logSubUXEvent(FIRE_SPECIFIC_MENU);
                 break;

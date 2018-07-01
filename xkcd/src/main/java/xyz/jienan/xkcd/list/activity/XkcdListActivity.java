@@ -148,6 +148,8 @@ public class XkcdListActivity extends BaseActivity implements XkcdListContract.V
                 if (filterDialog == null) {
                     filterDialog = new ListFilterDialogFragment();
                 }
+                final int[] filters = {R.string.filter_all_comics, R.string.filter_my_fav, R.string.filter_people_choice};
+                filterDialog.setFilters(filters);
                 if (!filterDialog.isAdded()) {
                     filterDialog.show(getSupportFragmentManager(), "filter");
                     filterDialog.setItemSelectListener(this);

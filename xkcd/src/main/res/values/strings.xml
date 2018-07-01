@@ -19,6 +19,7 @@
 
     <string name="dialog_pick_title">Specific xkcd</string>
     <string name="dialog_pick_content">Select the id of xkcd</string>
+    <string name="dialog_pick_content_what_if">Select the id of what if</string>
     <string name="dialog_select">Select</string>
     <string name="dialog_cancel">Cancel</string>
 
@@ -62,6 +63,7 @@
     <string name="add_to_fav">Add to favorite</string>
 
     <string name="filter_all_comics">All comics</string>
+    <string name="filter_all_articles">All articles</string>
     <string name="filter_my_fav">My favorite</string>
     <string name="filter_people_choice">People\'s choice</string>
 

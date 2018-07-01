@@ -85,6 +85,11 @@ public class WhatIfMainFragment extends ContentMainBaseFragment implements WhatI
     }
 
     @Override
+    protected int getPickerTitleTextRes() {
+        return R.string.dialog_pick_content_what_if;
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_what_if, menu);

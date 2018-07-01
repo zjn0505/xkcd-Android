@@ -22,7 +22,9 @@ public class NumberPickerDialogFragment extends DialogFragment {
 
     private final static String INT_MIN = "min";
     private final static String INT_MAX = "max";
+    private final static String TITLE_RES = "title";
     private int min, max;
+    private int title;
     private INumberPickerDialogListener mListener;
 
     public void setListener(INumberPickerDialogListener listener) {
@@ -40,6 +42,7 @@ public class NumberPickerDialogFragment extends DialogFragment {
         if (savedInstanceState != null) {
             max = savedInstanceState.getInt(INT_MAX);
             min = savedInstanceState.getInt(INT_MIN);
+            title = savedInstanceState.getInt(TITLE_RES);
         }
     }
 
@@ -48,6 +51,7 @@ public class NumberPickerDialogFragment extends DialogFragment {
         super.onSaveInstanceState(outState);
         outState.putInt(INT_MAX, max);
         outState.putInt(INT_MIN, min);
+        outState.putInt(TITLE_RES, title);
     }
 
     @NonNull
@@ -61,7 +65,7 @@ public class NumberPickerDialogFragment extends DialogFragment {
         picker.setMinValue(min);
         picker.setMaxValue(max);
         builder.setView(contentView)
-                .setTitle(R.string.dialog_pick_content)
+                .setTitle(title)
                 .setPositiveButton(R.string.dialog_select, (dialog, id) -> {
                     int value;
                     if (editText != null && editText.isFocused()) {
@@ -78,6 +82,10 @@ public class NumberPickerDialogFragment extends DialogFragment {
                 });
         // Create the AlertDialog object and return it
         return builder.create();
+    }
+
+    public void setTitle(int title) {
+        this.title = title;
     }
 
     public interface INumberPickerDialogListener {

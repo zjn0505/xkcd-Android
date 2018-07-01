@@ -23,17 +23,17 @@ public class ListFilterDialogFragment extends DialogFragment {
     private List<HashMap<String, String>> list;
     private int selection;
     private OnItemSelectListener itemSelectListener;
+    private int[] filters;
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        final String[] filter = {getString(R.string.filter_all_comics), getString(R.string.filter_my_fav), getString(R.string.filter_people_choice)};
         final int[] icons = {R.mipmap.ic_launcher_round, R.drawable.ic_heart_on, R.drawable.ic_thumb_on};
         list = new ArrayList<>();
-        for (int i = 0; i < filter.length; i++) {
+        for (int i = 0; i < filters.length; i++) {
             HashMap<String, String> hashMap = new HashMap<>();
-            hashMap.put("filter", filter[i]);
+            hashMap.put("filter", getString(filters[i]));
             hashMap.put("iconRes", String.valueOf(icons[i]));
             list.add(hashMap);
         }
@@ -55,6 +55,10 @@ public class ListFilterDialogFragment extends DialogFragment {
 
     public void setSelection(int selection) {
         this.selection = selection;
+    }
+
+    public void setFilters(int[] filters) {
+        this.filters = filters;
     }
 
     public interface OnItemSelectListener {
