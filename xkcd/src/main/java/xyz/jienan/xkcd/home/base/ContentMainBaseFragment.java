@@ -446,6 +446,7 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
         presenter.setLatest(latestIndex);
     }
 
+    @SuppressLint("RestrictedApi")
     private void setupSearch(Menu menu) {
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
         final MenuItem searchItem = menu.findItem(R.id.action_search);
@@ -455,6 +456,10 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
         }
         searchView.setQueryHint(getSearchHint());
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+        SearchView.SearchAutoComplete searchSrcTextView = searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        if (searchSrcTextView != null) {
+            searchSrcTextView.setThreshold(1);
+        }
         if (searchAdapter == null) {
             searchAdapter = new SearchCursorAdapter(getActivity(), null, 0);
         }
