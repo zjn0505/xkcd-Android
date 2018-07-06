@@ -60,8 +60,8 @@ public class WhatIfMainPresenter implements WhatIfMainContract.Presenter {
         if (article == null) {
             fabShowDisposable = whatIfModel.observe()
                     .filter(article1 -> article1.num == index)
-                    .doOnNext(view::showFab)
-                    .subscribe();
+                    .subscribe(view::showFab,
+                            e -> Timber.e(e, "what if pipeline observing error"));
             compositeDisposable.add(fabShowDisposable);
         } else {
             view.showFab(article);
@@ -104,7 +104,8 @@ public class WhatIfMainPresenter implements WhatIfMainContract.Presenter {
     public void searchContent(String query) {
         final Disposable d = whatIfModel.searchWhatIf(query)
                 .filter(whatIfArticles -> whatIfArticles != null && !whatIfArticles.isEmpty())
-                .subscribe(view::renderWhatIfSearch);
+                .subscribe(view::renderWhatIfSearch,
+                        e -> Timber.e(e, "search what if error"));
         compositeDisposable.add(d);
     }
 

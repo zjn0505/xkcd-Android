@@ -78,8 +78,8 @@ public class ComicsMainPresenter implements ComicsMainContract.Presenter {
         if (xkcdPic == null) {
             fabShowDisposable = xkcdModel.observe()
                     .filter(xkcdPic1 -> xkcdPic1.num == index)
-                    .doOnNext(view::showFab)
-                    .subscribe();
+                    .subscribe(view::showFab,
+                            e -> Timber.e("pic pipeline observing error"));
             compositeDisposable.add(fabShowDisposable);
         } else {
             view.showFab(xkcdPic);

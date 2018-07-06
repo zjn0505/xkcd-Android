@@ -24,6 +24,7 @@ import butterknife.ButterKnife;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import timber.log.Timber;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.base.BaseActivity;
 import xyz.jienan.xkcd.comics.fragment.ComicsMainFragment;
@@ -211,7 +212,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                         });
                     }
 
-                });
+                }, e -> Timber.e(e, "failed to get daily quote"));
         compositeDisposable.add(d);
     }
 

@@ -134,7 +134,7 @@ public class ImageDetailPageActivity extends Activity implements ImageDetailPage
                 .observeOn(AndroidSchedulers.mainThread()).subscribe(ignored -> {
                     photoView.setOnClickListener(listener);
                     bigImageView.setOnClickListener(listener);
-                }));
+                }, e -> Timber.e(e, "add listener error")));
     }
 
     @Override

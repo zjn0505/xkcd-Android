@@ -126,7 +126,8 @@ public class SingleWhatIfFragment extends BaseFragment implements WhatIfWebView.
         compositeDisposable.add(WhatIfModel
                 .getInstance()
                 .observeZoom()
-                .subscribe(zoom -> webView.getSettings().setTextZoom(zoom)));
+                .subscribe(zoom -> webView.getSettings().setTextZoom(zoom),
+                        e -> Timber.e(e, "observing zoom error")));
         return view;
     }
 
@@ -182,7 +183,10 @@ public class SingleWhatIfFragment extends BaseFragment implements WhatIfWebView.
 
     @Override
     public void onImgLongClick(String title) {
-        compositeDisposable.add(Observable.just(title).observeOn(AndroidSchedulers.mainThread()).subscribe(this::showSimpleInfoDialog));
+        compositeDisposable.add(Observable.just(title)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::showSimpleInfoDialog,
+                        e -> Timber.e("long click error")));
         if (this.getView() != null) {
             this.getView().performHapticFeedback(LONG_PRESS, FLAG_IGNORE_GLOBAL_SETTING);
         }
@@ -191,7 +195,10 @@ public class SingleWhatIfFragment extends BaseFragment implements WhatIfWebView.
 
     @Override
     public void onRefClick(String content) {
-        compositeDisposable.add(Observable.just(content).observeOn(AndroidSchedulers.mainThread()).subscribe(this::showSimpleInfoDialog));
+        compositeDisposable.add(Observable.just(content)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::showSimpleInfoDialog,
+                        e -> Timber.e(e, "ref click error")));
         if (this.getView() != null) {
             this.getView().performHapticFeedback(CONTEXT_CLICK, FLAG_IGNORE_GLOBAL_SETTING);
         }

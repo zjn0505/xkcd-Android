@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import butterknife.BindString;
 import butterknife.OnPageChange;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import timber.log.Timber;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.home.base.ContentMainBaseFragment;
 import xyz.jienan.xkcd.list.activity.WhatIfListActivity;
@@ -67,7 +68,8 @@ public class WhatIfMainFragment extends ContentMainBaseFragment implements WhatI
         RxView.attaches(fab)
                 .delay(100, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(ignored -> fab.hide());
+                .subscribe(ignored -> fab.hide(),
+                        e -> Timber.e(e, "fab observing error"));
         return view;
     }
 
