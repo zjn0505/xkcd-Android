@@ -206,7 +206,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                             Intent intent = new Intent(this, MainActivity.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             intent.putExtra(INDEX_ON_NOTI_INTENT, quote.getNum());
-                            intent.putExtra(LANDING_TYPE, quote.getSource());
+                            String tag = quote.getSource();
+                            if (tag.startsWith("what")) {
+                                tag = TAG_WHAT_IF;
+                            }
+                            intent.putExtra(LANDING_TYPE, tag);
                             startActivity(intent);
                             drawerLayout.closeDrawer(GravityCompat.START);
                         });
