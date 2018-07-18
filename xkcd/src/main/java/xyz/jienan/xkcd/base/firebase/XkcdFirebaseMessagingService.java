@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
-import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 
@@ -16,6 +15,7 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
@@ -25,19 +25,23 @@ import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.home.MainActivity;
 import xyz.jienan.xkcd.model.WhatIfArticle;
 import xyz.jienan.xkcd.model.XkcdPic;
+import xyz.jienan.xkcd.model.persist.BoxManager;
+import xyz.jienan.xkcd.model.persist.SharedPrefManager;
 
 import static xyz.jienan.xkcd.Const.INDEX_ON_NOTI_INTENT;
 import static xyz.jienan.xkcd.Const.LANDING_TYPE;
 import static xyz.jienan.xkcd.Const.TAG_WHAT_IF;
 import static xyz.jienan.xkcd.Const.TAG_XKCD;
-import static xyz.jienan.xkcd.Const.WHAT_IF_LATEST_INDEX;
-import static xyz.jienan.xkcd.Const.XKCD_LATEST_INDEX;
 
 /**
  * Created by jienanzhang on 04/03/2018.
  */
 
 public class XkcdFirebaseMessagingService extends FirebaseMessagingService {
+
+    private SharedPrefManager sharedPrefManager = new SharedPrefManager();
+
+    private BoxManager boxManager = BoxManager.getInstance();
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -72,9 +76,12 @@ public class XkcdFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void xkcdNoti(XkcdPic xkcdPic) {
-        int latestIndex = PreferenceManager.getDefaultSharedPreferences(this).getInt(XKCD_LATEST_INDEX, 0);
+        long latestIndex = sharedPrefManager.getLatestXkcd();
         if (latestIndex >= xkcdPic.num) {
             return; // User already read the latest comic
+        } else {
+            sharedPrefManager.setLatestXkcd(latestIndex);
+            boxManager.updateAndSave(xkcdPic);
         }
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -111,9 +118,12 @@ public class XkcdFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void whatIfNoti(WhatIfArticle whatIfArticle) {
-        int latestIndex = PreferenceManager.getDefaultSharedPreferences(this).getInt(WHAT_IF_LATEST_INDEX, 0);
+        long latestIndex = sharedPrefManager.getLatestWhatIf();
         if (latestIndex >= whatIfArticle.num) {
             return; // User already read the what if
+        } else {
+            sharedPrefManager.setLatestWhatIf(latestIndex);
+            boxManager.updateAndSaveWhatIf(Collections.singletonList(whatIfArticle));
         }
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
