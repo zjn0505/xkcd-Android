@@ -66,12 +66,16 @@ public class XkcdFirebaseMessagingService extends FirebaseMessagingService {
      * @param remoteMessage FCM message body received.
      */
     private void sendNotification(RemoteMessage remoteMessage) {
-        XkcdPic xkcdPic = new Gson().fromJson(remoteMessage.getData().get("xkcd"), XkcdPic.class);
-        WhatIfArticle whatIfArticle = new Gson().fromJson(remoteMessage.getData().get("whatif"), WhatIfArticle.class);
-        if (xkcdPic != null && !TextUtils.isEmpty(xkcdPic.getTitle())) {
-            xkcdNoti(xkcdPic);
-        } else if (whatIfArticle != null && !TextUtils.isEmpty(whatIfArticle.title)) {
-            whatIfNoti(whatIfArticle);
+        if (!TextUtils.isEmpty(remoteMessage.getData().get("xkcd"))) {
+            XkcdPic xkcdPic = new Gson().fromJson(remoteMessage.getData().get("xkcd"), XkcdPic.class);
+            if (xkcdPic != null && !TextUtils.isEmpty(xkcdPic.getTitle())) {
+                xkcdNoti(xkcdPic);
+            }
+        } else if (!TextUtils.isEmpty(remoteMessage.getData().get("whatif"))) {
+            WhatIfArticle whatIfArticle = new Gson().fromJson(remoteMessage.getData().get("whatif"), WhatIfArticle.class);
+            if (whatIfArticle != null && !TextUtils.isEmpty(whatIfArticle.title)) {
+                whatIfNoti(whatIfArticle);
+            }
         }
     }
 

@@ -122,7 +122,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             if (!openFragment(fragmentTag)) {
                 ContentMainBaseFragment fragment = (ContentMainBaseFragment) getVisibleFragment();
                 if (fragment != null) {
-                    fragment.scrollViewPagerToItem(intent.getIntExtra(INDEX_ON_NOTI_INTENT, 0) - 1, false);
+                    final int size = intent.getIntExtra(INDEX_ON_NOTI_INTENT, 0);
+                    fragment.expand(size);
+                    fragment.scrollViewPagerToItem(size - 1, false);
                 }
             }
         }

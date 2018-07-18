@@ -383,6 +383,10 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
         }
     }
 
+    public void expand(int size) {
+        adapter.setSize(size);
+    }
+
     protected void toggleSubFabs(final boolean showSubFabs) {
         btnThumb.setClickable(showSubFabs);
         btnFav.setClickable(showSubFabs);
