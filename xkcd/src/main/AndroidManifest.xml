@@ -61,6 +61,9 @@
             </intent-filter>
         </service>
 
+        <service android:name=".whatif.WhatIfFastLoadService"
+            android:exported="false"/>
+
         <meta-data
             android:name="xyz.jienan.xkcd.base.glide.OkHttpProgressGlideModule"
             android:value="GlideModule" />

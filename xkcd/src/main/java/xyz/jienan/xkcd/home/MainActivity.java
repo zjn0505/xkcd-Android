@@ -1,6 +1,9 @@
 package xyz.jienan.xkcd.home;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -33,6 +36,7 @@ import xyz.jienan.xkcd.model.Quote;
 import xyz.jienan.xkcd.model.QuoteModel;
 import xyz.jienan.xkcd.model.persist.SharedPrefManager;
 import xyz.jienan.xkcd.settings.PreferenceActivity;
+import xyz.jienan.xkcd.whatif.WhatIfFastLoadService;
 import xyz.jienan.xkcd.whatif.fragment.WhatIfMainFragment;
 
 import static xyz.jienan.xkcd.Const.FIRE_NAVI_WHAT_IF;
@@ -40,6 +44,7 @@ import static xyz.jienan.xkcd.Const.FIRE_NAVI_XKCD;
 import static xyz.jienan.xkcd.Const.FIRE_SETTING_MENU;
 import static xyz.jienan.xkcd.Const.INDEX_ON_NOTI_INTENT;
 import static xyz.jienan.xkcd.Const.LANDING_TYPE;
+import static xyz.jienan.xkcd.Const.LAST_VIEW_WHAT_IF_ID;
 import static xyz.jienan.xkcd.Const.TAG_WHAT_IF;
 import static xyz.jienan.xkcd.Const.TAG_XKCD;
 
@@ -89,6 +94,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         tvQuote = navigationView.getHeaderView(0).findViewById(R.id.tv_quote);
         tvSubQuote = navigationView.getHeaderView(0).findViewById(R.id.tv_quote_sub);
         getDailyQuote();
+        fastLoad();
     }
 
     @Override
@@ -220,4 +226,19 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         compositeDisposable.add(d);
     }
 
+    private void fastLoad() {
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager != null) {
+            NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+            boolean isConnected = activeNetwork != null
+                    && activeNetwork.isConnectedOrConnecting()
+                    && !connectivityManager.isActiveNetworkMetered();
+            if (isConnected) {
+                Intent msgIntent = new Intent(this, WhatIfFastLoadService.class);
+                msgIntent.putExtra(LAST_VIEW_WHAT_IF_ID, sharedPrefManager.getLatestWhatIf());
+                startService(msgIntent);
+            }
+        }
+    }
 }

@@ -123,9 +123,8 @@ public class BoxManager {
     public List<WhatIfArticle> updateAndSaveWhatIf(@NonNull List<WhatIfArticle> whatIfArticles) {
         for (WhatIfArticle article : whatIfArticles) {
             WhatIfArticle articleInBox = whatIfBox.get(article.num);
-            if (articleInBox != null) {
-                article.isFavorite = articleInBox.isFavorite;
-                article.hasThumbed = articleInBox.hasThumbed;
+            if (articleInBox != null && articleInBox.content != null) {
+                whatIfArticles.set((int) article.num - 1, articleInBox);
             }
         }
         whatIfBox.put(whatIfArticles);

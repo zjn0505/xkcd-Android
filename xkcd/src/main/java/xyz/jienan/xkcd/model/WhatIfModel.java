@@ -6,6 +6,7 @@ import org.jsoup.nodes.Element;
 
 import java.util.List;
 
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -116,6 +117,26 @@ public class WhatIfModel {
                 .map(whatIfArticle -> whatIfArticle.thumbCount);
     }
 
+    public Completable fastLoadWhatIfs(long index) {
+        return Observable.just(index)
+                .flatMap(ignored -> {
+                    if (index == 0) {
+                        return loadLatest().map(whatIfArticle -> whatIfArticle.num)
+                                .flatMapObservable(num -> Observable.rangeLong(1, num));
+                    } else {
+                        return Observable.rangeLong(1, index);
+                    }
+                }).flatMap(num -> {
+                    if (whatIfModel.loadArticleFromDB(num) == null
+                            || TextUtils.isEmpty(whatIfModel.loadArticleFromDB(num).content)) {
+                        return loadArticleFromAPI(num);
+                    } else {
+                        return Observable.just(whatIfModel.loadArticleFromDB(num));
+                    }})
+                .toList()
+                .toCompletable();
+    }
+
     private Observable<WhatIfArticle> loadArticleFromAPI(long id) {
         return whatIfAPI.getArticle(id)
                 .subscribeOn(Schedulers.io())
@@ -128,5 +149,4 @@ public class WhatIfModel {
         WhatIfArticle article = boxManager.getWhatIf(id);
         return (article == null || TextUtils.isEmpty(article.content)) ? Observable.empty() : Observable.just(article);
     }
-
 }
