@@ -41,6 +41,10 @@
         <item quantity="other">Switch %s pages when action bar arrow clicked</item>
     </plurals>
     <string name="pref_what_if_zoom">Text scale in what if</string>
+    <string name="pref_what_if_search">what if search preference</string>
+    <string name="pref_what_if_search_ignore_content">only search article title</string>
+    <string name="pref_what_if_search_include_read">include contents that liked or thumb-up-ed</string>
+    <string name="pref_what_if_search_search_all">search both title and content</string>
 
     <string name="pref_arrow_content">Set the number of comics to skip when arrow clicked</string>
     <string name="pref_font">Increase legibility</string>

@@ -13,6 +13,7 @@ import xyz.jienan.xkcd.model.WhatIfModel;
 
 import static xyz.jienan.xkcd.Const.PREF_ARROW;
 import static xyz.jienan.xkcd.Const.PREF_FONT;
+import static xyz.jienan.xkcd.Const.PREF_WHAT_IF_SEARCH;
 import static xyz.jienan.xkcd.Const.PREF_ZOOM;
 
 /**
@@ -24,6 +25,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     private static boolean needRecreateForParent = false;
     private ListPreference arrowPref;
     private ListPreference zoomPref;
+    private ListPreference searchPref;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -36,8 +38,11 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         arrowPref.setSummary(getResources().getQuantityString(R.plurals.pref_arrow_summary,
                 Integer.valueOf(arrowPref.getEntry().toString()), arrowPref.getEntry().toString()));
         arrowPref.setOnPreferenceChangeListener(this);
+        searchPref = (ListPreference) findPreference(PREF_WHAT_IF_SEARCH);
+        searchPref.setSummary(String.valueOf(searchPref.getEntry()));
         fontPref.setOnPreferenceChangeListener(this);
         zoomPref.setOnPreferenceChangeListener(this);
+        searchPref.setOnPreferenceChangeListener(this);
     }
 
     @Override
@@ -57,6 +62,10 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
                 ((ListPreference) preference).setValue(newValue.toString());
                 zoomPref.setSummary(String.valueOf(zoomPref.getEntry()));
                 WhatIfModel.getInstance().setZoom(Integer.valueOf(newValue.toString().substring(5)));
+                break;
+            case PREF_WHAT_IF_SEARCH:
+                ((ListPreference) preference).setValue(newValue.toString());
+                searchPref.setSummary(String.valueOf(searchPref.getEntry()));
                 break;
         }
         return false;

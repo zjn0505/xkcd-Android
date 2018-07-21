@@ -14,6 +14,10 @@ public class Const {
     public static final String PREF_ARROW = "pref_arrow";
     public static final String PREF_FONT = "pref_font";
     public static final String PREF_ZOOM = "pref_zoom";
+    public static final String PREF_WHAT_IF_SEARCH = "pref_what_if_search";
+    public static final String PREF_WHAT_IF_SEARCH_IGNORE_CONTENT = "ignore_content";
+    public static final String PREF_WHAT_IF_SEARCH_INCLUDE_READ = "include_read";
+    public static final String PREF_WHAT_IF_SEARCH_ALL = "search_all";
 
     public static final String FIRE_LARGE_IMAGE = "large_image";
     public static final String FIRE_COMIC_ID = "comic_id";

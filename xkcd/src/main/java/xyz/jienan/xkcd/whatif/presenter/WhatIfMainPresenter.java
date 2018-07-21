@@ -102,8 +102,7 @@ public class WhatIfMainPresenter implements WhatIfMainContract.Presenter {
 
     @Override
     public void searchContent(String query) {
-        final Disposable d = whatIfModel.searchWhatIf(query)
-                .filter(whatIfArticles -> whatIfArticles != null && !whatIfArticles.isEmpty())
+        final Disposable d = whatIfModel.searchWhatIf(query, sharedPrefManager.getWhatIfSearchPref())
                 .subscribe(view::renderWhatIfSearch,
                         e -> Timber.e(e, "search what if error"));
         compositeDisposable.add(d);

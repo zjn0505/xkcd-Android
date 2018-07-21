@@ -17,6 +17,9 @@ import xyz.jienan.xkcd.model.WhatIfArticle_;
 import xyz.jienan.xkcd.model.XkcdPic;
 import xyz.jienan.xkcd.model.XkcdPic_;
 
+import static xyz.jienan.xkcd.Const.PREF_WHAT_IF_SEARCH_ALL;
+import static xyz.jienan.xkcd.Const.PREF_WHAT_IF_SEARCH_INCLUDE_READ;
+
 public class BoxManager {
 
     private static BoxManager boxManager;
@@ -141,10 +144,24 @@ public class BoxManager {
     }
 
     @NonNull
-    public List<WhatIfArticle> searchWhatIf(@NonNull String query) {
+    public List<WhatIfArticle> searchWhatIf(@NonNull String query, String option) {
         QueryBuilder<WhatIfArticle> builder = whatIfBox.query().contains(WhatIfArticle_.title, query);
         if (NumberUtils.isNumeric(query)) {
             builder = builder.or().equal(WhatIfArticle_.num, Long.valueOf(query));
+        }
+        switch (option) {
+            case PREF_WHAT_IF_SEARCH_INCLUDE_READ:
+                builder = builder.or()
+                        .contains(WhatIfArticle_.content, query)
+                        .and()
+                        .equal(WhatIfArticle_.hasThumbed, true)
+                        .or()
+                        .equal(WhatIfArticle_.isFavorite, true);
+                break;
+            case PREF_WHAT_IF_SEARCH_ALL:
+                builder = builder.or()
+                        .contains(WhatIfArticle_.content, query);
+                break;
         }
         return builder.build().find();
     }

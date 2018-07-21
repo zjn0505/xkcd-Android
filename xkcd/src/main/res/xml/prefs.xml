@@ -19,4 +19,10 @@
         android:entries="@array/zoom_value"
         android:entryValues="@array/zoom"
         android:title="@string/pref_what_if_zoom" />
+    <ListPreference
+        android:defaultValue="ignore_content"
+        android:key="pref_what_if_search"
+        android:entries="@array/search_pref_value"
+        android:entryValues="@array/search_pref"
+        android:title="@string/pref_what_if_search" />
 </PreferenceScreen>

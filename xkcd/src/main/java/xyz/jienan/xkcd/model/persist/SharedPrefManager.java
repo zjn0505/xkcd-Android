@@ -12,6 +12,8 @@ import static xyz.jienan.xkcd.Const.INVALID_ID;
 import static xyz.jienan.xkcd.Const.LANDING_TYPE;
 import static xyz.jienan.xkcd.Const.LAST_VIEW_WHAT_IF_ID;
 import static xyz.jienan.xkcd.Const.LAST_VIEW_XKCD_ID;
+import static xyz.jienan.xkcd.Const.PREF_WHAT_IF_SEARCH;
+import static xyz.jienan.xkcd.Const.PREF_WHAT_IF_SEARCH_IGNORE_CONTENT;
 import static xyz.jienan.xkcd.Const.PREF_ZOOM;
 import static xyz.jienan.xkcd.Const.SHARED_PREF_KEY_PRE_QUOTE;
 import static xyz.jienan.xkcd.Const.TAG_XKCD;
@@ -83,5 +85,9 @@ public class SharedPrefManager {
     public int getWhatIfZoom() {
         String zoom = sharedPreferences.getString(PREF_ZOOM, "zoom_100");
         return Integer.valueOf(zoom.substring(5));
+    }
+
+    public String getWhatIfSearchPref() {
+        return sharedPreferences.getString(PREF_WHAT_IF_SEARCH, PREF_WHAT_IF_SEARCH_IGNORE_CONTENT);
     }
 }

@@ -88,8 +88,8 @@ public class WhatIfModel {
         return boxManager.getWhatIf(id);
     }
 
-    public Single<List<WhatIfArticle>> searchWhatIf(String query) {
-        return Observable.just(boxManager.searchWhatIf(query))
+    public Single<List<WhatIfArticle>> searchWhatIf(String query, String option) {
+        return Observable.just(boxManager.searchWhatIf(query, option))
                 .singleOrError();
     }
 
