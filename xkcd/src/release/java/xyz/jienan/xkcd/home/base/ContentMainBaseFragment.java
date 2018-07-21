@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.ColorRes;
@@ -341,7 +342,9 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
             int randomId = new Random().nextInt(latestIndex + 1);
             scrollViewPagerToItem(randomId - 1, false);
         }
-        getActivity().getWindow().getDecorView().performHapticFeedback(CONTEXT_CLICK, FLAG_IGNORE_GLOBAL_SETTING);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && getActivity() != null) {
+            getActivity().getWindow().getDecorView().performHapticFeedback(CONTEXT_CLICK, FLAG_IGNORE_GLOBAL_SETTING);
+        }
         logSubUXEvent(FIRE_SHAKE);
     }
 
