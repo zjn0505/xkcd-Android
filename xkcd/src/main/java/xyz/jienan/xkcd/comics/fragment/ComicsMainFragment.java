@@ -96,6 +96,7 @@ public class ComicsMainFragment extends ContentMainBaseFragment implements Comic
         }
     }
 
+    @Override
     @OnPageChange(value = R.id.viewpager, callback = PAGE_SCROLL_STATE_CHANGED)
     public void onPageScrollStateChanged(int state) {
         super.onPageScrollStateChanged(state);
@@ -152,7 +153,9 @@ public class ComicsMainFragment extends ContentMainBaseFragment implements Comic
 
     @Override
     protected void suggestionClicked(int position) {
-        XkcdPic xkcd = searchSuggestions.get(position);
-        scrollViewPagerToItem((int) (xkcd.num - 1), false);
+        if (searchSuggestions != null && searchSuggestions.size() > position + 1) {
+            XkcdPic xkcd = searchSuggestions.get(position);
+            scrollViewPagerToItem((int) (xkcd.num - 1), false);
+        }
     }
 }

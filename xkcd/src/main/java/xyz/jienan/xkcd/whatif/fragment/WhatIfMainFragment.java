@@ -55,8 +55,10 @@ public class WhatIfMainFragment extends ContentMainBaseFragment implements WhatI
 
     @Override
     protected void suggestionClicked(int position) {
-        WhatIfArticle article = searchSuggestions.get(position);
-        scrollViewPagerToItem((int) (article.num - 1), false);
+        if (searchSuggestions != null && searchSuggestions.size() > position + 1) {
+            WhatIfArticle article = searchSuggestions.get(position);
+            scrollViewPagerToItem((int) (article.num - 1), false);
+        }
     }
 
     @Nullable
@@ -116,6 +118,7 @@ public class WhatIfMainFragment extends ContentMainBaseFragment implements WhatI
         super.latestLoaded();
     }
 
+    @Override
     @OnPageChange(value = R.id.viewpager, callback = PAGE_SCROLL_STATE_CHANGED)
     public void onPageScrollStateChanged(int state) {
         super.onPageScrollStateChanged(state);
