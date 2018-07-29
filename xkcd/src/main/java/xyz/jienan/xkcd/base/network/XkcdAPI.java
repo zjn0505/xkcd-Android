@@ -7,6 +7,7 @@ import okhttp3.ResponseBody;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
@@ -26,9 +27,8 @@ public interface XkcdAPI {
     @GET
     Observable<ResponseBody> getExplain(@Url String url);
 
-    @Headers("cacheable: 86400")
     @GET
-    Observable<ResponseBody> getExplainWithShortCache(@Url String url);
+    Observable<ResponseBody> getExplainWithShortCache(@Url String url, @Header("cacheable") long cache);
 
     @GET
     Observable<List<XkcdPic>> getSpecialXkcds(@Url String url);

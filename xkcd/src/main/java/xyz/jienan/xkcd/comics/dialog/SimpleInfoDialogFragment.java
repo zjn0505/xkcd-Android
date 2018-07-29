@@ -74,8 +74,6 @@ public class SimpleInfoDialogFragment extends DialogFragment {
                                 if (tvExplain != null) {
                                     htmlContent = result;
                                     setTextViewHTML(tvExplain, result);
-//                                    tvExplain.setText(Html.fromHtml(result));
-//                                    tvExplain.setMovementMethod(LinkMovementMethod.getInstance());
                                 }
                                 buttonNegative.setText(R.string.go_to_explainxkcd);
                                 hasExplainedMore = true;
