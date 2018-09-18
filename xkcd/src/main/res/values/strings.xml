@@ -42,14 +42,14 @@
     </plurals>
     <string name="pref_what_if_zoom">Text scale in what if</string>
     <string name="pref_what_if_search">what if search preference</string>
-    <string name="pref_what_if_search_ignore_content">only search article title</string>
-    <string name="pref_what_if_search_include_read">include contents that liked or thumb-up-ed</string>
-    <string name="pref_what_if_search_search_all">search both title and content</string>
+    <string name="pref_what_if_search_ignore_content">Only search article title</string>
+    <string name="pref_what_if_search_include_read">Include contents that liked or thumb-up-ed</string>
+    <string name="pref_what_if_search_search_all">Search both title and content</string>
 
     <string name="pref_arrow_content">Set the number of comics to skip when arrow clicked</string>
     <string name="pref_font">Increase legibility</string>
-    <string name="pref_font_xkcd">Use xkcd font</string>
-    <string name="pref_font_normal">Use normal font</string>
+    <string name="pref_font_xkcd">Using xkcd font</string>
+    <string name="pref_font_normal">Using normal font</string>
     <string name="settings">Settings</string>
 
     <string name="arrow_1" translatable="false">1</string>
