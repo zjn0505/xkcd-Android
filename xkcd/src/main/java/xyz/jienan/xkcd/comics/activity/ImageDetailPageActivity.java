@@ -123,21 +123,23 @@ public class ImageDetailPageActivity extends Activity implements ImageDetailPage
                 tvTitle.setVisibility(equalWithinError(photoView.getScale(), 1) ? View.VISIBLE : View.GONE);
             }
         });
-        bigImageView.getSSIV().setOnStateChangedListener(new SubsamplingScaleImageView.DefaultOnStateChangedListener() {
+        if (bigImageView.getSSIV() != null) {
+            bigImageView.getSSIV().setOnStateChangedListener(new SubsamplingScaleImageView.DefaultOnStateChangedListener() {
 
-            private float initScale = 0.0f;
+                private float initScale = 0.0f;
 
-            @Override
-            public void onScaleChanged(float newScale, int origin) {
-                super.onScaleChanged(newScale, origin);
-                if (bigImageView.isEnabled() && showTitle) {
-                    if (initScale == 0) {
-                        initScale = newScale;
+                @Override
+                public void onScaleChanged(float newScale, int origin) {
+                    super.onScaleChanged(newScale, origin);
+                    if (bigImageView.isEnabled() && showTitle) {
+                        if (initScale == 0) {
+                            initScale = newScale;
+                        }
+                        tvTitle.setVisibility(equalWithinError(newScale, initScale) ? View.VISIBLE : View.GONE);
                     }
-                    tvTitle.setVisibility(equalWithinError(newScale, initScale) ? View.VISIBLE : View.GONE);
                 }
-            }
-        });
+            });
+        }
     }
 
     @Override
