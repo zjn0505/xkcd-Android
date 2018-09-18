@@ -4,6 +4,7 @@ window.addEventListener('load', function(){
         function(element, index, array) {
             var longpress = false;
             var presstimer = null;
+            var startClientY;
             var cancel = function(e) {
                 if (presstimer !== null) {
                     clearTimeout(presstimer);
@@ -25,6 +26,11 @@ window.addEventListener('load', function(){
                 if (e.type === "click" && e.button !== 0) {
                     return;
                 }
+
+                if (e.touches != undefined) {
+                    startClientY = e.touches[0].clientY;
+                }
+
                 longpress = false;
                 this.classList.add("longpress");
                 if (presstimer === null) {
@@ -35,6 +41,15 @@ window.addEventListener('load', function(){
                 }
                 return false;
             };
+            var move = function(e) {
+                if (e.touches != undefined) {
+                    var newY = e.touches[0].clientY;
+                    if (Math.abs(startClientY - newY) > 150) {
+                        clearTimeout(presstimer);
+                    }
+
+                }
+            }
             element.addEventListener("mousedown", start);
             element.addEventListener("touchstart", start);
             element.addEventListener("click", click);
@@ -42,6 +57,8 @@ window.addEventListener('load', function(){
             element.addEventListener("touchend", cancel);
             element.addEventListener("touchleave", cancel);
             element.addEventListener("touchcancel", cancel);
+            element.addEventListener("touchmove", move);
+            element.addEventListener("mousemove", move);
         }
     )
 }, false)
