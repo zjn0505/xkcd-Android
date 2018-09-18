@@ -72,6 +72,7 @@ public class WhatIfMainFragment extends ContentMainBaseFragment implements WhatI
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(ignored -> fab.hide(),
                         e -> Timber.e(e, "fab observing error"));
+        setRetainInstance(true);
         return view;
     }
 
@@ -145,6 +146,13 @@ public class WhatIfMainFragment extends ContentMainBaseFragment implements WhatI
         } else {
             fabAnimation(R.color.white, R.color.pink, R.drawable.ic_heart_white);
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        adapter = null;
+        searchAdapter = null;
+        super.onDestroyView();
     }
 
     @Override
