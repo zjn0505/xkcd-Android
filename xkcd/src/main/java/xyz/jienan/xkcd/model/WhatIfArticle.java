@@ -15,7 +15,7 @@ public class WhatIfArticle {
 
     public String content;
 
-    public long date;
+    public String date;
 
     public boolean isFavorite = false;
 
