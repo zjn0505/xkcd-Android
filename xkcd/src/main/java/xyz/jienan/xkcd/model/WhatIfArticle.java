@@ -1,7 +1,10 @@
 package xyz.jienan.xkcd.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import io.objectbox.annotation.Entity;
 import io.objectbox.annotation.Id;
+import io.objectbox.annotation.Transient;
 
 @Entity
 public class WhatIfArticle {
@@ -15,7 +18,13 @@ public class WhatIfArticle {
 
     public String content;
 
-    public long date;
+    // transient to make it invisible in Gson
+    public transient long date;
+
+    // transient to make it invisible in ObjectBox
+    @Transient
+    @SerializedName("date")
+    public String dateInString;
 
     public boolean isFavorite = false;
 
