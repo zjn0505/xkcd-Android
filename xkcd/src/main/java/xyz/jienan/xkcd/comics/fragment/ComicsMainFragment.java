@@ -153,7 +153,7 @@ public class ComicsMainFragment extends ContentMainBaseFragment implements Comic
 
     @Override
     protected void suggestionClicked(int position) {
-        if (searchSuggestions != null && searchSuggestions.size() > position + 1) {
+        if (searchSuggestions != null && searchSuggestions.size() > position) {
             XkcdPic xkcd = searchSuggestions.get(position);
             scrollViewPagerToItem((int) (xkcd.num - 1), false);
         }

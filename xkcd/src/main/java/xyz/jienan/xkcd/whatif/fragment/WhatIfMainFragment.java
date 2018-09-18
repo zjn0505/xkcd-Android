@@ -55,7 +55,7 @@ public class WhatIfMainFragment extends ContentMainBaseFragment implements WhatI
 
     @Override
     protected void suggestionClicked(int position) {
-        if (searchSuggestions != null && searchSuggestions.size() > position + 1) {
+        if (searchSuggestions != null && searchSuggestions.size() > position) {
             WhatIfArticle article = searchSuggestions.get(position);
             scrollViewPagerToItem((int) (article.num - 1), false);
         }
