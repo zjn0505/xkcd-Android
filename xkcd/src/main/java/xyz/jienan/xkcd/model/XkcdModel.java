@@ -175,7 +175,7 @@ public class XkcdModel {
 
     public Observable<String> loadExplain(long index, long latestIndex) {
         final String url = XKCD_EXPLAIN_URL + index;
-        final Observable<ResponseBody> observable = latestIndex - index < 10 ?
+        final Observable<ResponseBody> observable = latestIndex - index < 10 && latestIndex - index >= 0 ?
                 xkcdApi.getExplainWithShortCache(url, 1800 * (latestIndex - index + 1))
                 : xkcdApi.getExplain(url);
 
