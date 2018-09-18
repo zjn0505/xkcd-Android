@@ -4,7 +4,9 @@ window.addEventListener('load', function(){
         function(element, index, array) {
             var longpress = false;
             var presstimer = null;
+
             var startClientY;
+
             var cancel = function(e) {
                 if (presstimer !== null) {
                     clearTimeout(presstimer);
@@ -47,9 +49,15 @@ window.addEventListener('load', function(){
                     if (Math.abs(startClientY - newY) > 150) {
                         clearTimeout(presstimer);
                     }
-
+                }
+                var zoomFactorX = document.documentElement.clientWidth / window.innerWidth;
+                var zoomFactorY = document.documentElement.clientHeight / window.innerHeight;
+                var pageHasZoom = !(zoomFactorX === 1 && zoomFactorY === 1);
+                if (pageHasZoom) {
+                    clearTimeout(presstimer);
                 }
             }
+
             element.addEventListener("mousedown", start);
             element.addEventListener("touchstart", start);
             element.addEventListener("click", click);
