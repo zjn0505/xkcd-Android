@@ -43,6 +43,7 @@ import android.widget.Toast;
 
 import com.squareup.seismic.ShakeDetector;
 
+import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -96,10 +97,13 @@ import static xyz.jienan.xkcd.Const.TAG_XKCD;
 public abstract class ContentMainBaseFragment extends BaseFragment implements ShakeDetector.Listener {
 
     protected static final int REQ_LIST_ACTIVITY = 10;
+
     @BindView(R.id.fab)
     public FloatingActionButton fab;
+
     @BindView(R.id.viewpager)
     protected ViewPager viewPager;
+
     @BindView(R.id.btn_fav)
     protected LikeButton btnFav;
 
@@ -109,14 +113,23 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
     protected BaseStatePagerAdapter adapter;
 
     protected ShakeDetector sd;
+
     protected int latestIndex = INVALID_ID;
-    protected int lastViewdId = INVALID_ID;
+
+    protected int lastViewedId = INVALID_ID;
+
     protected boolean isPaused = true;
+
     protected ContentMainBasePresenter presenter;
+
     protected boolean isFre = true;
+
     protected SearchCursorAdapter searchAdapter;
+
     private SharedPreferences sharedPreferences;
+
     private boolean isFabsShowing = false;
+
     private Toast toast;
 
     private BoxManager boxManager = BoxManager.getInstance();
@@ -150,6 +163,7 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
             }
         }
     };
+
     private NumberPickerDialogFragment.INumberPickerDialogListener pickerListener =
             new NumberPickerDialogFragment.INumberPickerDialogListener() {
                 @Override
@@ -182,7 +196,7 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
         viewPager.setAdapter(adapter);
         presenter.loadLatest();
         latestIndex = presenter.getLatest();
-        lastViewdId = presenter.getLastViewed(latestIndex);
+        lastViewedId = presenter.getLastViewed(latestIndex);
         final ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle(getTitleTextRes());
@@ -190,7 +204,7 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
         }
         if (savedInstanceState != null) {
             if (actionBar != null) {
-                actionBar.setSubtitle(String.valueOf(lastViewdId));
+                actionBar.setSubtitle(String.valueOf(lastViewedId));
             }
             NumberPickerDialogFragment pickerDialog =
                     (NumberPickerDialogFragment) getChildFragmentManager().findFragmentByTag("IdPickerDialogFragment");
@@ -201,8 +215,8 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
             int notiIndex = getActivity().getIntent().getIntExtra(INDEX_ON_NOTI_INTENT, INVALID_ID);
 
             if (notiIndex != INVALID_ID) {
-                lastViewdId = notiIndex;
-                latestIndex = lastViewdId;
+                lastViewedId = notiIndex;
+                latestIndex = lastViewedId;
                 presenter.setLatest(latestIndex);
                 Map<String, String> params = new HashMap<>();
                 params.put(FIRE_FROM_NOTIFICATION_INDEX, String.valueOf(notiIndex));
@@ -213,7 +227,7 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
         isFre = latestIndex == INVALID_ID;
         if (latestIndex > INVALID_ID) {
             adapter.setSize(latestIndex);
-            scrollViewPagerToItem(lastViewdId > INVALID_ID ? lastViewdId - 1 : latestIndex - 1, false);
+            scrollViewPagerToItem(lastViewedId > INVALID_ID ? lastViewedId - 1 : latestIndex - 1, false);
         }
         SensorManager sensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
 
@@ -263,7 +277,8 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
 
     @SuppressLint("ObjectAnimatorBinding")
     protected void fabAnimation(@ColorRes final int startColor, @ColorRes final int endColor, @DrawableRes final int icon) {
-        final ObjectAnimator animator = ObjectAnimator.ofInt(fab, "backgroundTint", getResources().getColor(startColor), getResources().getColor(endColor));
+        final ObjectAnimator animator = ObjectAnimator.ofInt(fab, "backgroundTint",
+                getResources().getColor(startColor), getResources().getColor(endColor));
         animator.setDuration(1800L);
         animator.setEvaluator(new ArgbEvaluator());
         animator.setInterpolator(new DecelerateInterpolator(2));
@@ -288,21 +303,8 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
         imageButtonRight.setBackground(null);
 
         itemRight.setActionView(imageButtonRight);
-        imageButtonRight.setOnLongClickListener(v -> {
-            scrollViewPagerToItem(latestIndex - 1, true);
-            logSubUXEvent(FIRE_NEXT_BAR_LONG);
-            return true;
-        });
-        imageButtonRight.setOnClickListener(v -> {
-            String skipCount = getString(getResources().getIdentifier(sharedPreferences.getString(PREF_ARROW, "arrow_1"), "string", getActivity().getPackageName()));
-            int skip = Integer.parseInt(skipCount);
-            if (skip == 1) {
-                scrollViewPagerToItem(viewPager.getCurrentItem() + skip, true);
-            } else {
-                scrollViewPagerToItem(viewPager.getCurrentItem() + skip, false);
-            }
-            logSubUXEvent(FIRE_NEXT_BAR);
-        });
+        imageButtonRight.setOnLongClickListener(new MenuOnLongClickListener(this, false));
+        imageButtonRight.setOnClickListener(new MenuClickListener(this, false));
 
         MenuItem itemLeft = menu.findItem(R.id.action_left);
         ImageButton imageButtonLeft = new ImageButton(getContext());
@@ -310,25 +312,60 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
         imageButtonLeft.setBackground(null);
 
         itemLeft.setActionView(imageButtonLeft);
-        imageButtonLeft.setOnLongClickListener(v -> {
-            scrollViewPagerToItem(0, true);
-            logSubUXEvent(FIRE_PREVIOUS_BAR_LONG);
-            return true;
-        });
-        imageButtonLeft.setOnClickListener(v -> {
-            String skipCount = getString(getResources().getIdentifier(sharedPreferences.getString(PREF_ARROW, "arrow_1"), "string", getActivity().getPackageName()));
-            int skip = Integer.parseInt(skipCount);
-            if (skip == 1) {
-                scrollViewPagerToItem(viewPager.getCurrentItem() - skip, true);
-            } else {
-                scrollViewPagerToItem(viewPager.getCurrentItem() - skip, false);
-            }
-            logSubUXEvent(FIRE_PREVIOUS_BAR);
-        });
+        imageButtonLeft.setOnLongClickListener(new MenuOnLongClickListener(this, true));
+        imageButtonLeft.setOnClickListener(new MenuClickListener(this, true));
         setupSearch(menu);
-
     }
 
+    private static class MenuClickListener implements View.OnClickListener {
+
+        private WeakReference<ContentMainBaseFragment> weakReference;
+        private boolean isPrevious;
+
+        MenuClickListener(ContentMainBaseFragment fragment, boolean isPrevious) {
+            weakReference = new WeakReference<>(fragment);
+            this.isPrevious = isPrevious;
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (weakReference.get() != null) {
+                ContentMainBaseFragment fragment = weakReference.get();
+                String skipCount = fragment.getString(fragment.getResources().
+                        getIdentifier(fragment.sharedPreferences.getString(PREF_ARROW, "arrow_1"),
+                                "string", fragment.getActivity().getPackageName()));
+                int skip = Integer.parseInt(skipCount);
+                if (skip == 1) {
+                    skip = isPrevious ? 0 - skip : skip;
+                    fragment.scrollViewPagerToItem(fragment.viewPager.getCurrentItem() + skip, true);
+                } else {
+                    fragment.scrollViewPagerToItem(fragment.viewPager.getCurrentItem() + skip, false);
+                }
+                fragment.logSubUXEvent(isPrevious ? FIRE_PREVIOUS_BAR : FIRE_NEXT_BAR);
+            }
+        }
+    }
+
+    private static class MenuOnLongClickListener implements View.OnLongClickListener {
+
+        private WeakReference<ContentMainBaseFragment> weakReference;
+        private boolean isPrevious;
+
+        MenuOnLongClickListener(ContentMainBaseFragment fragment, boolean isPrevious) {
+            weakReference = new WeakReference<>(fragment);
+            this.isPrevious = isPrevious;
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            if (weakReference.get() != null) {
+                ContentMainBaseFragment fragment = weakReference.get();
+                fragment.scrollViewPagerToItem(isPrevious ? 0 : fragment.latestIndex - 1, true);
+                fragment.logSubUXEvent(isPrevious ? FIRE_PREVIOUS_BAR_LONG : FIRE_NEXT_BAR_LONG);
+            }
+            return true;
+        }
+    }
 
     @OnClick(R.id.fab)
     public void OnFABClicked() {
