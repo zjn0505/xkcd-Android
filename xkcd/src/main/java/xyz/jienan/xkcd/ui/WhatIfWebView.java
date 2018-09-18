@@ -1,10 +1,15 @@
 package xyz.jienan.xkcd.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.util.AttributeSet;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
+import xyz.jienan.xkcd.comics.activity.ImageDetailPageActivity;
+import xyz.jienan.xkcd.model.util.XkcdExplainUtil;
 import xyz.jienan.xkcd.whatif.interfaces.LatexInterface;
 
 public class WhatIfWebView extends WebView {
@@ -16,6 +21,21 @@ public class WhatIfWebView extends WebView {
     public WhatIfWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.setBackgroundColor(Color.TRANSPARENT);
+        setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                if (XkcdExplainUtil.isXkcdImageLink(url)) {
+                    final long id = XkcdExplainUtil.getXkcdIdFromXkcdImageLink(url);
+                    ImageDetailPageActivity.startActivityFromId(getContext(), id);
+                } else {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    if (browserIntent.resolveActivity(view.getContext().getPackageManager()) != null) {
+                        view.getContext().startActivity(browserIntent);
+                    }
+                }
+                return true;
+            }
+        });
     }
 
     public void setLatexScrollInterface(LatexInterface latexScrollInterface) {

@@ -1,5 +1,6 @@
 package xyz.jienan.xkcd.model.util;
 
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import org.jsoup.Jsoup;
@@ -84,13 +85,24 @@ public class XkcdExplainUtil {
         return null;
     }
 
-    public static boolean isXkcdImageLink(String url) {
-        final String regex = "^https?://www\\.explainxkcd\\.com/wiki/index\\.php/\\d+(?!#)[:]?\\w+$";
-        return url.matches(regex);
+    public static boolean isXkcdImageLink(@NonNull String url) {
+        final String regexExplain = "^https?://www\\.explainxkcd\\.com/wiki/index\\.php/\\d+(?!#)[:]?\\w+$";
+        final String regexXkcd = "^https?://(?:www\\.|m\\.)?xkcd\\.com/\\d+/?$";
+        return url.matches(regexExplain) || url.matches(regexXkcd);
     }
 
-    public static long getXkcdIdFromImageLink(String url) {
+    public static long getXkcdIdFromExplainImageLink(String url) {
         final String regex = "^https?://www\\.explainxkcd\\.com/wiki/index\\.php/(\\d+).*$";
+        Matcher matcher = Pattern.compile(regex).matcher(url);
+        if (matcher.find()) {
+            return Long.valueOf(matcher.group(1));
+        } else {
+            return 0;
+        }
+    }
+
+    public static long getXkcdIdFromXkcdImageLink(String url) {
+        final String regex = "^https?://(?:www\\.|m\\.)?xkcd\\.com/(\\d+)/?$";
         Matcher matcher = Pattern.compile(regex).matcher(url);
         if (matcher.find()) {
             return Long.valueOf(matcher.group(1));

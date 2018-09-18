@@ -81,13 +81,9 @@ public class XkcdModel {
                                 return true;
                             } else {
                                 final int size = xkcdPics.size();
-                                if (startIndex <= 404 && startIndex + SLICE > 404 && size != SLICE - 1) {
-                                    return true;
-                                } else if (startIndex > latestIndex - SLICE + 1 && startIndex + size - 1 != latestIndex) {
-                                    return true;
-                                }
+                                return startIndex <= 404 && startIndex + SLICE > 404 && size != SLICE - 1
+                                        || startIndex > latestIndex - SLICE + 1 && startIndex + size - 1 != latestIndex;
                             }
-                            return false;
                         }).flatMap(ignored -> loadRange(startIndex, SLICE)))
                 .map(ignored -> Boolean.TRUE);
     }

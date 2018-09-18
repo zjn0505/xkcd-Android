@@ -25,10 +25,8 @@ import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.objectbox.Box;
 import xyz.jienan.xkcd.BuildConfig;
 import xyz.jienan.xkcd.R;
-import xyz.jienan.xkcd.XkcdApplication;
 import xyz.jienan.xkcd.comics.activity.ImageDetailPageActivity;
 import xyz.jienan.xkcd.model.XkcdPic;
 import xyz.jienan.xkcd.model.util.XkcdExplainUtil;
@@ -41,13 +39,12 @@ import static xyz.jienan.xkcd.Const.URI_XKCD_EXPLAIN_EDIT;
 
 public class SimpleInfoDialogFragment extends DialogFragment {
 
-    private final static String CONTENT = "content";
-    private final static String HTML_CONTENT = "html_content";
+    private static final String CONTENT = "content";
+    private static final String HTML_CONTENT = "html_content";
     @BindView(R.id.tv_explain)
     TextView tvExplain;
     @BindView(R.id.pb_explaining)
     ProgressBar pbLoading;
-    private Box<XkcdPic> box;
     private String xkcdContent;
     private String htmlContent;
     private ISimpleInfoDialogListener mListener;
@@ -117,7 +114,6 @@ public class SimpleInfoDialogFragment extends DialogFragment {
             xkcdContent = savedInstanceState.getString(CONTENT);
             htmlContent = savedInstanceState.getString(HTML_CONTENT);
         }
-        box = ((XkcdApplication) getActivity().getApplication()).getBoxStore().boxFor(XkcdPic.class);
     }
 
     @Override
@@ -162,14 +158,8 @@ public class SimpleInfoDialogFragment extends DialogFragment {
             public void onClick(View view) {
                 String url = span.getURL();
                 if (XkcdExplainUtil.isXkcdImageLink(url)) {
-                    final long id = XkcdExplainUtil.getXkcdIdFromImageLink(url);
-                    XkcdPic xkcdPic = box.get(id);
-                    Intent intent = new Intent(getActivity(), ImageDetailPageActivity.class);
-                    if (xkcdPic != null) {
-                        intent.putExtra("URL", xkcdPic.getTargetImg());
-                    }
-                    intent.putExtra("ID", id);
-                    startActivity(intent);
+                    final long id = XkcdExplainUtil.getXkcdIdFromExplainImageLink(url);
+                    ImageDetailPageActivity.startActivityFromId(getContext(), id);
                 } else if (URLUtil.isNetworkUrl(url)) {
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                     if (browserIntent.resolveActivity(getActivity().getPackageManager()) != null) {

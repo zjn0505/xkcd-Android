@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:background="#000">
 
     <com.github.chrisbanes.photoview.PhotoView
         android:id="@+id/photo_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:contentDescription="@string/xkcd_pic"
-        android:visibility="gone" />
+        android:contentDescription="@string/xkcd_pic" />
 
 
     <com.github.piasy.biv.view.BigImageView
@@ -18,6 +19,19 @@
         android:layout_height="match_parent"
         android:contentDescription="@string/xkcd_pic"
         app:optimizeDisplay="true" />
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#66585858"
+        android:gravity="center"
+        android:padding="10dp"
+        android:textColor="#FFF"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        tools:text="2001 - A Space Odyssey" />
 
     <ProgressBar
         android:id="@+id/pb_loading"

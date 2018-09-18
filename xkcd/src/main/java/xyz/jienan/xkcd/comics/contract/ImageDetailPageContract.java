@@ -2,6 +2,7 @@ package xyz.jienan.xkcd.comics.contract;
 
 import xyz.jienan.xkcd.base.BasePresenter;
 import xyz.jienan.xkcd.base.BaseView;
+import xyz.jienan.xkcd.model.XkcdPic;
 
 public interface ImageDetailPageContract {
 
@@ -10,6 +11,8 @@ public interface ImageDetailPageContract {
         void setLoading(boolean isLoading);
 
         void renderPic(String targetImgUrl);
+
+        void renderTitle(XkcdPic xkcdPic);
     }
 
     interface Presenter extends BasePresenter {

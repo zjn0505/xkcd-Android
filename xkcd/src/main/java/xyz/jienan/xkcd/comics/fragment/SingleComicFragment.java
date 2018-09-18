@@ -252,10 +252,7 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
         if (currentPic == null || TextUtils.isEmpty(currentPic.getTargetImg())) {
             return;
         }
-        Intent intent = new Intent(getActivity(), ImageDetailPageActivity.class);
-        intent.putExtra("URL", currentPic.getTargetImg());
-        intent.putExtra("ID", currentPic.num);
-        startActivity(intent);
+        ImageDetailPageActivity.startActivity(getActivity(), currentPic.getTargetImg(), currentPic.num);
         getActivity().overridePendingTransition(R.anim.fadein, R.anim.fadeout);
     }
 
