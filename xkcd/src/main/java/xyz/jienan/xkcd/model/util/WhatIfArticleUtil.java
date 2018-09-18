@@ -31,6 +31,7 @@ public class WhatIfArticleUtil {
             Element a = element.selectFirst("a[href]");
             String[] href = a.attr("href").split("/");
             article.num = Long.parseLong(href[href.length - 1]);
+            article.title = element.selectFirst("h1.archive-title").child(0).html();
             article.featureImg = a.child(0).absUrl("src");
             String archiveDate = element.selectFirst("h2.archive-date").html();
             final SimpleDateFormat sdf = new SimpleDateFormat("MMMMM d, yyyy", Locale.ENGLISH);
