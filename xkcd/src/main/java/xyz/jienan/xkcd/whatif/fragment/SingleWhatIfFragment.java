@@ -25,6 +25,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.lang.ref.WeakReference;
+
 import butterknife.BindView;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -52,7 +54,7 @@ import static xyz.jienan.xkcd.Const.FIRE_WHAT_IF_SUFFIX;
  * Created by jienanzhang on 03/03/2018.
  */
 
-public class SingleWhatIfFragment extends BaseFragment implements WhatIfWebView.ScrollToEndCallback, ImgInterface.ImgCallback, RefInterface.RefCallback {
+public class SingleWhatIfFragment extends BaseFragment implements ImgInterface.ImgCallback, RefInterface.RefCallback {
 
     @BindView(R.id.webview_what_if)
     WhatIfWebView webView;
@@ -116,7 +118,7 @@ public class SingleWhatIfFragment extends BaseFragment implements WhatIfWebView.
                             }
                         },
                         Timber::e));
-        webView.setCallback(this);
+        webView.setCallback(new WebViewScrollCallback(this));
         webView.setLatexScrollInterface(latexInterface);
         webView.addJavascriptInterface(latexInterface, "AndroidLatex");
         webView.addJavascriptInterface(new ImgInterface(this), "AndroidImg");
@@ -131,13 +133,19 @@ public class SingleWhatIfFragment extends BaseFragment implements WhatIfWebView.
         return view;
     }
 
-    @Override
-    public void scrolledToTheEnd(boolean isTheEnd) {
-        if (parentFragment != null) {
-            if (!parentFragment.fab.isShown() && isTheEnd) {
-                parentFragment.showOrHideFabWithInfo(true);
-            } else if (parentFragment.fab.isShown() && !isTheEnd) {
-                parentFragment.showOrHideFabWithInfo(false);
+    private class WebViewScrollCallback implements WhatIfWebView.ScrollToEndCallback {
+
+        private WeakReference<SingleWhatIfFragment> weakReference;
+
+        WebViewScrollCallback(SingleWhatIfFragment fragment) {
+            weakReference = new WeakReference<>(fragment);
+        }
+
+        @Override
+        public void scrolledToTheEnd(boolean isTheEnd) {
+            if (weakReference.get() != null) {
+                SingleWhatIfFragment fragment = weakReference.get();
+                fragment.scrolledToTheEnd(isTheEnd);
             }
         }
     }
@@ -178,6 +186,16 @@ public class SingleWhatIfFragment extends BaseFragment implements WhatIfWebView.
             scrolledToTheEnd(true);
         } else if (webView.distanceToEnd() > 250) {
             scrolledToTheEnd(false);
+        }
+    }
+
+    private void scrolledToTheEnd(boolean isTheEnd) {
+        if (parentFragment != null) {
+            if (!parentFragment.fab.isShown() && isTheEnd) {
+                parentFragment.showOrHideFabWithInfo(true);
+            } else if (parentFragment.fab.isShown() && !isTheEnd) {
+                parentFragment.showOrHideFabWithInfo(false);
+            }
         }
     }
 
