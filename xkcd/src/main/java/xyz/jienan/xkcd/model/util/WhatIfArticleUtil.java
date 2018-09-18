@@ -6,8 +6,11 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import okhttp3.ResponseBody;
 import xyz.jienan.xkcd.model.WhatIfArticle;
@@ -18,7 +21,7 @@ public class WhatIfArticleUtil {
 
     private static final String TEX_JS = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/latest.js?config=TeX-MML-AM_CHTML";
 
-    public static List<WhatIfArticle> getArticlesFromArchive(ResponseBody responseBody) throws IOException {
+    public static List<WhatIfArticle> getArticlesFromArchive(ResponseBody responseBody) throws IOException, ParseException {
         Document doc = Jsoup.parse(responseBody.string(), BASE_URI);
         Elements divArchive = doc.select("div#archive-wrapper");
         List<WhatIfArticle> articles = new ArrayList<>();
@@ -29,8 +32,9 @@ public class WhatIfArticleUtil {
             String[] href = a.attr("href").split("/");
             article.num = Long.parseLong(href[href.length - 1]);
             article.featureImg = a.child(0).absUrl("src");
-            article.title = element.selectFirst("h1.archive-title").child(0).html();
-            article.date = element.selectFirst("h2.archive-date").html();
+            String archiveDate = element.selectFirst("h2.archive-date").html();
+            final SimpleDateFormat sdf = new SimpleDateFormat("MMMMM d, yyyy", Locale.ENGLISH);
+            article.date = sdf.parse(archiveDate).getTime();
 
             articles.add(article);
         }
