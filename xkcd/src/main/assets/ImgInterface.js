@@ -6,6 +6,7 @@ window.addEventListener('load', function(){
             var presstimer = null;
 
             var startClientY;
+            var startWindowScale;
 
             var cancel = function(e) {
                 if (presstimer !== null) {
@@ -31,6 +32,7 @@ window.addEventListener('load', function(){
 
                 if (e.touches != undefined) {
                     startClientY = e.touches[0].clientY;
+                    startWindowScale = window.visualViewport.scale;
                 }
 
                 longpress = false;
@@ -46,13 +48,11 @@ window.addEventListener('load', function(){
             var move = function(e) {
                 if (e.touches != undefined) {
                     var newY = e.touches[0].clientY;
-                    if (Math.abs(startClientY - newY) > 150) {
+                    if (Math.abs(startClientY - newY) > 50) {
                         clearTimeout(presstimer);
                     }
                 }
-                var zoomFactorX = document.documentElement.clientWidth / window.innerWidth;
-                var zoomFactorY = document.documentElement.clientHeight / window.innerHeight;
-                var pageHasZoom = !(zoomFactorX === 1 && zoomFactorY === 1);
+                var pageHasZoom = Math.abs(startWindowScale - window.visualViewport.scale) / startWindowScale > 0.05;
                 if (pageHasZoom) {
                     clearTimeout(presstimer);
                 }
