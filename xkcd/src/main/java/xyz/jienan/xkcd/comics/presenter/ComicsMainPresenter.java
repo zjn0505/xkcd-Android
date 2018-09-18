@@ -1,8 +1,11 @@
 package xyz.jienan.xkcd.comics.presenter;
 
+import java.util.Collections;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.Disposables;
 import timber.log.Timber;
 import xyz.jienan.xkcd.comics.contract.ComicsMainContract;
 import xyz.jienan.xkcd.model.XkcdModel;
@@ -17,6 +20,8 @@ public class ComicsMainPresenter implements ComicsMainContract.Presenter {
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     private Disposable fabShowDisposable;
+
+    private Disposable searchDisposable = Disposables.empty();
 
     public ComicsMainPresenter(ComicsMainContract.View view) {
         this.view = view;
@@ -114,11 +119,53 @@ public class ComicsMainPresenter implements ComicsMainContract.Presenter {
 
     @Override
     public void searchContent(String query) {
-        final Disposable d = xkcdModel.search(query)
+
+        if (!searchDisposable.isDisposed()) {
+            searchDisposable.dispose();
+        }
+
+        searchDisposable = xkcdModel.search(query)
                 .observeOn(AndroidSchedulers.mainThread())
                 .filter(xkcdPics -> xkcdPics != null && !xkcdPics.isEmpty())
+                .map(list -> {
+                    if (isNumQuery(query)) {
+                        long num = Long.parseLong(query);
+                        XkcdPic matchedPic = null;
+                        for (XkcdPic pic : list) {
+                            if (pic.num == num) {
+                                matchedPic = pic;
+                                break;
+                            }
+                        }
+                        if (matchedPic != null) {
+                            list.remove(matchedPic);
+                            list.add(0, matchedPic);
+                        }
+                    }
+                    return list;
+                })
                 .subscribe(view::renderXkcdSearch,
-                        e -> Timber.e(e, "search error"));
-        compositeDisposable.add(d);
+                        e -> {
+                            Timber.e(e, "search error");
+                            if (isNumQuery(query)) {
+                                long num = Long.parseLong(query);
+                                XkcdPic pic = xkcdModel.loadXkcdFromDB(num);
+                                if (pic != null) {
+                                    view.renderXkcdSearch(Collections.singletonList(pic));
+                                }
+                            }
+                        });
+        compositeDisposable.add(searchDisposable);
+    }
+
+
+
+    private boolean isNumQuery(String query) {
+        try {
+            long num = Long.parseLong(query);
+            return num > 0 && num <= sharedPrefManager.getLatestXkcd();
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 }

@@ -1,5 +1,7 @@
 package xyz.jienan.xkcd.whatif.presenter;
 
+import java.util.Collections;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -103,13 +105,48 @@ public class WhatIfMainPresenter implements WhatIfMainContract.Presenter {
     @Override
     public void searchContent(String query) {
         final Disposable d = whatIfModel.searchWhatIf(query, sharedPrefManager.getWhatIfSearchPref())
+                .map(list -> {
+                    if (isNumQuery(query)) {
+                        long num = Long.parseLong(query);
+                        WhatIfArticle matchNumArticle = null;
+                        for (WhatIfArticle article : list) {
+                            if (article.num == num) {
+                                matchNumArticle = article;
+                                break;
+                            }
+                        }
+                        if (matchNumArticle != null) {
+                            list.remove(matchNumArticle);
+                            list.add(0, matchNumArticle);
+                        }
+                    }
+                    return list;
+                })
                 .subscribe(view::renderWhatIfSearch,
-                        e -> Timber.e(e, "search what if error"));
+                        e -> {
+                    Timber.e(e, "search what if error");
+                    if (isNumQuery(query)) {
+                        long num = Long.parseLong(query);
+                        WhatIfArticle article = whatIfModel.loadArticleFromDB(num);
+                        if (article != null) {
+                            view.renderWhatIfSearch(Collections.singletonList(article));
+                        }
+                    }
+                });
         compositeDisposable.add(d);
     }
 
     @Override
     public void onDestroy() {
         compositeDisposable.dispose();
+    }
+
+    private boolean isNumQuery(String query) {
+        try {
+            long num = Long.parseLong(query);
+            return num > 0 && num <= sharedPrefManager.getLatestWhatIf();
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 }
