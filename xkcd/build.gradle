@@ -10,7 +10,7 @@ android {
         applicationId "xyz.jienan.xkcd"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 13
+        versionCode 14
         versionName "2.1.1"
         vectorDrawables.useSupportLibrary = true
     }
