@@ -4,10 +4,13 @@ import java.util.Random;
 
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
+import xyz.jienan.xkcd.BuildConfig;
 import xyz.jienan.xkcd.base.network.NetworkService;
 import xyz.jienan.xkcd.base.network.QuoteAPI;
 
 public class QuoteModel {
+
+    private static final long INTERVAL = BuildConfig.DEBUG ? 10000 : 1000 * 60 * 60 * 24;
 
     private static QuoteModel quoteModel;
 
@@ -24,13 +27,13 @@ public class QuoteModel {
         return quoteModel;
     }
 
-    public Observable<Quote> getQuoteOfTheDay(final Quote quote) {
+    public Observable<Quote> getQuoteOfTheDay(final Quote previousQuote) {
         return Observable.just(1)
                 .flatMap(ignored -> {
-                    if (System.currentTimeMillis() - quote.getTimestamp() < 1000 * 60 * 60 * 24) {
-                        return Observable.just(quote);
+                    if (System.currentTimeMillis() - previousQuote.getTimestamp() < INTERVAL) {
+                        return Observable.just(previousQuote);
                     } else {
-                        return queryNewQuote(quote);
+                        return queryNewQuote(previousQuote);
                     }
                 });
     }
