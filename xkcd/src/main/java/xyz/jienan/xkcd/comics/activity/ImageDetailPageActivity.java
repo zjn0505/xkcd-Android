@@ -19,11 +19,9 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import com.github.chrisbanes.photoview.PhotoView;
-import com.github.piasy.biv.loader.ImageLoader;
 import com.github.piasy.biv.view.BigImageView;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
-import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;

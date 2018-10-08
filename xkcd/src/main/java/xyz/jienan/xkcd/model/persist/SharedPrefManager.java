@@ -2,6 +2,7 @@ package xyz.jienan.xkcd.model.persist;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 
 import com.google.gson.Gson;
 
@@ -74,8 +75,8 @@ public class SharedPrefManager {
     }
 
     public Quote getPreviousQuote() {
-        String json = sharedPreferences.getString(SHARED_PREF_KEY_PRE_QUOTE, null);
-        return json != null ? gson.fromJson(json, Quote.class) : new Quote();
+        final String json = sharedPreferences.getString(SHARED_PREF_KEY_PRE_QUOTE, null);
+        return !TextUtils.isEmpty(json) ? gson.fromJson(json, Quote.class) : new Quote();
     }
 
     public void saveNewQuote(Quote quote) {
@@ -83,7 +84,7 @@ public class SharedPrefManager {
     }
 
     public int getWhatIfZoom() {
-        String zoom = sharedPreferences.getString(PREF_ZOOM, "zoom_100");
+        final String zoom = sharedPreferences.getString(PREF_ZOOM, "zoom_100");
         return Integer.valueOf(zoom.substring(5));
     }
 

@@ -51,8 +51,6 @@
 # Gson
 -keep class com.google.gson.stream.** { *; }
 -keepattributes EnclosingMethod
--keep class xyz.jienan.xkcd.model.XkcdPic { *; }
--keep class xyz.jienan.xkcd.base.network.NetworkService { *; }
 
 -dontnote rx.internal.util.PlatformDependent
 

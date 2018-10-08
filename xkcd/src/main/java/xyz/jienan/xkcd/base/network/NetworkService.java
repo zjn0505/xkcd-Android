@@ -48,7 +48,8 @@ public class NetworkService {
     public static final String WHAT_IF_TOP = "https://api.jienan.xyz/xkcd/what-if-top";
     public static final String XKCD_TOP_SORT_BY_THUMB_UP = "thumb-up";
     public static final String XKCD_EXPLAIN_URL = "https://www.explainxkcd.com/wiki/index.php/";
-    public static final String QUOTE_LIST = "https://raw.githubusercontent.com/zjn0505/Xkcd-Android/master/quotes.json";
+    
+    static final String QUOTE_LIST = "https://raw.githubusercontent.com/zjn0505/Xkcd-Android/master/quotes.json";
 
     private static final String XKCD_BASE_URL = "https://xkcd.com/";
     private static final String WHAT_IF_BASE_URL = "https://what-if.xkcd.com/";

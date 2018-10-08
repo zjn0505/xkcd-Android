@@ -50,26 +50,33 @@ import static xyz.jienan.xkcd.Const.TAG_XKCD;
 
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    private static final String OUTSTATE_FRAGMENT_TYPE = "outstate_fragment_type";
     private final static int REQ_SETTINGS = 101;
 
     static {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
     }
 
-    private final SharedPrefManager sharedPrefManager = new SharedPrefManager();
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+
     @BindView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
+
     @BindView(R.id.nav_view)
     NavigationView navigationView;
+
     @BindView(R.id.container)
     FrameLayout container;
+
     private TextView tvQuote;
+
     private TextView tvSubQuote;
+
     private FragmentManager fragmentManager = getSupportFragmentManager();
+
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
+    
+    private final SharedPrefManager sharedPrefManager = new SharedPrefManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
