@@ -26,7 +26,9 @@ public class XkcdApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        DebugUtils.init(this);
+        if (!DebugUtils.init(this)) {
+            return;
+        }
         mInstance = this;
         boxStore = MyObjectBox.builder().androidContext(this).maxReaders(300).build();
         XkcdSideloadUtils.init(this);
