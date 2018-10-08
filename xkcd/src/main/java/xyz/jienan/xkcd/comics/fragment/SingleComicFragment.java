@@ -185,6 +185,7 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
     @Override
     public void onDestroyView() {
         singleComicPresenter.onDestroy();
+        dialogFragment = null;
         super.onDestroyView();
     }
 
@@ -285,7 +286,7 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
         private final ProgressBar progressbar;
         private final ImageView image;
 
-        public MyProgressTarget(Target<Z> target, ProgressBar progress, ImageView image) {
+        MyProgressTarget(Target<Z> target, ProgressBar progress, ImageView image) {
             super(target);
             this.progressbar = progress;
             this.image = image;
