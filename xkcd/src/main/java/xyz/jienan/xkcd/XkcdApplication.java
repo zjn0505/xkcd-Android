@@ -4,10 +4,8 @@ import android.app.Application;
 
 import com.github.piasy.biv.BigImageViewer;
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.squareup.leakcanary.LeakCanary;
 
 import io.objectbox.BoxStore;
-import timber.log.Timber;
 import xyz.jienan.xkcd.base.glide.GlideImageLoader;
 import xyz.jienan.xkcd.model.MyObjectBox;
 import xyz.jienan.xkcd.model.util.XkcdSideloadUtils;
@@ -28,15 +26,7 @@ public class XkcdApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        if (LeakCanary.isInAnalyzerProcess(this)) {
-            // This process is dedicated to LeakCanary for heap analysis.
-            // You should not init your app in this process.
-            return;
-        }
-        if (BuildConfig.DEBUG) {
-            Timber.plant(new Timber.DebugTree());
-        }
-        LeakCanary.install(this);
+        DebugUtils.init(this);
         mInstance = this;
         boxStore = MyObjectBox.builder().androidContext(this).maxReaders(300).build();
         XkcdSideloadUtils.init(this);
