@@ -3,7 +3,7 @@ package xyz.jienan.xkcd.model.persist;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.google.android.gms.common.util.NumberUtils;
+import org.jsoup.helper.StringUtil;
 
 import java.util.Collections;
 import java.util.List;
@@ -146,7 +146,7 @@ public class BoxManager {
     @NonNull
     public List<WhatIfArticle> searchWhatIf(@NonNull String query, String option) {
         QueryBuilder<WhatIfArticle> builder = whatIfBox.query().contains(WhatIfArticle_.title, query);
-        if (NumberUtils.isNumeric(query)) {
+        if (StringUtil.isNumeric(query)) {
             builder = builder.or().equal(WhatIfArticle_.num, Long.valueOf(query));
         }
         switch (option) {
