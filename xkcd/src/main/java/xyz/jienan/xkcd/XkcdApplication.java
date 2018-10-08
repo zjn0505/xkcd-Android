@@ -16,7 +16,11 @@ import xyz.jienan.xkcd.model.util.XkcdSideloadUtils;
 
 public class XkcdApplication extends Application {
 
+    private static final String FCM_TOPIC_NEW_COMICS = "new_comics";
+    private static final String FCM_TOPIC_NEW_WHAT_IF = "new_what_if";
+
     private static XkcdApplication mInstance;
+
     private BoxStore boxStore;
 
     public static XkcdApplication getInstance() {
@@ -32,9 +36,9 @@ public class XkcdApplication extends Application {
         mInstance = this;
         boxStore = MyObjectBox.builder().androidContext(this).maxReaders(300).build();
         XkcdSideloadUtils.init(this);
-        FirebaseMessaging.getInstance().subscribeToTopic("new_comics");
-        FirebaseMessaging.getInstance().subscribeToTopic("new_what_if");
-        BigImageViewer.initialize(GlideImageLoader.with(getApplicationContext()));
+        FirebaseMessaging.getInstance().subscribeToTopic(FCM_TOPIC_NEW_COMICS);
+        FirebaseMessaging.getInstance().subscribeToTopic(FCM_TOPIC_NEW_WHAT_IF);
+        BigImageViewer.initialize(GlideImageLoader.with(this));
     }
 
     public BoxStore getBoxStore() {
