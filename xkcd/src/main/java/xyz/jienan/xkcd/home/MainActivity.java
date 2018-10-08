@@ -17,7 +17,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -50,7 +49,7 @@ import static xyz.jienan.xkcd.Const.TAG_XKCD;
 
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    private final static int REQ_SETTINGS = 101;
+    private static final int REQ_SETTINGS = 101;
 
     static {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
@@ -64,9 +63,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     @BindView(R.id.nav_view)
     NavigationView navigationView;
-
-    @BindView(R.id.container)
-    FrameLayout container;
 
     private TextView tvQuote;
 
