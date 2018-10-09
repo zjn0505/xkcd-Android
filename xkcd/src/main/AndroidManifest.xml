@@ -36,6 +36,7 @@
 
         <activity
             android:name=".settings.PreferenceActivity"
+            android:label="@string/settings"
             android:configChanges="screenSize|orientation|keyboardHidden"
             android:launchMode="singleTask" />
 
