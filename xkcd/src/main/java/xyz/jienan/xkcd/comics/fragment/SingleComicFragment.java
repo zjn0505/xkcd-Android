@@ -44,6 +44,8 @@ import static xyz.jienan.xkcd.Const.FIRE_GO_XKCD_MENU;
 import static xyz.jienan.xkcd.Const.FIRE_LONG_PRESS;
 import static xyz.jienan.xkcd.Const.FIRE_MORE_EXPLAIN;
 import static xyz.jienan.xkcd.Const.FIRE_SHARE_BAR;
+import static xyz.jienan.xkcd.base.network.NetworkService.XKCD_BASE_URL;
+import static xyz.jienan.xkcd.base.network.NetworkService.XKCD_EXPLAIN_URL;
 
 /**
  * Created by jienanzhang on 03/03/2018.
@@ -112,7 +114,7 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
 
         @Override
         public void onNegativeClick() {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.explainxkcd.com/wiki/index.php/" + currentPic.num));
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(XKCD_EXPLAIN_URL + currentPic.num));
             if (browserIntent.resolveActivity(getActivity().getPackageManager()) != null) {
                 startActivity(browserIntent);
             }
@@ -185,7 +187,10 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
     @Override
     public void onDestroyView() {
         singleComicPresenter.onDestroy();
-        dialogFragment = null;
+        if (dialogFragment != null && dialogFragment.isAdded()) {
+            dialogFragment.dismiss();
+            dialogFragment = null;
+        }
         super.onDestroyView();
     }
 
@@ -204,13 +209,13 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
                 logUXEvent(FIRE_SHARE_BAR);
                 return true;
             case R.id.action_go_xkcd: {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://xkcd.com/" + currentPic.num));
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(XKCD_BASE_URL + currentPic.num));
                 startActivity(browserIntent);
                 logUXEvent(FIRE_GO_XKCD_MENU);
                 return true;
             }
             case R.id.action_go_explain: {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.explainxkcd.com/wiki/index.php/" + currentPic.num));
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(XKCD_EXPLAIN_URL + currentPic.num));
                 startActivity(browserIntent);
                 logUXEvent(FIRE_GO_EXPLAIN_MENU);
                 return true;
