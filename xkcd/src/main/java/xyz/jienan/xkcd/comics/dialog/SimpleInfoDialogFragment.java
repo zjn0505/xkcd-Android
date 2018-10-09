@@ -177,6 +177,12 @@ public class SimpleInfoDialogFragment extends DialogFragment {
         strBuilder.removeSpan(span);
     }
 
+    @Override
+    public void onDestroyView() {
+        mListener = null;
+        super.onDestroyView();
+    }
+
     private void setTextViewHTML(TextView text, String html) {
         CharSequence sequence = Html.fromHtml(html);
         SpannableStringBuilder strBuilder = new SpannableStringBuilder(sequence);
