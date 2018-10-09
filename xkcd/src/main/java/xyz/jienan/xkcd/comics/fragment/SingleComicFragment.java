@@ -187,11 +187,16 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
     @Override
     public void onDestroyView() {
         singleComicPresenter.onDestroy();
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         if (dialogFragment != null && dialogFragment.isAdded()) {
             dialogFragment.dismiss();
             dialogFragment = null;
         }
-        super.onDestroyView();
+        super.onSaveInstanceState(outState);
     }
 
     @Override
