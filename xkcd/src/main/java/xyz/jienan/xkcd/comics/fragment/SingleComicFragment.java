@@ -77,9 +77,13 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
     private int id;
 
     private XkcdPic currentPic;
+
     private ProgressTarget<String, Bitmap> target;
+
     private SimpleInfoDialogFragment.ExplainingCallback explainingCallback;
+
     private SingleComicContract.Presenter singleComicPresenter;
+
     private RequestListener<String, Bitmap> glideListener = new RequestListener<String, Bitmap>() {
         @Override
         public boolean onException(Exception e, final String model, final Target<Bitmap> target, boolean isFirstResource) {
@@ -190,6 +194,7 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
     @Override
     public void onDestroyView() {
         singleComicPresenter.onDestroy();
+        Glide.clear(target);
         super.onDestroyView();
     }
 
