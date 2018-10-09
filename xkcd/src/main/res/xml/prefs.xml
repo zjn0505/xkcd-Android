@@ -1,28 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <ListPreference
-        android:defaultValue="arrow_1"
-        android:dialogTitle="@string/pref_arrow_content"
-        android:entries="@array/arrow_switch_by"
-        android:entryValues="@array/arrow_switch_by_value"
-        android:key="pref_arrow"
-        android:title="@string/pref_arrow" />
-    <SwitchPreference
-        android:defaultValue="false"
-        android:key="pref_font"
-        android:summaryOff="@string/pref_font_xkcd"
-        android:summaryOn="@string/pref_font_normal"
-        android:title="@string/pref_font" />
-    <ListPreference
-        android:defaultValue="zoom_100"
-        android:key="pref_zoom"
-        android:entries="@array/zoom_value"
-        android:entryValues="@array/zoom"
-        android:title="@string/pref_what_if_zoom" />
-    <ListPreference
-        android:defaultValue="ignore_content"
-        android:key="pref_what_if_search"
-        android:entries="@array/search_pref_value"
-        android:entryValues="@array/search_pref"
-        android:title="@string/pref_what_if_search" />
+
+    <PreferenceCategory
+        android:title="@string/pref_appearance"
+        android:key="pref_key_appearance">
+
+        <ListPreference
+            android:defaultValue="arrow_1"
+            android:dialogTitle="@string/pref_arrow_content"
+            android:entries="@array/arrow_switch_by"
+            android:entryValues="@array/arrow_switch_by_value"
+            android:key="pref_arrow"
+            android:title="@string/pref_arrow" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="pref_font"
+            android:summaryOff="@string/pref_font_xkcd"
+            android:summaryOn="@string/pref_font_normal"
+            android:title="@string/pref_font" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/pref_what_if"
+        android:key="pref_key_what_if">
+
+        <ListPreference
+            android:defaultValue="zoom_100"
+            android:key="pref_zoom"
+            android:entries="@array/zoom_value"
+            android:entryValues="@array/zoom"
+            android:title="@string/pref_what_if_zoom" />
+        <ListPreference
+            android:defaultValue="ignore_content"
+            android:key="pref_what_if_search"
+            android:entries="@array/search_pref_value"
+            android:entryValues="@array/search_pref"
+            android:title="@string/pref_what_if_search" />
+
+    </PreferenceCategory>
+
 </PreferenceScreen>
