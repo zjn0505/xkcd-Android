@@ -225,6 +225,8 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
                 logUXEvent(FIRE_GO_EXPLAIN_MENU);
                 return true;
             }
+            default:
+                break;
         }
         return false;
     }
