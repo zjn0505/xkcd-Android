@@ -8,6 +8,8 @@ import android.support.annotation.Nullable;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.Disposables;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 import xyz.jienan.xkcd.model.WhatIfModel;
@@ -17,6 +19,8 @@ import static xyz.jienan.xkcd.Const.LAST_VIEW_WHAT_IF_ID;
 public class WhatIfFastLoadService extends IntentService {
 
     private final WhatIfModel whatIfModel;
+
+    private Disposable disposable = Disposables.empty();
 
     public WhatIfFastLoadService() {
         super("WhatIfFastLoadService");
@@ -29,11 +33,19 @@ public class WhatIfFastLoadService extends IntentService {
         if (intent != null) {
             long latestId = intent.getLongExtra(LAST_VIEW_WHAT_IF_ID, 0);
 
-            Observable.timer(3, TimeUnit.SECONDS)
+            disposable = Observable.timer(3, TimeUnit.SECONDS)
                     .flatMapCompletable(ignored -> whatIfModel.fastLoadWhatIfs(latestId))
                     .subscribeOn(Schedulers.io())
                     .subscribe(() -> Timber.d("complete"),
                             e -> Timber.e(e, "error"));
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        if (!disposable.isDisposed()) {
+            disposable.dispose();
+        }
+        super.onDestroy();
     }
 }
