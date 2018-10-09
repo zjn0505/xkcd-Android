@@ -9,8 +9,8 @@ cache:
   - "$HOME/.android/build-cache"
 android:
   components:
-  - build-tools-27.0.3
-  - android-27
+  - build-tools-28.0.3
+  - android-28
 before_install:
 - openssl aes-256-cbc -K $encrypted_89744ce7a44a_key -iv $encrypted_89744ce7a44a_iv -in secrets.tar.enc -out secrets.tar -d
 - tar xvf secrets.tar
