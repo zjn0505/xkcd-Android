@@ -1,7 +1,9 @@
 package xyz.jienan.xkcd.comics.presenter;
 
 import java.util.Collections;
+import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -124,17 +126,26 @@ public class ComicsMainPresenter implements ComicsMainContract.Presenter {
             searchDisposable.dispose();
         }
 
+        final boolean isNumQuery = isNumQuery(query);
+
+        final XkcdPic numPic = isNumQuery ? xkcdModel.loadXkcdFromDB(Long.parseLong(query)) : null;
+
         searchDisposable = xkcdModel.search(query)
-                .observeOn(AndroidSchedulers.mainThread())
-                .filter(xkcdPics -> xkcdPics != null && !xkcdPics.isEmpty())
+                .startWith(numPic != null ?
+                        Observable.just(numPic).toList().toObservable() : Observable.empty())
+                .debounce(200, TimeUnit.MILLISECONDS)
                 .map(list -> {
-                    if (isNumQuery(query)) {
+                    if (isNumQuery) {
                         long num = Long.parseLong(query);
                         XkcdPic matchedPic = null;
-                        for (XkcdPic pic : list) {
-                            if (pic.num == num) {
-                                matchedPic = pic;
-                                break;
+                        if (numPic != null && list.contains(numPic)) {
+                            matchedPic = numPic;
+                        } else {
+                            for (XkcdPic pic : list) {
+                                if (pic.num == num) {
+                                    matchedPic = pic;
+                                    break;
+                                }
                             }
                         }
                         if (matchedPic != null) {
@@ -144,21 +155,18 @@ public class ComicsMainPresenter implements ComicsMainContract.Presenter {
                     }
                     return list;
                 })
+                .filter(xkcdPics -> xkcdPics != null && !xkcdPics.isEmpty())
+                .distinctUntilChanged()
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(view::renderXkcdSearch,
                         e -> {
                             Timber.e(e, "search error");
-                            if (isNumQuery(query)) {
-                                long num = Long.parseLong(query);
-                                XkcdPic pic = xkcdModel.loadXkcdFromDB(num);
-                                if (pic != null) {
-                                    view.renderXkcdSearch(Collections.singletonList(pic));
-                                }
+                            if (numPic != null) {
+                                view.renderXkcdSearch(Collections.singletonList(numPic));
                             }
                         });
         compositeDisposable.add(searchDisposable);
     }
-
-
 
     private boolean isNumQuery(String query) {
         try {
