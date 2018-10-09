@@ -30,6 +30,7 @@ import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import timber.log.Timber;
+import xyz.jienan.xkcd.BuildConfig;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.comics.contract.ImageDetailPageContract;
 import xyz.jienan.xkcd.comics.presenter.ImageDetailPagePresenter;
@@ -52,6 +53,10 @@ public class ImageDetailPageActivity extends Activity implements ImageDetailPage
     private static final String KEY_ID = "ID";
 
     private static final String KEY_SHOW_TITLE = "show_title";
+
+    private static final int MAX_SCALE = 10;
+
+    private static final int TRANSITION_ANIMATION_DURATION = 500;
 
     @BindView(R.id.photo_view)
     PhotoView photoView;
@@ -107,7 +112,8 @@ public class ImageDetailPageActivity extends Activity implements ImageDetailPage
         final String url = getIntent().getStringExtra(KEY_URL);
         index = (int) getIntent().getLongExtra(KEY_ID, 0L);
         showTitle = getIntent().getBooleanExtra(KEY_SHOW_TITLE, false);
-        photoView.setMaximumScale(10);
+        photoView.setMaximumScale(MAX_SCALE);
+        photoView.setZoomTransitionDuration(TRANSITION_ANIMATION_DURATION);
         if (!TextUtils.isEmpty(url)) {
             renderPic(url);
         } else if (index != 0) {
@@ -122,6 +128,7 @@ public class ImageDetailPageActivity extends Activity implements ImageDetailPage
             }
         });
         if (bigImageView.getSSIV() != null) {
+            bigImageView.getSSIV().setMaxScale(MAX_SCALE);
             bigImageView.getSSIV().setOnStateChangedListener(new SubsamplingScaleImageView.DefaultOnStateChangedListener() {
 
                 private float initScale = 0.0f;
@@ -136,6 +143,15 @@ public class ImageDetailPageActivity extends Activity implements ImageDetailPage
                         tvTitle.setVisibility(equalWithinError(newScale, initScale) ? View.VISIBLE : View.GONE);
                     }
                 }
+            });
+        }
+        if (BuildConfig.DEBUG) {
+            photoView.setOnLongClickListener(ignored -> {
+                bigImageView.showImage(Uri.parse(url));
+                bigImageView.setVisibility(View.VISIBLE);
+                photoView.setVisibility(View.GONE);
+                photoView.setEnabled(false);
+                return true;
             });
         }
     }
@@ -211,7 +227,7 @@ public class ImageDetailPageActivity extends Activity implements ImageDetailPage
     @Override
     public void renderTitle(XkcdPic xkcdPic) {
         if (showTitle) {
-            tvTitle.setText(getString(R.string.item_search_title, xkcdPic.num, xkcdPic.getTitle()));
+            tvTitle.setText(getString(R.string.item_search_title, String.valueOf(xkcdPic.num), xkcdPic.getTitle()));
             tvTitle.setVisibility(View.VISIBLE);
         }
     }
