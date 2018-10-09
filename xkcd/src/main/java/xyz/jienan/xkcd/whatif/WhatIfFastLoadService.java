@@ -18,6 +18,8 @@ import static xyz.jienan.xkcd.Const.LAST_VIEW_WHAT_IF_ID;
 
 public class WhatIfFastLoadService extends IntentService {
 
+    private static final int WHAT_IF_FASTLOAD_DELAY = 3;
+
     private final WhatIfModel whatIfModel;
 
     private Disposable disposable = Disposables.empty();
@@ -33,11 +35,11 @@ public class WhatIfFastLoadService extends IntentService {
         if (intent != null) {
             long latestId = intent.getLongExtra(LAST_VIEW_WHAT_IF_ID, 0);
 
-            disposable = Observable.timer(3, TimeUnit.SECONDS)
+            disposable = Observable.timer(WHAT_IF_FASTLOAD_DELAY, TimeUnit.SECONDS)
                     .flatMapCompletable(ignored -> whatIfModel.fastLoadWhatIfs(latestId))
                     .subscribeOn(Schedulers.io())
-                    .subscribe(() -> Timber.d("complete"),
-                            e -> Timber.e(e, "error"));
+                    .subscribe(() -> Timber.d("what if fast load complete"),
+                            e -> Timber.e(e, "what if fast load error"));
         }
     }
 
