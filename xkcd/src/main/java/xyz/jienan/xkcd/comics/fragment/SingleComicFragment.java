@@ -98,7 +98,9 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
         }
 
         @Override
-        public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
+        public boolean onResourceReady(Bitmap resource, String model,
+                                       Target<Bitmap> target, boolean isFromMemoryCache,
+                                       boolean isFirstResource) {
             if (ivXkcdPic != null) {
                 ivXkcdPic.setOnClickListener(v -> launchDetailPageActivity());
             }
@@ -171,6 +173,7 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
+        pbLoading.clearAnimation();
         pbLoading.setAnimation(AnimationUtils.loadAnimation(pbLoading.getContext(), R.anim.rotate));
         initGlide();
         singleComicPresenter.loadXkcd(id);
@@ -281,7 +284,13 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
         }
         if (TextUtils.isEmpty(target.getModel())) {
             target.setModel(xPic.getTargetImg());
-            Glide.with(getActivity()).load(xPic.getTargetImg()).asBitmap().fitCenter().diskCacheStrategy(DiskCacheStrategy.SOURCE).listener(glideListener).into(target);
+            Glide.with(getActivity())
+                    .load(xPic.getTargetImg())
+                    .asBitmap()
+                    .fitCenter()
+                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                    .listener(glideListener)
+                    .into(target);
         }
 
         currentPic = xPic;
