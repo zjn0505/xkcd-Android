@@ -15,8 +15,11 @@ import xyz.jienan.xkcd.whatif.contract.WhatIfMainContract;
 public class WhatIfMainPresenter implements WhatIfMainContract.Presenter {
 
     private final SharedPrefManager sharedPrefManager = new SharedPrefManager();
+
     private WhatIfMainContract.View view;
+
     private WhatIfModel whatIfModel = WhatIfModel.getInstance();
+
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     private Disposable fabShowDisposable = Disposables.empty();

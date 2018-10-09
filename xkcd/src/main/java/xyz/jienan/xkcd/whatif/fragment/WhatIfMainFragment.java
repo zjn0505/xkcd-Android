@@ -22,6 +22,9 @@ import java.util.concurrent.TimeUnit;
 import butterknife.BindString;
 import butterknife.OnPageChange;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.Disposables;
 import timber.log.Timber;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.home.base.ContentMainBaseFragment;
@@ -48,6 +51,8 @@ public class WhatIfMainFragment extends ContentMainBaseFragment implements WhatI
 
     private List<WhatIfArticle> searchSuggestions;
 
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
+
     @Override
     protected int getLayoutResId() {
         return R.layout.fragment_comic_main;
@@ -67,11 +72,12 @@ public class WhatIfMainFragment extends ContentMainBaseFragment implements WhatI
         adapter = new WhatIfPagerAdapter(getChildFragmentManager());
         presenter = new WhatIfMainPresenter(this);
         View view = super.onCreateView(inflater, container, savedInstanceState);
-        RxView.attaches(fab)
+        final Disposable d = RxView.attaches(fab)
                 .delay(100, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(ignored -> fab.hide(),
                         e -> Timber.e(e, "fab observing error"));
+        compositeDisposable.add(d);
         setRetainInstance(true);
         return view;
     }
@@ -108,6 +114,8 @@ public class WhatIfMainFragment extends ContentMainBaseFragment implements WhatI
                 Intent intent = new Intent(getActivity(), WhatIfListActivity.class);
                 startActivityForResult(intent, REQ_LIST_ACTIVITY);
                 logUXEvent(FIRE_BROWSE_LIST_MENU + FIRE_WHAT_IF_SUFFIX);
+                break;
+            default:
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -150,6 +158,7 @@ public class WhatIfMainFragment extends ContentMainBaseFragment implements WhatI
 
     @Override
     public void onDestroyView() {
+        compositeDisposable.dispose();
         adapter = null;
         searchAdapter = null;
         super.onDestroyView();
