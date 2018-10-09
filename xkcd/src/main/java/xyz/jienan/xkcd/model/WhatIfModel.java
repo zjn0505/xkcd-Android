@@ -134,7 +134,7 @@ public class WhatIfModel {
                         return Observable.just(whatIfModel.loadArticleFromDB(num));
                     }})
                 .toList()
-                .toCompletable();
+                .ignoreElement();
     }
 
     private Observable<WhatIfArticle> loadArticleFromAPI(long id) {

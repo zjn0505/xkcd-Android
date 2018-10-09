@@ -5,6 +5,7 @@ import java.util.Collections;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.Disposables;
 import timber.log.Timber;
 import xyz.jienan.xkcd.model.WhatIfArticle;
 import xyz.jienan.xkcd.model.WhatIfModel;
@@ -18,7 +19,9 @@ public class WhatIfMainPresenter implements WhatIfMainContract.Presenter {
     private WhatIfModel whatIfModel = WhatIfModel.getInstance();
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
-    private Disposable fabShowDisposable;
+    private Disposable fabShowDisposable = Disposables.empty();
+
+    private Disposable searchDisposable = Disposables.empty();
 
     private WhatIfMainPresenter() {
         // no default public constructor
@@ -104,7 +107,12 @@ public class WhatIfMainPresenter implements WhatIfMainContract.Presenter {
 
     @Override
     public void searchContent(String query) {
-        final Disposable d = whatIfModel.searchWhatIf(query, sharedPrefManager.getWhatIfSearchPref())
+
+        if (!searchDisposable.isDisposed()) {
+            searchDisposable.dispose();
+        }
+
+        searchDisposable = whatIfModel.searchWhatIf(query, sharedPrefManager.getWhatIfSearchPref())
                 .map(list -> {
                     if (isNumQuery(query)) {
                         long num = Long.parseLong(query);
@@ -133,12 +141,13 @@ public class WhatIfMainPresenter implements WhatIfMainContract.Presenter {
                         }
                     }
                 });
-        compositeDisposable.add(d);
     }
 
     @Override
     public void onDestroy() {
         compositeDisposable.dispose();
+        fabShowDisposable.dispose();
+        searchDisposable.dispose();
     }
 
     private boolean isNumQuery(String query) {
