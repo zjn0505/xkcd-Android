@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:showIn="@layout/activity_main">
+    tools:showIn="@layout/fragment_comic_main">
 
     <xyz.jienan.xkcd.ui.like.LikeButton
         android:id="@+id/btn_fav"
@@ -16,8 +16,12 @@
         android:contentDescription="@string/add_to_fav"
         android:paddingBottom="8dp"
         android:visibility="gone"
+        android:layout_alignLeft="@+id/fab"
+        android:layout_alignStart="@id/fab"
         app:icon_size="24dp"
-        app:icon_type="heart" />
+        app:icon_type="heart"
+        tools:visibility="visible"
+        tools:background="@mipmap/ic_launcher"/>
 
     <xyz.jienan.xkcd.ui.like.LikeButton
         android:id="@+id/btn_thumb"
@@ -29,9 +33,13 @@
         android:contentDescription="@string/thumbs_up"
         android:paddingBottom="8dp"
         android:visibility="gone"
+        android:layout_alignLeft="@id/fab"
+        android:layout_alignStart="@id/fab"
         app:icon_size="24dp"
         app:icon_type="thumb"
-        app:persist_liked="true" />
+        app:persist_liked="true"
+        tools:visibility="visible"
+        tools:background="@mipmap/ic_launcher" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

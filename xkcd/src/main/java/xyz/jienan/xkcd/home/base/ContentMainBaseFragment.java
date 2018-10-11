@@ -134,6 +134,8 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
 
     private BoxManager boxManager = BoxManager.getInstance();
 
+    private AnimatorSet fabAnimSet;
+
     private OnLikeListener likeListener = new OnLikeListener() {
         @Override
         public void liked(LikeButton likeButton) {
@@ -555,23 +557,28 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
         btnThumb.setClickable(showSubFabs);
         btnFav.setClickable(showSubFabs);
         ObjectAnimator thumbMove, thumbAlpha, favMove, favAlpha;
+        int distance = fab.getWidth();
         if (showSubFabs) {
-            thumbMove = ObjectAnimator.ofFloat(btnThumb, View.TRANSLATION_X, -215);
-            thumbAlpha = ObjectAnimator.ofFloat(btnThumb, View.ALPHA, 1);
-            favMove = ObjectAnimator.ofFloat(btnFav, View.TRANSLATION_X, -150, -400);
-            favAlpha = ObjectAnimator.ofFloat(btnFav, View.ALPHA, 1);
+            thumbMove = ObjectAnimator.ofFloat(btnThumb, View.TRANSLATION_X, -distance);
+            thumbAlpha = ObjectAnimator.ofFloat(btnThumb, View.ALPHA, 0, 1);
+            favMove = ObjectAnimator.ofFloat(btnFav, View.TRANSLATION_X, -distance, -distance * 2);
+            favAlpha = ObjectAnimator.ofFloat(btnFav, View.ALPHA, 0, 1);
         } else {
             thumbMove = ObjectAnimator.ofFloat(btnThumb, View.TRANSLATION_X, 0);
             thumbAlpha = ObjectAnimator.ofFloat(btnThumb, View.ALPHA, 0);
-            favMove = ObjectAnimator.ofFloat(btnFav, View.TRANSLATION_X, -150);
+            favMove = ObjectAnimator.ofFloat(btnFav, View.TRANSLATION_X, -distance);
             favAlpha = ObjectAnimator.ofFloat(btnFav, View.ALPHA, 0);
         }
 
         isFabsShowing = showSubFabs;
-        AnimatorSet animSet = new AnimatorSet();
-        animSet.playTogether(thumbMove, thumbAlpha, favMove, favAlpha);
-        animSet.setDuration(300);
-        animSet.addListener(new AnimatorListenerAdapter() {
+
+        if (fabAnimSet != null && fabAnimSet.isRunning()) {
+            fabAnimSet.cancel();
+        }
+
+        fabAnimSet = new AnimatorSet();
+        fabAnimSet.playTogether(thumbMove, thumbAlpha, favMove, favAlpha);
+        fabAnimSet.setDuration(300).addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animator) {
                 if (btnThumb != null && btnFav != null && showSubFabs) {
@@ -588,7 +595,7 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
                 }
             }
         });
-        animSet.start();
+        fabAnimSet.start();
     }
 
     protected void showToast(Context context, String text) {
