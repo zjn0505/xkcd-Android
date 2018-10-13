@@ -105,9 +105,13 @@ public class XkcdListGridAdapter extends RecyclerView.Adapter<XkcdListGridAdapte
 
             info.aspectRatio = ((float) width) / height;
             layoutParams.height = 0;
-            itemXkcdImageView.setLayoutParams(layoutParams);
-            glide.load(pic.getTargetImg()).asBitmap()
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE).priority(Priority.HIGH).fitCenter().into(itemXkcdImageView);
+            glide.load(pic.getTargetImg())
+                    .asBitmap()
+                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                    .priority(Priority.HIGH)
+                    .fitCenter()
+                    .dontTransform()
+                    .into(itemXkcdImageView);
             itemXkcdImageNum.setText(String.valueOf(pic.num));
             if (pic.isFavorite) {
                 itemXkcdImageNum.setBackground(mContext.getResources().getDrawable(R.drawable.ic_heart_on));
