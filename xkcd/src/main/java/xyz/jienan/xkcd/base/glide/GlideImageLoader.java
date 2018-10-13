@@ -70,6 +70,11 @@ public final class GlideImageLoader implements ImageLoader {
             @Override
             public void onLoadFailed(Exception e, Drawable errorDrawable) {
                 super.onLoadFailed(e, errorDrawable);
+                if (uri.getPath().startsWith("https")) {
+                    Glide.with(context).load(Uri.parse(uri.getPath().replaceFirst("https", "http")))
+                            .downloadOnly(this);
+                    return;
+                }
                 callback.onFail(new GlideLoaderException(errorDrawable));
             }
 

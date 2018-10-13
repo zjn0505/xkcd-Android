@@ -191,6 +191,13 @@ public class ImageDetailPageActivity extends Activity implements ImageDetailPage
                                                    String model,
                                                    Target<GlideDrawable> target,
                                                    boolean isFirstResource) {
+                            if (model.startsWith("https")) {
+                                Glide.with(ImageDetailPageActivity.this)
+                                        .load(model.replaceFirst("https", "http"))
+                                        .listener(this)
+                                        .into(photoView);
+                                return true;
+                            }
                             pbLoading.setVisibility(View.GONE);
                             return false;
                         }

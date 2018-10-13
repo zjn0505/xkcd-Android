@@ -63,7 +63,6 @@ public class XkcdPic {
         return clone;
     }
 
-
     @Override
     public boolean equals(Object obj) {
         return obj instanceof XkcdPic && this.num == ((XkcdPic) obj).num;

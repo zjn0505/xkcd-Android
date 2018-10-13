@@ -13,9 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.Priority;
 import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +22,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 import xyz.jienan.xkcd.R;
+import xyz.jienan.xkcd.base.glide.GlideUtils;
 import xyz.jienan.xkcd.model.XkcdModel;
 import xyz.jienan.xkcd.model.XkcdPic;
 
@@ -105,13 +104,7 @@ public class XkcdListGridAdapter extends RecyclerView.Adapter<XkcdListGridAdapte
 
             info.aspectRatio = ((float) width) / height;
             layoutParams.height = 0;
-            glide.load(pic.getTargetImg())
-                    .asBitmap()
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .priority(Priority.HIGH)
-                    .fitCenter()
-                    .dontTransform()
-                    .into(itemXkcdImageView);
+            GlideUtils.load(glide, pic, pic.getTargetImg(), itemXkcdImageView);
             itemXkcdImageNum.setText(String.valueOf(pic.num));
             if (pic.isFavorite) {
                 itemXkcdImageNum.setBackground(mContext.getResources().getDrawable(R.drawable.ic_heart_on));

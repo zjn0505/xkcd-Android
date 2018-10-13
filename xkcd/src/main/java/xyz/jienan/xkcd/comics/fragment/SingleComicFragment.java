@@ -24,6 +24,8 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.bumptech.glide.request.target.Target;
 
+import java.lang.ref.WeakReference;
+
 import butterknife.BindView;
 import butterknife.OnLongClick;
 import timber.log.Timber;
@@ -36,6 +38,7 @@ import xyz.jienan.xkcd.comics.dialog.SimpleInfoDialogFragment;
 import xyz.jienan.xkcd.comics.dialog.SimpleInfoDialogFragment.ISimpleInfoDialogListener;
 import xyz.jienan.xkcd.comics.presenter.SingleComicPresenter;
 import xyz.jienan.xkcd.model.XkcdPic;
+import xyz.jienan.xkcd.model.util.XkcdSideloadUtils;
 
 import static android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING;
 import static android.view.HapticFeedbackConstants.LONG_PRESS;
@@ -84,19 +87,40 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
 
     private SingleComicContract.Presenter singleComicPresenter;
 
-    private RequestListener<String, Bitmap> glideListener = new RequestListener<String, Bitmap>() {
+    private static class GlideListener implements RequestListener<String, Bitmap> {
+
+        private WeakReference<SingleComicFragment> weakReference;
+
+        GlideListener(SingleComicFragment singleComicFragment) {
+            weakReference = new WeakReference<>(singleComicFragment);
+        }
+
         @Override
         public boolean onException(Exception e, final String model, final Target<Bitmap> target, boolean isFirstResource) {
-            if (btnReload == null) {
+
+            SingleComicFragment fragment = weakReference.get();
+
+            if (fragment == null) {
                 return false;
             }
-            btnReload.setVisibility(View.VISIBLE);
-            btnReload.setOnClickListener(view -> {
-                pbLoading.clearAnimation();
-                pbLoading.setAnimation(AnimationUtils.loadAnimation(pbLoading.getContext(), R.anim.rotate));
-                Glide.with(getActivity()).load(currentPic.getImg()).asBitmap().fitCenter()
-                        .diskCacheStrategy(DiskCacheStrategy.SOURCE).listener(glideListener).into(target);
-                btnReload.setVisibility(View.GONE);
+
+            if (fragment.btnReload == null) {
+                return false;
+            }
+
+            if (model.startsWith("https")) {
+                fragment.load(model.replaceFirst("https", "http"));
+                return true;
+            }
+
+            fragment.btnReload.setVisibility(View.VISIBLE);
+
+            fragment.btnReload.setOnClickListener(view -> {
+                fragment.pbLoading.clearAnimation();
+                fragment.pbLoading.setAnimation(AnimationUtils.loadAnimation(fragment.pbLoading.getContext(), R.anim.rotate));
+                Glide.with(fragment.getActivity()).load(fragment.currentPic.getImg()).asBitmap().fitCenter()
+                        .diskCacheStrategy(DiskCacheStrategy.SOURCE).listener(this).into(target);
+
             });
             return false;
         }
@@ -105,13 +129,20 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
         public boolean onResourceReady(Bitmap resource, String model,
                                        Target<Bitmap> target, boolean isFromMemoryCache,
                                        boolean isFirstResource) {
-            if (ivXkcdPic != null) {
-                ivXkcdPic.setOnClickListener(v -> launchDetailPageActivity());
+            SingleComicFragment fragment = weakReference.get();
+
+            if (fragment == null) {
+                return false;
             }
-            singleComicPresenter.updateXkcdSize(currentPic, resource);
+            fragment.btnReload.setVisibility(View.GONE);
+            if (fragment.ivXkcdPic != null) {
+                fragment.ivXkcdPic.setOnClickListener(v -> fragment.launchDetailPageActivity());
+            }
+            fragment.singleComicPresenter.updateXkcdSize(fragment.currentPic, resource);
             return false;
         }
-    };
+    }
+
     private ISimpleInfoDialogListener dialogListener = new ISimpleInfoDialogListener() {
         @Override
         public void onPositiveClick() {
@@ -289,13 +320,7 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
         }
         if (TextUtils.isEmpty(target.getModel())) {
             target.setModel(xPic.getTargetImg());
-            Glide.with(getActivity())
-                    .load(xPic.getTargetImg())
-                    .asBitmap()
-                    .fitCenter()
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .listener(glideListener)
-                    .into(target);
+            load(xPic.getTargetImg());
         }
 
         currentPic = xPic;
@@ -305,7 +330,16 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
         if (tvDescription != null) {
             tvDescription.setText(xPic.alt);
         }
+    }
 
+    private void load(@NonNull String url) {
+        Glide.with(getActivity())
+                .load(url)
+                .asBitmap()
+                .fitCenter()
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .listener(new GlideListener(this))
+                .into(target);
     }
 
     private static class MyProgressTarget<Z> extends ProgressTarget<String, Z> {

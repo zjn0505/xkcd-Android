@@ -51,15 +51,26 @@ public class XkcdSideloadUtils {
         return xkcdSideloadMap.containsKey(num) && xkcdSideloadMap.get(num).large;
     }
 
-    public static XkcdPic sideload(XkcdPic xkcdPic) {
-        XkcdPic clone = xkcdPic.clone();
+    public static boolean isSpecialComics(XkcdPic xkcdPic) {
+        return xkcdSideloadMap.containsKey((int) xkcdPic.num);
+    }
+
+    public static XkcdPic getPicFromXkcd(XkcdPic xkcdPic) {
         if (xkcdPic.num >= 1084) {
+            XkcdPic clone = xkcdPic.clone();
             String img = xkcdPic.getImg();
             int insert = img.indexOf(".png");
             if (insert > 0)
                 clone.setImg(img.substring(0, insert) + "_2x" + img.substring(insert, img.length()));
+            return clone;
+        } else {
+            return xkcdPic;
         }
-        if (xkcdSideloadMap.containsKey((int) xkcdPic.num)) {
+    }
+
+    public static XkcdPic sideload(XkcdPic xkcdPic) {
+        XkcdPic clone = getPicFromXkcd(xkcdPic);
+        if (isSpecialComics(xkcdPic)) {
             XkcdPic sideload = xkcdSideloadMap.get((int) xkcdPic.num);
             if (sideload.getImg() != null) {
                 clone.setImg(sideload.getImg());
@@ -67,12 +78,9 @@ public class XkcdSideloadUtils {
             if (sideload.getRawTitle() != null) {
                 clone.setTitle(sideload.getRawTitle());
             }
-            return clone;
+            return clone; // special
         }
-        if (xkcdPic.num >= 1084) {
-            return clone;
-        }
-        return xkcdPic;
+        return clone; // original or 2x
     }
 
     private static void initXkcdSideloadMap(Context context) throws IOException {

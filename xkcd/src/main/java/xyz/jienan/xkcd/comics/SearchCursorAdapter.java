@@ -2,6 +2,7 @@ package xyz.jienan.xkcd.comics;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,9 +11,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import xyz.jienan.xkcd.R;
+import xyz.jienan.xkcd.base.glide.GlideUtils;
 
 /**
  * Created by jienanzhang on 21/03/2018.
@@ -20,8 +26,11 @@ import xyz.jienan.xkcd.R;
 
 public class SearchCursorAdapter extends CursorAdapter {
 
+    private RequestManager glide;
+
     public SearchCursorAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
+        glide = Glide.with(context);
     }
 
     @Override
@@ -32,13 +41,12 @@ public class SearchCursorAdapter extends CursorAdapter {
 
         String url = cursor.getString(1);
         ImageView ivThumbnail = view.findViewById(R.id.iv_thumbnail);
-        Glide.with(context).load(url).diskCacheStrategy(DiskCacheStrategy.SOURCE).into(ivThumbnail);
+        GlideUtils.load(glide, url, ivThumbnail);
 
         ((TextView) view.findViewById(R.id.tv_xkcd_title))
                 .setText(context.getResources().getString(R.string.item_search_title,
                         cursor.getString(3),
                         cursor.getString(2)));
-
 
         return view;
     }
@@ -47,11 +55,13 @@ public class SearchCursorAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         String url = cursor.getString(1);
         ImageView ivThumbnail = view.findViewById(R.id.iv_thumbnail);
-        Glide.with(context).load(url).asBitmap().diskCacheStrategy(DiskCacheStrategy.SOURCE).into(ivThumbnail);
+        GlideUtils.load(glide, url, ivThumbnail);
 
         ((TextView) view.findViewById(R.id.tv_xkcd_title))
                 .setText(context.getResources().getString(R.string.item_search_title,
                         cursor.getString(3),
                         cursor.getString(2)));
     }
+
+
 }
