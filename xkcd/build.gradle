@@ -1,6 +1,41 @@
+apply plugin: 'AndResGuard'
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
-apply plugin: 'io.objectbox'
+
+
+andResGuard {
+//    mappingFile = file("./resource_mapping.txt")
+    mappingFile = null
+    use7zip = true
+    useSign = true
+    keepRoot = false
+
+    whiteList = [
+            // for icon
+            "R.ic_launcher.png",
+            "R.ic_launcher_round.png",
+            // for fabric
+            "R.string.com.crashlytics.*",
+            // for google-services
+            "R.string.default_web_client_id",
+            "R.string.firebase_database_url",
+            "R.string.gcm_defaultSenderId",
+            "R.string.google_api_key",
+            "R.string.google_app_id",
+            "R.string.google_crash_reporting_api_key",
+            "R.string.google_storage_bucket",
+            "R.string.project_id"
+    ]
+    compressFilePattern = [
+            "*.png",
+            "*.jpg",
+            "*.jpeg",
+            "*.gif",
+    ]
+    sevenzip {
+        artifact = "com.tencent.mm:SevenZip:$andResGuardVersion"
+    }
+}
 
 android {
     compileSdkVersion 28
@@ -13,7 +48,9 @@ android {
         versionCode 15
         versionName "2.1.2"
         vectorDrawables.useSupportLibrary = true
+        resConfigs "zh-rCN"
     }
+
     signingConfigs {
         releaseConfig {
             File key = file("../key.jks")
@@ -29,10 +66,16 @@ android {
             }
         }
     }
+
     buildTypes {
         debug {
+            minifyEnabled true
+            useProguard false
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             applicationIdSuffix ".debug"
         }
+
         release {
             minifyEnabled true
             zipAlignEnabled true
@@ -41,10 +84,12 @@ android {
             signingConfig signingConfigs.releaseConfig
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
     lintOptions {
         abortOnError true
     }
@@ -54,11 +99,21 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
     debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.1'
-    implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation 'com.android.support:exifinterface:27.1.1'
-    implementation 'com.android.support:recyclerview-v7:27.1.1'
-    implementation 'com.android.support:design:27.1.1'
-    implementation 'com.android.support:percent:27.1.1'
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+
+    // forced to update libs' dependencies
+    implementation 'com.android.support:support-v4:28.0.0'
+    implementation 'com.android.support:support-media-compat:28.0.0'
+    implementation 'com.android.support:exifinterface:28.0.0'
+
+    implementation 'com.android.support:recyclerview-v7:28.0.0'
+    implementation ('com.android.support:design:27.0.2') {
+        force = true
+    }
+    // TODO Bug in FAB tracking in the ticket https://issuetracker.google.com/issues/117476935
+//    implementation 'com.android.support:design:28.0.0'
+
+    implementation 'com.android.support:percent:28.0.0'
     implementation 'org.jsoup:jsoup:1.11.3'
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
@@ -76,15 +131,16 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:16.0.4'
     implementation 'com.google.firebase:firebase-messaging:17.3.3'
     implementation 'com.dinuscxj:circleprogressbar:1.1.1'
-    implementation('com.github.piasy:BigImageViewer:1.4.6') {
-        exclude module: 'exifinterface'
-    }
-    implementation('com.crashlytics.sdk.android:crashlytics:2.9.1@aar') {
-        transitive = true
-    }
-    implementation "io.objectbox:objectbox-android:$objectboxVersion"
-    annotationProcessor "io.objectbox:objectbox-processor:$objectboxVersion"
+    implementation 'com.github.piasy:BigImageViewer:1.4.6'
+    implementation "com.crashlytics.sdk.android:crashlytics:2.9.5"
+    debugImplementation "io.objectbox:objectbox-android-objectbrowser:$objectboxVersion"
+    releaseImplementation "io.objectbox:objectbox-android:$objectboxVersion"
     implementation 'com.jakewharton.timber:timber:4.7.1'
     implementation 'com.jakewharton.rxbinding2:rxbinding-design:2.1.1'
 }
+// TODO to remove after FAB issue
+configurations.all {
+    exclude group: "com.android.support", module:"coordinatorlayout"
+}
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'io.objectbox'
