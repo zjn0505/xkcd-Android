@@ -5,6 +5,8 @@ import android.content.Context;
 
 import com.squareup.leakcanary.LeakCanary;
 
+import io.objectbox.BoxStore;
+import io.objectbox.android.AndroidObjectBrowser;
 import timber.log.Timber;
 
 public class DebugUtils {
@@ -19,5 +21,11 @@ public class DebugUtils {
         }
         LeakCanary.install((Application) context);
         return true;
+    }
+
+    public static void debugDB(Context context, BoxStore boxStore) {
+        if (BuildConfig.DEBUG) {
+            new AndroidObjectBrowser(boxStore).start(context);
+        }
     }
 }

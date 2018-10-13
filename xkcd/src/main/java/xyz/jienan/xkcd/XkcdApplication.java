@@ -35,6 +35,7 @@ public class XkcdApplication extends Application {
         }
         mInstance = this;
         boxStore = MyObjectBox.builder().androidContext(this).maxReaders(300).build();
+        DebugUtils.debugDB(this, boxStore);
         XkcdSideloadUtils.init(this);
         FirebaseMessaging.getInstance().subscribeToTopic(FCM_TOPIC_NEW_COMICS);
         FirebaseMessaging.getInstance().subscribeToTopic(FCM_TOPIC_NEW_WHAT_IF);

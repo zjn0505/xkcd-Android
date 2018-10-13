@@ -2,6 +2,7 @@ package xyz.jienan.xkcd;
 
 import android.content.Context;
 
+import io.objectbox.BoxStore;
 import timber.log.Timber;
 
 public class DebugUtils {
@@ -10,5 +11,9 @@ public class DebugUtils {
             Timber.plant(new Timber.DebugTree());
         }
         return true;
+    }
+
+    public static void debugDB(Context context, BoxStore boxStore) {
+        // no-ops
     }
 }
