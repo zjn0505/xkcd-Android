@@ -96,7 +96,8 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
         }
 
         @Override
-        public boolean onException(Exception e, final String model, final Target<Bitmap> target, boolean isFirstResource) {
+        public boolean onException(Exception e, final String model,
+                                   final Target<Bitmap> target, boolean isFirstResource) {
 
             SingleComicFragment fragment = weakReference.get();
 
@@ -206,7 +207,8 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         pbLoading.clearAnimation();
         pbLoading.setAnimation(AnimationUtils.loadAnimation(pbLoading.getContext(), R.anim.rotate));
@@ -214,7 +216,8 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
         singleComicPresenter.loadXkcd(id);
 
         if (savedInstanceState != null) {
-            dialogFragment = (SimpleInfoDialogFragment) getChildFragmentManager().findFragmentByTag("AltInfoDialogFragment");
+            dialogFragment = (SimpleInfoDialogFragment) getChildFragmentManager()
+                    .findFragmentByTag("AltInfoDialogFragment");
             if (dialogFragment != null) {
                 dialogFragment.setListener(dialogListener);
             }

@@ -48,9 +48,12 @@ public class GlideUtils {
     }
 
     public static void load(RequestManager glide, @NonNull String url, ImageView imageView) {
-        glide.load(url).diskCacheStrategy(DiskCacheStrategy.SOURCE).listener(new RequestListener<String, GlideDrawable>() {
+        glide.load(url)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .listener(new RequestListener<String, GlideDrawable>() {
             @Override
-            public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+            public boolean onException(Exception e, String model,
+                                       Target<GlideDrawable> target, boolean isFirstResource) {
                 if (model.startsWith("https")) {
                     load(glide, model.replaceFirst("https", "http"), imageView);
                     return true;

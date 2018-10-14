@@ -13,6 +13,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
@@ -80,6 +81,8 @@ public class ImageDetailPageActivity extends Activity implements ImageDetailPage
 
     private boolean showTitle = false;
 
+    private RequestManager glide;
+
     public static void startActivity(Context context,
                                      @Nullable String url,
                                      @NonNull Long id) {
@@ -145,6 +148,7 @@ public class ImageDetailPageActivity extends Activity implements ImageDetailPage
                 }
             });
         }
+        glide = Glide.with(this);
         if (BuildConfig.DEBUG) {
             photoView.setOnLongClickListener(ignored -> {
                 bigImageView.showImage(Uri.parse(url));
@@ -182,8 +186,7 @@ public class ImageDetailPageActivity extends Activity implements ImageDetailPage
             photoView.setEnabled(false);
             bundle.putBoolean(FIRE_LARGE_IMAGE, true);
         } else {
-            Glide.with(this)
-                    .load(url)
+            glide.load(url)
                     .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                     .listener(new RequestListener<String, GlideDrawable>() {
                         @Override
@@ -192,8 +195,7 @@ public class ImageDetailPageActivity extends Activity implements ImageDetailPage
                                                    Target<GlideDrawable> target,
                                                    boolean isFirstResource) {
                             if (model.startsWith("https")) {
-                                Glide.with(ImageDetailPageActivity.this)
-                                        .load(model.replaceFirst("https", "http"))
+                                glide.load(model.replaceFirst("https", "http"))
                                         .listener(this)
                                         .into(photoView);
                                 return true;
