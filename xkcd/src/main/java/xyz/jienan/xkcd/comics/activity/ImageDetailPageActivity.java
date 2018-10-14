@@ -112,6 +112,7 @@ public class ImageDetailPageActivity extends Activity implements ImageDetailPage
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         setContentView(R.layout.activity_image_detail);
         ButterKnife.bind(this);
+        glide = Glide.with(this);
         final String url = getIntent().getStringExtra(KEY_URL);
         index = (int) getIntent().getLongExtra(KEY_ID, 0L);
         showTitle = getIntent().getBooleanExtra(KEY_SHOW_TITLE, false);
@@ -148,7 +149,6 @@ public class ImageDetailPageActivity extends Activity implements ImageDetailPage
                 }
             });
         }
-        glide = Glide.with(this);
         if (BuildConfig.DEBUG) {
             photoView.setOnLongClickListener(ignored -> {
                 bigImageView.showImage(Uri.parse(url));
