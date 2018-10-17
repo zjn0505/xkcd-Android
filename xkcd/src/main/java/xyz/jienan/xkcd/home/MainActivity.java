@@ -51,10 +51,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     private static final int REQ_SETTINGS = 101;
 
-    static {
-        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
-    }
-
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 

@@ -11,6 +11,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import java.util.Map;
 
 import xyz.jienan.xkcd.R;
+import xyz.jienan.xkcd.comics.activity.ImageDetailPageActivity;
 import xyz.jienan.xkcd.home.MainActivity;
 
 import static xyz.jienan.xkcd.Const.FIRE_UX_ACTION;
@@ -32,12 +33,16 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (fontPref) {
             if (this instanceof MainActivity) {
                 setTheme(R.style.CustomActionBarTheme);
+            } else if (this instanceof ImageDetailPageActivity) {
+                setTheme(R.style.FullScreenTheme);
             } else {
                 setTheme(R.style.AppNoBarTheme);
             }
         } else {
             if (this instanceof MainActivity) {
                 setTheme(R.style.CustomActionBarFontTheme);
+            } else if (this instanceof ImageDetailPageActivity) {
+                setTheme(R.style.FullScreenTheme);
             } else {
                 setTheme(R.style.AppNoBarFontTheme);
             }
