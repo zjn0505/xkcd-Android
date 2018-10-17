@@ -416,6 +416,12 @@ public class ImageDetailPageActivity extends BaseActivity implements ImageDetail
                 stopPlayingGif();
             } else {
                 onStartTrackingTouch(seekBar);
+                if (seekBar.getProgress() == 1 || seekBar.getProgress() == seekBar.getMax()) {
+                    if (isGifInPlayState()) {
+                        setGifPlayState(false);
+                    }
+                    stopPlayingGif();
+                }
                 onStopTrackingTouch(null);
             }
         }
@@ -447,9 +453,6 @@ public class ImageDetailPageActivity extends BaseActivity implements ImageDetail
                         faded = true;
                         colorFade.start();
                     }, Timber::e);
-            if (seekBar != null && (seekBar.getProgress() == 0 || seekBar.getProgress() == seekBar.getMax())) {
-                stopPlayingGif();
-            }
         }
     }
 }

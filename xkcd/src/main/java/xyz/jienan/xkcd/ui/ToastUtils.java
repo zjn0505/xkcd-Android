@@ -10,9 +10,8 @@ public class ToastUtils {
 
     public static void showToast(Context context, String text) {
         try{
-            if (toast.getView().isShown()) {
-                toast.setText(text);
-            }
+            toast.getView().isShown();
+            toast.setText(text);
         } catch (Exception e) {
             toast = Toast.makeText(context.getApplicationContext(), text, Toast.LENGTH_SHORT);
         }
