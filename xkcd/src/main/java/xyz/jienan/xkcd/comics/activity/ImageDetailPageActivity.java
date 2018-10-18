@@ -1,53 +1,77 @@
 package xyz.jienan.xkcd.comics.activity;
 
-import android.app.Activity;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.github.piasy.biv.view.BigImageView;
-import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.OnTouch;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.Disposables;
 import timber.log.Timber;
 import xyz.jienan.xkcd.BuildConfig;
 import xyz.jienan.xkcd.R;
+import xyz.jienan.xkcd.base.BaseActivity;
+import xyz.jienan.xkcd.base.glide.GlideUtils;
 import xyz.jienan.xkcd.comics.contract.ImageDetailPageContract;
 import xyz.jienan.xkcd.comics.presenter.ImageDetailPagePresenter;
 import xyz.jienan.xkcd.model.XkcdPic;
 import xyz.jienan.xkcd.model.util.XkcdSideloadUtils;
+import xyz.jienan.xkcd.ui.AnimUtils;
+import xyz.jienan.xkcd.ui.ToastUtils;
 
 import static xyz.jienan.xkcd.Const.FIRE_COMIC_ID;
 import static xyz.jienan.xkcd.Const.FIRE_COMIC_URL;
 import static xyz.jienan.xkcd.Const.FIRE_DETAIL_PAGE;
+import static xyz.jienan.xkcd.Const.FIRE_GIF_FAST_FORWARD;
+import static xyz.jienan.xkcd.Const.FIRE_GIF_FAST_REWIND;
+import static xyz.jienan.xkcd.Const.FIRE_GIF_NEXT_CLICK;
+import static xyz.jienan.xkcd.Const.FIRE_GIF_NEXT_HOLD;
+import static xyz.jienan.xkcd.Const.FIRE_GIF_PREVIOUS_CLICK;
+import static xyz.jienan.xkcd.Const.FIRE_GIF_PREVIOUS_HOLD;
+import static xyz.jienan.xkcd.Const.FIRE_GIF_USER_PROGRESS;
 import static xyz.jienan.xkcd.Const.FIRE_LARGE_IMAGE;
 
 /**
  * Created by jienanzhang on 09/07/2017.
  */
 
-public class ImageDetailPageActivity extends Activity implements ImageDetailPageContract.View {
+public class ImageDetailPageActivity extends BaseActivity implements ImageDetailPageContract.View {
 
     private static final String KEY_URL = "URL";
 
@@ -71,17 +95,33 @@ public class ImageDetailPageActivity extends Activity implements ImageDetailPage
     @BindView(R.id.tv_title)
     TextView tvTitle;
 
+    @BindView(R.id.sb_movie)
+    SeekBar sbMovie;
+
+    @BindView(R.id.rl_gif_panel)
+    LinearLayout gifPanel;
+
+    @BindView(R.id.btn_gif_play)
+    ImageView playBtn;
+
+    private View.OnClickListener listener = v -> {
+        finish();
+        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+    };
+
     private int index;
 
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
-    private FirebaseAnalytics mFirebaseAnalytics;
+    private Disposable holdDisposable = Disposables.disposed();
 
     private ImageDetailPageContract.Presenter imageDetailPagePresenter;
 
     private boolean showTitle = false;
 
     private RequestManager glide;
+
+    private String url = "";
 
     public static void startActivity(Context context,
                                      @Nullable String url,
@@ -109,11 +149,10 @@ public class ImageDetailPageActivity extends Activity implements ImageDetailPage
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         imageDetailPagePresenter = new ImageDetailPagePresenter(this);
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         setContentView(R.layout.activity_image_detail);
         ButterKnife.bind(this);
         glide = Glide.with(this);
-        final String url = getIntent().getStringExtra(KEY_URL);
+        url = getIntent().getStringExtra(KEY_URL);
         index = (int) getIntent().getLongExtra(KEY_ID, 0L);
         showTitle = getIntent().getBooleanExtra(KEY_SHOW_TITLE, false);
         photoView.setMaximumScale(MAX_SCALE);
@@ -130,6 +169,10 @@ public class ImageDetailPageActivity extends Activity implements ImageDetailPage
             if (photoView.isEnabled() && showTitle) {
                 tvTitle.setVisibility(equalWithinError(photoView.getScale(), 1) ? View.VISIBLE : View.GONE);
             }
+            if (isGifInPlayState()) {
+                setGifPlayState(false);
+            }
+            stopPlayingGif();
         });
         if (bigImageView.getSSIV() != null) {
             bigImageView.getSSIV().setMaxScale(MAX_SCALE);
@@ -149,7 +192,7 @@ public class ImageDetailPageActivity extends Activity implements ImageDetailPage
                 }
             });
         }
-        if (BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG && !url.endsWith("gif")) {
             photoView.setOnLongClickListener(ignored -> {
                 bigImageView.showImage(Uri.parse(url));
                 bigImageView.setVisibility(View.VISIBLE);
@@ -163,6 +206,7 @@ public class ImageDetailPageActivity extends Activity implements ImageDetailPage
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        gifPanel.setVisibility(View.GONE);
         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
     }
 
@@ -172,12 +216,14 @@ public class ImageDetailPageActivity extends Activity implements ImageDetailPage
             Glide.clear(photoView);
         }
         imageDetailPagePresenter.onDestroy();
+        setGifPlayState(false);
         compositeDisposable.dispose();
         super.onDestroy();
     }
 
     @Override
     public void renderPic(String url) {
+        this.url = url;
         Bundle bundle = new Bundle();
         if (XkcdSideloadUtils.useLargeImageView(index)) {
             bigImageView.showImage(Uri.parse(url));
@@ -186,46 +232,22 @@ public class ImageDetailPageActivity extends Activity implements ImageDetailPage
             photoView.setEnabled(false);
             bundle.putBoolean(FIRE_LARGE_IMAGE, true);
         } else {
-            glide.load(url)
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .listener(new RequestListener<String, GlideDrawable>() {
-                        @Override
-                        public boolean onException(Exception e,
-                                                   String model,
-                                                   Target<GlideDrawable> target,
-                                                   boolean isFirstResource) {
-                            if (model.startsWith("https")) {
-                                glide.load(model.replaceFirst("https", "http"))
-                                        .listener(this)
-                                        .into(photoView);
-                                return true;
-                            }
-                            pbLoading.setVisibility(View.GONE);
-                            return false;
-                        }
-
-                        @Override
-                        public boolean onResourceReady(GlideDrawable resource,
-                                                       String model,
-                                                       Target<GlideDrawable> target,
-                                                       boolean isFromMemoryCache,
-                                                       boolean isFirstResource) {
-                            pbLoading.setVisibility(View.GONE);
-                            return false;
-                        }
-                    }).into(photoView);
             bigImageView.setVisibility(View.GONE);
             bigImageView.setEnabled(false);
             photoView.setVisibility(View.VISIBLE);
             bundle.putBoolean(FIRE_LARGE_IMAGE, false);
+
+            if (url.endsWith("gif")) {
+                loadGifWithControl();
+            } else {
+                loadGifWithoutControl(url);
+            }
         }
+
         bundle.putInt(FIRE_COMIC_ID, index);
         bundle.putString(FIRE_COMIC_URL, url);
-        mFirebaseAnalytics.logEvent(FIRE_DETAIL_PAGE, bundle);
-        final View.OnClickListener listener = v -> {
-            ImageDetailPageActivity.this.finish();
-            ImageDetailPageActivity.this.overridePendingTransition(R.anim.fadein, R.anim.fadeout);
-        };
+        logUXEvent(FIRE_DETAIL_PAGE, bundle);
+
         compositeDisposable.add(Observable.timer(500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread()).subscribe(ignored -> {
                     photoView.setOnClickListener(listener);
@@ -242,6 +264,37 @@ public class ImageDetailPageActivity extends Activity implements ImageDetailPage
     }
 
     @Override
+    public void renderSeekBar(int duration) {
+        gifPanel.setVisibility(View.VISIBLE);
+        sbMovie.setVisibility(View.VISIBLE);
+        sbMovie.setMax(duration);
+        sbMovie.setOnSeekBarChangeListener(new GifSeekBarListener());
+        imageDetailPagePresenter.parseFrame(1);
+        onGifPlayClicked();
+    }
+
+    @Override
+    public void renderFrame(Bitmap bitmap) {
+        photoView.setImageBitmap(bitmap);
+        sbMovie.setThumb(new BitmapDrawable(getResources(),
+                Bitmap.createScaledBitmap(bitmap, 100, 100, false)));
+    }
+
+    @Override
+    public void changeGifSeekBarProgress(int progress) {
+        sbMovie.setProgress(progress);
+    }
+
+    @Override
+    public void showGifPlaySpeed(int speed) {
+        if (isGifInPlayState()) {
+            ToastUtils.showToast(this, String.format(speed < 0 ? "<< %d" : "%d >>", speed));
+        } else {
+            ToastUtils.cancelToast();
+        }
+    }
+
+    @Override
     public void setLoading(boolean isLoading) {
         if (isLoading) {
             pbLoading.setVisibility(View.VISIBLE);
@@ -250,8 +303,189 @@ public class ImageDetailPageActivity extends Activity implements ImageDetailPage
         }
     }
 
+    @OnClick({R.id.btn_gif_back, R.id.btn_gif_forward})
+    public void onGifSpeedClicked(ImageView view) {
+        boolean isForward = view.getId() == R.id.btn_gif_forward;
+        if (isGifInPlayState()) {
+            imageDetailPagePresenter.adjustGifSpeed(isForward ? 1 : -1);
+            logUXEvent(isForward ? FIRE_GIF_FAST_FORWARD : FIRE_GIF_FAST_REWIND);
+        } else {
+            imageDetailPagePresenter.adjustGifSpeed(0);
+            imageDetailPagePresenter.adjustGifFrame(isForward);
+            logUXEvent(isForward ? FIRE_GIF_NEXT_CLICK : FIRE_GIF_PREVIOUS_CLICK);
+        }
+        AnimUtils.vectorAnim(view, isForward ? R.drawable.anim_fast_forward_shake : R.drawable.anim_fast_rewind_shake);
+    }
+
+    @OnTouch({R.id.btn_gif_back, R.id.btn_gif_forward})
+    public boolean onGifSpeedPressed(View view, MotionEvent motionEvent) {
+        if (!isGifInPlayState()) {
+            if (motionEvent.getAction() == MotionEvent.ACTION_CANCEL || motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                stopPlayingGif();
+            } else if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                startPlayingGif(view.getId() == R.id.btn_gif_forward, true);
+            }
+        }
+        return false;
+    }
+
+    @OnClick(R.id.btn_gif_play)
+    public void onGifPlayClicked() {
+        final boolean isNewStatePlay = !isGifInPlayState();
+        setGifPlayState(isNewStatePlay);
+        stopPlayingGif();
+        if (isNewStatePlay) {
+            startPlayingGif(true, false);
+        }
+    }
+
+    private void startPlayingGif(boolean isForward, boolean isFromUserLongPress) {
+        stopPlayingGif();
+        holdDisposable = Observable.interval(100, TimeUnit.MILLISECONDS)
+                .delay(isFromUserLongPress ? 500 : 0, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(ignored -> {
+                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                    if (!isFromUserLongPress) {
+                        AnimUtils.vectorAnim(playBtn, R.drawable.anim_play_to_pause, R.drawable.ic_pause);
+                    }
+                })
+                .doOnDispose(() -> {
+                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                    imageDetailPagePresenter.adjustGifSpeed(0);
+                    if (!isFromUserLongPress) {
+                        AnimUtils.vectorAnim(playBtn, R.drawable.anim_pause_to_play, R.drawable.ic_play_arrow);
+                    }
+                })
+                .doOnNext(num -> {
+                    if (num == 10 && isFromUserLongPress) {
+                        logUXEvent(isForward ? FIRE_GIF_NEXT_HOLD : FIRE_GIF_PREVIOUS_HOLD);
+                    }
+                })
+                .subscribe(ignored -> {
+                    if (!isFromUserLongPress && sbMovie.getProgress() == sbMovie.getMax() && isForward) {
+                        imageDetailPagePresenter.parseFrame(1);
+                    }
+                    imageDetailPagePresenter.adjustGifFrame(isForward);
+                }, e -> Timber.e("Failed to play gif"));
+        compositeDisposable.add(holdDisposable);
+    }
+
+    private void stopPlayingGif() {
+        if (!holdDisposable.isDisposed()) {
+            holdDisposable.dispose();
+        }
+    }
+
+    private boolean isGifInPlayState() {
+        return !playBtn.getTag().toString().equals("0");
+    }
+
+    private void setGifPlayState(boolean isPlay) {
+        playBtn.setTag(isPlay ? "1" : "0");
+    }
+
     private boolean equalWithinError(float scale, float target) {
         final float errorMargin = 0.16f;
         return scale - target < errorMargin;
+    }
+
+    private void loadGifWithControl() {
+        GlideUtils.loadGif(glide, url, new SimpleTarget<GifDrawable>() {
+
+            @Override
+            public void onResourceReady(GifDrawable resource, GlideAnimation<? super GifDrawable> glideAnimation) {
+                imageDetailPagePresenter.parseGifData(resource.getData());
+            }
+        });
+    }
+
+    private void loadGifWithoutControl(String url) {
+        pbLoading.setVisibility(View.VISIBLE);
+        glide.load(url)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .listener(new RequestListener<String, GlideDrawable>() {
+                    @Override
+                    public boolean onException(Exception e,
+                                               String model,
+                                               Target<GlideDrawable> target,
+                                               boolean isFirstResource) {
+                        if (model.startsWith("https")) {
+                            loadGifWithoutControl(model.replaceFirst("https", "http"));
+                            return true;
+                        }
+                        pbLoading.setVisibility(View.GONE);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(GlideDrawable resource,
+                                                   String model,
+                                                   Target<GlideDrawable> target,
+                                                   boolean isFromMemoryCache,
+                                                   boolean isFirstResource) {
+                        pbLoading.setVisibility(View.GONE);
+                        return false;
+                    }
+                }).into(photoView);
+    }
+
+    private class GifSeekBarListener implements SeekBar.OnSeekBarChangeListener {
+
+        private Disposable fadingDisposable = Disposables.empty();
+
+        private boolean faded = false;
+
+        private ObjectAnimator colorFade;
+
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            if (fromUser) {
+                imageDetailPagePresenter.parseFrame(progress);
+                if (isGifInPlayState()) {
+                    setGifPlayState(false);
+                }
+                stopPlayingGif();
+                logUXEvent(FIRE_GIF_USER_PROGRESS);
+            } else {
+                onStartTrackingTouch(seekBar);
+                if (seekBar.getProgress() == 1 || seekBar.getProgress() == seekBar.getMax()) {
+                    if (isGifInPlayState()) {
+                        setGifPlayState(false);
+                    }
+                    stopPlayingGif();
+                }
+                onStopTrackingTouch(null);
+            }
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+            fadingDisposable.dispose();
+            if (faded) {
+                if (colorFade != null && colorFade.isStarted()) {
+                    colorFade.cancel();
+                }
+                colorFade = ObjectAnimator.ofInt(sbMovie.getProgressDrawable(), "alpha", 0, 255);
+                colorFade.start();
+                faded = false;
+            }
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+            fadingDisposable.dispose();
+            fadingDisposable = Observable.timer(1, TimeUnit.SECONDS)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .take(1)
+                    .subscribe(ignored -> {
+                        if (colorFade != null && colorFade.isStarted()) {
+                            colorFade.cancel();
+                        }
+                        colorFade = ObjectAnimator.ofInt(sbMovie.getProgressDrawable(), "alpha", 255, 0);
+                        faded = true;
+                        colorFade.start();
+                    }, Timber::e);
+        }
     }
 }

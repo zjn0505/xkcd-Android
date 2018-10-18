@@ -8,9 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 
-import java.util.Map;
-
 import xyz.jienan.xkcd.R;
+import xyz.jienan.xkcd.comics.activity.ImageDetailPageActivity;
 import xyz.jienan.xkcd.home.MainActivity;
 
 import static xyz.jienan.xkcd.Const.FIRE_UX_ACTION;
@@ -32,12 +31,16 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (fontPref) {
             if (this instanceof MainActivity) {
                 setTheme(R.style.CustomActionBarTheme);
+            } else if (this instanceof ImageDetailPageActivity) {
+                setTheme(R.style.FullScreenTheme);
             } else {
                 setTheme(R.style.AppNoBarTheme);
             }
         } else {
             if (this instanceof MainActivity) {
                 setTheme(R.style.CustomActionBarFontTheme);
+            } else if (this instanceof ImageDetailPageActivity) {
+                setTheme(R.style.FullScreenTheme);
             } else {
                 setTheme(R.style.AppNoBarFontTheme);
             }
@@ -50,19 +53,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         logUXEvent(event, null);
     }
 
-    protected void logUXEvent(String event, final Map<String, String> params) {
-        Bundle bundle = new Bundle();
-        bundle.putString(FIRE_UX_ACTION, event);
-        if (params != null && params.size() > 0) {
-            for (String key : params.keySet()) {
-                String value = params.get(key);
-                if (value.matches("-?\\d+")) {
-                    bundle.putInt(key, Integer.valueOf(value));
-                } else {
-                    bundle.putString(key, params.get(key));
-                }
-            }
+    protected void logUXEvent(String event, Bundle bundle) {
+        if (bundle == null) {
+            bundle = new Bundle();
         }
+        bundle.putString(FIRE_UX_ACTION, event);
         mFirebaseAnalytics.logEvent(FIRE_UX_ACTION, bundle);
     }
 }

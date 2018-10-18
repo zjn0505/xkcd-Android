@@ -51,6 +51,13 @@ public class Const {
     public static final String FIRE_SCROLL_TO_END = "scroll_to_end";
     public static final String FIRE_FROM_NOTIFICATION = "from_notification";
     public static final String FIRE_FROM_NOTIFICATION_INDEX = "from_notification_index";
+    public static final String FIRE_GIF_FAST_FORWARD = "gif_fast_forward";
+    public static final String FIRE_GIF_FAST_REWIND = "gif_fast_rewind";
+    public static final String FIRE_GIF_NEXT_CLICK = "gif_next_click";
+    public static final String FIRE_GIF_NEXT_HOLD = "gif_next_hold";
+    public static final String FIRE_GIF_PREVIOUS_CLICK = "gif_previous_click";
+    public static final String FIRE_GIF_PREVIOUS_HOLD = "gif_previous_hold";
+    public static final String FIRE_GIF_USER_PROGRESS = "gif_user_progress";
 
     public static final String FIRE_NAVI_XKCD = "fire_navi_xkcd";
     public static final String FIRE_NAVI_WHAT_IF = "fire_navi_what_if";

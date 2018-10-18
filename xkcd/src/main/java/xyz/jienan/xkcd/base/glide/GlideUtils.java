@@ -8,6 +8,7 @@ import com.bumptech.glide.Priority;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
@@ -70,5 +71,31 @@ public class GlideUtils {
                 return false;
             }
         }).into(imageView);
+    }
+
+    public static void loadGif(RequestManager glide, @NonNull String url, Target target) {
+        glide.load(url)
+                .asGif()
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .listener(new RequestListener<String, GifDrawable>() {
+                    @Override
+                    public boolean onException(Exception e, String model,
+                                               Target<GifDrawable> target, boolean isFirstResource) {
+                        if (model.startsWith("https")) {
+                            loadGif(glide, model.replaceFirst("https", "http"), target);
+                            return true;
+                        }
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(GifDrawable resource,
+                                                   String model,
+                                                   Target<GifDrawable> target, boolean isFromMemoryCache,
+                                                   boolean isFirstResource) {
+                        return false;
+                    }
+                })
+                .into(target);
     }
 }

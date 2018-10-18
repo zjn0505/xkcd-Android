@@ -1,6 +1,7 @@
 package xyz.jienan.xkcd;
 
 import android.app.Application;
+import android.support.v7.app.AppCompatDelegate;
 
 import com.github.piasy.biv.BigImageViewer;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -33,6 +34,7 @@ public class XkcdApplication extends Application {
         if (!DebugUtils.init(this)) {
             return;
         }
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         mInstance = this;
         boxStore = MyObjectBox.builder().androidContext(this).maxReaders(300).build();
         DebugUtils.debugDB(this, boxStore);

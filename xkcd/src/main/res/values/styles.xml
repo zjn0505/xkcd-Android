@@ -22,6 +22,14 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="FullScreenTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorAccent">@color/white</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
     <style name="MyTextViewStyle" parent="android:Widget.TextView">
         <item name="android:fontFamily">@font/xkcd</item>
     </style>
@@ -61,4 +69,12 @@
     </style>
 
     <style name="holo_progressbar" parent="android:Widget.Holo.ProgressBar" />
+
+    <style name="btn_gif_control">
+        <item name="android:layout_width">60dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/ripple</item>
+        <item name="android:tag">0</item>
+        <item name="android:padding">5dp</item>
+    </style>
 </resources>

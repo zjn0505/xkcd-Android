@@ -23,7 +23,7 @@ public class DebugUtils {
         return true;
     }
 
-    public static void debugDB(Context context, BoxStore boxStore) {
+    static void debugDB(Context context, BoxStore boxStore) {
         if (BuildConfig.DEBUG) {
             new AndroidObjectBrowser(boxStore).start(context);
         }

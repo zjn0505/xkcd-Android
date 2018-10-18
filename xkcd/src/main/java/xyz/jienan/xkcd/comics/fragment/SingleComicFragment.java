@@ -38,7 +38,6 @@ import xyz.jienan.xkcd.comics.dialog.SimpleInfoDialogFragment;
 import xyz.jienan.xkcd.comics.dialog.SimpleInfoDialogFragment.ISimpleInfoDialogListener;
 import xyz.jienan.xkcd.comics.presenter.SingleComicPresenter;
 import xyz.jienan.xkcd.model.XkcdPic;
-import xyz.jienan.xkcd.model.util.XkcdSideloadUtils;
 
 import static android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING;
 import static android.view.HapticFeedbackConstants.LONG_PRESS;

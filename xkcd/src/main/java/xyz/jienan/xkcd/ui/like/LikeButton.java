@@ -206,7 +206,7 @@ public class LikeButton extends FrameLayout implements View.OnClickListener {
             dotsAnimator.setInterpolator(ACCELERATE_DECELERATE_INTERPOLATOR);
 
             if (isChecked) {
-                ObjectAnimator bgAnimator = ObjectAnimator.ofFloat(icon, "alpha", 0, 1f);
+                ObjectAnimator bgAnimator = ObjectAnimator.ofFloat(icon, ALPHA, 0, 1f);
                 bgAnimator.setDuration(800);
                 bgAnimator.setStartDelay(150);
                 bgAnimator.setInterpolator(ACCELERATE_DECELERATE_INTERPOLATOR);
