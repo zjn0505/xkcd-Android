@@ -264,6 +264,7 @@ public class ImageDetailPageActivity extends BaseActivity implements ImageDetail
         sbMovie.setMax(duration);
         sbMovie.setOnSeekBarChangeListener(new GifSeekBarListener());
         imageDetailPagePresenter.parseFrame(1);
+        onGifPlayClicked();
     }
 
     @Override
