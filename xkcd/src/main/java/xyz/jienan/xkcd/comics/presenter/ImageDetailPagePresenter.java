@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Movie;
 import android.text.TextUtils;
+import android.util.LruCache;
 
 import java.util.concurrent.TimeUnit;
 
@@ -18,6 +19,8 @@ import xyz.jienan.xkcd.model.XkcdModel;
 import xyz.jienan.xkcd.model.XkcdPic;
 
 public class ImageDetailPagePresenter implements ImageDetailPageContract.Presenter {
+
+    private static final boolean IS_ECO_MODE = true;
 
     private static final int STEP = 150;
 
@@ -39,8 +42,21 @@ public class ImageDetailPagePresenter implements ImageDetailPageContract.Present
 
     private int duration;
 
+    private Bitmap reusableBitmap = null;
+
+    private LruCache<Integer, Bitmap> mMemoryCache;
+
     public ImageDetailPagePresenter(ImageDetailPageContract.View imageDetailPageActivity) {
         view = imageDetailPageActivity;
+        final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+        mMemoryCache = new LruCache<Integer, Bitmap>(maxMemory / 8) {
+            @Override
+            protected int sizeOf(Integer key, Bitmap bitmap) {
+                // The cache size will be measured in kilobytes rather than
+                // number of items.
+                return bitmap.getByteCount() / 1024;
+            }
+        };
     }
 
     @Override
@@ -76,26 +92,38 @@ public class ImageDetailPagePresenter implements ImageDetailPageContract.Present
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(ignored -> {
-                    duration = Math.min(mMovie.duration(), Integer.MAX_VALUE);
+                    duration = Math.min(mMovie.duration(), Integer.MAX_VALUE) / STEP * getEcoModeValue();
                     view.renderSeekBar(duration);
                 }, Timber::e));
     }
 
     @Override
     public void parseFrame(int progress) {
+        progress = progress == 0 ? 1 : progress;
         currentFrame = progress;
         if (movieHeight == 0 || movieWidth == 0) {
             movieHeight = mMovie.height();
             movieWidth = mMovie.width();
         }
 
-        final Bitmap bitmap = Bitmap.createBitmap(movieWidth, movieHeight, Bitmap.Config.RGB_565);
-        final Canvas canvas = new Canvas(bitmap);
-        canvas.setBitmap(bitmap);
-        mMovie.setTime(progress);
-        mMovie.draw(canvas, 0, 0);
+        Bitmap bitmap = getBitmapFromMemCache(progress);
 
-        view.renderFrame(bitmap);
+        if (bitmap != null) {
+            view.renderFrame(bitmap);
+            Timber.e("zjn hit cache " + progress);
+        } else {
+            if (reusableBitmap == null) {
+                reusableBitmap = Bitmap.createBitmap(movieWidth, movieHeight, Bitmap.Config.RGB_565);
+            }
+
+            final Canvas canvas = new Canvas(reusableBitmap);
+            canvas.setBitmap(reusableBitmap);
+            mMovie.setTime(progress * STEP / getEcoModeValue());
+            mMovie.draw(canvas, 0, 0);
+            Timber.e("zjn current progress " + progress);
+            addBitmapToMemoryCache(progress, reusableBitmap);
+            view.renderFrame(reusableBitmap);
+        }
     }
 
     @Override
@@ -113,8 +141,10 @@ public class ImageDetailPagePresenter implements ImageDetailPageContract.Present
 
     @Override
     public void adjustGifFrame(boolean isForward) {
-        int progress = isForward ? currentFrame + STEP * stepMultiplier : currentFrame - STEP * stepMultiplier;
+        int progress = isForward ? currentFrame + getEcoModeValue() * stepMultiplier
+                : currentFrame - getEcoModeValue() * stepMultiplier;
         progress = Math.min(Math.max(progress, 1), duration);
+        progress = progress == 1 && isForward ? 2 : progress;
         view.changeGifSeekBarProgress(progress);
         parseFrame(progress);
         if (progress == 1 || progress == duration) {
@@ -125,5 +155,19 @@ public class ImageDetailPagePresenter implements ImageDetailPageContract.Present
     @Override
     public void onDestroy() {
         compositeDisposable.dispose();
+    }
+
+    private void addBitmapToMemoryCache(int key, Bitmap bitmap) {
+        if (getBitmapFromMemCache(key) == null) {
+            mMemoryCache.put(key, bitmap);
+        }
+    }
+
+    private Bitmap getBitmapFromMemCache(int key) {
+        return mMemoryCache.get(key);
+    }
+
+    private int getEcoModeValue() {
+        return IS_ECO_MODE ?  1 : STEP;
     }
 }

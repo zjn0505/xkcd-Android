@@ -265,12 +265,21 @@ public class ImageDetailPageActivity extends BaseActivity implements ImageDetail
 
     @Override
     public void renderSeekBar(int duration) {
+        pbLoading.setVisibility(View.GONE);
         gifPanel.setVisibility(View.VISIBLE);
         sbMovie.setVisibility(View.VISIBLE);
         sbMovie.setMax(duration);
         sbMovie.setOnSeekBarChangeListener(new GifSeekBarListener());
         imageDetailPagePresenter.parseFrame(1);
         onGifPlayClicked();
+    }
+
+    @Override
+    protected void onPause() {
+        if (isGifInPlayState()) {
+            onGifPlayClicked();
+        }
+        super.onPause();
     }
 
     @Override
@@ -343,7 +352,7 @@ public class ImageDetailPageActivity extends BaseActivity implements ImageDetail
         stopPlayingGif();
         holdDisposable = Observable.interval(100, TimeUnit.MILLISECONDS)
                 .delay(isFromUserLongPress ? 500 : 0, TimeUnit.MILLISECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(ignored -> {
                     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                     if (!isFromUserLongPress) {
@@ -391,6 +400,7 @@ public class ImageDetailPageActivity extends BaseActivity implements ImageDetail
     }
 
     private void loadGifWithControl() {
+        pbLoading.setVisibility(View.VISIBLE);
         GlideUtils.loadGif(glide, url, new SimpleTarget<GifDrawable>() {
 
             @Override
@@ -446,7 +456,6 @@ public class ImageDetailPageActivity extends BaseActivity implements ImageDetail
                     setGifPlayState(false);
                 }
                 stopPlayingGif();
-                logUXEvent(FIRE_GIF_USER_PROGRESS);
             } else {
                 onStartTrackingTouch(seekBar);
                 if (seekBar.getProgress() == 1 || seekBar.getProgress() == seekBar.getMax()) {
@@ -486,6 +495,10 @@ public class ImageDetailPageActivity extends BaseActivity implements ImageDetail
                         faded = true;
                         colorFade.start();
                     }, Timber::e);
+
+            if (seekBar != null) {
+                logUXEvent(FIRE_GIF_USER_PROGRESS);
+            }
         }
     }
 }
