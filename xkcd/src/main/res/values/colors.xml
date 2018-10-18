@@ -16,4 +16,8 @@
     <color name="hint_text_color">#DEffffff</color>
 
     <color name="like_btn_bg">#ffffff</color>
+
+    <color name="ripple_bg">#42000000</color>
+    <color name="ripple_mask">#50DDDDDD</color>
+
 </resources>

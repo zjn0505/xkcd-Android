@@ -18,7 +18,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
@@ -48,10 +47,12 @@ import timber.log.Timber;
 import xyz.jienan.xkcd.BuildConfig;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.base.BaseActivity;
+import xyz.jienan.xkcd.base.glide.GlideUtils;
 import xyz.jienan.xkcd.comics.contract.ImageDetailPageContract;
 import xyz.jienan.xkcd.comics.presenter.ImageDetailPagePresenter;
 import xyz.jienan.xkcd.model.XkcdPic;
 import xyz.jienan.xkcd.model.util.XkcdSideloadUtils;
+import xyz.jienan.xkcd.ui.AnimUtils;
 import xyz.jienan.xkcd.ui.ToastUtils;
 
 import static xyz.jienan.xkcd.Const.FIRE_COMIC_ID;
@@ -113,7 +114,7 @@ public class ImageDetailPageActivity extends BaseActivity implements ImageDetail
 
     private RequestManager glide;
 
-    private Toast toast;
+    private String url = "";
 
     public static void startActivity(Context context,
                                      @Nullable String url,
@@ -144,7 +145,7 @@ public class ImageDetailPageActivity extends BaseActivity implements ImageDetail
         setContentView(R.layout.activity_image_detail);
         ButterKnife.bind(this);
         glide = Glide.with(this);
-        final String url = getIntent().getStringExtra(KEY_URL);
+        url = getIntent().getStringExtra(KEY_URL);
         index = (int) getIntent().getLongExtra(KEY_ID, 0L);
         showTitle = getIntent().getBooleanExtra(KEY_SHOW_TITLE, false);
         photoView.setMaximumScale(MAX_SCALE);
@@ -161,6 +162,10 @@ public class ImageDetailPageActivity extends BaseActivity implements ImageDetail
             if (photoView.isEnabled() && showTitle) {
                 tvTitle.setVisibility(equalWithinError(photoView.getScale(), 1) ? View.VISIBLE : View.GONE);
             }
+            if (isGifInPlayState()) {
+                setGifPlayState(false);
+            }
+            stopPlayingGif();
         });
         if (bigImageView.getSSIV() != null) {
             bigImageView.getSSIV().setMaxScale(MAX_SCALE);
@@ -180,7 +185,7 @@ public class ImageDetailPageActivity extends BaseActivity implements ImageDetail
                 }
             });
         }
-        if (BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG && !url.endsWith("gif")) {
             photoView.setOnLongClickListener(ignored -> {
                 bigImageView.showImage(Uri.parse(url));
                 bigImageView.setVisibility(View.VISIBLE);
@@ -211,6 +216,7 @@ public class ImageDetailPageActivity extends BaseActivity implements ImageDetail
 
     @Override
     public void renderPic(String url) {
+        this.url = url;
         Bundle bundle = new Bundle();
         if (XkcdSideloadUtils.useLargeImageView(index)) {
             bigImageView.showImage(Uri.parse(url));
@@ -226,45 +232,9 @@ public class ImageDetailPageActivity extends BaseActivity implements ImageDetail
             bundle.putBoolean(FIRE_LARGE_IMAGE, false);
 
             if (url.endsWith("gif")) {
-                glide.load(url)
-                        .asGif()
-                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                        .into(new SimpleTarget<GifDrawable>() {
-
-                            @Override
-                            public void onResourceReady(GifDrawable resource, GlideAnimation<? super GifDrawable> glideAnimation) {
-                                imageDetailPagePresenter.parseGifData(resource.getData());
-                            }
-                        });
+                loadGifWithControl();
             } else {
-                glide.load(url)
-                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                        .listener(new RequestListener<String, GlideDrawable>() {
-                            @Override
-                            public boolean onException(Exception e,
-                                                       String model,
-                                                       Target<GlideDrawable> target,
-                                                       boolean isFirstResource) {
-                                if (model.startsWith("https")) {
-                                    glide.load(model.replaceFirst("https", "http"))
-                                            .listener(this)
-                                            .into(photoView);
-                                    return true;
-                                }
-                                pbLoading.setVisibility(View.GONE);
-                                return false;
-                            }
-
-                            @Override
-                            public boolean onResourceReady(GlideDrawable resource,
-                                                           String model,
-                                                           Target<GlideDrawable> target,
-                                                           boolean isFromMemoryCache,
-                                                           boolean isFirstResource) {
-                                pbLoading.setVisibility(View.GONE);
-                                return false;
-                            }
-                        }).into(photoView);
+                loadGifWithoutControl(url);
             }
         }
 
@@ -327,13 +297,15 @@ public class ImageDetailPageActivity extends BaseActivity implements ImageDetail
     }
 
     @OnClick({R.id.btn_gif_back, R.id.btn_gif_forward})
-    public void onGifSpeedClicked(View view) {
+    public void onGifSpeedClicked(ImageView view) {
+        boolean isForward = view.getId() == R.id.btn_gif_forward;
         if (isGifInPlayState()) {
-            imageDetailPagePresenter.adjustGifSpeed(view.getId() == R.id.btn_gif_forward ? 1 : -1);
+            imageDetailPagePresenter.adjustGifSpeed(isForward ? 1 : -1);
         } else {
             imageDetailPagePresenter.adjustGifSpeed(0);
-            imageDetailPagePresenter.adjustGifFrame(view.getId() == R.id.btn_gif_forward);
+            imageDetailPagePresenter.adjustGifFrame(isForward);
         }
+        AnimUtils.vectorAnim(view, isForward ? R.drawable.anim_fast_forward_shake : R.drawable.anim_fast_rewind_shake);
     }
 
     @OnTouch({R.id.btn_gif_back, R.id.btn_gif_forward})
@@ -362,20 +334,26 @@ public class ImageDetailPageActivity extends BaseActivity implements ImageDetail
         stopPlayingGif();
         holdDisposable = Observable.interval(100, TimeUnit.MILLISECONDS)
                 .delay(isFromUserLongPress ? 500 : 0, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(ignored -> {
                     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                     if (!isFromUserLongPress) {
-                        playBtn.setImageResource(R.drawable.ic_pause);
+                        AnimUtils.vectorAnim(playBtn, R.drawable.anim_play_to_pause, R.drawable.ic_pause);
                     }
                 })
                 .doOnDispose(() -> {
                     getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                     imageDetailPagePresenter.adjustGifSpeed(0);
                     if (!isFromUserLongPress) {
-                        playBtn.setImageResource(R.drawable.ic_play_arrow);
+                        AnimUtils.vectorAnim(playBtn, R.drawable.anim_pause_to_play, R.drawable.ic_play_arrow);
                     }
                 })
-                .subscribe(ignored -> imageDetailPagePresenter.adjustGifFrame(isForward));
+                .subscribe(ignored -> {
+                    if (!isFromUserLongPress && sbMovie.getProgress() == sbMovie.getMax() && isForward) {
+                        imageDetailPagePresenter.parseFrame(1);
+                    }
+                    imageDetailPagePresenter.adjustGifFrame(isForward);
+                });
         compositeDisposable.add(holdDisposable);
     }
 
@@ -396,6 +374,46 @@ public class ImageDetailPageActivity extends BaseActivity implements ImageDetail
     private boolean equalWithinError(float scale, float target) {
         final float errorMargin = 0.16f;
         return scale - target < errorMargin;
+    }
+
+    private void loadGifWithControl() {
+        GlideUtils.loadGif(glide, url, new SimpleTarget<GifDrawable>() {
+
+            @Override
+            public void onResourceReady(GifDrawable resource, GlideAnimation<? super GifDrawable> glideAnimation) {
+                imageDetailPagePresenter.parseGifData(resource.getData());
+            }
+        });
+    }
+
+    private void loadGifWithoutControl(String url) {
+        pbLoading.setVisibility(View.VISIBLE);
+        glide.load(url)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .listener(new RequestListener<String, GlideDrawable>() {
+                    @Override
+                    public boolean onException(Exception e,
+                                               String model,
+                                               Target<GlideDrawable> target,
+                                               boolean isFirstResource) {
+                        if (model.startsWith("https")) {
+                            loadGifWithoutControl(model.replaceFirst("https", "http"));
+                            return true;
+                        }
+                        pbLoading.setVisibility(View.GONE);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(GlideDrawable resource,
+                                                   String model,
+                                                   Target<GlideDrawable> target,
+                                                   boolean isFromMemoryCache,
+                                                   boolean isFirstResource) {
+                        pbLoading.setVisibility(View.GONE);
+                        return false;
+                    }
+                }).into(photoView);
     }
 
     private class GifSeekBarListener implements SeekBar.OnSeekBarChangeListener {

@@ -69,4 +69,12 @@
     </style>
 
     <style name="holo_progressbar" parent="android:Widget.Holo.ProgressBar" />
+
+    <style name="btn_gif_control">
+        <item name="android:layout_width">60dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/ripple</item>
+        <item name="android:tag">0</item>
+        <item name="android:padding">5dp</item>
+    </style>
 </resources>
