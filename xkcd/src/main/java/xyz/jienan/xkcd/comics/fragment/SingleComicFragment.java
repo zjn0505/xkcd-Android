@@ -234,7 +234,7 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         if (dialogFragment != null && dialogFragment.isAdded()) {
-            dialogFragment.dismiss();
+            dialogFragment.dismissAllowingStateLoss();
             dialogFragment = null;
         }
         super.onSaveInstanceState(outState);
