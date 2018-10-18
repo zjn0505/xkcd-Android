@@ -110,7 +110,6 @@ public class ImageDetailPagePresenter implements ImageDetailPageContract.Present
 
         if (bitmap != null) {
             view.renderFrame(bitmap);
-            Timber.e("zjn hit cache " + progress);
         } else {
             if (reusableBitmap == null) {
                 reusableBitmap = Bitmap.createBitmap(movieWidth, movieHeight, Bitmap.Config.RGB_565);
@@ -120,7 +119,6 @@ public class ImageDetailPagePresenter implements ImageDetailPageContract.Present
             canvas.setBitmap(reusableBitmap);
             mMovie.setTime(progress * step / getEcoModeValue());
             mMovie.draw(canvas, 0, 0);
-            Timber.e("zjn current progress " + progress);
             addBitmapToMemoryCache(progress, reusableBitmap);
             view.renderFrame(reusableBitmap);
         }
