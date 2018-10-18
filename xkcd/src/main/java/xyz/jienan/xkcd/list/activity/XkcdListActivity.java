@@ -1,9 +1,7 @@
 package xyz.jienan.xkcd.list.activity;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -63,8 +61,6 @@ public class XkcdListActivity extends BaseActivity implements XkcdListContract.V
     private int spanCount = 2;
 
     private boolean loadingMore = false;
-
-    private SharedPreferences sharedPreferences;
 
     private Selection currentSelection = ALL_COMICS;
 
@@ -180,7 +176,6 @@ public class XkcdListActivity extends BaseActivity implements XkcdListContract.V
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         xkcdListPresenter = new XkcdListPresenter(this);
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         setContentView(R.layout.activity_list);
         ButterKnife.bind(this);
         scroller.setRecyclerView(rvList);

@@ -23,9 +23,11 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected FirebaseAnalytics mFirebaseAnalytics;
 
+    protected SharedPreferences sharedPreferences;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         boolean fontPref = sharedPreferences.getBoolean(PREF_FONT, false);
         if (fontPref) {

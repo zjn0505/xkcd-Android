@@ -20,10 +20,6 @@ import xyz.jienan.xkcd.model.XkcdPic;
 
 public class ImageDetailPagePresenter implements ImageDetailPageContract.Presenter {
 
-    private static final boolean IS_ECO_MODE = true;
-
-    private static final int STEP = 150;
-
     private final XkcdModel xkcdModel = XkcdModel.getInstance();
 
     private ImageDetailPageContract.View view;
@@ -45,6 +41,10 @@ public class ImageDetailPagePresenter implements ImageDetailPageContract.Present
     private Bitmap reusableBitmap = null;
 
     private LruCache<Integer, Bitmap> mMemoryCache;
+
+    private boolean isEcoMode = true;
+
+    private int step = 150;
 
     public ImageDetailPagePresenter(ImageDetailPageContract.View imageDetailPageActivity) {
         view = imageDetailPageActivity;
@@ -92,7 +92,7 @@ public class ImageDetailPagePresenter implements ImageDetailPageContract.Present
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(ignored -> {
-                    duration = Math.min(mMovie.duration(), Integer.MAX_VALUE) / STEP * getEcoModeValue();
+                    duration = Math.min(mMovie.duration(), Integer.MAX_VALUE) / step * getEcoModeValue();
                     view.renderSeekBar(duration);
                 }, Timber::e));
     }
@@ -118,7 +118,7 @@ public class ImageDetailPagePresenter implements ImageDetailPageContract.Present
 
             final Canvas canvas = new Canvas(reusableBitmap);
             canvas.setBitmap(reusableBitmap);
-            mMovie.setTime(progress * STEP / getEcoModeValue());
+            mMovie.setTime(progress * step / getEcoModeValue());
             mMovie.draw(canvas, 0, 0);
             Timber.e("zjn current progress " + progress);
             addBitmapToMemoryCache(progress, reusableBitmap);
@@ -153,6 +153,12 @@ public class ImageDetailPagePresenter implements ImageDetailPageContract.Present
     }
 
     @Override
+    public void setEcoMode(boolean isEcoMode) {
+        this.isEcoMode = isEcoMode;
+        this.step = isEcoMode ? 150 : 90;
+    }
+
+    @Override
     public void onDestroy() {
         compositeDisposable.dispose();
     }
@@ -168,6 +174,6 @@ public class ImageDetailPagePresenter implements ImageDetailPageContract.Present
     }
 
     private int getEcoModeValue() {
-        return IS_ECO_MODE ?  1 : STEP;
+        return isEcoMode ?  1 : step;
     }
 }

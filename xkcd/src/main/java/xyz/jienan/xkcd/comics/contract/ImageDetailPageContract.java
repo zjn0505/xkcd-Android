@@ -36,5 +36,7 @@ public interface ImageDetailPageContract {
         void adjustGifSpeed(int increaseByOne);
 
         void adjustGifFrame(boolean isForward);
+
+        void setEcoMode(boolean isEchoMode);
     }
 }

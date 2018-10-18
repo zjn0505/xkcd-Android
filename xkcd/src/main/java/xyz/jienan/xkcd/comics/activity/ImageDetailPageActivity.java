@@ -3,10 +3,12 @@ package xyz.jienan.xkcd.comics.activity;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -66,6 +68,7 @@ import static xyz.jienan.xkcd.Const.FIRE_GIF_PREVIOUS_CLICK;
 import static xyz.jienan.xkcd.Const.FIRE_GIF_PREVIOUS_HOLD;
 import static xyz.jienan.xkcd.Const.FIRE_GIF_USER_PROGRESS;
 import static xyz.jienan.xkcd.Const.FIRE_LARGE_IMAGE;
+import static xyz.jienan.xkcd.Const.PREF_XKCD_GIF_ECHO;
 
 /**
  * Created by jienanzhang on 09/07/2017.
@@ -123,6 +126,8 @@ public class ImageDetailPageActivity extends BaseActivity implements ImageDetail
 
     private String url = "";
 
+    private boolean isEchoMode = true;
+
     public static void startActivity(Context context,
                                      @Nullable String url,
                                      @NonNull Long id) {
@@ -149,6 +154,8 @@ public class ImageDetailPageActivity extends BaseActivity implements ImageDetail
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         imageDetailPagePresenter = new ImageDetailPagePresenter(this);
+        isEchoMode = sharedPreferences.getBoolean(PREF_XKCD_GIF_ECHO, true);
+        imageDetailPagePresenter.setEcoMode(isEchoMode);
         setContentView(R.layout.activity_image_detail);
         ButterKnife.bind(this);
         glide = Glide.with(this);
@@ -350,7 +357,7 @@ public class ImageDetailPageActivity extends BaseActivity implements ImageDetail
 
     private void startPlayingGif(boolean isForward, boolean isFromUserLongPress) {
         stopPlayingGif();
-        holdDisposable = Observable.interval(100, TimeUnit.MILLISECONDS)
+        holdDisposable = Observable.interval(isEchoMode ? 100 : 60, TimeUnit.MILLISECONDS)
                 .delay(isFromUserLongPress ? 500 : 0, TimeUnit.MILLISECONDS)
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(ignored -> {

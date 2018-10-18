@@ -3,7 +3,6 @@ package xyz.jienan.xkcd.list.activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -58,8 +57,6 @@ public class WhatIfListActivity extends BaseActivity implements WhatIfListContra
     private WhatIfListAdapter mAdapter;
 
     private LinearLayoutManager linearLayoutManager;
-
-    private SharedPreferences sharedPreferences;
 
     private Selection currentSelection = ALL_WHAT_IF;
 
@@ -166,7 +163,6 @@ public class WhatIfListActivity extends BaseActivity implements WhatIfListContra
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         whatIfListPresenter = new WhatIfListPresenter(this);
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         setContentView(R.layout.activity_list);
         ButterKnife.bind(this);
         scroller.setRecyclerView(rvList);

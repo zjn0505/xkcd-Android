@@ -14,6 +14,7 @@ import xyz.jienan.xkcd.model.WhatIfModel;
 import static xyz.jienan.xkcd.Const.PREF_ARROW;
 import static xyz.jienan.xkcd.Const.PREF_FONT;
 import static xyz.jienan.xkcd.Const.PREF_WHAT_IF_SEARCH;
+import static xyz.jienan.xkcd.Const.PREF_XKCD_GIF_ECHO;
 import static xyz.jienan.xkcd.Const.PREF_ZOOM;
 
 /**
@@ -33,6 +34,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         addPreferencesFromResource(R.xml.prefs);
         arrowPref = (ListPreference) findPreference(PREF_ARROW);
         SwitchPreference fontPref = (SwitchPreference) findPreference(PREF_FONT);
+        SwitchPreference gifEchoPref = (SwitchPreference) findPreference(PREF_XKCD_GIF_ECHO);
         zoomPref = (ListPreference) findPreference(PREF_ZOOM);
         zoomPref.setSummary(String.valueOf(zoomPref.getEntry()));
         arrowPref.setSummary(getResources().getQuantityString(R.plurals.pref_arrow_summary,
@@ -41,6 +43,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         searchPref = (ListPreference) findPreference(PREF_WHAT_IF_SEARCH);
         searchPref.setSummary(String.valueOf(searchPref.getEntry()));
         fontPref.setOnPreferenceChangeListener(this);
+        gifEchoPref.setOnPreferenceChangeListener(this);
         zoomPref.setOnPreferenceChangeListener(this);
         searchPref.setOnPreferenceChangeListener(this);
     }
@@ -66,6 +69,11 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
             case PREF_WHAT_IF_SEARCH:
                 ((ListPreference) preference).setValue(newValue.toString());
                 searchPref.setSummary(String.valueOf(searchPref.getEntry()));
+                break;
+            case PREF_XKCD_GIF_ECHO:
+                ((SwitchPreference) preference).setChecked((boolean) newValue);
+                break;
+            default:
                 break;
         }
         return false;

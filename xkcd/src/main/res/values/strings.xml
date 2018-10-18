@@ -51,6 +51,9 @@
     <string name="pref_font_xkcd">Using xkcd font</string>
     <string name="pref_font_normal">Using normal font</string>
     <string name="pref_appearance">Appearance</string>
+    <string name="pref_xkcd_gif_echo_mode_title">xkcd gif echo mode</string>
+    <string name="pref_xkcd_gif_echo_mode_on">Better performance, 10 frames per second</string>
+    <string name="pref_xkcd_gif_echo_mode_off">Better details, higher fps when playing</string>
     <string name="pref_what_if" translatable="false">what if</string>
     <string name="pref_xkcd" translatable="false">xkcd</string>
     <string name="settings">Settings</string>
