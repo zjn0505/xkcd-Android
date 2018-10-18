@@ -58,6 +58,13 @@ import xyz.jienan.xkcd.ui.ToastUtils;
 import static xyz.jienan.xkcd.Const.FIRE_COMIC_ID;
 import static xyz.jienan.xkcd.Const.FIRE_COMIC_URL;
 import static xyz.jienan.xkcd.Const.FIRE_DETAIL_PAGE;
+import static xyz.jienan.xkcd.Const.FIRE_GIF_FAST_FORWARD;
+import static xyz.jienan.xkcd.Const.FIRE_GIF_FAST_REWIND;
+import static xyz.jienan.xkcd.Const.FIRE_GIF_NEXT_CLICK;
+import static xyz.jienan.xkcd.Const.FIRE_GIF_NEXT_HOLD;
+import static xyz.jienan.xkcd.Const.FIRE_GIF_PREVIOUS_CLICK;
+import static xyz.jienan.xkcd.Const.FIRE_GIF_PREVIOUS_HOLD;
+import static xyz.jienan.xkcd.Const.FIRE_GIF_USER_PROGRESS;
 import static xyz.jienan.xkcd.Const.FIRE_LARGE_IMAGE;
 
 /**
@@ -225,7 +232,6 @@ public class ImageDetailPageActivity extends BaseActivity implements ImageDetail
             photoView.setEnabled(false);
             bundle.putBoolean(FIRE_LARGE_IMAGE, true);
         } else {
-
             bigImageView.setVisibility(View.GONE);
             bigImageView.setEnabled(false);
             photoView.setVisibility(View.VISIBLE);
@@ -240,7 +246,7 @@ public class ImageDetailPageActivity extends BaseActivity implements ImageDetail
 
         bundle.putInt(FIRE_COMIC_ID, index);
         bundle.putString(FIRE_COMIC_URL, url);
-        mFirebaseAnalytics.logEvent(FIRE_DETAIL_PAGE, bundle);
+        logUXEvent(FIRE_DETAIL_PAGE, bundle);
 
         compositeDisposable.add(Observable.timer(500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread()).subscribe(ignored -> {
@@ -302,9 +308,11 @@ public class ImageDetailPageActivity extends BaseActivity implements ImageDetail
         boolean isForward = view.getId() == R.id.btn_gif_forward;
         if (isGifInPlayState()) {
             imageDetailPagePresenter.adjustGifSpeed(isForward ? 1 : -1);
+            logUXEvent(isForward ? FIRE_GIF_FAST_FORWARD : FIRE_GIF_FAST_REWIND);
         } else {
             imageDetailPagePresenter.adjustGifSpeed(0);
             imageDetailPagePresenter.adjustGifFrame(isForward);
+            logUXEvent(isForward ? FIRE_GIF_NEXT_CLICK : FIRE_GIF_PREVIOUS_CLICK);
         }
         AnimUtils.vectorAnim(view, isForward ? R.drawable.anim_fast_forward_shake : R.drawable.anim_fast_rewind_shake);
     }
@@ -349,12 +357,17 @@ public class ImageDetailPageActivity extends BaseActivity implements ImageDetail
                         AnimUtils.vectorAnim(playBtn, R.drawable.anim_pause_to_play, R.drawable.ic_play_arrow);
                     }
                 })
+                .doOnNext(num -> {
+                    if (num == 10 && isFromUserLongPress) {
+                        logUXEvent(isForward ? FIRE_GIF_NEXT_HOLD : FIRE_GIF_PREVIOUS_HOLD);
+                    }
+                })
                 .subscribe(ignored -> {
                     if (!isFromUserLongPress && sbMovie.getProgress() == sbMovie.getMax() && isForward) {
                         imageDetailPagePresenter.parseFrame(1);
                     }
                     imageDetailPagePresenter.adjustGifFrame(isForward);
-                });
+                }, e -> Timber.e("Failed to play gif"));
         compositeDisposable.add(holdDisposable);
     }
 
@@ -433,6 +446,7 @@ public class ImageDetailPageActivity extends BaseActivity implements ImageDetail
                     setGifPlayState(false);
                 }
                 stopPlayingGif();
+                logUXEvent(FIRE_GIF_USER_PROGRESS);
             } else {
                 onStartTrackingTouch(seekBar);
                 if (seekBar.getProgress() == 1 || seekBar.getProgress() == seekBar.getMax()) {
