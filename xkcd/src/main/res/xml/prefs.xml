@@ -27,10 +27,10 @@
 
         <SwitchPreference
             android:defaultValue="true"
-            android:key="pref_xkcd_gif_echo_mode"
-            android:summaryOff="@string/pref_xkcd_gif_echo_mode_off"
-            android:summaryOn="@string/pref_xkcd_gif_echo_mode_on"
-            android:title="@string/pref_xkcd_gif_echo_mode_title" />
+            android:key="pref_xkcd_gif_eco_mode"
+            android:summaryOff="@string/pref_xkcd_gif_eco_mode_off"
+            android:summaryOn="@string/pref_xkcd_gif_eco_mode_on"
+            android:title="@string/pref_xkcd_gif_eco_mode_title" />
 
     </PreferenceCategory>
 

@@ -37,6 +37,6 @@ public interface ImageDetailPageContract {
 
         void adjustGifFrame(boolean isForward);
 
-        void setEcoMode(boolean isEchoMode);
+        void setEcoMode(boolean isEcoMode);
     }
 }
