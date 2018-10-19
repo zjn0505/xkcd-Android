@@ -40,6 +40,8 @@ public class ImageDetailPagePresenter implements ImageDetailPageContract.Present
 
     private Bitmap reusableBitmap = null;
 
+    private Canvas canvas = null;
+
     private LruCache<Integer, Bitmap> mMemoryCache;
 
     private boolean isEcoMode = true;
@@ -111,12 +113,11 @@ public class ImageDetailPagePresenter implements ImageDetailPageContract.Present
         if (bitmap != null) {
             view.renderFrame(bitmap);
         } else {
-            if (reusableBitmap == null) {
+            if (reusableBitmap == null || canvas == null) {
                 reusableBitmap = Bitmap.createBitmap(movieWidth, movieHeight, Bitmap.Config.RGB_565);
+                canvas = new Canvas(reusableBitmap);
             }
 
-            final Canvas canvas = new Canvas(reusableBitmap);
-            canvas.setBitmap(reusableBitmap);
             mMovie.setTime(progress * step / getEcoModeValue());
             mMovie.draw(canvas, 0, 0);
             addBitmapToMemoryCache(progress, reusableBitmap);

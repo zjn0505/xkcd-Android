@@ -1,14 +1,11 @@
 package xyz.jienan.xkcd.comics.activity;
 
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -449,12 +446,6 @@ public class ImageDetailPageActivity extends BaseActivity implements ImageDetail
 
     private class GifSeekBarListener implements SeekBar.OnSeekBarChangeListener {
 
-        private Disposable fadingDisposable = Disposables.empty();
-
-        private boolean faded = false;
-
-        private ObjectAnimator colorFade;
-
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if (fromUser) {
@@ -464,48 +455,23 @@ public class ImageDetailPageActivity extends BaseActivity implements ImageDetail
                 }
                 stopPlayingGif();
             } else {
-                onStartTrackingTouch(seekBar);
                 if (seekBar.getProgress() == 1 || seekBar.getProgress() == seekBar.getMax()) {
                     if (isGifInPlayState()) {
                         setGifPlayState(false);
                     }
                     stopPlayingGif();
                 }
-                onStopTrackingTouch(null);
             }
         }
 
         @Override
         public void onStartTrackingTouch(SeekBar seekBar) {
-            fadingDisposable.dispose();
-            if (faded) {
-                if (colorFade != null && colorFade.isStarted()) {
-                    colorFade.cancel();
-                }
-                colorFade = ObjectAnimator.ofInt(sbMovie.getProgressDrawable(), "alpha", 0, 255);
-                colorFade.start();
-                faded = false;
-            }
+            // no ops
         }
 
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
-            fadingDisposable.dispose();
-            fadingDisposable = Observable.timer(1, TimeUnit.SECONDS)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .take(1)
-                    .subscribe(ignored -> {
-                        if (colorFade != null && colorFade.isStarted()) {
-                            colorFade.cancel();
-                        }
-                        colorFade = ObjectAnimator.ofInt(sbMovie.getProgressDrawable(), "alpha", 255, 0);
-                        faded = true;
-                        colorFade.start();
-                    }, Timber::e);
-
-            if (seekBar != null) {
-                logUXEvent(FIRE_GIF_USER_PROGRESS);
-            }
+            logUXEvent(FIRE_GIF_USER_PROGRESS);
         }
     }
 }
