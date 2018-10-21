@@ -32,6 +32,7 @@ import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import timber.log.Timber;
+import xyz.jienan.xkcd.BuildConfig;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.base.BaseFragment;
 import xyz.jienan.xkcd.model.WhatIfModel;
@@ -123,6 +124,9 @@ public class SingleWhatIfFragment extends BaseFragment implements ImgInterface.I
         webView.addJavascriptInterface(latexInterface, "AndroidLatex");
         webView.addJavascriptInterface(new ImgInterface(this), "AndroidImg");
         webView.addJavascriptInterface(new RefInterface(this), "AndroidRef");
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+            webView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG);
+        }
         parentFragment = ((WhatIfMainFragment) getParentFragment());
         setHasOptionsMenu(true);
         compositeDisposable.add(WhatIfModel

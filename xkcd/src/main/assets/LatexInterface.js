@@ -5,8 +5,6 @@ window.addEventListener('load', function(){
             var lastX;
             element.addEventListener('touchmove', function(e){
                 var currentX = e.changedTouches[0].clientX
-                console.log(currentX - lastX)
-
                 if (currentX > lastX) {
                     // pre
                     if (element.scrollLeft == 0) {

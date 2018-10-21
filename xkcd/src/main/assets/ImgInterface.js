@@ -5,7 +5,7 @@ window.addEventListener('load', function(){
             var longpress = false;
             var presstimer = null;
 
-            var startClientY;
+            var startScreenX, startScreenY;
             var startWindowScale;
 
             var cancel = function(e) {
@@ -31,7 +31,8 @@ window.addEventListener('load', function(){
                 }
 
                 if (e.touches != undefined) {
-                    startClientY = e.touches[0].clientY;
+                    startScreenX = e.touches[0].screenX;
+                    startScreenY = e.touches[0].screenY;
                     startWindowScale = window.visualViewport.scale;
                 }
 
@@ -47,8 +48,11 @@ window.addEventListener('load', function(){
             };
             var move = function(e) {
                 if (e.touches != undefined) {
-                    var newY = e.touches[0].clientY;
-                    if (Math.abs(startClientY - newY) > 50) {
+                    var newX = e.touches[0].screenX;
+                    var newY = e.touches[0].screenY;
+                    var moveX = Math.abs(startScreenX - newX);
+                    var moveY = Math.abs(startScreenY - newY);
+                    if (Math.max(moveX, moveY) > 20) {
                         clearTimeout(presstimer);
                     }
                 }
