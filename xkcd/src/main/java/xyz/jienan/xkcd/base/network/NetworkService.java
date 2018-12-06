@@ -9,9 +9,8 @@ import android.text.TextUtils;
 import java.io.File;
 import java.io.IOException;
 import java.security.KeyStore;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.TrustManager;
@@ -19,6 +18,7 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
 import okhttp3.Cache;
+import okhttp3.CipherSuite;
 import okhttp3.ConnectionSpec;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -59,6 +59,21 @@ public class NetworkService {
     private static XkcdAPI xkcdAPI;
     private static WhatIfAPI whatIfAPI;
     private static QuoteAPI quoteAPI;
+    private static ConnectionSpec spec = new ConnectionSpec.Builder(ConnectionSpec.COMPATIBLE_TLS)
+            .supportsTlsExtensions(true)
+            .tlsVersions(TlsVersion.TLS_1_2, TlsVersion.TLS_1_1, TlsVersion.TLS_1_0)
+            .cipherSuites(
+                    CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+                    CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
+                    CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
+                    CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
+                    CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
+                    CipherSuite.TLS_ECDHE_ECDSA_WITH_RC4_128_SHA,
+                    CipherSuite.TLS_ECDHE_RSA_WITH_RC4_128_SHA,
+                    CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA,
+                    CipherSuite.TLS_DHE_DSS_WITH_AES_128_CBC_SHA,
+                    CipherSuite.TLS_DHE_RSA_WITH_AES_256_CBC_SHA)
+            .build();
 
     private NetworkService() {
         OkHttpClient client = getOkHttpClientBuilder().build();
@@ -119,16 +134,7 @@ public class NetworkService {
 
             client.sslSocketFactory(new TLSSocketFactory(), trustManager);
 
-            ConnectionSpec cs = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
-                    .tlsVersions(TlsVersion.TLS_1_2, TlsVersion.TLS_1_1)
-                    .build();
-
-            List<ConnectionSpec> specs = new ArrayList<>();
-            specs.add(cs);
-            specs.add(ConnectionSpec.COMPATIBLE_TLS);
-            specs.add(ConnectionSpec.CLEARTEXT);
-
-            client.connectionSpecs(specs);
+            client.connectionSpecs(Collections.singletonList(spec));
         } catch (Exception exc) {
             Timber.e(exc, "Error while setting TLS");
         }
