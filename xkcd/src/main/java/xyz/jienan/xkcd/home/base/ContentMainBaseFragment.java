@@ -91,6 +91,7 @@ import static xyz.jienan.xkcd.Const.INTENT_TARGET_XKCD_ID;
 import static xyz.jienan.xkcd.Const.INVALID_ID;
 import static xyz.jienan.xkcd.Const.LANDING_TYPE;
 import static xyz.jienan.xkcd.Const.PREF_ARROW;
+import static xyz.jienan.xkcd.Const.PREF_RANDOM;
 import static xyz.jienan.xkcd.Const.TAG_WHAT_IF;
 import static xyz.jienan.xkcd.Const.TAG_XKCD;
 
@@ -395,9 +396,22 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
         if (isPaused) {
             return;
         }
+
+        final String prefRandom = sharedPreferences.getString(PREF_RANDOM, "random_all");
+
+        if ("random_disabled".equals(prefRandom)) {
+            return;
+        }
+
         latestIndex = presenter.getLatest();
         if (latestIndex != INVALID_ID) {
-            int randomId = new Random().nextInt(latestIndex + 1);
+            int randomId = 0;
+
+            if ("random_all".equals(prefRandom)) {
+                randomId = new Random().nextInt(latestIndex + 1);
+            } else {
+                randomId = (int) presenter.getRandomUntouchedIndex();
+            }
             scrollViewPagerToItem(randomId - 1, false);
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && getActivity() != null) {
@@ -614,7 +628,9 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
     }
 
     protected void latestLoaded() {
-        adapter.setSize(latestIndex);
+        if (adapter != null) {
+            adapter.setSize(latestIndex);
+        }
         if (isFre) {
             scrollViewPagerToItem(latestIndex - 1, false);
         }

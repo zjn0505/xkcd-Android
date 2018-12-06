@@ -21,4 +21,6 @@ public interface ContentMainBasePresenter extends BasePresenter {
     void loadLatest();
 
     void searchContent(String query);
+
+    long getRandomUntouchedIndex();
 }

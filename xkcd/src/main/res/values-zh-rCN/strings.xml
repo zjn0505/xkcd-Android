@@ -40,9 +40,13 @@
 
     <string name="pref_arrow_content">选择快速切换的数量</string>
     <string name="pref_font">增加可读性</string>
+    <string name="pref_random_title">随机摇一摇</string>
+    <string name="random_disabled">关闭</string>
+    <string name="random_fav_like">排除已收藏或赞过的内容</string>
+    <string name="random_all">全部内容</string>
     <string name="pref_font_xkcd">正在使用 xkcd 字体</string>
     <string name="pref_font_normal">正在使用正常字体</string>
-    <string name="pref_appearance">外观</string>
+    <string name="pref_general">通用</string>
     <string name="pref_xkcd_gif_eco_mode_title">xkcd 动画节能模式</string>
     <string name="pref_xkcd_gif_eco_mode_on">更加节能，每秒钟 10 帧画面</string>
     <string name="pref_xkcd_gif_eco_mode_off">更多细节，帧率提高70%</string>

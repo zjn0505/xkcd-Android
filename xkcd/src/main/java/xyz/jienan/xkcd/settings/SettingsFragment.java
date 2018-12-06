@@ -13,6 +13,7 @@ import xyz.jienan.xkcd.model.WhatIfModel;
 
 import static xyz.jienan.xkcd.Const.PREF_ARROW;
 import static xyz.jienan.xkcd.Const.PREF_FONT;
+import static xyz.jienan.xkcd.Const.PREF_RANDOM;
 import static xyz.jienan.xkcd.Const.PREF_WHAT_IF_SEARCH;
 import static xyz.jienan.xkcd.Const.PREF_XKCD_GIF_ECO;
 import static xyz.jienan.xkcd.Const.PREF_ZOOM;
@@ -25,6 +26,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
 
     private static boolean needRecreateForParent = false;
     private ListPreference arrowPref;
+    private ListPreference randomPref;
     private ListPreference zoomPref;
     private ListPreference searchPref;
 
@@ -33,6 +35,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.prefs);
         arrowPref = (ListPreference) findPreference(PREF_ARROW);
+        randomPref = (ListPreference) findPreference(PREF_RANDOM);
         SwitchPreference fontPref = (SwitchPreference) findPreference(PREF_FONT);
         SwitchPreference gifEcoPref = (SwitchPreference) findPreference(PREF_XKCD_GIF_ECO);
         zoomPref = (ListPreference) findPreference(PREF_ZOOM);
@@ -40,6 +43,10 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         arrowPref.setSummary(getResources().getQuantityString(R.plurals.pref_arrow_summary,
                 Integer.valueOf(arrowPref.getEntry().toString()), arrowPref.getEntry().toString()));
         arrowPref.setOnPreferenceChangeListener(this);
+
+        randomPref.setSummary(randomPref.getEntry().toString());
+        randomPref.setOnPreferenceChangeListener(this);
+
         searchPref = (ListPreference) findPreference(PREF_WHAT_IF_SEARCH);
         searchPref.setSummary(String.valueOf(searchPref.getEntry()));
         fontPref.setOnPreferenceChangeListener(this);
@@ -55,6 +62,10 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
                 ((ListPreference) preference).setValue(newValue.toString());
                 arrowPref.setSummary(getResources().getQuantityString(R.plurals.pref_arrow_summary,
                         Integer.valueOf(arrowPref.getEntry().toString()), arrowPref.getEntry().toString()));
+                break;
+            case PREF_RANDOM:
+                ((ListPreference) preference).setValue(newValue.toString());
+                randomPref.setSummary(randomPref.getEntry().toString());
                 break;
             case PREF_FONT:
                 ((SwitchPreference) preference).setChecked((boolean) newValue);

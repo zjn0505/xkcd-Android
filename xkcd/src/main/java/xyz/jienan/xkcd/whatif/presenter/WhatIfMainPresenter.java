@@ -1,6 +1,8 @@
 package xyz.jienan.xkcd.whatif.presenter;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -151,6 +153,16 @@ public class WhatIfMainPresenter implements WhatIfMainContract.Presenter {
         compositeDisposable.dispose();
         fabShowDisposable.dispose();
         searchDisposable.dispose();
+    }
+
+    @Override
+    public long getRandomUntouchedIndex() {
+        final List<WhatIfArticle> list = whatIfModel.getUntouchedList();
+        if (list.isEmpty()) {
+            return 0;
+        } else {
+            return list.get(new Random().nextInt(list.size())).num;
+        }
     }
 
     private boolean isNumQuery(String query) {

@@ -1,6 +1,8 @@
 package xyz.jienan.xkcd.comics.presenter;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
@@ -166,6 +168,16 @@ public class ComicsMainPresenter implements ComicsMainContract.Presenter {
                             }
                         });
         compositeDisposable.add(searchDisposable);
+    }
+
+    @Override
+    public long getRandomUntouchedIndex() {
+        final List<XkcdPic> list = xkcdModel.getUntouchedList();
+        if (list.isEmpty()) {
+            return 0;
+        } else {
+            return list.get(new Random().nextInt(list.size())).num;
+        }
     }
 
     private boolean isNumQuery(String query) {

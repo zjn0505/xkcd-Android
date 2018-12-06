@@ -156,7 +156,7 @@ public class XkcdModel {
 
     public Observable<XkcdPic> fav(long index, boolean isFav) {
         final XkcdPic xkcdPicInBox = boxManager.favXkcd(index, isFav);
-        if (xkcdPicInBox.width == 0 || xkcdPicInBox.height == 0) {
+        if (xkcdPicInBox == null || xkcdPicInBox.width == 0 || xkcdPicInBox.height == 0) {
             return loadXkcd(index);
         } else {
             return Observable.just(xkcdPicInBox);
@@ -177,5 +177,9 @@ public class XkcdModel {
 
         return observable.subscribeOn(Schedulers.io())
                 .map(responseBody -> XkcdExplainUtil.getExplainFromHtml(responseBody, url));
+    }
+
+    public List<XkcdPic> getUntouchedList() {
+        return boxManager.getUntouchedComicsList();
     }
 }

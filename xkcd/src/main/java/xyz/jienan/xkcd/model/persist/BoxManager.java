@@ -110,6 +110,12 @@ public class BoxManager {
         return updateAndSave(Collections.singletonList(xkcdPic)).get(0);
     }
 
+    public List<XkcdPic> getUntouchedComicsList() {
+        final Query<XkcdPic> query = xkcdBox.query().notEqual(XkcdPic_.isFavorite, true)
+                .and().notEqual(XkcdPic_.hasThumbed, true).build();
+        return query.find();
+    }
+
     /********** what if **********/
 
     @Nullable
@@ -188,5 +194,11 @@ public class BoxManager {
     public List<WhatIfArticle> getFavWhatIf() {
         final Query<WhatIfArticle> queryFav = whatIfBox.query().equal(WhatIfArticle_.isFavorite, true).build();
         return queryFav.find();
+    }
+
+    public List<WhatIfArticle> getUntouchedArticleList() {
+        final Query<WhatIfArticle> query = whatIfBox.query().notEqual(WhatIfArticle_.isFavorite, true)
+                .and().notEqual(WhatIfArticle_.hasThumbed, true).build();
+        return query.find();
     }
 }

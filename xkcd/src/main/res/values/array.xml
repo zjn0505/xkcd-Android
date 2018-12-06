@@ -13,6 +13,17 @@
         <item>@string/arrow_30_value</item>
     </string-array>
 
+    <string-array name="random_option">
+        <item>random_disabled</item>
+        <item>random_fav_like</item>
+        <item>random_all</item>
+    </string-array>
+
+    <string-array name="random_option_value">
+        <item>@string/random_disabled</item>
+        <item>@string/random_fav_like</item>
+        <item>@string/random_all</item>
+    </string-array>
 
     <string-array name="zoom" tools:ignore="MissingTranslation">
         <item>zoom_40</item>

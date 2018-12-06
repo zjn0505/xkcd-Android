@@ -2,8 +2,15 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory
-        android:title="@string/pref_appearance"
-        android:key="pref_key_appearance">
+        android:title="@string/pref_general"
+        android:key="pref_key_general">
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="pref_font"
+            android:summaryOff="@string/pref_font_xkcd"
+            android:summaryOn="@string/pref_font_normal"
+            android:title="@string/pref_font" />
 
         <ListPreference
             android:defaultValue="arrow_1"
@@ -12,12 +19,14 @@
             android:entryValues="@array/arrow_switch_by_value"
             android:key="pref_arrow"
             android:title="@string/pref_arrow" />
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="pref_font"
-            android:summaryOff="@string/pref_font_xkcd"
-            android:summaryOn="@string/pref_font_normal"
-            android:title="@string/pref_font" />
+
+        <ListPreference
+            android:defaultValue="random_all"
+            android:dialogTitle="@string/pref_random_title"
+            android:entries="@array/random_option_value"
+            android:entryValues="@array/random_option"
+            android:key="pref_random"
+            android:title="@string/pref_random_title" />
 
     </PreferenceCategory>
 

@@ -149,4 +149,8 @@ public class WhatIfModel {
         WhatIfArticle article = boxManager.getWhatIf(id);
         return (article == null || TextUtils.isEmpty(article.content)) ? Observable.empty() : Observable.just(article);
     }
+
+    public List<WhatIfArticle> getUntouchedList() {
+        return boxManager.getUntouchedArticleList();
+    }
 }

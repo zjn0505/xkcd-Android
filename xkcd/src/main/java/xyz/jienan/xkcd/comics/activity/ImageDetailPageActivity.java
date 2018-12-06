@@ -357,6 +357,7 @@ public class ImageDetailPageActivity extends BaseActivity implements ImageDetail
         holdDisposable = Observable.interval(isEcoMode ? 100 : 60, TimeUnit.MILLISECONDS)
                 .delay(isFromUserLongPress ? 500 : 0, TimeUnit.MILLISECONDS)
                 .subscribeOn(AndroidSchedulers.mainThread())
+                .unsubscribeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(ignored -> {
                     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                     if (!isFromUserLongPress) {

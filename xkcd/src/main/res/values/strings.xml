@@ -46,11 +46,12 @@
     <string name="pref_what_if_search_include_read">Include contents that liked or thumb-up-ed</string>
     <string name="pref_what_if_search_search_all">Search both title and content</string>
 
-    <string name="pref_arrow_content">Set the number of comics to skip when arrow clicked</string>
     <string name="pref_font">Increase legibility</string>
+    <string name="pref_arrow_content">Set the number of comics to skip when arrow clicked</string>
+    <string name="pref_random_title">Shake for random</string>
     <string name="pref_font_xkcd">Using xkcd font</string>
     <string name="pref_font_normal">Using normal font</string>
-    <string name="pref_appearance">Appearance</string>
+    <string name="pref_general">General</string>
     <string name="pref_xkcd_gif_eco_mode_title">xkcd gif eco mode</string>
     <string name="pref_xkcd_gif_eco_mode_on">Better performance, 10 frames per second</string>
     <string name="pref_xkcd_gif_eco_mode_off">Better details, higher fps when playing</string>
@@ -64,6 +65,9 @@
     <string name="arrow_1_value" translatable="false">arrow_1</string>
     <string name="arrow_10_value" translatable="false">arrow_10</string>
     <string name="arrow_30_value" translatable="false">arrow_30</string>
+    <string name="random_disabled">Disabled</string>
+    <string name="random_fav_like">Exclude favorites or thumbed</string>
+    <string name="random_all">All the contents</string>
     <string name="share_text">Come and check this funny image I got from xkcd. %s</string>
     <string name="toast_more_explain_failed">Failed to get more details</string>
     <string name="title_xkcd_list">xkcd list</string>
