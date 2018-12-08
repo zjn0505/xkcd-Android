@@ -4,10 +4,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.util.AttributeSet;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.request.FutureTarget;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.ArrayList;
+
+import timber.log.Timber;
 import xyz.jienan.xkcd.comics.activity.ImageDetailPageActivity;
 import xyz.jienan.xkcd.model.util.XkcdExplainUtil;
 import xyz.jienan.xkcd.whatif.interfaces.LatexInterface;
@@ -18,10 +29,34 @@ public class WhatIfWebView extends WebView {
 
     private LatexInterface latexScrollInterface;
 
+    private RequestManager glide;
+
+    private ArrayList<FutureTarget<File>> imageTasks = new ArrayList<>();
+
     public WhatIfWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.setBackgroundColor(Color.TRANSPARENT);
+        glide = Glide.with(context);
         setWebViewClient(new WebViewClient() {
+
+            @Override
+            public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT && url.contains("what-if.xkcd.com/imgs/a/")) {
+                    url = url.replace("http://", "https://");
+                    FutureTarget<File> t = glide.load(url).downloadOnly(10, 10);
+                    imageTasks.add(t);
+                    try {
+                        return new WebResourceResponse("image/png", "deflate", new FileInputStream((t.get())));
+                    } catch (Exception e) {
+                        Timber.e(e);
+                    }
+                    return null;
+                } else {
+                    return super.shouldInterceptRequest(view, url);
+                }
+            }
+
+
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 if (XkcdExplainUtil.isXkcdImageLink(url)) {
@@ -90,6 +125,16 @@ public class WhatIfWebView extends WebView {
             return offset > 0;
         } else {
             return offset < range - 1;
+        }
+    }
+
+    public void clearTasks() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            for (FutureTarget t : imageTasks) {
+                t.cancel(true);
+                t.clear();
+                Timber.e("OkHttp: cleared tasks %d", imageTasks.size());
+            }
         }
     }
 

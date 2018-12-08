@@ -162,6 +162,10 @@ public class SingleWhatIfFragment extends BaseFragment implements ImgInterface.I
         if (compositeDisposable != null) {
             compositeDisposable.dispose();
         }
+        if (webView != null) {
+            Timber.d("OkHttp: clear %d", id);
+            webView.clearTasks();
+        }
         super.onDestroyView();
     }
 
