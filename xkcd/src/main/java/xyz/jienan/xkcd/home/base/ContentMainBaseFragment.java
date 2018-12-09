@@ -6,17 +6,12 @@ import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.hardware.SensorManager;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -25,7 +20,6 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -58,11 +52,11 @@ import xyz.jienan.xkcd.XkcdApplication;
 import xyz.jienan.xkcd.base.BaseFragment;
 import xyz.jienan.xkcd.comics.SearchCursorAdapter;
 import xyz.jienan.xkcd.comics.dialog.NumberPickerDialogFragment;
-import xyz.jienan.xkcd.home.MainActivity;
 import xyz.jienan.xkcd.model.WhatIfArticle;
 import xyz.jienan.xkcd.model.XkcdPic;
 import xyz.jienan.xkcd.model.persist.BoxManager;
 import xyz.jienan.xkcd.model.persist.SharedPrefManager;
+import xyz.jienan.xkcd.ui.NotificationUtils;
 import xyz.jienan.xkcd.ui.like.LikeButton;
 import xyz.jienan.xkcd.ui.like.OnLikeListener;
 
@@ -89,11 +83,8 @@ import static xyz.jienan.xkcd.Const.FIRE_WHAT_IF_SUFFIX;
 import static xyz.jienan.xkcd.Const.INDEX_ON_NOTI_INTENT;
 import static xyz.jienan.xkcd.Const.INTENT_TARGET_XKCD_ID;
 import static xyz.jienan.xkcd.Const.INVALID_ID;
-import static xyz.jienan.xkcd.Const.LANDING_TYPE;
 import static xyz.jienan.xkcd.Const.PREF_ARROW;
 import static xyz.jienan.xkcd.Const.PREF_RANDOM;
-import static xyz.jienan.xkcd.Const.TAG_WHAT_IF;
-import static xyz.jienan.xkcd.Const.TAG_XKCD;
 
 public abstract class ContentMainBaseFragment extends BaseFragment implements ShakeDetector.Listener {
 
@@ -478,38 +469,9 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
             sharedPrefManager.setLatestXkcd(latestIndex);
             boxManager.updateAndSave(xkcdPic);
         }
-        Intent intent = new Intent(getActivity(), MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.putExtra(INDEX_ON_NOTI_INTENT, (int) xkcdPic.num);
-        intent.putExtra(LANDING_TYPE, TAG_XKCD);
-        PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0 /* Request code */, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-        String[] titles = getResources().getStringArray(R.array.notification_titles);
-        int index = new Random().nextInt(titles.length);
-        String channelId = getString(R.string.default_notification_channel_id);
-        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder notificationBuilder =
-                new NotificationCompat.Builder(getContext(), channelId)
-                        .setSmallIcon(R.drawable.ic_notification)
-                        .setContentTitle(String.format(titles[index], "xkcd"))
-                        .setContentText(getString(R.string.notification_content, xkcdPic.num, xkcdPic.getTitle()))
-                        .setAutoCancel(true)
-                        .setSound(defaultSoundUri)
-                        .setContentIntent(pendingIntent);
-
-        NotificationManager notificationManager =
-                (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-        if (notificationManager == null) {
-            return;
+        if (getActivity() != null) {
+            NotificationUtils.showNotification(getActivity(), xkcdPic);
         }
-        // Since android Oreo notification channel is needed.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(channelId,
-                    "Xkcd",
-                    NotificationManager.IMPORTANCE_DEFAULT);
-            notificationManager.createNotificationChannel(channel);
-        }
-        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
     }
 
     private void whatIfNoti(WhatIfArticle whatIfArticle) {
@@ -520,38 +482,9 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
             sharedPrefManager.setLatestWhatIf(latestIndex);
             boxManager.updateAndSaveWhatIf(Collections.singletonList(whatIfArticle));
         }
-        Intent intent = new Intent(getContext(), MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.putExtra(INDEX_ON_NOTI_INTENT, (int) whatIfArticle.num);
-        intent.putExtra(LANDING_TYPE, TAG_WHAT_IF);
-        PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0 /* Request code */, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-        String[] titles = getResources().getStringArray(R.array.notification_titles);
-        int index = new Random().nextInt(titles.length);
-        String channelId = getString(R.string.default_notification_channel_id);
-        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder notificationBuilder =
-                new NotificationCompat.Builder(getContext(), channelId)
-                        .setSmallIcon(R.drawable.ic_notification)
-                        .setContentTitle(String.format(titles[index], "what if"))
-                        .setContentText(getString(R.string.notification_content, whatIfArticle.num, whatIfArticle.title))
-                        .setAutoCancel(true)
-                        .setSound(defaultSoundUri)
-                        .setContentIntent(pendingIntent);
-
-        NotificationManager notificationManager =
-                (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
-        if (notificationManager == null) {
-            return;
+        if (getActivity() != null) {
+            NotificationUtils.showNotification(getActivity(), whatIfArticle);
         }
-        // Since android Oreo notification channel is needed.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(channelId,
-                    "What-if",
-                    NotificationManager.IMPORTANCE_DEFAULT);
-            notificationManager.createNotificationChannel(channel);
-        }
-        notificationManager.notify(1 /* ID of notification */, notificationBuilder.build());
     }
 
     public void scrollViewPagerToItem(int id, boolean smoothScroll) {

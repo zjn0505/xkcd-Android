@@ -9,7 +9,7 @@ public class Const {
     public static final int INVALID_ID = 0;
 
     public static final String TAG_XKCD = "xkcd";
-    public static final String TAG_WHAT_IF = "whatif";
+    public static final String TAG_WHAT_IF = "what if";
 
     public static final String PREF_ARROW = "pref_arrow";
     public static final String PREF_RANDOM = "pref_random";
