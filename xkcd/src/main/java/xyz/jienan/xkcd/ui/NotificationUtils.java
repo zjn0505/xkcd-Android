@@ -32,7 +32,7 @@ import static xyz.jienan.xkcd.Const.TAG_XKCD;
 
 public class NotificationUtils {
 
-    private static final String XKCD_LOGO = "hhttps://xkcd.com/s/0b7742.png";
+    private static final String XKCD_LOGO = "https://xkcd.com/s/0b7742.png";
     private static final String WHAT_IF_LOGO = "https://what-if.xkcd.com/imgs/whatif-logo.png";
 
     public static void showNotification(final Context context, XkcdPic xkcdPic) {
@@ -53,11 +53,11 @@ public class NotificationUtils {
 
     @SuppressLint("CheckResult")
     private static void showNotification(Context context, int width, int height, int num, String title, String imgUrl, String tag) {
-        Intent intent = new Intent(context, MainActivity.class);
+        final Intent intent = new Intent(context, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra(INDEX_ON_NOTI_INTENT, num);
         intent.putExtra(LANDING_TYPE, tag);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0 /* Request code */, intent,
+        final PendingIntent pendingIntent = PendingIntent.getActivity(context, 0 /* Request code */, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         final String[] titles = context.getResources().getStringArray(R.array.notification_titles);

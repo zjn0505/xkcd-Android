@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import timber.log.Timber;
+import xyz.jienan.xkcd.BuildConfig;
 import xyz.jienan.xkcd.model.WhatIfArticle;
 import xyz.jienan.xkcd.model.XkcdPic;
 import xyz.jienan.xkcd.model.persist.BoxManager;
@@ -30,16 +31,30 @@ public class XkcdFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
-        Timber.d("onMessageReceived: " + remoteMessage.getData());
+        Timber.d("onMessageReceived: data %s", remoteMessage.getData());
+        if (BuildConfig.DEBUG && remoteMessage.getNotification() != null) {
+            String body = remoteMessage.getNotification().getBody();
+            Timber.d("onMessageReceived: body %s ", body);
+            if (remoteMessage.getData().isEmpty()) {
+                if ("xkcd".equals(remoteMessage.getNotification().getTitle())) {
+                    sendNotification(new RemoteMessage.Builder("xkcd").addData("xkcd", body).build());
+                } else if ("whatif".equals(remoteMessage.getNotification().getTitle())) {
+                    sendNotification(new RemoteMessage.Builder("whatif").addData("whatif", body).build());
+                }
+                return;
+            }
+        }
         sendNotification(remoteMessage);
-        Map<String, String> map = remoteMessage.getData();
-        if (map != null) {
-            Iterator iterator = map.keySet().iterator();
+        if (BuildConfig.DEBUG) {
+            Map<String, String> map = remoteMessage.getData();
+            if (map != null) {
+                Iterator iterator = map.keySet().iterator();
 
-            while (iterator.hasNext()) {
-                String key = iterator.next().toString();
-                String value = map.get(key);
-                Timber.d("msg data: %s  %s", key, value);
+                while (iterator.hasNext()) {
+                    String key = iterator.next().toString();
+                    String value = map.get(key);
+                    Timber.d("msg data: %s  %s", key, value);
+                }
             }
         }
     }
@@ -52,11 +67,13 @@ public class XkcdFirebaseMessagingService extends FirebaseMessagingService {
     private void sendNotification(RemoteMessage remoteMessage) {
         if (!TextUtils.isEmpty(remoteMessage.getData().get("xkcd"))) {
             XkcdPic xkcdPic = new Gson().fromJson(remoteMessage.getData().get("xkcd"), XkcdPic.class);
+            Timber.d("xkcd noti : %s", xkcdPic);
             if (xkcdPic != null && !TextUtils.isEmpty(xkcdPic.getTitle())) {
                 xkcdNoti(xkcdPic);
             }
         } else if (!TextUtils.isEmpty(remoteMessage.getData().get("whatif"))) {
             WhatIfArticle whatIfArticle = new Gson().fromJson(remoteMessage.getData().get("whatif"), WhatIfArticle.class);
+            Timber.d("what if noti : %s", whatIfArticle);
             if (whatIfArticle != null && !TextUtils.isEmpty(whatIfArticle.title)) {
                 whatIfNoti(whatIfArticle);
             }
