@@ -15,15 +15,6 @@ import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import androidx.annotation.ColorRes;
-import androidx.annotation.DrawableRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -35,6 +26,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.seismic.ShakeDetector;
 
 import java.lang.ref.WeakReference;
@@ -43,6 +35,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.OnPageChange;
@@ -52,6 +52,7 @@ import xyz.jienan.xkcd.XkcdApplication;
 import xyz.jienan.xkcd.base.BaseFragment;
 import xyz.jienan.xkcd.comics.SearchCursorAdapter;
 import xyz.jienan.xkcd.comics.dialog.NumberPickerDialogFragment;
+import xyz.jienan.xkcd.home.MainActivity;
 import xyz.jienan.xkcd.model.WhatIfArticle;
 import xyz.jienan.xkcd.model.XkcdPic;
 import xyz.jienan.xkcd.model.persist.BoxManager;
@@ -62,9 +63,9 @@ import xyz.jienan.xkcd.ui.like.OnLikeListener;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.SENSOR_SERVICE;
-import static androidx.viewpager.widget.ViewPager.SCROLL_STATE_DRAGGING;
 import static android.view.HapticFeedbackConstants.CONTEXT_CLICK;
 import static android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING;
+import static androidx.viewpager.widget.ViewPager.SCROLL_STATE_DRAGGING;
 import static butterknife.OnPageChange.Callback.PAGE_SCROLL_STATE_CHANGED;
 import static butterknife.OnPageChange.Callback.PAGE_SELECTED;
 import static xyz.jienan.xkcd.Const.FIRE_FAVORITE_OFF;
@@ -620,12 +621,14 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
         searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem menuItem) {
+                ((MainActivity) getActivity()).toggleDrawerAvailability(false);
                 setItemsVisibility(menu, new int[]{R.id.action_left, R.id.action_right, R.id.action_share}, false);
                 return true;
             }
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem menuItem) {
+                ((MainActivity) getActivity()).toggleDrawerAvailability(true);
                 setItemsVisibility(menu, new int[]{R.id.action_left, R.id.action_right, R.id.action_share}, true);
                 return true;
             }
