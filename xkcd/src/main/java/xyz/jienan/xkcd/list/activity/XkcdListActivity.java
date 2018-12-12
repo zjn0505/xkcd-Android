@@ -2,11 +2,11 @@ package xyz.jienan.xkcd.list.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,8 +27,8 @@ import xyz.jienan.xkcd.list.presenter.XkcdListPresenter;
 import xyz.jienan.xkcd.model.XkcdPic;
 import xyz.jienan.xkcd.ui.RecyclerItemClickListener;
 
-import static android.support.v7.widget.RecyclerView.SCROLL_STATE_DRAGGING;
-import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
+import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_DRAGGING;
+import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static xyz.jienan.xkcd.Const.FIRE_FILTER_ALL;
 import static xyz.jienan.xkcd.Const.FIRE_FILTER_FAV;
 import static xyz.jienan.xkcd.Const.FIRE_FILTER_THUMB;

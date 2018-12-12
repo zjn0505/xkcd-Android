@@ -1,6 +1,6 @@
 package xyz.jienan.xkcd.ui.like;
 
-import android.support.annotation.DrawableRes;
+import androidx.annotation.DrawableRes;
 
 /**
  * Created by Joel on 23/12/2015.

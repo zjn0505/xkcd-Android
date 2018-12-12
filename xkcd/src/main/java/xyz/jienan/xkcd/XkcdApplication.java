@@ -1,7 +1,7 @@
 package xyz.jienan.xkcd;
 
 import android.app.Application;
-import android.support.v7.app.AppCompatDelegate;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.github.piasy.biv.BigImageViewer;
 import com.google.firebase.messaging.FirebaseMessaging;

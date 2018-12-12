@@ -3,7 +3,7 @@ package xyz.jienan.xkcd.whatif;
 import android.annotation.SuppressLint;
 import android.app.IntentService;
 import android.content.Intent;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import java.util.concurrent.TimeUnit;
 

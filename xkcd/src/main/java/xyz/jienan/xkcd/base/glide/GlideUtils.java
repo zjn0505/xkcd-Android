@@ -1,7 +1,7 @@
 package xyz.jienan.xkcd.base.glide;
 
 import android.graphics.Bitmap;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Priority;

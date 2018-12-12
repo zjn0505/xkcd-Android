@@ -1,8 +1,8 @@
 package xyz.jienan.xkcd.settings;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import android.view.MenuItem;
 
 import xyz.jienan.xkcd.base.BaseActivity;

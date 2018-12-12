@@ -6,7 +6,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.model.WhatIfModel;
