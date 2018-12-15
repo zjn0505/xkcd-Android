@@ -85,7 +85,7 @@ public class XkcdFirebaseMessagingService extends FirebaseMessagingService {
         if (latestIndex >= xkcdPic.num) {
             return; // User already read the latest comic
         } else {
-            sharedPrefManager.setLatestXkcd(latestIndex);
+            sharedPrefManager.setLatestXkcd(xkcdPic.num);
             boxManager.updateAndSave(xkcdPic);
         }
         NotificationUtils.showNotification(this, xkcdPic);
@@ -96,7 +96,7 @@ public class XkcdFirebaseMessagingService extends FirebaseMessagingService {
         if (latestIndex >= whatIfArticle.num) {
             return; // User already read the what if
         } else {
-            sharedPrefManager.setLatestWhatIf(latestIndex);
+            sharedPrefManager.setLatestWhatIf(whatIfArticle.num);
             boxManager.updateAndSaveWhatIf(Collections.singletonList(whatIfArticle));
         }
         NotificationUtils.showNotification(this, whatIfArticle);

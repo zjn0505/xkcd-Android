@@ -6,16 +6,19 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
-import androidx.core.app.NotificationCompat;
 import android.text.TextUtils;
 
 import com.bumptech.glide.Glide;
 
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
 
+import androidx.core.app.NotificationCompat;
+import io.reactivex.Maybe;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -36,8 +39,13 @@ public class NotificationUtils {
     private static final String WHAT_IF_LOGO = "https://what-if.xkcd.com/imgs/whatif-logo.png";
 
     public static void showNotification(final Context context, XkcdPic xkcdPic) {
-        final int width = xkcdPic.width, height = xkcdPic.height, num = (int) xkcdPic.num;
-        showNotification(context, width, height, num, xkcdPic.getTitle(), xkcdPic.getTargetImg(), TAG_XKCD);
+        int width = xkcdPic.width, height = xkcdPic.height, num = (int) xkcdPic.num;
+        width = width == 0 ? 400 : width;
+        height = height == 0 ? 400 : height;
+
+        String imgUrl = xkcdPic.getImg().contains("xkcd") ? xkcdPic.getTargetImg() : xkcdPic.getImg();
+
+        showNotification(context, width, height, num, xkcdPic.getTitle(), imgUrl, TAG_XKCD);
     }
 
 
@@ -68,20 +76,33 @@ public class NotificationUtils {
                 .subscribeOn(Schedulers.io())
                 .map(url -> Glide.with(context).load(url).asBitmap().into(width, height).get())
                 .onErrorResumeNext(Single.just(tag)
-                                    .map(ignored -> tag.equals(TAG_XKCD) ? XKCD_LOGO : WHAT_IF_LOGO)
-                                    .map(logo -> Glide.with(context).load(logo).asBitmap().into(width, height).get()))
-                .map(bitmap -> new NotificationCompat.Builder(context, tag)
-                        .setLargeIcon(bitmap)
-                        .setSmallIcon(R.drawable.ic_notification)
-                        .setContentTitle(String.format(titles[index], tag))
-                        .setContentText(context.getString(R.string.notification_content, num, title))
-                        .setAutoCancel(true)
-                        .setSound(defaultSoundUri)
-                        .setStyle(new NotificationCompat.BigPictureStyle()
-                                .bigPicture(bitmap)
-                                .bigLargeIcon(null))
-                        .setContentIntent(pendingIntent)
-                        .build())
+                        .map(ignored -> tag.equals(TAG_XKCD) ? XKCD_LOGO : WHAT_IF_LOGO)
+                        .map(logo -> Glide.with(context).load(logo).asBitmap().into(width, height).get()))
+                .toMaybe()
+                .onErrorResumeNext(e -> {
+                    if (e instanceof ExecutionException) {
+                        return Maybe.empty();
+                    } else {
+                        return Maybe.error(e);
+                    }
+                })
+                .defaultIfEmpty(Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888))
+                .map(bitmap -> {
+                    NotificationCompat.Builder builder = new NotificationCompat.Builder(context, tag)
+                            .setSmallIcon(R.drawable.ic_notification)
+                            .setContentTitle(String.format(titles[index], tag))
+                            .setContentText(context.getString(R.string.notification_content, num, title))
+                            .setAutoCancel(true)
+                            .setSound(defaultSoundUri)
+                            .setContentIntent(pendingIntent);
+                    if (bitmap.getWidth() != 1 && bitmap.getHeight() != 1) {
+                        builder.setLargeIcon(bitmap)
+                                .setStyle(new NotificationCompat.BigPictureStyle()
+                                        .bigPicture(bitmap)
+                                        .bigLargeIcon(null));
+                    }
+                    return builder.build();
+                })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(notification -> {
                     NotificationManager notificationManager =
@@ -96,7 +117,7 @@ public class NotificationUtils {
                                 NotificationManager.IMPORTANCE_DEFAULT);
                         notificationManager.createNotificationChannel(channel);
                     }
-                    notificationManager.notify(tag.equals(TAG_XKCD) ? 0 : 1 , notification);
+                    notificationManager.notify(tag.equals(TAG_XKCD) ? 0 : 1, notification);
 
                 }, Timber::e);
     }
