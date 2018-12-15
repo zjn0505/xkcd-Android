@@ -32,18 +32,6 @@ public class XkcdFirebaseMessagingService extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
         Timber.d("onMessageReceived: data %s", remoteMessage.getData());
-        if (BuildConfig.DEBUG && remoteMessage.getNotification() != null) {
-            String body = remoteMessage.getNotification().getBody();
-            Timber.d("onMessageReceived: body %s ", body);
-            if (remoteMessage.getData().isEmpty()) {
-                if ("xkcd".equals(remoteMessage.getNotification().getTitle())) {
-                    sendNotification(new RemoteMessage.Builder("xkcd").addData("xkcd", body).build());
-                } else if ("whatif".equals(remoteMessage.getNotification().getTitle())) {
-                    sendNotification(new RemoteMessage.Builder("whatif").addData("whatif", body).build());
-                }
-                return;
-            }
-        }
         sendNotification(remoteMessage);
         if (BuildConfig.DEBUG) {
             Map<String, String> map = remoteMessage.getData();
