@@ -369,6 +369,7 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
 
     @OnPageChange(value = R.id.viewpager, callback = PAGE_SELECTED)
     public void OnPagerSelected(int position) {
+        ((MainActivity) getActivity()).toggleDrawerAvailability(true);
         final ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if (actionBar != null) {
             actionBar.setSubtitle(String.valueOf(position + 1));
