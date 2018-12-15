@@ -73,7 +73,7 @@ public class GlideUtils {
         }).into(imageView);
     }
 
-    public static void loadGif(RequestManager glide, @NonNull String url, Target target) {
+    public static void loadGif(RequestManager glide, @NonNull String url, Target<GifDrawable> target) {
         glide.load(url)
                 .asGif()
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
