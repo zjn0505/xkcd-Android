@@ -93,7 +93,6 @@ public class SingleWhatIfFragment extends BaseFragment implements ImgInterface.I
         if (args != null)
             id = args.getInt("id");
         setHasOptionsMenu(true);
-        setRetainInstance(true);
     }
 
     @Nullable
