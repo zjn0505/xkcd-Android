@@ -25,7 +25,8 @@ andResGuard {
 
             "R.string.arrow_1",
             "R.string.arrow_10",
-            "R.string.arrow_30"
+            "R.string.arrow_30",
+            "R.font.xkcd_script"
     ]
     compressFilePattern = [
             "*.png",
