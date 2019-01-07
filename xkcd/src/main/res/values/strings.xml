@@ -17,7 +17,6 @@
     <string name="dialog_got_it">Got it</string>
     <string name="dialog_more_details">More details</string>
 
-    <string name="dialog_pick_title">Specific xkcd</string>
     <string name="dialog_pick_content">Select the id of xkcd</string>
     <string name="dialog_pick_content_what_if">Select the id of what if</string>
     <string name="dialog_select">Select</string>
@@ -25,8 +24,6 @@
 
     <string name="share_to">Share this xkcd to</string>
 
-    <string name="toast_first">No more pre-palaeolithic pictures.</string>
-    <string name="toast_last">Oops, xkcd is exhausted.</string>
     <string name="notification_content" translatable="false">%d-%s</string>
     <string name="item_search_title" translatable="false">%s - %s</string>
     <string name="btn_reload">reload</string>

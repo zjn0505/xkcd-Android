@@ -13,7 +13,6 @@
     <string name="dialog_got_it">了解</string>
     <string name="dialog_more_details">更多解释</string>
 
-    <string name="dialog_pick_title">指定 xkcd</string>
     <string name="dialog_pick_content">选择指定 xkcd</string>
     <string name="dialog_pick_content_what_if">选择指定 what if</string>
     <string name="dialog_select">选择</string>
@@ -21,8 +20,6 @@
 
     <string name="share_to">分享这篇 xkcd 至</string>
 
-    <string name="toast_first">没有更早的漫画了</string>
-    <string name="toast_last">已经是最新的漫画了</string>
     <string name="btn_reload">刷新</string>
     <string name="go_to_explainxkcd">访问Explainxkcd</string>
     <string name="more_on_explainxkcd">访问Explainxkcd</string>
