@@ -331,10 +331,20 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
                                 "string", fragment.getActivity().getPackageName()));
                 int skip = Integer.parseInt(skipCount);
                 skip = isPrevious ? 0 - skip : skip;
+
+                final int current = fragment.viewPager.getCurrentItem();
+
                 if (Math.abs(skip) == 1) {
-                    fragment.scrollViewPagerToItem(fragment.viewPager.getCurrentItem() + skip, true);
+
+                    boolean smoothScroll = false;
+
+                    if (isPrevious && current != 0 || !isPrevious && current != fragment.latestIndex - 1) {
+                        smoothScroll = true;
+                    }
+
+                    fragment.scrollViewPagerToItem(current + skip, smoothScroll);
                 } else {
-                    fragment.scrollViewPagerToItem(fragment.viewPager.getCurrentItem() + skip, false);
+                    fragment.scrollViewPagerToItem(current + skip, false);
                 }
                 fragment.logSubUXEvent(isPrevious ? FIRE_PREVIOUS_BAR : FIRE_NEXT_BAR);
             }
@@ -354,8 +364,14 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
         @Override
         public boolean onLongClick(View v) {
             if (weakReference.get() != null) {
-                ContentMainBaseFragment fragment = weakReference.get();
-                fragment.scrollViewPagerToItem(isPrevious ? 0 : fragment.latestIndex - 1, true);
+                final ContentMainBaseFragment fragment = weakReference.get();
+                final int current = fragment.viewPager.getCurrentItem();
+                boolean smoothScroll = false;
+                if (isPrevious && current != 0 || !isPrevious && current != fragment.latestIndex - 1) {
+                    smoothScroll = true;
+                }
+
+                fragment.scrollViewPagerToItem(isPrevious ? 0 : fragment.latestIndex - 1, smoothScroll);
                 fragment.logSubUXEvent(isPrevious ? FIRE_PREVIOUS_BAR_LONG : FIRE_NEXT_BAR_LONG);
             }
             return true;
