@@ -31,5 +31,6 @@ deploy:
     tags: true
     all_branches: true
 after_deploy:
+- mkdir xkcd/build/outputs/mapping/release/upload
 - mv xkcd/build/outputs/mapping/release/mapping.txt "xkcd/build/outputs/mapping/release/upload/mapping_${TRAVIS_TAG:5}.txt"
 - dropbox-deployment
