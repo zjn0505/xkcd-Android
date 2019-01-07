@@ -104,7 +104,7 @@ public class SimpleInfoDialogFragment extends DialogFragment {
     }
 
     public void setPic(XkcdPic pic) {
-        this.xkcdContent = pic.alt;
+        this.xkcdContent = escapingUnicode(pic.alt);
     }
 
     @Override
@@ -192,6 +192,13 @@ public class SimpleInfoDialogFragment extends DialogFragment {
         }
         text.setText(strBuilder);
         text.setMovementMethod(LinkMovementMethod.getInstance());
+    }
+
+    private static String escapingUnicode(String raw) {
+        return raw.replaceAll("\\u00e2\\u0080\\u0099", "'")
+                .replaceAll("\\u00e2\\u0080\\u009c", "\"")
+                .replaceAll("\\u00e2\\u0080\\u009d", "\"")
+                .replaceAll("\\u00e2\\u0080\\u0093", "-");
     }
 
     public interface ISimpleInfoDialogListener {
