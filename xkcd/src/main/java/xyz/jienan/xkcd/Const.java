@@ -10,6 +10,7 @@ public class Const {
 
     public static final String TAG_XKCD = "xkcd";
     public static final String TAG_WHAT_IF = "what if";
+    public static final String TAG_EXTRA = "extra";
 
     public static final String PREF_ARROW = "pref_arrow";
     public static final String PREF_RANDOM = "pref_random";
@@ -63,6 +64,7 @@ public class Const {
 
     public static final String FIRE_NAVI_XKCD = "fire_navi_xkcd";
     public static final String FIRE_NAVI_WHAT_IF = "fire_navi_what_if";
+    public static final String FIRE_NAVI_EXTRA = "fire_navi_extra";
     public static final String FIRE_WHAT_IF_REF = "fire_what_if_ref";
     public static final String FIRE_WHAT_IF_IMG_LONG = "fire_what_if_img_long";
     public static final String FIRE_WHAT_IF_SUFFIX = "_what_if";

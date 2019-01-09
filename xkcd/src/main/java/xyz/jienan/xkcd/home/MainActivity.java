@@ -38,12 +38,14 @@ import xyz.jienan.xkcd.settings.PreferenceActivity;
 import xyz.jienan.xkcd.whatif.WhatIfFastLoadService;
 import xyz.jienan.xkcd.whatif.fragment.WhatIfMainFragment;
 
+import static xyz.jienan.xkcd.Const.FIRE_NAVI_EXTRA;
 import static xyz.jienan.xkcd.Const.FIRE_NAVI_WHAT_IF;
 import static xyz.jienan.xkcd.Const.FIRE_NAVI_XKCD;
 import static xyz.jienan.xkcd.Const.FIRE_SETTING_MENU;
 import static xyz.jienan.xkcd.Const.INDEX_ON_NOTI_INTENT;
 import static xyz.jienan.xkcd.Const.LANDING_TYPE;
 import static xyz.jienan.xkcd.Const.LAST_VIEW_WHAT_IF_ID;
+import static xyz.jienan.xkcd.Const.TAG_EXTRA;
 import static xyz.jienan.xkcd.Const.TAG_WHAT_IF;
 import static xyz.jienan.xkcd.Const.TAG_XKCD;
 
@@ -149,6 +151,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             case R.id.nav_whatif:
                 openFragment(TAG_WHAT_IF);
                 logUXEvent(FIRE_NAVI_WHAT_IF);
+                break;
+            case R.id.nav_extra:
+                openFragment(TAG_EXTRA);
+                logUXEvent(FIRE_NAVI_EXTRA);
                 break;
             case R.id.nav_setting:
                 Intent settingsIntent = new Intent(this, PreferenceActivity.class);
