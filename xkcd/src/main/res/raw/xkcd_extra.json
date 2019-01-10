@@ -25,7 +25,7 @@
     "num": 4,
     "date": "2011.03.19",
     "title": "Five-Minute Comics: Part 4",
-    "img": "http://imgs.xkcd.com/blag/radiation.png",
+    "img": "https://imgs.xkcd.com/blag/radiation.png",
     "explain": "https://www.explainxkcd.com/wiki/index.php/Radiation"
   },
   {
@@ -39,7 +39,7 @@
     "num": 6,
     "date": "2013.10.04",
     "title": "The Rise of Open Access",
-    "img": "http://www.sciencemag.org/site/special/scicomm/infographic.jpg",
+    "img": "https://www.sciencemag.org/site/special/scicomm/infographic.jpg",
     "explain": "https://www.explainxkcd.com/wiki/index.php/The_Rise_of_Open_Access"
   },
   {
