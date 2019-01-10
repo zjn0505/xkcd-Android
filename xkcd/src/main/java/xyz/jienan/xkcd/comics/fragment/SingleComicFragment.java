@@ -330,7 +330,7 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
         tvTitle.setText(String.format("%d. %s", xPic.num, xPic.getTitle()));
         tvCreateDate.setText(String.format(getString(R.string.created_on), xPic.year, xPic.month, xPic.day));
         if (tvDescription != null) {
-            tvDescription.setText(xPic.alt);
+            tvDescription.setText(xPic.getAlt());
         }
     }
 

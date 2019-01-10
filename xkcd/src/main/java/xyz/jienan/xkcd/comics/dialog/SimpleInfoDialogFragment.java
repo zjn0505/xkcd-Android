@@ -5,10 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
-import androidx.appcompat.app.AlertDialog;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -23,6 +19,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import xyz.jienan.xkcd.BuildConfig;
@@ -104,7 +104,7 @@ public class SimpleInfoDialogFragment extends DialogFragment {
     }
 
     public void setPic(XkcdPic pic) {
-        this.xkcdContent = escapingUnicode(pic.alt);
+        this.xkcdContent = pic.getAlt();
     }
 
     @Override
@@ -192,13 +192,6 @@ public class SimpleInfoDialogFragment extends DialogFragment {
         }
         text.setText(strBuilder);
         text.setMovementMethod(LinkMovementMethod.getInstance());
-    }
-
-    private static String escapingUnicode(String raw) {
-        return raw.replaceAll("\\u00e2\\u0080\\u0099", "'")
-                .replaceAll("\\u00e2\\u0080\\u009c", "\"")
-                .replaceAll("\\u00e2\\u0080\\u009d", "\"")
-                .replaceAll("\\u00e2\\u0080\\u0093", "-");
     }
 
     public interface ISimpleInfoDialogListener {

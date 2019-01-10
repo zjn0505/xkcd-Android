@@ -16,7 +16,7 @@ public class XkcdPic {
     public String day;
     @Id(assignable = true)
     public long num;
-    public String alt;
+    private String alt;
     public boolean large = false;
     public boolean special = false;
     public int width;
@@ -49,6 +49,10 @@ public class XkcdPic {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getAlt() {
+        return alt;
     }
 
     public XkcdPic clone() {

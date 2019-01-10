@@ -6,6 +6,8 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.text.TextUtils;
 
+import com.google.gson.GsonBuilder;
+
 import java.io.File;
 import java.io.IOException;
 import java.security.KeyStore;
@@ -32,6 +34,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import timber.log.Timber;
 import xyz.jienan.xkcd.BuildConfig;
 import xyz.jienan.xkcd.XkcdApplication;
+import xyz.jienan.xkcd.model.XkcdPic;
+import xyz.jienan.xkcd.model.XkcdPicDeserializer;
 
 /**
  * Created by Jienan on 2018/3/2.
@@ -80,7 +84,8 @@ public class NetworkService {
 
         Retrofit.Builder builder = new Retrofit.Builder()
                 .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(
+                        new GsonBuilder().registerTypeAdapter(XkcdPic.class, new XkcdPicDeserializer()).create()))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create());
         xkcdAPI = builder.baseUrl(XKCD_BASE_URL).build().create(XkcdAPI.class);
         whatIfAPI = builder.baseUrl(WHAT_IF_BASE_URL).build().create(WhatIfAPI.class);
