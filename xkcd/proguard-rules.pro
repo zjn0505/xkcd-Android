@@ -87,4 +87,15 @@
 # A resource is loaded with a relative path so the package of this class must be preserved.
 -keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
 
+# For proguard optimization, retrofit annotation
 -optimizations !method/removal/parameter
+
+-dontnote com.crashlytics.android.**
+-dontnote io.reactivex.Observable
+-dontnote okhttp3.**
+-dontnote retrofit2.**
+-dontnote com.github.chrisbanes.photoview.PhotoView
+-dontnote com.github.piasy.biv.view.BigImageView
+-dontnote com.google.**
+-dontnote io.fabric.sdk.android.**
+-dontnote okio.**
