@@ -1,7 +1,8 @@
 package xyz.jienan.xkcd.model;
 
-import androidx.annotation.Keep;
 import android.text.TextUtils;
+
+import androidx.annotation.Keep;
 
 import static xyz.jienan.xkcd.Const.TAG_XKCD;
 

@@ -1,6 +1,5 @@
 package xyz.jienan.xkcd.model.util;
 
-import androidx.annotation.NonNull;
 import android.text.TextUtils;
 
 import org.jsoup.Jsoup;
@@ -15,6 +14,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import androidx.annotation.NonNull;
 import okhttp3.ResponseBody;
 
 import static xyz.jienan.xkcd.Const.URI_XKCD_EXPLAIN_EDIT;

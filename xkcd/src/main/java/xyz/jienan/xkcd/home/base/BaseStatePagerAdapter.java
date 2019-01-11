@@ -1,11 +1,12 @@
 package xyz.jienan.xkcd.home.base;
 
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentStatePagerAdapter;
 import android.view.ViewGroup;
 
 import java.util.HashMap;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 
 public abstract class BaseStatePagerAdapter extends FragmentStatePagerAdapter {
 

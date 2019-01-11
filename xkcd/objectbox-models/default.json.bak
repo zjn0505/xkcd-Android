@@ -106,9 +106,45 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "3:2126556071039851182",
+      "lastPropertyId": "8:1452847694015131153",
+      "name": "ExtraComics",
+      "properties": [
+        {
+          "id": "1:3849361378411559568",
+          "name": "num"
+        },
+        {
+          "id": "2:3602056239081349548",
+          "name": "title"
+        },
+        {
+          "id": "3:5900901818034830518",
+          "name": "date"
+        },
+        {
+          "id": "4:1164534608024511325",
+          "name": "img"
+        },
+        {
+          "id": "6:1416395650126494423",
+          "name": "links"
+        },
+        {
+          "id": "7:6502473592907040853",
+          "name": "explainUrl"
+        },
+        {
+          "id": "8:1452847694015131153",
+          "name": "explainContent"
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "2:5390338631784931612",
+  "lastEntityId": "3:2126556071039851182",
   "lastIndexId": "0:0",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
@@ -118,7 +154,8 @@
   "retiredIndexUids": [],
   "retiredPropertyUids": [
     3062322936490117812,
-    1803428119984195950
+    1803428119984195950,
+    8142909451705119412
   ],
   "retiredRelationUids": [],
   "version": 1

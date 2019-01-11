@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -24,14 +22,16 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.bumptech.glide.request.target.Target;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import butterknife.BindView;
 import butterknife.OnLongClick;
 import timber.log.Timber;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.base.BaseFragment;
+import xyz.jienan.xkcd.base.glide.MyProgressTarget;
 import xyz.jienan.xkcd.base.glide.ProgressTarget;
 import xyz.jienan.xkcd.comics.activity.ImageDetailPageActivity;
 import xyz.jienan.xkcd.comics.contract.SingleComicContract;
@@ -343,66 +343,5 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .listener(new GlideListener(this))
                 .into(target);
-    }
-
-    private static class MyProgressTarget<Z> extends ProgressTarget<String, Z> {
-        private final ProgressBar progressbar;
-        private final ImageView image;
-
-        MyProgressTarget(Target<Z> target, ProgressBar progress, ImageView image) {
-            super(target);
-            this.progressbar = progress;
-            this.image = image;
-        }
-
-        @Override
-        public float getGranualityPercentage() {
-            return 0.1f; // this matches the format string for #text below
-        }
-
-        @Override
-        public void onDownloadStart() {
-
-        }
-
-        @Override
-        public void onProgress(int progress) {
-
-        }
-
-        @Override
-        public void onDownloadFinish() {
-
-        }
-
-        @Override
-        protected void onConnecting() {
-            progressbar.setProgress(1);
-            progressbar.setVisibility(View.VISIBLE);
-            image.setImageLevel(0);
-        }
-
-        @Override
-        protected void onDownloading(long bytesRead, long expectedLength) {
-            int progress = (int) (100 * bytesRead / expectedLength);
-            progress = progress <= 0 ? 1 : progress;
-            progressbar.setProgress(progress);
-            if (progressbar.getAnimation() == null) {
-                progressbar.setAnimation(AnimationUtils.loadAnimation(progressbar.getContext(), R.anim.rotate));
-            }
-            image.setImageLevel((int) (10000 * bytesRead / expectedLength));
-        }
-
-        @Override
-        protected void onDownloaded() {
-            image.setImageLevel(10000);
-        }
-
-        @Override
-        protected void onDelivered() {
-            progressbar.setVisibility(View.INVISIBLE);
-            progressbar.clearAnimation();
-            image.setImageLevel(0); // reset ImageView default
-        }
     }
 }

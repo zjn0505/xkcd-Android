@@ -2,10 +2,6 @@ package xyz.jienan.xkcd.list;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.percentlayout.widget.PercentFrameLayout;
-import androidx.percentlayout.widget.PercentLayoutHelper;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +14,10 @@ import com.bumptech.glide.RequestManager;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.percentlayout.widget.PercentFrameLayout;
+import androidx.percentlayout.widget.PercentLayoutHelper;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;

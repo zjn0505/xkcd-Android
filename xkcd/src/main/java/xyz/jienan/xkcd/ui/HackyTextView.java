@@ -1,11 +1,12 @@
 package xyz.jienan.xkcd.ui;
 
 import android.content.Context;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatTextView;
 import android.text.Selection;
 import android.text.Spannable;
 import android.util.AttributeSet;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatTextView;
 
 public class HackyTextView extends AppCompatTextView {
 

@@ -4,9 +4,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
@@ -14,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebSettings;
+import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -27,6 +25,9 @@ import org.jsoup.select.Elements;
 
 import java.lang.ref.WeakReference;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import butterknife.BindView;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -124,7 +125,7 @@ public class SingleWhatIfFragment extends BaseFragment implements ImgInterface.I
         webView.addJavascriptInterface(new ImgInterface(this), "AndroidImg");
         webView.addJavascriptInterface(new RefInterface(this), "AndroidRef");
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
-            webView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG);
+            WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG);
         }
         parentFragment = ((WhatIfMainFragment) getParentFragment());
         setHasOptionsMenu(true);

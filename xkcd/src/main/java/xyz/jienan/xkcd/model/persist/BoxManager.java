@@ -1,19 +1,19 @@
 package xyz.jienan.xkcd.model.persist;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import org.jsoup.helper.StringUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import io.objectbox.Box;
 import io.objectbox.query.Query;
 import io.objectbox.query.QueryBuilder;
 import xyz.jienan.xkcd.XkcdApplication;
 import xyz.jienan.xkcd.model.ExtraComics;
+import xyz.jienan.xkcd.model.ExtraComics_;
 import xyz.jienan.xkcd.model.WhatIfArticle;
 import xyz.jienan.xkcd.model.WhatIfArticle_;
 import xyz.jienan.xkcd.model.XkcdPic;
@@ -219,5 +219,22 @@ public class BoxManager {
     @NonNull
     public ExtraComics getExtra(int index) {
         return extraBox.get(index);
+    }
+
+    public String loadExtraExplain(String url) {
+        ExtraComics extraComics = extraBox.query().equal(ExtraComics_.explainUrl, url).build().findFirst();
+        if (extraComics != null) {
+            return extraComics.explainContent;
+        } else {
+            return "";
+        }
+    }
+
+    public void updateExtra(String url, String explainContent) {
+        ExtraComics extraComics = extraBox.query().equal(ExtraComics_.explainUrl, url).build().findFirst();
+        if (extraComics != null) {
+            extraComics.explainContent = explainContent;
+            extraBox.put(extraComics);
+        }
     }
 }

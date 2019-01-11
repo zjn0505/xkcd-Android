@@ -1,11 +1,8 @@
 package xyz.jienan.xkcd.extra.contract;
 
-import android.graphics.Bitmap;
-
 import xyz.jienan.xkcd.base.BasePresenter;
 import xyz.jienan.xkcd.base.BaseView;
 import xyz.jienan.xkcd.model.ExtraComics;
-import xyz.jienan.xkcd.model.XkcdPic;
 
 public interface SingleExtraContract {
 
@@ -22,10 +19,8 @@ public interface SingleExtraContract {
 
     interface Presenter extends BasePresenter {
 
-        void loadXkcd(int index);
+        void loadExtra(int index);
 
-        void getExplain(long index);
-
-        void updateXkcdSize(ExtraComics currentPic, Bitmap resource);
+        void getExplain(String url);
     }
 }

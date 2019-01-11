@@ -1,6 +1,5 @@
 package xyz.jienan.xkcd.extra.fragment;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -31,6 +30,7 @@ import butterknife.OnLongClick;
 import timber.log.Timber;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.base.BaseFragment;
+import xyz.jienan.xkcd.base.glide.MyProgressTarget;
 import xyz.jienan.xkcd.base.glide.ProgressTarget;
 import xyz.jienan.xkcd.comics.activity.ImageDetailPageActivity;
 import xyz.jienan.xkcd.comics.dialog.SimpleInfoDialogFragment;
@@ -38,15 +38,13 @@ import xyz.jienan.xkcd.comics.dialog.SimpleInfoDialogFragment.ISimpleInfoDialogL
 import xyz.jienan.xkcd.extra.contract.SingleExtraContract;
 import xyz.jienan.xkcd.extra.presenter.SingleExtraPresenter;
 import xyz.jienan.xkcd.model.ExtraComics;
-import xyz.jienan.xkcd.model.XkcdPic;
+import xyz.jienan.xkcd.model.util.ExplainLinkUtil;
 
 import static android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING;
 import static android.view.HapticFeedbackConstants.LONG_PRESS;
 import static xyz.jienan.xkcd.Const.FIRE_GO_EXPLAIN_MENU;
 import static xyz.jienan.xkcd.Const.FIRE_LONG_PRESS;
-import static xyz.jienan.xkcd.Const.FIRE_MORE_EXPLAIN;
 import static xyz.jienan.xkcd.Const.FIRE_SHARE_BAR;
-import static xyz.jienan.xkcd.base.network.NetworkService.XKCD_EXPLAIN_URL;
 
 /**
  * Created by jienanzhang on 03/03/2018.
@@ -80,8 +78,6 @@ public class SingleExtraFragment extends BaseFragment implements SingleExtraCont
     private ExtraComics currentExtra;
 
     private ProgressTarget<String, Bitmap> target;
-
-    private SimpleInfoDialogFragment.ExplainingCallback explainingCallback;
 
     private SingleExtraContract.Presenter singleExtraPresenter;
 
@@ -137,7 +133,6 @@ public class SingleExtraFragment extends BaseFragment implements SingleExtraCont
             if (fragment.ivXkcdPic != null) {
                 fragment.ivXkcdPic.setOnClickListener(v -> fragment.launchDetailPageActivity());
             }
-            fragment.singleExtraPresenter.updateXkcdSize(fragment.currentExtra, resource);
             return false;
         }
     }
@@ -150,18 +145,15 @@ public class SingleExtraFragment extends BaseFragment implements SingleExtraCont
 
         @Override
         public void onNegativeClick() {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(XKCD_EXPLAIN_URL + currentExtra.num));
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(currentExtra.explainUrl));
             if (browserIntent.resolveActivity(getActivity().getPackageManager()) != null) {
                 startActivity(browserIntent);
             }
         }
 
-        @SuppressLint({"StaticFieldLeak", "CheckResult"})
         @Override
         public void onExplainMoreClick(final SimpleInfoDialogFragment.ExplainingCallback explainingCallback) {
-            SingleExtraFragment.this.explainingCallback = explainingCallback;
-            singleExtraPresenter.getExplain(currentExtra.num);
-            logUXEvent(FIRE_MORE_EXPLAIN);
+            // no-ops
         }
     };
 
@@ -176,15 +168,20 @@ public class SingleExtraFragment extends BaseFragment implements SingleExtraCont
     @Override
     public void explainLoaded(String result) {
         if (!TextUtils.isEmpty(result)) {
-            explainingCallback.explanationLoaded(result);
+            if (dialogFragment != null && dialogFragment.isAdded()) {
+                dialogFragment.setExtraExplain(result);
+            }
+            ExplainLinkUtil.setTextViewHTML(tvDescription, result);
         } else {
-            explainingCallback.explanationFailed();
+            if (dialogFragment != null && dialogFragment.isAdded()) {
+                dialogFragment.setExtraExplain(null);
+            }
         }
     }
 
     @Override
     public void explainFailed() {
-        explainingCallback.explanationFailed();
+        // no-ops
     }
 
     @Override
@@ -211,7 +208,7 @@ public class SingleExtraFragment extends BaseFragment implements SingleExtraCont
         pbLoading.clearAnimation();
         pbLoading.setAnimation(AnimationUtils.loadAnimation(pbLoading.getContext(), R.anim.rotate));
         initGlide();
-        singleExtraPresenter.loadXkcd(id);
+        singleExtraPresenter.loadExtra(id);
 
         if (savedInstanceState != null) {
             dialogFragment = (SimpleInfoDialogFragment) getChildFragmentManager()
@@ -254,7 +251,7 @@ public class SingleExtraFragment extends BaseFragment implements SingleExtraCont
                 logUXEvent(FIRE_SHARE_BAR);
                 return true;
             case R.id.action_go_explain: {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(XKCD_EXPLAIN_URL + currentExtra.num));
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(currentExtra.explainUrl));
                 startActivity(browserIntent);
                 logUXEvent(FIRE_GO_EXPLAIN_MENU);
                 return true;
@@ -280,10 +277,10 @@ public class SingleExtraFragment extends BaseFragment implements SingleExtraCont
             return false;
         }
         dialogFragment = new SimpleInfoDialogFragment();
-//        dialogFragment.setPic(currentExtra);
         dialogFragment.setListener(dialogListener);
         dialogFragment.show(getChildFragmentManager(), "AltInfoDialogFragment");
         v.performHapticFeedback(LONG_PRESS, FLAG_IGNORE_GLOBAL_SETTING);
+
         logUXEvent(FIRE_LONG_PRESS);
         return true;
     }
@@ -322,6 +319,7 @@ public class SingleExtraFragment extends BaseFragment implements SingleExtraCont
         Timber.i("Pic to be loaded: %d - %s", id, xPic.img);
         tvTitle.setText(String.format("%d. %s", xPic.num, xPic.title));
         tvCreateDate.setText(xPic.date);
+        singleExtraPresenter.getExplain(xPic.explainUrl);
     }
 
     private void load(@NonNull String url) {
@@ -332,66 +330,5 @@ public class SingleExtraFragment extends BaseFragment implements SingleExtraCont
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .listener(new GlideListener(this))
                 .into(target);
-    }
-
-    private static class MyProgressTarget<Z> extends ProgressTarget<String, Z> {
-        private final ProgressBar progressbar;
-        private final ImageView image;
-
-        MyProgressTarget(Target<Z> target, ProgressBar progress, ImageView image) {
-            super(target);
-            this.progressbar = progress;
-            this.image = image;
-        }
-
-        @Override
-        public float getGranualityPercentage() {
-            return 0.1f; // this matches the format string for #text below
-        }
-
-        @Override
-        public void onDownloadStart() {
-
-        }
-
-        @Override
-        public void onProgress(int progress) {
-
-        }
-
-        @Override
-        public void onDownloadFinish() {
-
-        }
-
-        @Override
-        protected void onConnecting() {
-            progressbar.setProgress(1);
-            progressbar.setVisibility(View.VISIBLE);
-            image.setImageLevel(0);
-        }
-
-        @Override
-        protected void onDownloading(long bytesRead, long expectedLength) {
-            int progress = (int) (100 * bytesRead / expectedLength);
-            progress = progress <= 0 ? 1 : progress;
-            progressbar.setProgress(progress);
-            if (progressbar.getAnimation() == null) {
-                progressbar.setAnimation(AnimationUtils.loadAnimation(progressbar.getContext(), R.anim.rotate));
-            }
-            image.setImageLevel((int) (10000 * bytesRead / expectedLength));
-        }
-
-        @Override
-        protected void onDownloaded() {
-            image.setImageLevel(10000);
-        }
-
-        @Override
-        protected void onDelivered() {
-            progressbar.setVisibility(View.INVISIBLE);
-            progressbar.clearAnimation();
-            image.setImageLevel(0); // reset ImageView default
-        }
     }
 }

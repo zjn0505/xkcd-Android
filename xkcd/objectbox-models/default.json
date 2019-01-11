@@ -109,7 +109,7 @@
     },
     {
       "id": "3:2126556071039851182",
-      "lastPropertyId": "6:1416395650126494423",
+      "lastPropertyId": "8:1452847694015131153",
       "name": "ExtraComics",
       "properties": [
         {
@@ -129,12 +129,12 @@
           "name": "img"
         },
         {
-          "id": "5:8142909451705119412",
-          "name": "explain"
-        },
-        {
           "id": "6:1416395650126494423",
           "name": "links"
+        },
+        {
+          "id": "7:6502473592907040853",
+          "name": "explainUrl"
         }
       ],
       "relations": []
@@ -150,7 +150,9 @@
   "retiredIndexUids": [],
   "retiredPropertyUids": [
     3062322936490117812,
-    1803428119984195950
+    1803428119984195950,
+    8142909451705119412,
+    1452847694015131153
   ],
   "retiredRelationUids": [],
   "version": 1

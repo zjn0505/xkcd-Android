@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.MatrixCursor;
 import android.os.Bundle;
 import android.provider.BaseColumns;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,6 +17,8 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import butterknife.BindString;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.extra.ExtraPagerAdapter;
@@ -30,10 +33,10 @@ import static xyz.jienan.xkcd.Const.LAST_VIEW_XKCD_ID;
 
 public class ExtraMainFragment extends ContentMainBaseFragment implements ExtraMainContract.View {
 
-    @BindString(R.string.search_hint_xkcd)
+    @BindString(R.string.search_hint_extra)
     String searchHint;
 
-    @BindString(R.string.menu_xkcd)
+    @BindString(R.string.menu_extra)
     String titleText;
 
     private List<ExtraComics> searchSuggestions;
@@ -58,13 +61,24 @@ public class ExtraMainFragment extends ContentMainBaseFragment implements ExtraM
     }
 
     @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        fab.setVisibility(View.GONE);
+        final ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        if (actionBar != null && TextUtils.isEmpty(actionBar.getSubtitle())) {
+            actionBar.setSubtitle("1");
+        }
+    }
+
+    @Override
     protected String getTitleTextRes() {
         return titleText;
     }
 
     @Override
     protected int getPickerTitleTextRes() {
-        return R.string.dialog_pick_content;
+        // no-ops
+        return 0;
     }
 
     @Override
@@ -85,6 +99,7 @@ public class ExtraMainFragment extends ContentMainBaseFragment implements ExtraM
     public void onPrepareOptionsMenu(@NonNull Menu menu) {
         super.onPrepareOptionsMenu(menu);
         menu.findItem(R.id.action_go_xkcd).setVisible(false);
+        menu.findItem(R.id.action_search).setVisible(false);
     }
 
     @Override

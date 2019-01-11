@@ -2,7 +2,6 @@ package xyz.jienan.xkcd.whatif;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-
 import xyz.jienan.xkcd.home.base.BaseStatePagerAdapter;
 import xyz.jienan.xkcd.whatif.fragment.SingleWhatIfFragment;
 

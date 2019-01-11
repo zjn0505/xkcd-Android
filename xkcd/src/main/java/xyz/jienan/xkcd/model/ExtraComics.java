@@ -1,5 +1,7 @@
 package xyz.jienan.xkcd.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,7 +23,10 @@ public class ExtraComics {
 
     public String img;
 
-    public String explain;
+    @SerializedName("explain")
+    public String explainUrl;
+
+    public transient String explainContent;
 
     @Convert(converter = ListConverter.class, dbType = String.class)
     public List<String> links;

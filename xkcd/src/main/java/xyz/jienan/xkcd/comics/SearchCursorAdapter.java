@@ -2,7 +2,6 @@ package xyz.jienan.xkcd.comics;
 
 import android.content.Context;
 import android.database.Cursor;
-import androidx.cursoradapter.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +11,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 
+import androidx.cursoradapter.widget.CursorAdapter;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.base.glide.GlideUtils;
 

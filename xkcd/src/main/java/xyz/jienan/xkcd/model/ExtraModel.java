@@ -1,9 +1,15 @@
 package xyz.jienan.xkcd.model;
 
 
+import android.text.TextUtils;
+
 import java.util.List;
 
+import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
+import xyz.jienan.xkcd.base.network.NetworkService;
 import xyz.jienan.xkcd.model.persist.BoxManager;
+import xyz.jienan.xkcd.model.util.XkcdExplainUtil;
 
 public class ExtraModel {
 
@@ -32,5 +38,19 @@ public class ExtraModel {
 
     public List<ExtraComics> getAll() {
         return boxManager.getExtraList();
+    }
+
+    public Observable<String> loadExplain(String url) {
+        String explainFromDB = boxManager.loadExtraExplain(url);
+        if (!TextUtils.isEmpty(explainFromDB)) {
+            return Observable.just(explainFromDB);
+        }
+
+        return NetworkService.getXkcdAPI().getExplain(url).subscribeOn(Schedulers.io())
+                .map(responseBody -> XkcdExplainUtil.getExplainFromHtml(responseBody, url));
+    }
+
+    public void saveExtraWithExplain(String url, String explainContent) {
+        boxManager.updateExtra(url, explainContent);
     }
 }

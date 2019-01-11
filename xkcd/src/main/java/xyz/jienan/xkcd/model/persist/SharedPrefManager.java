@@ -11,6 +11,7 @@ import xyz.jienan.xkcd.model.Quote;
 
 import static xyz.jienan.xkcd.Const.INVALID_ID;
 import static xyz.jienan.xkcd.Const.LANDING_TYPE;
+import static xyz.jienan.xkcd.Const.LAST_VIEW_EXTRA_ID;
 import static xyz.jienan.xkcd.Const.LAST_VIEW_WHAT_IF_ID;
 import static xyz.jienan.xkcd.Const.LAST_VIEW_XKCD_ID;
 import static xyz.jienan.xkcd.Const.PREF_WHAT_IF_SEARCH;
@@ -56,6 +57,14 @@ public class SharedPrefManager {
 
     public long getLastViewedXkcd(int latestIndex) {
         return sharedPreferences.getInt(LAST_VIEW_XKCD_ID, latestIndex);
+    }
+
+    public void setLastViewedExtra(int lastViewed) {
+        editor.putInt(LAST_VIEW_EXTRA_ID, lastViewed).apply();
+    }
+
+    public int getLastViewedExtra(int latestIndex) {
+        return sharedPreferences.getInt(LAST_VIEW_EXTRA_ID, latestIndex);
     }
 
     public long getLatestWhatIf() {

@@ -1,10 +1,11 @@
 package xyz.jienan.xkcd.ui;
 
 import android.content.Context;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 public class RecyclerItemClickListener extends RecyclerView.SimpleOnItemTouchListener {
 

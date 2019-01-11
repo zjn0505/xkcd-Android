@@ -43,9 +43,9 @@ import xyz.jienan.xkcd.model.XkcdPicDeserializer;
 
 public class NetworkService {
 
-    public static final String XKCD_SPECIAL_LIST = "https://raw.githubusercontent.com/zjn0505/Xkcd-Android/dev-extra/xkcd/src/main/res/raw/xkcd_special.json";
+    public static final String XKCD_SPECIAL_LIST = "https://raw.githubusercontent.com/zjn0505/Xkcd-Android/master/xkcd/src/main/res/raw/xkcd_special.json";
 
-    public static final String XKCD_EXTRA_LIST = "https://raw.githubusercontent.com/zjn0505/Xkcd-Android/dev-extra/xkcd/src/main/res/raw/xkcd_extra.json"; // TODO change to master
+    public static final String XKCD_EXTRA_LIST = "https://raw.githubusercontent.com/zjn0505/Xkcd-Android/master/xkcd/src/main/res/raw/xkcd_extra.json"; // TODO change to master
 
     public static final String XKCD_SEARCH_SUGGESTION = "https://api.jienan.xyz/xkcd/xkcd-suggest";
     public static final String XKCD_BROWSE_LIST = "https://api.jienan.xyz/xkcd/xkcd-list";
@@ -89,7 +89,6 @@ public class NetworkService {
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create(
                         new GsonBuilder().registerTypeAdapter(XkcdPic.class, new XkcdPicDeserializer()).create()))
-//                        ))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create());
         xkcdAPI = builder.baseUrl(XKCD_BASE_URL).build().create(XkcdAPI.class);
         whatIfAPI = builder.baseUrl(WHAT_IF_BASE_URL).build().create(WhatIfAPI.class);

@@ -1,11 +1,11 @@
 package xyz.jienan.xkcd;
 
 import android.app.Application;
-import androidx.appcompat.app.AppCompatDelegate;
 
 import com.github.piasy.biv.BigImageViewer;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import androidx.appcompat.app.AppCompatDelegate;
 import io.objectbox.BoxStore;
 import xyz.jienan.xkcd.base.glide.GlideImageLoader;
 import xyz.jienan.xkcd.model.MyObjectBox;

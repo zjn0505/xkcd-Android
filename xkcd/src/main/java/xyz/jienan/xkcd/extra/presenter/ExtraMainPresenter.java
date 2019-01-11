@@ -1,21 +1,12 @@
 package xyz.jienan.xkcd.extra.presenter;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.disposables.Disposables;
-import timber.log.Timber;
 import xyz.jienan.xkcd.extra.contract.ExtraMainContract;
 import xyz.jienan.xkcd.model.ExtraComics;
 import xyz.jienan.xkcd.model.ExtraModel;
-import xyz.jienan.xkcd.model.XkcdPic;
 import xyz.jienan.xkcd.model.persist.SharedPrefManager;
 
 public class ExtraMainPresenter implements ExtraMainContract.Presenter {
@@ -42,40 +33,42 @@ public class ExtraMainPresenter implements ExtraMainContract.Presenter {
 
     @Override
     public void liked(long index) {
-
+        // no-ops
     }
 
     @Override
     public void favorited(long index, boolean isFav) {
-
+        // no-ops
     }
 
     @Override
     public void fastLoad(int latestIndex) {
-
+        // no-ops
     }
 
     @Override
     public void getInfoAndShowFab(int index) {
-
+        // no-ops
     }
 
     @Override
     public int getLatest() {
-        return 0;
+        return extraComics.size();
     }
 
     @Override
     public void setLatest(int latestIndex) {
+        // no-ops
     }
 
     @Override
     public void setLastViewed(int lastViewed) {
+        sharedPrefManager.setLastViewedExtra(lastViewed);
     }
 
     @Override
     public int getLastViewed(int latestIndex) {
-        return 0;
+        return sharedPrefManager.getLastViewedExtra(latestIndex);
     }
 
     @Override
