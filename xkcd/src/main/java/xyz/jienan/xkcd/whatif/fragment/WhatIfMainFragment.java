@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.database.MatrixCursor;
 import android.os.Bundle;
 import android.provider.BaseColumns;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,12 +12,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-
 import com.jakewharton.rxbinding3.view.RxView;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import butterknife.BindString;
 import butterknife.OnPageChange;
 import io.reactivex.android.schedulers.AndroidSchedulers;

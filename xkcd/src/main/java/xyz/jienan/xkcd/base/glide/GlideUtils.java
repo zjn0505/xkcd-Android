@@ -1,7 +1,6 @@
 package xyz.jienan.xkcd.base.glide;
 
 import android.graphics.Bitmap;
-import androidx.annotation.NonNull;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Priority;
@@ -12,6 +11,7 @@ import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
+import androidx.annotation.NonNull;
 import xyz.jienan.xkcd.model.XkcdPic;
 import xyz.jienan.xkcd.model.util.XkcdSideloadUtils;
 

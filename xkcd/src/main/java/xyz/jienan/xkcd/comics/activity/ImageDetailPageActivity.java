@@ -6,8 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
@@ -33,6 +31,8 @@ import com.github.piasy.biv.view.BigImageView;
 
 import java.util.concurrent.TimeUnit;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -76,6 +76,8 @@ public class ImageDetailPageActivity extends BaseActivity implements ImageDetail
     private static final String KEY_URL = "URL";
 
     private static final String KEY_ID = "ID";
+
+    private static final String KEY_LARGE = "LARGE";
 
     private static final String KEY_SHOW_TITLE = "show_title";
 
@@ -125,6 +127,8 @@ public class ImageDetailPageActivity extends BaseActivity implements ImageDetail
 
     private boolean isEcoMode = true;
 
+    private boolean withLargeImage = false;
+
     public static void startActivity(Context context,
                                      @Nullable String url,
                                      @NonNull Long id) {
@@ -134,6 +138,20 @@ public class ImageDetailPageActivity extends BaseActivity implements ImageDetail
         Intent intent = new Intent(context, ImageDetailPageActivity.class);
         intent.putExtra(KEY_URL, url);
         intent.putExtra(KEY_ID, id);
+        context.startActivity(intent);
+    }
+
+    public static void startActivity(Context context,
+                                     @Nullable String url,
+                                     @NonNull Long id,
+                                     boolean withLargeImage) {
+        if (id <= 0) {
+            return;
+        }
+        Intent intent = new Intent(context, ImageDetailPageActivity.class);
+        intent.putExtra(KEY_URL, url);
+        intent.putExtra(KEY_ID, id);
+        intent.putExtra(KEY_LARGE, withLargeImage);
         context.startActivity(intent);
     }
 
@@ -159,6 +177,7 @@ public class ImageDetailPageActivity extends BaseActivity implements ImageDetail
         url = getIntent().getStringExtra(KEY_URL);
         index = (int) getIntent().getLongExtra(KEY_ID, 0L);
         showTitle = getIntent().getBooleanExtra(KEY_SHOW_TITLE, false);
+        withLargeImage = getIntent().getBooleanExtra(KEY_LARGE, false);
         photoView.setMaximumScale(MAX_SCALE);
         photoView.setZoomTransitionDuration(TRANSITION_ANIMATION_DURATION);
         if (!TextUtils.isEmpty(url)) {
@@ -229,7 +248,7 @@ public class ImageDetailPageActivity extends BaseActivity implements ImageDetail
     public void renderPic(String url) {
         this.url = url;
         Bundle bundle = new Bundle();
-        if (XkcdSideloadUtils.useLargeImageView(index)) {
+        if (XkcdSideloadUtils.useLargeImageView(index) && !withLargeImage) {
             bigImageView.showImage(Uri.parse(url));
             bigImageView.setVisibility(View.VISIBLE);
             photoView.setVisibility(View.GONE);

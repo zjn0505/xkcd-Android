@@ -3,11 +3,11 @@ package xyz.jienan.xkcd.base;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.comics.activity.ImageDetailPageActivity;
 import xyz.jienan.xkcd.home.MainActivity;

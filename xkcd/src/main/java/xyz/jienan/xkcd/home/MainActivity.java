@@ -30,6 +30,7 @@ import timber.log.Timber;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.base.BaseActivity;
 import xyz.jienan.xkcd.comics.fragment.ComicsMainFragment;
+import xyz.jienan.xkcd.extra.fragment.ExtraMainFragment;
 import xyz.jienan.xkcd.home.base.ContentMainBaseFragment;
 import xyz.jienan.xkcd.model.Quote;
 import xyz.jienan.xkcd.model.QuoteModel;
@@ -38,12 +39,14 @@ import xyz.jienan.xkcd.settings.PreferenceActivity;
 import xyz.jienan.xkcd.whatif.WhatIfFastLoadService;
 import xyz.jienan.xkcd.whatif.fragment.WhatIfMainFragment;
 
+import static xyz.jienan.xkcd.Const.FIRE_NAVI_EXTRA;
 import static xyz.jienan.xkcd.Const.FIRE_NAVI_WHAT_IF;
 import static xyz.jienan.xkcd.Const.FIRE_NAVI_XKCD;
 import static xyz.jienan.xkcd.Const.FIRE_SETTING_MENU;
 import static xyz.jienan.xkcd.Const.INDEX_ON_NOTI_INTENT;
 import static xyz.jienan.xkcd.Const.LANDING_TYPE;
 import static xyz.jienan.xkcd.Const.LAST_VIEW_WHAT_IF_ID;
+import static xyz.jienan.xkcd.Const.TAG_EXTRA;
 import static xyz.jienan.xkcd.Const.TAG_WHAT_IF;
 import static xyz.jienan.xkcd.Const.TAG_XKCD;
 
@@ -150,6 +153,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 openFragment(TAG_WHAT_IF);
                 logUXEvent(FIRE_NAVI_WHAT_IF);
                 break;
+            case R.id.nav_extra:
+                openFragment(TAG_EXTRA);
+                logUXEvent(FIRE_NAVI_EXTRA);
+                break;
             case R.id.nav_setting:
                 Intent settingsIntent = new Intent(this, PreferenceActivity.class);
                 startActivityForResult(settingsIntent, REQ_SETTINGS);
@@ -178,8 +185,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         if (targetFragment == null) {
             if (TAG_WHAT_IF.equals(fragmentTag)) {
                 targetFragment = new WhatIfMainFragment();
-            } else {
+            } else if (TAG_XKCD.equals(fragmentTag)) {
                 targetFragment = new ComicsMainFragment();
+            } else if (TAG_EXTRA.equals(fragmentTag)) {
+                targetFragment = new ExtraMainFragment();
             }
         }
         sharedPrefManager.setLandingType(fragmentTag);

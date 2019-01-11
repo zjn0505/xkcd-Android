@@ -1,0 +1,52 @@
+[
+  {
+    "num": 1,
+    "date": "2006.10.11",
+    "title": "Blue Eyes",
+    "img": "https://www.explainxkcd.com/wiki/images/a/a0/Blue_Eyes.jpg",
+    "links": ["https://xkcd.com/blue_eyes.html", "https://xkcd.com/solution.html"],
+    "explain": "https://www.explainxkcd.com/wiki/index.php/Blue_Eyes"
+  },
+  {
+    "num": 2,
+    "date": "2009.06.17",
+    "title": "Conservation",
+    "img": "https://www.explainxkcd.com/wiki/images/1/10/conservation.png",
+    "explain": "https://www.explainxkcd.com/wiki/index.php/Conservation"
+  },
+  {
+    "num": 3,
+    "date": "2009.08.11",
+    "title": "Prescriptions",
+    "img": "https://www.explainxkcd.com/wiki/images/b/bc/prescriptions.png",
+    "explain": "https://www.explainxkcd.com/wiki/index.php/Prescriptions"
+  },
+  {
+    "num": 4,
+    "date": "2011.03.19",
+    "title": "Radiation",
+    "img": "https://imgs.xkcd.com/blag/radiation.png",
+    "explain": "https://www.explainxkcd.com/wiki/index.php/Radiation"
+  },
+  {
+    "num": 5,
+    "date": "2011.08.19",
+    "title": "Five-Minute Comics: Part 4",
+    "img": "https://www.explainxkcd.com/wiki/images/6/60/five_minute_comics_part_4.png",
+    "explain": "https://www.explainxkcd.com/wiki/index.php/Five-Minute_Comics:_Part_4"
+  },
+  {
+    "num": 6,
+    "date": "2013.10.04",
+    "title": "The Rise of Open Access",
+    "img": "https://www.sciencemag.org/site/special/scicomm/infographic.jpg",
+    "explain": "https://www.explainxkcd.com/wiki/index.php/The_Rise_of_Open_Access"
+  },
+  {
+    "num": 7,
+    "date": "2015.10.22",
+    "title": "XKCD Marks the Spot",
+    "img": "https://www.explainxkcd.com/wiki/images/9/9c/world_polio_day.png",
+    "explain": "https://www.explainxkcd.com/wiki/index.php/XKCD_Marks_the_Spot"
+  }
+]

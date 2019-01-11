@@ -7,10 +7,11 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
-import androidx.annotation.ColorInt;
 import android.util.AttributeSet;
 import android.util.Property;
 import android.view.View;
+
+import androidx.annotation.ColorInt;
 
 /**
  * Created by Miroslaw Stanek on 21.12.2015.

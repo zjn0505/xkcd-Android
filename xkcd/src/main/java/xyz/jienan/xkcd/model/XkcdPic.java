@@ -1,6 +1,8 @@
 package xyz.jienan.xkcd.model;
 
 
+import android.text.Html;
+
 import io.objectbox.annotation.Entity;
 import io.objectbox.annotation.Id;
 import xyz.jienan.xkcd.model.util.XkcdSideloadUtils;
@@ -16,7 +18,7 @@ public class XkcdPic {
     public String day;
     @Id(assignable = true)
     public long num;
-    public String alt;
+    private String alt;
     public boolean large = false;
     public boolean special = false;
     public int width;
@@ -39,16 +41,16 @@ public class XkcdPic {
         this.img = img;
     }
 
-    public String getRawTitle() {
-        return title;
-    }
-
     public String getTitle() {
-        return XkcdSideloadUtils.sideload(this).title;
+        return Html.fromHtml(title).toString();
     }
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getAlt() {
+        return Html.fromHtml(alt).toString();
     }
 
     public XkcdPic clone() {

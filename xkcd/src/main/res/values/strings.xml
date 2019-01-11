@@ -3,6 +3,7 @@
 
     <string name="menu_xkcd" translatable="false">xkcd</string>
     <string name="menu_whatif" translatable="false">what if</string>
+    <string name="menu_extra" translatable="false">Extra</string>
 
     <string name="action_share">Share this xkcd</string>
     <string name="action_left">Previous</string>
@@ -13,6 +14,7 @@
     <string name="action_xkcd">Go to xkcd.com</string>
     <string name="action_explain">Go to explainxkcd</string>
     <string name="search_hint_xkcd">Search xkcd</string>
+    <string name="search_hint_extra">Search extra</string>
 
     <string name="dialog_got_it">Got it</string>
     <string name="dialog_more_details">More details</string>

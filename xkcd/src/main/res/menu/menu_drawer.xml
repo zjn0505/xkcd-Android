@@ -9,6 +9,10 @@
         android:icon="@drawable/ic_megan"
         android:title="@string/menu_whatif" />
     <item
+        android:id="@+id/nav_extra"
+        android:icon="@drawable/ic_ponytail"
+        android:title="@string/menu_extra" />
+    <item
         android:id="@+id/nav_setting"
         android:icon="@drawable/ic_black_hat"
         android:title="@string/settings" />

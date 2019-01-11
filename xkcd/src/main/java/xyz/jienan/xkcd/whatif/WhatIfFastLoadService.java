@@ -3,10 +3,10 @@ package xyz.jienan.xkcd.whatif;
 import android.annotation.SuppressLint;
 import android.app.IntentService;
 import android.content.Intent;
-import androidx.annotation.Nullable;
 
 import java.util.concurrent.TimeUnit;
 
+import androidx.annotation.Nullable;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.disposables.Disposables;

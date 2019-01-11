@@ -8,7 +8,8 @@
     <string name="action_specific">选择指定 xkcd</string>
     <string name="action_xkcd">访问 xkcd.com</string>
     <string name="action_explain">访问 Explainxkcd</string>
-    <string name="search_hint_xkcd">搜索xkcd</string>
+    <string name="search_hint_xkcd">搜索 xkcd</string>
+    <string name="search_hint_extra">搜索 extra</string>
 
     <string name="dialog_got_it">了解</string>
     <string name="dialog_more_details">更多解释</string>

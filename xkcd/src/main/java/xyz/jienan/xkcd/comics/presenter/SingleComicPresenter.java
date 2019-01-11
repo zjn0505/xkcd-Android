@@ -30,7 +30,7 @@ public class SingleComicPresenter implements SingleComicContract.Presenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(view::explainLoaded, e -> {
                     view.explainFailed();
-                    Timber.e(e, "Load explain failed");
+                    Timber.e(e, "Load explainUrl failed");
                 });
         compositeDisposable.add(d);
     }
