@@ -20,8 +20,11 @@ import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.base.network.NetworkService;
+import xyz.jienan.xkcd.model.ExtraComics;
+import xyz.jienan.xkcd.model.ExtraModel;
 import xyz.jienan.xkcd.model.XkcdPic;
 
+import static xyz.jienan.xkcd.base.network.NetworkService.XKCD_EXTRA_LIST;
 import static xyz.jienan.xkcd.base.network.NetworkService.XKCD_SPECIAL_LIST;
 
 /**
@@ -44,6 +47,16 @@ public class XkcdSideloadUtils {
                     for (XkcdPic pic : xkcdPics) {
                         xkcdSideloadMap.put((int) pic.num, pic);
                     }
+                }, e -> Timber.e(e, "Failed to init special list"));
+
+        NetworkService.getXkcdAPI()
+                .getExtraComics(XKCD_EXTRA_LIST)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .doOnSubscribe(ignored -> initExtraSideloadMap(context))
+                .singleOrError()
+                .subscribe(extraComics -> {
+                    ExtraModel.getInstance().update(extraComics);
                 }, e -> Timber.e(e, "Failed to init special list"));
     }
 
@@ -75,9 +88,6 @@ public class XkcdSideloadUtils {
             if (sideload.getImg() != null) {
                 clone.setImg(sideload.getImg());
             }
-            if (sideload.getRawTitle() != null) {
-                clone.setTitle(sideload.getRawTitle());
-            }
             return clone; // special
         }
         return clone; // original or 2x
@@ -100,4 +110,18 @@ public class XkcdSideloadUtils {
         }
     }
 
+    private static void initExtraSideloadMap(Context context) throws IOException {
+        Writer writer = new StringWriter();
+        char[] buffer = new char[1024];
+        try (InputStream is = context.getResources().openRawResource(R.raw.xkcd_extra)) {
+            Reader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+            int n;
+            while ((n = reader.read(buffer)) != -1) {
+                writer.write(buffer, 0, n);
+            }
+        }
+        List<ExtraComics> sideloadList = new Gson().fromJson(writer.toString(), new TypeToken<List<ExtraComics>>() {
+        }.getType());
+        ExtraModel.getInstance().update(sideloadList);
+    }
 }

@@ -103,10 +103,6 @@
         {
           "id": "8:2512212370237625559",
           "name": "hasRead"
-        },
-        {
-          "id": "9:1803428119984195950",
-          "name": "date"
         }
       ],
       "relations": []
@@ -121,7 +117,8 @@
   "retiredEntityUids": [],
   "retiredIndexUids": [],
   "retiredPropertyUids": [
-    3062322936490117812
+    3062322936490117812,
+    1803428119984195950
   ],
   "retiredRelationUids": [],
   "version": 1

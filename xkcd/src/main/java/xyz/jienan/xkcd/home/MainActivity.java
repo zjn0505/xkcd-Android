@@ -30,6 +30,7 @@ import timber.log.Timber;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.base.BaseActivity;
 import xyz.jienan.xkcd.comics.fragment.ComicsMainFragment;
+import xyz.jienan.xkcd.extra.fragment.ExtraMainFragment;
 import xyz.jienan.xkcd.home.base.ContentMainBaseFragment;
 import xyz.jienan.xkcd.model.Quote;
 import xyz.jienan.xkcd.model.QuoteModel;
@@ -184,8 +185,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         if (targetFragment == null) {
             if (TAG_WHAT_IF.equals(fragmentTag)) {
                 targetFragment = new WhatIfMainFragment();
-            } else {
+            } else if (TAG_XKCD.equals(fragmentTag)) {
                 targetFragment = new ComicsMainFragment();
+            } else if (TAG_EXTRA.equals(fragmentTag)) {
+                targetFragment = new ExtraMainFragment();
             }
         }
         sharedPrefManager.setLandingType(fragmentTag);

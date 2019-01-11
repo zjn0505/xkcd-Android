@@ -12,7 +12,7 @@ import java.nio.charset.Charset;
 
 public class XkcdPicDeserializer implements JsonDeserializer {
     @Override
-    public Object deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+    public XkcdPic deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
             throws JsonParseException {
         Gson gson = new Gson();
         String string = json.toString();
@@ -24,7 +24,8 @@ public class XkcdPicDeserializer implements JsonDeserializer {
             enString = string.replaceAll("\\u00e2\\u0080\\u0099", "'")
                     .replaceAll("\\u00e2\\u0080\\u009c", "\"")
                     .replaceAll("\\u00e2\\u0080\\u009d", "\"")
-                    .replaceAll("\\u00e2\\u0080\\u0093", "-");
+                    .replaceAll("\\u00e2\\u0080\\u0093", "-")
+                    .replaceAll("\\u00c3\\u00a9", "é");
         }
         return gson.fromJson(enString, XkcdPic.class);
     }

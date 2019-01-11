@@ -5,6 +5,7 @@
     <string name="action_right">向后</string>
     <string name="action_search">搜索</string>
     <string name="action_xkcd_list">浏览 xkcd 列表</string>
+    <string name="action_extra_list">浏览 extra 列表</string>
     <string name="action_specific">选择指定 xkcd</string>
     <string name="action_xkcd">访问 xkcd.com</string>
     <string name="action_explain">访问 Explainxkcd</string>

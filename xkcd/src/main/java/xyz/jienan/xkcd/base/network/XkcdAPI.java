@@ -13,6 +13,7 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.Url;
+import xyz.jienan.xkcd.model.ExtraComics;
 import xyz.jienan.xkcd.model.XkcdPic;
 
 public interface XkcdAPI {
@@ -32,6 +33,9 @@ public interface XkcdAPI {
 
     @GET
     Observable<List<XkcdPic>> getSpecialXkcds(@Url String url);
+
+    @GET
+    Observable<List<ExtraComics>> getExtraComics(@Url String url);
 
     @Headers("cacheable: 600")
     @GET

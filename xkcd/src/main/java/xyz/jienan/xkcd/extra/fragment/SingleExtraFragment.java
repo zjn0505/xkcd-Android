@@ -1,12 +1,10 @@
-package xyz.jienan.xkcd.comics.fragment;
+package xyz.jienan.xkcd.extra.fragment;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -24,9 +22,10 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.bumptech.glide.request.target.Target;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import butterknife.BindView;
 import butterknife.OnLongClick;
 import timber.log.Timber;
@@ -34,27 +33,26 @@ import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.base.BaseFragment;
 import xyz.jienan.xkcd.base.glide.ProgressTarget;
 import xyz.jienan.xkcd.comics.activity.ImageDetailPageActivity;
-import xyz.jienan.xkcd.comics.contract.SingleComicContract;
 import xyz.jienan.xkcd.comics.dialog.SimpleInfoDialogFragment;
 import xyz.jienan.xkcd.comics.dialog.SimpleInfoDialogFragment.ISimpleInfoDialogListener;
-import xyz.jienan.xkcd.comics.presenter.SingleComicPresenter;
+import xyz.jienan.xkcd.extra.contract.SingleExtraContract;
+import xyz.jienan.xkcd.extra.presenter.SingleExtraPresenter;
+import xyz.jienan.xkcd.model.ExtraComics;
 import xyz.jienan.xkcd.model.XkcdPic;
 
 import static android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING;
 import static android.view.HapticFeedbackConstants.LONG_PRESS;
 import static xyz.jienan.xkcd.Const.FIRE_GO_EXPLAIN_MENU;
-import static xyz.jienan.xkcd.Const.FIRE_GO_XKCD_MENU;
 import static xyz.jienan.xkcd.Const.FIRE_LONG_PRESS;
 import static xyz.jienan.xkcd.Const.FIRE_MORE_EXPLAIN;
 import static xyz.jienan.xkcd.Const.FIRE_SHARE_BAR;
-import static xyz.jienan.xkcd.base.network.NetworkService.XKCD_BASE_URL;
 import static xyz.jienan.xkcd.base.network.NetworkService.XKCD_EXPLAIN_URL;
 
 /**
  * Created by jienanzhang on 03/03/2018.
  */
 
-public class SingleComicFragment extends BaseFragment implements SingleComicContract.View {
+public class SingleExtraFragment extends BaseFragment implements SingleExtraContract.View {
 
     @BindView(R.id.tv_title)
     TextView tvTitle;
@@ -79,27 +77,27 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
 
     private int id;
 
-    private XkcdPic currentPic;
+    private ExtraComics currentExtra;
 
     private ProgressTarget<String, Bitmap> target;
 
     private SimpleInfoDialogFragment.ExplainingCallback explainingCallback;
 
-    private SingleComicContract.Presenter singleComicPresenter;
+    private SingleExtraContract.Presenter singleExtraPresenter;
 
     private static class GlideListener implements RequestListener<String, Bitmap> {
 
-        private WeakReference<SingleComicFragment> weakReference;
+        private WeakReference<SingleExtraFragment> weakReference;
 
-        GlideListener(SingleComicFragment singleComicFragment) {
-            weakReference = new WeakReference<>(singleComicFragment);
+        GlideListener(SingleExtraFragment singleExtraFragment) {
+            weakReference = new WeakReference<>(singleExtraFragment);
         }
 
         @Override
         public boolean onException(Exception e, final String model,
                                    final Target<Bitmap> target, boolean isFirstResource) {
 
-            SingleComicFragment fragment = weakReference.get();
+            SingleExtraFragment fragment = weakReference.get();
 
             if (fragment == null) {
                 return false;
@@ -119,7 +117,7 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
             fragment.btnReload.setOnClickListener(view -> {
                 fragment.pbLoading.clearAnimation();
                 fragment.pbLoading.setAnimation(AnimationUtils.loadAnimation(fragment.pbLoading.getContext(), R.anim.rotate));
-                Glide.with(fragment.getActivity()).load(fragment.currentPic.getImg()).asBitmap().fitCenter()
+                Glide.with(fragment.getActivity()).load(fragment.currentExtra.img).asBitmap().fitCenter()
                         .diskCacheStrategy(DiskCacheStrategy.SOURCE).listener(this).into(target);
 
             });
@@ -130,7 +128,7 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
         public boolean onResourceReady(Bitmap resource, String model,
                                        Target<Bitmap> target, boolean isFromMemoryCache,
                                        boolean isFirstResource) {
-            SingleComicFragment fragment = weakReference.get();
+            SingleExtraFragment fragment = weakReference.get();
 
             if (fragment == null) {
                 return false;
@@ -139,7 +137,7 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
             if (fragment.ivXkcdPic != null) {
                 fragment.ivXkcdPic.setOnClickListener(v -> fragment.launchDetailPageActivity());
             }
-            fragment.singleComicPresenter.updateXkcdSize(fragment.currentPic, resource);
+            fragment.singleExtraPresenter.updateXkcdSize(fragment.currentExtra, resource);
             return false;
         }
     }
@@ -152,7 +150,7 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
 
         @Override
         public void onNegativeClick() {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(XKCD_EXPLAIN_URL + currentPic.num));
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(XKCD_EXPLAIN_URL + currentExtra.num));
             if (browserIntent.resolveActivity(getActivity().getPackageManager()) != null) {
                 startActivity(browserIntent);
             }
@@ -161,14 +159,14 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
         @SuppressLint({"StaticFieldLeak", "CheckResult"})
         @Override
         public void onExplainMoreClick(final SimpleInfoDialogFragment.ExplainingCallback explainingCallback) {
-            SingleComicFragment.this.explainingCallback = explainingCallback;
-            singleComicPresenter.getExplain(currentPic.num);
+            SingleExtraFragment.this.explainingCallback = explainingCallback;
+            singleExtraPresenter.getExplain(currentExtra.num);
             logUXEvent(FIRE_MORE_EXPLAIN);
         }
     };
 
-    public static SingleComicFragment newInstance(int comicId) {
-        SingleComicFragment fragment = new SingleComicFragment();
+    public static SingleExtraFragment newInstance(int comicId) {
+        SingleExtraFragment fragment = new SingleExtraFragment();
         Bundle args = new Bundle();
         args.putInt("id", comicId);
         fragment.setArguments(args);
@@ -192,7 +190,7 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        singleComicPresenter = new SingleComicPresenter(this);
+        singleExtraPresenter = new SingleExtraPresenter(this);
         Bundle args = getArguments();
         if (args != null) {
             id = args.getInt("id");
@@ -213,7 +211,7 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
         pbLoading.clearAnimation();
         pbLoading.setAnimation(AnimationUtils.loadAnimation(pbLoading.getContext(), R.anim.rotate));
         initGlide();
-        singleComicPresenter.loadXkcd(id);
+        singleExtraPresenter.loadXkcd(id);
 
         if (savedInstanceState != null) {
             dialogFragment = (SimpleInfoDialogFragment) getChildFragmentManager()
@@ -227,7 +225,7 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
 
     @Override
     public void onDestroyView() {
-        singleComicPresenter.onDestroy();
+        singleExtraPresenter.onDestroy();
         Glide.clear(target);
         super.onDestroyView();
     }
@@ -243,26 +241,20 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (currentPic == null) {
+        if (currentExtra == null) {
             return false;
         }
         switch (item.getItemId()) {
             case R.id.action_share:
                 Intent shareIntent = new Intent();
                 shareIntent.setAction(Intent.ACTION_SEND);
-                shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_text, currentPic.getTargetImg()));
+                shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_text, currentExtra.img));
                 shareIntent.setType("text/plain");
                 startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.share_to)));
                 logUXEvent(FIRE_SHARE_BAR);
                 return true;
-            case R.id.action_go_xkcd: {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(XKCD_BASE_URL + currentPic.num));
-                startActivity(browserIntent);
-                logUXEvent(FIRE_GO_XKCD_MENU);
-                return true;
-            }
             case R.id.action_go_explain: {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(XKCD_EXPLAIN_URL + currentPic.num));
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(XKCD_EXPLAIN_URL + currentExtra.num));
                 startActivity(browserIntent);
                 logUXEvent(FIRE_GO_EXPLAIN_MENU);
                 return true;
@@ -284,11 +276,11 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
 
     @OnLongClick(R.id.iv_xkcd_pic)
     public boolean showExplainDialog(ImageView v) {
-        if (currentPic == null) {
+        if (currentExtra == null) {
             return false;
         }
         dialogFragment = new SimpleInfoDialogFragment();
-        dialogFragment.setPic(currentPic);
+//        dialogFragment.setPic(currentExtra);
         dialogFragment.setListener(dialogListener);
         dialogFragment.show(getChildFragmentManager(), "AltInfoDialogFragment");
         v.performHapticFeedback(LONG_PRESS, FLAG_IGNORE_GLOBAL_SETTING);
@@ -304,10 +296,10 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
      * Launch a new Activity to show the pic in full screen mode
      */
     private void launchDetailPageActivity() {
-        if (currentPic == null || TextUtils.isEmpty(currentPic.getTargetImg())) {
+        if (currentExtra == null || TextUtils.isEmpty(currentExtra.img)) {
             return;
         }
-        ImageDetailPageActivity.startActivity(getActivity(), currentPic.getTargetImg(), currentPic.num);
+        ImageDetailPageActivity.startActivity(getActivity(), currentExtra.img, currentExtra.num, true);
         getActivity().overridePendingTransition(R.anim.fadein, R.anim.fadeout);
     }
 
@@ -317,22 +309,19 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
      * @param xPic
      */
     @Override
-    public void renderXkcdPic(final XkcdPic xPic) {
+    public void renderExtraPic(final ExtraComics xPic) {
         if (getActivity() == null || getActivity().isFinishing()) {
             return;
         }
         if (TextUtils.isEmpty(target.getModel())) {
-            target.setModel(xPic.getTargetImg());
-            load(xPic.getTargetImg());
+            target.setModel(xPic.img);
+            load(xPic.img);
         }
 
-        currentPic = xPic;
-        Timber.i("Pic to be loaded: %d - %s", id, xPic.getTargetImg());
-        tvTitle.setText(String.format("%d. %s", xPic.num, xPic.getTitle()));
-        tvCreateDate.setText(String.format(getString(R.string.created_on), xPic.year, xPic.month, xPic.day));
-        if (tvDescription != null) {
-            tvDescription.setText(xPic.getAlt());
-        }
+        currentExtra = xPic;
+        Timber.i("Pic to be loaded: %d - %s", id, xPic.img);
+        tvTitle.setText(String.format("%d. %s", xPic.num, xPic.title));
+        tvCreateDate.setText(xPic.date);
     }
 
     private void load(@NonNull String url) {
