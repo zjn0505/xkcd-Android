@@ -50,6 +50,9 @@ public class WhatIfArticleUtil {
         final Elements imageElements = doc.select("img.illustration");
         for (Element element : imageElements) {
             element.attr("src", element.absUrl("src"));
+            if (element.attr("src").startsWith("http://what-if.xkcd")) {
+                element.attr("src", element.attr("src").replaceFirst("http:", "https:"));
+            }
         }
 
         final Elements pElements = doc.select("p");

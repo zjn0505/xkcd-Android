@@ -42,7 +42,9 @@ import xyz.jienan.xkcd.model.util.ExplainLinkUtil;
 
 import static android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING;
 import static android.view.HapticFeedbackConstants.LONG_PRESS;
+import static xyz.jienan.xkcd.Const.FIRE_EXTRA_SUFFIX;
 import static xyz.jienan.xkcd.Const.FIRE_GO_EXPLAIN_MENU;
+import static xyz.jienan.xkcd.Const.FIRE_GO_EXTRA_MENU;
 import static xyz.jienan.xkcd.Const.FIRE_LONG_PRESS;
 import static xyz.jienan.xkcd.Const.FIRE_SHARE_BAR;
 
@@ -171,7 +173,9 @@ public class SingleExtraFragment extends BaseFragment implements SingleExtraCont
             if (dialogFragment != null && dialogFragment.isAdded()) {
                 dialogFragment.setExtraExplain(result);
             }
-            ExplainLinkUtil.setTextViewHTML(tvDescription, result);
+            if (tvDescription != null) {
+                ExplainLinkUtil.setTextViewHTML(tvDescription, result);
+            }
         } else {
             if (dialogFragment != null && dialogFragment.isAdded()) {
                 dialogFragment.setExtraExplain(null);
@@ -248,12 +252,12 @@ public class SingleExtraFragment extends BaseFragment implements SingleExtraCont
                 shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_text, currentExtra.img));
                 shareIntent.setType("text/plain");
                 startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.share_to)));
-                logUXEvent(FIRE_SHARE_BAR);
+                logUXEvent(FIRE_SHARE_BAR + FIRE_EXTRA_SUFFIX);
                 return true;
             case R.id.action_go_explain: {
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(currentExtra.explainUrl));
                 startActivity(browserIntent);
-                logUXEvent(FIRE_GO_EXPLAIN_MENU);
+                logUXEvent(FIRE_GO_EXTRA_MENU);
                 return true;
             }
             default:
@@ -280,7 +284,7 @@ public class SingleExtraFragment extends BaseFragment implements SingleExtraCont
         dialogFragment.setListener(dialogListener);
         dialogFragment.show(getChildFragmentManager(), "AltInfoDialogFragment");
         v.performHapticFeedback(LONG_PRESS, FLAG_IGNORE_GLOBAL_SETTING);
-
+        singleExtraPresenter.getExplain(currentExtra.explainUrl);
         logUXEvent(FIRE_LONG_PRESS);
         return true;
     }

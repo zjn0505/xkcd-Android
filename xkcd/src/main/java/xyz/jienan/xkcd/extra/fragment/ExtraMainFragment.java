@@ -140,6 +140,7 @@ public class ExtraMainFragment extends ContentMainBaseFragment implements ExtraM
     @Override
     public void showExtras(List<ExtraComics> extraComics) {
         adapter.setSize(extraComics.size());
+        ((ExtraPagerAdapter) adapter).setEntities(extraComics);
     }
 
     @Override

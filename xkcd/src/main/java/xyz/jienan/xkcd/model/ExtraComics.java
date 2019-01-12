@@ -2,6 +2,7 @@ package xyz.jienan.xkcd.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -12,7 +13,7 @@ import io.objectbox.annotation.Id;
 import io.objectbox.converter.PropertyConverter;
 
 @Entity
-public class ExtraComics {
+public class ExtraComics implements Serializable {
 
     @Id(assignable = true)
     public long num;

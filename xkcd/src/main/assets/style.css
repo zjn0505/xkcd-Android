@@ -1,10 +1,21 @@
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,pre,a,abbr,acronym,address,big,cite,code,del,dfn,img,ins,kbd,q,s,samp,small,strike,tt,var,b,u,i,center,dl,dt,dd,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{margin:0;padding:0;border:0;font-size:100%;font:inherit;vertical-align:baseline}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}body{line-height:1}ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}table{border-collapse:collapse;border-spacing:0}.centered{margin:0 auto;min-width:960px}.clearfix:after{content:".";display:block;clear:both;visibility:hidden;line-height:0;height:0}.clearfix{display:inline-block}html[xmlns] .clearfix{display:block}* html .clearfix{height:1%}
 
 body {
+    font-size: 1.3em;
     line-height: 1.1em;
-    font-weight: 700;
     background: url('file:///android_asset/graph_tile.png');
     padding: 1em;
+}
+
+div {
+    line-height: 1.1em;
+    font-weight: 700;
+    padding: 1em;
+}
+
+table {
+    line-height: 1.7em;
+    font-weight: 500;
 }
 
 sup {
@@ -23,10 +34,11 @@ ul {
     font-size: 1.5em;
 }
 
-ol {
+body > ol {
     font-size: 1.5em;
-    padding-left: 150px;
+    padding-left: 140px;
 }
+
 
 li {
     line-height: 1.4;
@@ -47,9 +59,23 @@ a > h1 {
 }
 
 blockquote, blockquote > p {
-    font-size: 1.2em;
+    font-size: 1.0em;
     font-style: italic;
-    line-height: 1.2em;
+    line-height: 1.5em;
+}
+
+body > blockquote {
+    font-size: 1.7em;
+}
+
+td > ol > li {
+    font-size: 0.6em;
+    padding: .75em 0;
+    padding-left: 0px;
+}
+
+center > font {
+    font-size: 1.0em;
 }
 
 #news, .entry h1, .date-stamp, #question, .nav-buttons, footer p, footer a:link {

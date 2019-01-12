@@ -1,5 +1,6 @@
 package xyz.jienan.xkcd.ui;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -19,6 +20,7 @@ import java.io.FileInputStream;
 import java.util.ArrayList;
 
 import timber.log.Timber;
+import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.comics.activity.ImageDetailPageActivity;
 import xyz.jienan.xkcd.model.util.XkcdExplainUtil;
 import xyz.jienan.xkcd.whatif.interfaces.LatexInterface;
@@ -41,7 +43,9 @@ public class WhatIfWebView extends WebView {
 
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT && url.contains("what-if.xkcd.com/imgs/a/")) {
+                if ((Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT)
+                        && url.contains("what-if.xkcd.com/imgs/a/")
+                        || url.contains("imgs.xkcd.com/comics")) {
                     url = url.replace("http://", "https://");
                     FutureTarget<File> t = glide.load(url).downloadOnly(10, 10);
                     imageTasks.add(t);
@@ -56,12 +60,19 @@ public class WhatIfWebView extends WebView {
                 }
             }
 
-
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 if (XkcdExplainUtil.isXkcdImageLink(url)) {
                     final long id = XkcdExplainUtil.getXkcdIdFromXkcdImageLink(url);
-                    ImageDetailPageActivity.startActivityFromId(getContext(), id);
+                    if (id != -1) {
+                        ImageDetailPageActivity.startActivityFromId(getContext(), id);
+                    } else {
+                        ImageDetailPageActivity.startActivity(getContext(), url, 1L, false);
+                    }
+                    if (getContext() instanceof Activity) {
+                        ((Activity) getContext()).overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+                    }
+
                 } else {
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                     if (browserIntent.resolveActivity(view.getContext().getPackageManager()) != null) {

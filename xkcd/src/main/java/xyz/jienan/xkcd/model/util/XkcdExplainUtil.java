@@ -88,7 +88,8 @@ public class XkcdExplainUtil {
     public static boolean isXkcdImageLink(@NonNull String url) {
         final String regexExplain = "^https?://www\\.explainxkcd\\.com/wiki/index\\.php/\\d+(?!#)[:]?\\w+$";
         final String regexXkcd = "^https?://(?:www\\.|m\\.)?xkcd\\.com/\\d+/?$";
-        return url.matches(regexExplain) || url.matches(regexXkcd);
+        final String extraXkcd = "^https?://(?:imgs\\.)?xkcd\\.com/comics/.*$";
+        return url.matches(regexExplain) || url.matches(regexXkcd) || url.matches(extraXkcd);
     }
 
     public static long getXkcdIdFromExplainImageLink(String url) {
@@ -107,7 +108,7 @@ public class XkcdExplainUtil {
         if (matcher.find()) {
             return Long.valueOf(matcher.group(1));
         } else {
-            return 0;
+            return -1;
         }
     }
 

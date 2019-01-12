@@ -100,6 +100,10 @@
     <string name="item_what_if_list_title" translatable="false">%d - %s</string>
     <string name="title_what_if_list">what if list</string>
     <string name="share_text_what_if">Come and check this article I got from what if. %s</string>
+    <string name="share_text_article_extra">Come and check this article I got. %s</string>
 
     <string name="quote_sub_text" translatable="false">- %s %s:%d</string>
+
+    <string name="release_for_solution">Release for solution</string>
+    <string name="release_for_puzzle">Release for puzzle</string>
 </resources>

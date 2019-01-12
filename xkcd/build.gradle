@@ -132,6 +132,8 @@ dependencies {
     releaseImplementation "io.objectbox:objectbox-android:$objectboxVersion"
     implementation 'com.jakewharton.timber:timber:4.7.1'
     implementation 'com.jakewharton.rxbinding3:rxbinding:3.0.0-alpha2'
+    implementation 'me.dkzwm.widget.srl:core:1.6.5.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-classics:1.6.5.androidx'
 }
 
 apply plugin: 'com.google.gms.google-services'
