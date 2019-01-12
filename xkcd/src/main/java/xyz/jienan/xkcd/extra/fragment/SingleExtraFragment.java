@@ -43,7 +43,6 @@ import xyz.jienan.xkcd.model.util.ExplainLinkUtil;
 import static android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING;
 import static android.view.HapticFeedbackConstants.LONG_PRESS;
 import static xyz.jienan.xkcd.Const.FIRE_EXTRA_SUFFIX;
-import static xyz.jienan.xkcd.Const.FIRE_GO_EXPLAIN_MENU;
 import static xyz.jienan.xkcd.Const.FIRE_GO_EXTRA_MENU;
 import static xyz.jienan.xkcd.Const.FIRE_LONG_PRESS;
 import static xyz.jienan.xkcd.Const.FIRE_SHARE_BAR;
