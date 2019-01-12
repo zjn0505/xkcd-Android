@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<me.dkzwm.widget.srl.SmoothRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/refresh_layout"
+    android:background="@drawable/what_if_webview_bg"
+    tools:context="xyz.jienan.xkcd.home.MainActivity">
+
+    <xyz.jienan.xkcd.ui.WhatIfWebView
+        android:id="@+id/webview_what_if"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</me.dkzwm.widget.srl.SmoothRefreshLayout>

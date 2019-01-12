@@ -6,9 +6,11 @@ import android.text.TextUtils;
 import java.util.List;
 
 import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import xyz.jienan.xkcd.base.network.NetworkService;
 import xyz.jienan.xkcd.model.persist.BoxManager;
+import xyz.jienan.xkcd.model.util.ExtraHtmlUtil;
 import xyz.jienan.xkcd.model.util.XkcdExplainUtil;
 
 public class ExtraModel {
@@ -52,5 +54,10 @@ public class ExtraModel {
 
     public void saveExtraWithExplain(String url, String explainContent) {
         boxManager.updateExtra(url, explainContent);
+    }
+
+    public Observable<String> parseContnetFromUrl(String url) {
+        return ExtraHtmlUtil.getContentFromUrl(url)
+                .observeOn(AndroidSchedulers.mainThread());
     }
 }

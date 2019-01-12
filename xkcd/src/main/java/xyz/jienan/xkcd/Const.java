@@ -44,6 +44,7 @@ public class Const {
     public static final String FIRE_SPECIFIC_MENU = "specific_menu";
     public static final String FIRE_GO_XKCD_MENU = "go_xkcd_menu";
     public static final String FIRE_GO_WHAT_IF_MENU = "go_what_if_menu";
+    public static final String FIRE_GO_EXTRA_MENU = "go_extra_menu";
     public static final String FIRE_GO_EXPLAIN_MENU = "go_explain_menu";
     public static final String FIRE_LONG_PRESS = "long_press";
     public static final String FIRE_MORE_EXPLAIN = "more_explain";
@@ -68,6 +69,7 @@ public class Const {
     public static final String FIRE_WHAT_IF_REF = "fire_what_if_ref";
     public static final String FIRE_WHAT_IF_IMG_LONG = "fire_what_if_img_long";
     public static final String FIRE_WHAT_IF_SUFFIX = "_what_if";
+    public static final String FIRE_EXTRA_SUFFIX = "_extra";
     // user actions end
 
     public static final String URI_XKCD_EXPLAIN_EDIT = "xkcd://explain.edit";

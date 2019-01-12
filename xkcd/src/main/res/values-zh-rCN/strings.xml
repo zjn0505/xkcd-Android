@@ -72,5 +72,9 @@
     <string name="action_specific_what_if">选择指定 what if</string>
     <string name="search_hint_what_if">搜索 what if</string>
     <string name="title_what_if_list">what if 列表</string>
-    <string name="share_text_what_if">一起来看看这篇有趣的  what if 文章吧. %s</string>
+    <string name="share_text_what_if">一起来看看这篇有趣的 what if 文章吧. %s</string>
+    <string name="share_text_article_extra">一起来看看这篇有趣的文章吧. %s</string>
+
+    <string name="release_for_solution">松开查看答案</string>
+    <string name="release_for_puzzle">松开查看问题</string>
 </resources>

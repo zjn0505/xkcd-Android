@@ -32,6 +32,7 @@ import butterknife.BindView;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import timber.log.Timber;
 import xyz.jienan.xkcd.BuildConfig;
 import xyz.jienan.xkcd.R;
@@ -59,19 +60,19 @@ import static xyz.jienan.xkcd.Const.FIRE_WHAT_IF_SUFFIX;
 public class SingleWhatIfFragment extends BaseFragment implements ImgInterface.ImgCallback, RefInterface.RefCallback {
 
     @BindView(R.id.webview_what_if)
-    WhatIfWebView webView;
+    public WhatIfWebView webView;
 
-    private int id;
+    private int id = -1;
 
     private WhatIfMainFragment parentFragment;
 
     private LatexInterface latexInterface = new LatexInterface();
 
-    private CompositeDisposable compositeDisposable;
+    protected CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     private AlertDialog dialog = null;
 
-    private SharedPrefManager sharedPref = new SharedPrefManager();
+    protected SharedPrefManager sharedPref = new SharedPrefManager();
 
     public static SingleWhatIfFragment newInstance(int articleId) {
         SingleWhatIfFragment fragment = new SingleWhatIfFragment();
@@ -80,7 +81,6 @@ public class SingleWhatIfFragment extends BaseFragment implements ImgInterface.I
         fragment.setArguments(args);
         return fragment;
     }
-
 
     @Override
     protected int getLayoutResId() {
@@ -92,7 +92,7 @@ public class SingleWhatIfFragment extends BaseFragment implements ImgInterface.I
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
         if (args != null)
-            id = args.getInt("id");
+            id = args.getInt("id", -1);
         setHasOptionsMenu(true);
     }
 
@@ -100,7 +100,6 @@ public class SingleWhatIfFragment extends BaseFragment implements ImgInterface.I
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
-        compositeDisposable = new CompositeDisposable();
         webView.getSettings().setBuiltInZoomControls(true);
         webView.getSettings().setUseWideViewPort(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT);
         webView.getSettings().setJavaScriptEnabled(true);
@@ -110,24 +109,35 @@ public class SingleWhatIfFragment extends BaseFragment implements ImgInterface.I
         webView.getSettings().setAppCacheEnabled(true);
         webView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
         webView.getSettings().setTextZoom(sharedPref.getWhatIfZoom());
-        final WhatIfModel model = WhatIfModel.getInstance();
-        compositeDisposable.add(model.loadArticle(id)
-                .doOnSuccess(model::push)
-                .subscribe(article -> {
-                            if (webView != null) {
-                                webView.loadDataWithBaseURL("file:///android_asset/", article.content, "text/html", "UTF-8", null);
-                            }
-                        },
-                        Timber::e));
-        webView.setCallback(new WebViewScrollCallback(this));
-        webView.setLatexScrollInterface(latexInterface);
-        webView.addJavascriptInterface(latexInterface, "AndroidLatex");
-        webView.addJavascriptInterface(new ImgInterface(this), "AndroidImg");
-        webView.addJavascriptInterface(new RefInterface(this), "AndroidRef");
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
             WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG);
         }
-        parentFragment = ((WhatIfMainFragment) getParentFragment());
+        if (id != -1) {
+            final WhatIfModel model = WhatIfModel.getInstance();
+
+            compositeDisposable.add(model.loadArticle(id)
+                    .doOnSuccess(model::push)
+                    .subscribe(article -> {
+                                if (webView != null) {
+                                    webView.loadDataWithBaseURL("file:///android_asset/",
+                                            article.content.replaceAll("\\$", "&#36;"), "text/html", "UTF-8", null);
+                                }
+                            },
+                            Timber::e));
+
+            webView.setCallback(new WebViewScrollCallback(this));
+            webView.setLatexScrollInterface(latexInterface);
+            webView.addJavascriptInterface(latexInterface, "AndroidLatex");
+            webView.addJavascriptInterface(new ImgInterface(this), "AndroidImg");
+            webView.addJavascriptInterface(new RefInterface(this), "AndroidRef");
+
+            if (getParentFragment() instanceof WhatIfMainFragment) {
+                parentFragment = ((WhatIfMainFragment) getParentFragment());
+            }
+        }
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+            WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG);
+        }
         setHasOptionsMenu(true);
         compositeDisposable.add(WhatIfModel
                 .getInstance()
@@ -135,23 +145,6 @@ public class SingleWhatIfFragment extends BaseFragment implements ImgInterface.I
                 .subscribe(zoom -> webView.getSettings().setTextZoom(zoom),
                         e -> Timber.e(e, "observing zoom error")));
         return view;
-    }
-
-    private class WebViewScrollCallback implements WhatIfWebView.ScrollToEndCallback {
-
-        private WeakReference<SingleWhatIfFragment> weakReference;
-
-        WebViewScrollCallback(SingleWhatIfFragment fragment) {
-            weakReference = new WeakReference<>(fragment);
-        }
-
-        @Override
-        public void scrolledToTheEnd(boolean isTheEnd) {
-            if (weakReference.get() != null) {
-                SingleWhatIfFragment fragment = weakReference.get();
-                fragment.scrolledToTheEnd(isTheEnd);
-            }
-        }
     }
 
     @Override
@@ -247,5 +240,22 @@ public class SingleWhatIfFragment extends BaseFragment implements ImgInterface.I
         textView.setMovementMethod(LinkMovementMethod.getInstance());
         dialog.setView(view);
         dialog.show();
+    }
+
+    private class WebViewScrollCallback implements WhatIfWebView.ScrollToEndCallback {
+
+        private WeakReference<SingleWhatIfFragment> weakReference;
+
+        WebViewScrollCallback(SingleWhatIfFragment fragment) {
+            weakReference = new WeakReference<>(fragment);
+        }
+
+        @Override
+        public void scrolledToTheEnd(boolean isTheEnd) {
+            if (weakReference.get() != null) {
+                SingleWhatIfFragment fragment = weakReference.get();
+                fragment.scrolledToTheEnd(isTheEnd);
+            }
+        }
     }
 }
