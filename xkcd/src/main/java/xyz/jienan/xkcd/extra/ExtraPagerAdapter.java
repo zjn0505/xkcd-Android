@@ -8,7 +8,6 @@ import xyz.jienan.xkcd.extra.fragment.SingleExtraFragment;
 import xyz.jienan.xkcd.extra.fragment.SingleExtraWebViewFragment;
 import xyz.jienan.xkcd.home.base.BaseStatePagerAdapter;
 import xyz.jienan.xkcd.model.ExtraComics;
-import xyz.jienan.xkcd.whatif.fragment.SingleWhatIfFragment;
 
 public class ExtraPagerAdapter extends BaseStatePagerAdapter {
 

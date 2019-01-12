@@ -9,7 +9,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebSettings;
-import android.webkit.WebView;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -24,13 +23,11 @@ import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.footer.ClassicFooter;
 import me.dkzwm.widget.srl.extra.header.ClassicHeader;
 import timber.log.Timber;
-import xyz.jienan.xkcd.BuildConfig;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.model.ExtraComics;
 import xyz.jienan.xkcd.model.ExtraModel;
 import xyz.jienan.xkcd.ui.RefreshFooterView;
 import xyz.jienan.xkcd.ui.RefreshHeaderView;
-import xyz.jienan.xkcd.ui.WhatIfWebView;
 import xyz.jienan.xkcd.whatif.fragment.SingleWhatIfFragment;
 
 import static xyz.jienan.xkcd.Const.FIRE_EXTRA_SUFFIX;
