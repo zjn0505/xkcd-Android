@@ -7,17 +7,15 @@ import org.jsoup.select.Elements;
 
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
+import xyz.jienan.xkcd.base.network.NetworkService;
 
 public class ExtraHtmlUtil {
 
     private static final String XKCD_LINK = "http://www.xkcd.com/";
 
     public static Observable<String> getContentFromUrl(String url) {
-        return Observable.just(url)
-                .subscribeOn(Schedulers.io())
-                .map(ignored -> Jsoup.connect(url)
-                        .header("Cache-control", "cache")
-                        .get())
+        return NetworkService.getXkcdAPI().getExplain(url)
+                .map(responseBody -> Jsoup.parse(responseBody.string()))
                 .map(doc -> {
                     doc.head().appendElement("link")
                             .attr("rel", "stylesheet")
@@ -40,6 +38,8 @@ public class ExtraHtmlUtil {
 
                     return doc;
                 })
-                .map(Node::outerHtml);
+                .map(Node::outerHtml)
+
+                .subscribeOn(Schedulers.io());
     }
 }

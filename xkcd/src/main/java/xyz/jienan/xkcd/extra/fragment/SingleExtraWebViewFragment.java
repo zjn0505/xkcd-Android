@@ -79,6 +79,9 @@ public class SingleExtraWebViewFragment extends SingleWhatIfFragment {
             webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         }
         webView.getSettings().setTextZoom((int) (sharedPref.getWhatIfZoom() * 1.5));
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            webView.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
+        }
         if (savedInstanceState != null) {
             currentPage = savedInstanceState.getInt("current", 0);
         }
