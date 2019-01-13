@@ -56,7 +56,7 @@ public class ExtraModel {
         boxManager.updateExtra(url, explainContent);
     }
 
-    public Observable<String> parseContnetFromUrl(String url) {
+    public Observable<String> parseContentFromUrl(String url) {
         return ExtraHtmlUtil.getContentFromUrl(url)
                 .observeOn(AndroidSchedulers.mainThread());
     }

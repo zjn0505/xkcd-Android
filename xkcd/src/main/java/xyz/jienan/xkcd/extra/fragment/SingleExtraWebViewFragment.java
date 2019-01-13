@@ -172,7 +172,7 @@ public class SingleExtraWebViewFragment extends SingleWhatIfFragment {
         List<String> links = extraComics.links;
 
         compositeDisposable.add(
-                ExtraModel.getInstance().parseContnetFromUrl(links.get(Math.abs(pageIndex % links.size())))
+                ExtraModel.getInstance().parseContentFromUrl(links.get(Math.abs(pageIndex % links.size())))
                         .subscribe(html -> webView.loadDataWithBaseURL("file:///android_asset/.",
                                 html, "text/html", "UTF-8", null),
                                 Timber::e));
