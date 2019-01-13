@@ -1,5 +1,7 @@
 package xyz.jienan.xkcd.extra;
 
+import android.text.TextUtils;
+
 import java.util.List;
 
 import androidx.fragment.app.Fragment;
@@ -20,7 +22,7 @@ public class ExtraPagerAdapter extends BaseStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         ExtraComics extraComics = extraComicsList.get(position);
-        if (extraComics.links != null && !extraComics.links.isEmpty()) {
+        if (extraComics.links != null && !extraComics.links.isEmpty() && !TextUtils.isEmpty(extraComics.links.get(0))) {
             SingleExtraWebViewFragment fragment = SingleExtraWebViewFragment.newInstance(extraComics);
             fragmentsMap.put(position + 1, fragment);
             return fragment;
