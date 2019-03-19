@@ -45,10 +45,10 @@ import static xyz.jienan.xkcd.Const.FIRE_NAVI_XKCD;
 import static xyz.jienan.xkcd.Const.FIRE_SETTING_MENU;
 import static xyz.jienan.xkcd.Const.INDEX_ON_NOTI_INTENT;
 import static xyz.jienan.xkcd.Const.LANDING_TYPE;
-import static xyz.jienan.xkcd.Const.LAST_VIEW_WHAT_IF_ID;
 import static xyz.jienan.xkcd.Const.TAG_EXTRA;
 import static xyz.jienan.xkcd.Const.TAG_WHAT_IF;
 import static xyz.jienan.xkcd.Const.TAG_XKCD;
+import static xyz.jienan.xkcd.Const.WHAT_IF_LATEST_INDEX;
 
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -250,7 +250,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                     && !connectivityManager.isActiveNetworkMetered();
             if (isConnected) {
                 Intent msgIntent = new Intent(this, WhatIfFastLoadService.class);
-                msgIntent.putExtra(LAST_VIEW_WHAT_IF_ID, sharedPrefManager.getLatestWhatIf());
+                msgIntent.putExtra(WHAT_IF_LATEST_INDEX, sharedPrefManager.getLatestWhatIf());
                 startService(msgIntent);
             }
         }

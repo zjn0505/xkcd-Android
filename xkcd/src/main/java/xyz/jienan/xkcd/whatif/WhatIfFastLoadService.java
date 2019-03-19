@@ -14,7 +14,7 @@ import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 import xyz.jienan.xkcd.model.WhatIfModel;
 
-import static xyz.jienan.xkcd.Const.LAST_VIEW_WHAT_IF_ID;
+import static xyz.jienan.xkcd.Const.WHAT_IF_LATEST_INDEX;
 
 public class WhatIfFastLoadService extends IntentService {
 
@@ -33,7 +33,7 @@ public class WhatIfFastLoadService extends IntentService {
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         if (intent != null) {
-            long latestId = intent.getLongExtra(LAST_VIEW_WHAT_IF_ID, 0);
+            long latestId = intent.getLongExtra(WHAT_IF_LATEST_INDEX, 0);
 
             disposable = Observable.timer(WHAT_IF_FASTLOAD_DELAY, TimeUnit.SECONDS)
                     .flatMapCompletable(ignored -> whatIfModel.fastLoadWhatIfs(latestId))

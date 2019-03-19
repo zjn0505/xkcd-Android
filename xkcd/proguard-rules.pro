@@ -99,3 +99,7 @@
 -dontnote com.google.**
 -dontnote io.fabric.sdk.android.**
 -dontnote okio.**
+
+# dependencies
+-dontnote me.dkzwm.widget.srl.**
+-dontnote xyz.jienan.xkcd.ui.like.LikeButton

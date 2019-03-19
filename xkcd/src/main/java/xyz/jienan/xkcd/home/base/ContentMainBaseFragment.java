@@ -638,15 +638,19 @@ public abstract class ContentMainBaseFragment extends BaseFragment implements Sh
         searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem menuItem) {
-                ((MainActivity) getActivity()).toggleDrawerAvailability(false);
-                setItemsVisibility(menu, new int[]{R.id.action_left, R.id.action_right, R.id.action_share}, false);
+                if (getActivity() != null) {
+                    ((MainActivity) getActivity()).toggleDrawerAvailability(false);
+                    setItemsVisibility(menu, new int[]{R.id.action_left, R.id.action_right, R.id.action_share}, false);
+                }
                 return true;
             }
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem menuItem) {
-                ((MainActivity) getActivity()).toggleDrawerAvailability(true);
-                setItemsVisibility(menu, new int[]{R.id.action_left, R.id.action_right, R.id.action_share}, true);
+                if (getActivity() != null) {
+                    ((MainActivity) getActivity()).toggleDrawerAvailability(true);
+                    setItemsVisibility(menu, new int[]{R.id.action_left, R.id.action_right, R.id.action_share}, true);
+                }
                 return true;
             }
         });
