@@ -33,6 +33,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.github.piasy.biv.loader.ImageLoader;
+import com.github.piasy.biv.metadata.ImageInfoExtractor;
 import com.github.piasy.biv.view.BigImageView;
 
 import java.io.File;
@@ -63,7 +64,7 @@ public final class GlideImageLoader implements ImageLoader {
             public void onResourceReady(File resource, GlideAnimation<? super File> glideAnimation) {
                 super.onResourceReady(resource, glideAnimation);
                 // we don't need delete this image file, so it behaves live cache hit
-                callback.onCacheHit(resource);
+                callback.onCacheHit(ImageInfoExtractor.getImageType(resource), resource);
                 callback.onSuccess(resource);
             }
 
@@ -110,12 +111,6 @@ public final class GlideImageLoader implements ImageLoader {
         Glide.with(context)
                 .load(uri)
                 .downloadOnly(target);
-    }
-
-    @Override
-    public View showThumbnail(BigImageView parent, Uri thumbnail, int scaleType) {
-        // not used
-        return null;
     }
 
     private void saveTarget(int requestId, ImageDownloadTarget target) {
