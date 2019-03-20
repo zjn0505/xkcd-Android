@@ -40,6 +40,9 @@ android {
     packagingOptions {
         exclude "/META-INF/*.kotlin_module"
         exclude "**/kotlin/**"
+        exclude "/META-INF/*.version"
+        exclude "/META-INF/CHANGES"
+        exclude "/META-INF/*.md"
     }
     compileSdkVersion 28
     buildToolsVersion '28.0.3'
