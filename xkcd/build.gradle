@@ -74,11 +74,13 @@ android {
 
     buildTypes {
         debug {
-            useProguard false
+            minifyEnabled true
+            zipAlignEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             testProguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project-test.pro'
             applicationIdSuffix ".debug"
-            multiDexEnabled true
+            multiDexEnabled false
         }
 
         release {

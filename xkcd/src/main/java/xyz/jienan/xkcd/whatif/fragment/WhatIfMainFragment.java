@@ -77,6 +77,9 @@ public class WhatIfMainFragment extends ContentMainBaseFragment implements WhatI
                 .subscribe(ignored -> fab.hide(),
                         e -> Timber.e(e, "fab observing error"));
         compositeDisposable.add(d);
+        if (view != null) {
+            view.setBackgroundResource(R.drawable.what_if_webview_bg);
+        }
         return view;
     }
 

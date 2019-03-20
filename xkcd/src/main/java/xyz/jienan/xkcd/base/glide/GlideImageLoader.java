@@ -27,14 +27,12 @@ package xyz.jienan.xkcd.base.glide;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.view.View;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.github.piasy.biv.loader.ImageLoader;
 import com.github.piasy.biv.metadata.ImageInfoExtractor;
-import com.github.piasy.biv.view.BigImageView;
 
 import java.io.File;
 import java.util.concurrent.ConcurrentHashMap;
@@ -71,7 +69,7 @@ public final class GlideImageLoader implements ImageLoader {
             @Override
             public void onLoadFailed(Exception e, Drawable errorDrawable) {
                 super.onLoadFailed(e, errorDrawable);
-                if (uri.getPath().startsWith("https")) {
+                if (uri.getPath() != null && uri.getPath().startsWith("https")) {
                     Glide.with(context).load(Uri.parse(uri.getPath().replaceFirst("https", "http")))
                             .downloadOnly(this);
                     return;

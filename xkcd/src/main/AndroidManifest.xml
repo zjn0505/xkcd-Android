@@ -53,13 +53,15 @@
             android:configChanges="screenSize|orientation|keyboardHidden"
             android:label="@string/title_what_if_list" />
 
-        <service android:name=".base.firebase.XkcdFirebaseMessagingService">
+        <service android:name=".base.firebase.XkcdFirebaseMessagingService"
+            tools:ignore="ExportedService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
-        <service android:name=".base.firebase.XkcdFirebaseInstanceIDService">
+        <service android:name=".base.firebase.XkcdFirebaseInstanceIDService"
+            tools:ignore="ExportedService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>

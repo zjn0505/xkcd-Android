@@ -5,7 +5,6 @@ import android.content.Context;
 
 import com.squareup.leakcanary.LeakCanary;
 
-import androidx.multidex.MultiDex;
 import io.objectbox.BoxStore;
 import io.objectbox.android.AndroidObjectBrowser;
 import timber.log.Timber;
@@ -20,8 +19,6 @@ public class DebugUtils {
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
         }
-
-        MultiDex.install(context);
 
         LeakCanary.install((Application) context);
         return true;
