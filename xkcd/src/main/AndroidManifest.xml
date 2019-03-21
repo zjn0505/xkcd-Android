@@ -16,7 +16,7 @@
         android:extractNativeLibs="true"
         tools:replace="android:extractNativeLibs"
         android:theme="@style/AppNoBarFontTheme"
-        tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute">
+        tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
         <activity
             android:name="xyz.jienan.xkcd.home.MainActivity"
             android:configChanges="screenSize|keyboardHidden"
