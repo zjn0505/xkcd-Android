@@ -56,7 +56,6 @@ android {
         vectorDrawables.useSupportLibrary = true
         resConfigs "zh-rCN"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        multiDexEnabled true
     }
 
     signingConfigs {
@@ -80,7 +79,8 @@ android {
             minifyEnabled true
             zipAlignEnabled true
             shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            useProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'proguard-rules-debug.pro'
             testProguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project-test.pro'
             applicationIdSuffix ".debug"
             multiDexEnabled false

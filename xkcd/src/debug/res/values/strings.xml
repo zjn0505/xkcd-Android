@@ -2,4 +2,6 @@
     <string name="app_name" translatable="false">xkcd debug</string>
     
     <string name="action_noti" translatable="false">Test Notification</string>
+
+    <string name="leak_canary_display_activity_label" translatable="false">xkcd-Leak Canary</string>
 </resources>

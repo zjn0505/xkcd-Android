@@ -228,6 +228,7 @@ public class SingleComicFragment extends BaseFragment implements SingleComicCont
     @Override
     public void onDestroyView() {
         singleComicPresenter.onDestroy();
+        dialogFragment = null;
         Glide.clear(target);
         super.onDestroyView();
     }
