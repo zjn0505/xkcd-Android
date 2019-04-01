@@ -154,17 +154,17 @@ dependencies {
     implementation 'me.dkzwm.widget.srl:core:1.6.5.androidx'
     implementation 'me.dkzwm.widget.srl:ext-classics:1.6.5.androidx'
 
-    implementation 'androidx.slice:slice-core:1.0.0'
-    implementation 'androidx.slice:slice-builders:1.0.0'
+//    implementation 'androidx.slice:slice-core:1.0.0'
+//    implementation 'androidx.slice:slice-builders:1.0.0'
 
-    testImplementation 'junit:junit:4.12'
-
-    androidTestImplementation "androidx.arch.core:core-testing:2.0.1"
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
-    androidTestImplementation "androidx.test.espresso:espresso-intents:3.1.1"
-    androidTestImplementation "androidx.test.espresso:espresso-contrib:3.1.1"
-
-    implementation 'androidx.multidex:multidex:2.0.1'
+//    testImplementation 'junit:junit:4.12'
+//
+//    androidTestImplementation "androidx.arch.core:core-testing:2.0.1"
+//    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+//    androidTestImplementation "androidx.test.espresso:espresso-intents:3.1.1"
+//    androidTestImplementation "androidx.test.espresso:espresso-contrib:3.1.1"
+//
+//    implementation 'androidx.multidex:multidex:2.0.1'
 
 }
 
