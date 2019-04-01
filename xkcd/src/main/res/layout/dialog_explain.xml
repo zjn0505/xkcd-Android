@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <xyz.jienan.xkcd.ui.HackyTextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_explain"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

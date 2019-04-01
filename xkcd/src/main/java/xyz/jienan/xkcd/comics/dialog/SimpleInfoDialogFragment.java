@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
-import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -22,6 +21,7 @@ import butterknife.ButterKnife;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.model.XkcdPic;
 import xyz.jienan.xkcd.model.util.ExplainLinkUtil;
+import xyz.jienan.xkcd.ui.CustomMovementMethod;
 
 /**
  * Created by jienanzhang on 09/07/2017.
@@ -145,7 +145,7 @@ public class SimpleInfoDialogFragment extends DialogFragment {
             tvExplain.setText(xkcdContent);
         } else {
             tvExplain.setText(Html.fromHtml(htmlContent));
-            tvExplain.setMovementMethod(LinkMovementMethod.getInstance());
+            tvExplain.setMovementMethod(CustomMovementMethod.getInstance());
             negativeBtnTextId = R.string.go_to_explainxkcd;
             hasExplainedMore = true;
         }
