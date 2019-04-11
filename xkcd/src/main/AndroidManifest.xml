@@ -60,13 +60,6 @@
             </intent-filter>
         </service>
 
-        <service android:name=".base.firebase.XkcdFirebaseInstanceIDService"
-            tools:ignore="ExportedService">
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
-            </intent-filter>
-        </service>
-
         <service android:name=".whatif.WhatIfFastLoadService"
             android:exported="false"/>
 

@@ -29,6 +29,12 @@ public class XkcdFirebaseMessagingService extends FirebaseMessagingService {
     private BoxManager boxManager = BoxManager.getInstance();
 
     @Override
+    public void onNewToken(String refreshedToken) {
+        super.onNewToken(refreshedToken);
+        Timber.d("Refreshed token: %s", refreshedToken);
+    }
+
+    @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
         Timber.d("onMessageReceived: data %s", remoteMessage.getData());
