@@ -11,10 +11,11 @@ import android.os.Build;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 import xyz.jienan.xkcd.R;
 
 /**

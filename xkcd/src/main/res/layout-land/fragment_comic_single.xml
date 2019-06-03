@@ -18,7 +18,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tv_title"
+                android:id="@+id/tvTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
@@ -40,7 +40,7 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/tv_description"
+                        android:id="@+id/tvDescription"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_margin="20dp"
@@ -51,7 +51,7 @@
             </ScrollView>
 
             <TextView
-                android:id="@+id/tv_create_date"
+                android:id="@+id/tvCreateDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
@@ -68,8 +68,8 @@
             android:layout_height="match_parent"
             android:layout_weight="2">
 
-            <com.github.chrisbanes.photoview.PhotoView
-                android:id="@+id/iv_xkcd_pic"
+            <ImageView
+                android:id="@+id/ivXkcdPic"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="20dp"
@@ -78,7 +78,7 @@
                 android:scaleType="fitCenter" />
 
             <Button
-                android:id="@+id/btn_reload"
+                android:id="@+id/btnReload"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -91,8 +91,7 @@
     </LinearLayout>
 
     <com.dinuscxj.progressbar.CircleProgressBar
-        android:id="@+id/pb_loading"
+        android:id="@+id/pbLoading"
         style="@style/image_progress_bar" />
-
 
 </FrameLayout>

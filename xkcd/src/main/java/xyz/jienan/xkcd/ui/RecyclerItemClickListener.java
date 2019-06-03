@@ -43,15 +43,6 @@ public class RecyclerItemClickListener extends RecyclerView.SimpleOnItemTouchLis
         return false;
     }
 
-    @Override
-    public void onTouchEvent(RecyclerView view, MotionEvent motionEvent) {
-        // no-ops
-    }
-
-    @Override
-    public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-    }
-
     public interface OnItemClickListener {
 
         void onItemClick(View view, int position);

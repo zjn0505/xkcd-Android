@@ -4,25 +4,25 @@
     android:layout_height="match_parent">
 
     <ProgressBar
-        android:id="@+id/pb_loading"
+        android:id="@+id/pbLoading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:visibility="gone" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_list"
+        android:id="@+id/rvList"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <xyz.jienan.xkcd.list.RecyclerViewFastScroller
-        android:id="@+id/rv_scroller"
+        android:id="@+id/rvScroller"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_alignBottom="@id/rv_list"
+        android:layout_alignBottom="@id/rvList"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_alignTop="@id/rv_list"
+        android:layout_alignTop="@id/rvList"
         android:visibility="gone" />
 
 </RelativeLayout>

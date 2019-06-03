@@ -1,0 +1,502 @@
+package xyz.jienan.xkcd.home.base
+
+import android.animation.ArgbEvaluator
+import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
+import android.app.Activity.RESULT_OK
+import android.app.SearchManager
+import android.content.Context
+import android.content.Context.SENSOR_SERVICE
+import android.content.Intent
+import android.content.res.ColorStateList
+import android.hardware.SensorManager
+import android.os.Build
+import android.os.Bundle
+import android.preference.PreferenceManager
+import android.view.*
+import android.view.HapticFeedbackConstants.CONTEXT_CLICK
+import android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
+import android.view.animation.DecelerateInterpolator
+import android.widget.ImageButton
+import android.widget.Toast
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
+import androidx.viewpager.widget.ViewPager
+import androidx.viewpager.widget.ViewPager.SCROLL_STATE_DRAGGING
+import androidx.viewpager.widget.ViewPager.SCROLL_STATE_IDLE
+import com.squareup.seismic.ShakeDetector
+import kotlinx.android.synthetic.main.fab_sub_icons.*
+import kotlinx.android.synthetic.main.fragment_comic_main.*
+import xyz.jienan.xkcd.Const.*
+import xyz.jienan.xkcd.R
+import xyz.jienan.xkcd.base.BaseFragment
+import xyz.jienan.xkcd.comics.SearchCursorAdapter
+import xyz.jienan.xkcd.comics.dialog.NumberPickerDialogFragment
+import xyz.jienan.xkcd.home.MainActivity
+import xyz.jienan.xkcd.model.WhatIfArticle
+import xyz.jienan.xkcd.model.XkcdPic
+import xyz.jienan.xkcd.model.persist.BoxManager
+import xyz.jienan.xkcd.model.persist.SharedPrefManager
+import xyz.jienan.xkcd.ui.NotificationUtils
+import xyz.jienan.xkcd.ui.like.LikeButton
+import xyz.jienan.xkcd.ui.like.OnLikeListener
+import xyz.jienan.xkcd.ui.like.animateHide
+import xyz.jienan.xkcd.ui.like.animateShow
+import java.lang.ref.WeakReference
+import java.util.*
+
+abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener {
+
+    val isFabShowing: Boolean
+        get() = fab.isShown
+
+    protected lateinit var adapter: BaseStatePagerAdapter
+
+    protected lateinit var presenter: ContentMainBasePresenter
+
+    protected val searchAdapter by lazy { SearchCursorAdapter(activity, null, 0) }
+
+    protected var latestIndex = INVALID_ID
+
+    private val isFre: Boolean
+        get() = latestIndex == INVALID_ID
+
+    private val sharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(context) }
+
+    private var isFabsShowing = false
+
+    private var toast: Toast? = null
+
+    private val sd by lazy { ShakeDetector(this) }
+
+    private var lastViewedId = INVALID_ID
+
+    private val subFabAnimationDistance by lazy { fab!!.width.toFloat() }
+
+    private val likeListener = object : OnLikeListener {
+        override fun liked(likeButton: LikeButton) {
+            when (likeButton.id) {
+                R.id.btnFav -> {
+                    presenter.favorited(currentIndex.toLong(), true)
+                    logSubUXEvent(FIRE_FAVORITE_ON)
+                }
+                R.id.btnThumb -> {
+                    presenter.liked(currentIndex.toLong())
+                    logSubUXEvent(FIRE_THUMB_UP)
+                }
+            }
+        }
+
+        override fun unliked(likeButton: LikeButton) {
+            when (likeButton.id) {
+                R.id.btnFav -> {
+                    presenter.favorited(currentIndex.toLong(), false)
+                    logSubUXEvent(FIRE_FAVORITE_OFF)
+                }
+            }
+        }
+    }
+
+    private val pickerListener = object : NumberPickerDialogFragment.INumberPickerDialogListener {
+        override fun onPositiveClick(number: Int) {
+            scrollViewPagerToItem(number - 1, false)
+        }
+
+        override fun onNegativeClick() {
+            // Do nothing
+        }
+    }
+
+    protected abstract val titleTextRes: String
+
+    protected abstract val pickerTitleTextRes: Int
+
+    protected val currentIndex: Int
+        get() = viewPager!!.currentItem + 1
+
+    protected abstract val searchHint: CharSequence
+
+    protected abstract fun suggestionClicked(position: Int)
+
+    protected abstract fun updateFab()
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = super.onCreateView(inflater, container, savedInstanceState)
+        setHasOptionsMenu(true)
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        btnFav.setOnLikeListener(likeListener)
+        btnThumb.setOnLikeListener(likeListener)
+        viewPager.adapter = adapter
+
+        val actionBar = (activity as AppCompatActivity).supportActionBar
+        if (actionBar != null) {
+            actionBar.title = titleTextRes
+            actionBar.subtitle = null
+        }
+
+        viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrollStateChanged(state: Int) {
+                if (state == SCROLL_STATE_DRAGGING) {
+                    fab?.hide()
+                    toggleSubFabs(false)
+                } else if (state == SCROLL_STATE_IDLE) {
+                    updateFab()
+                }
+            }
+
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+                // no ops
+            }
+
+            override fun onPageSelected(position: Int) {
+                (activity as MainActivity).toggleDrawerAvailability(true)
+                actionBar?.subtitle = (position + 1).toString()
+            }
+        })
+        presenter.loadLatest()
+        latestIndex = presenter.latest
+        lastViewedId = presenter.getLastViewed(latestIndex)
+        if (savedInstanceState != null) {
+            actionBar?.subtitle = lastViewedId.toString()
+            val pickerDialog = childFragmentManager.findFragmentByTag(NumberPickerDialogFragment.TAG) as NumberPickerDialogFragment?
+            pickerDialog?.setListener(pickerListener)
+        } else if (activity?.intent != null) {
+            val notiIndex = activity!!.intent.getIntExtra(INDEX_ON_NOTI_INTENT, INVALID_ID)
+
+            if (notiIndex != INVALID_ID) {
+                lastViewedId = notiIndex
+                latestIndex = lastViewedId
+                presenter.latest = latestIndex
+                logSubUXEvent(FIRE_FROM_NOTIFICATION, mapOf(FIRE_FROM_NOTIFICATION_INDEX to notiIndex.toString()))
+            }
+            activity!!.intent = null
+        }
+        if (latestIndex > INVALID_ID) {
+            adapter.setSize(latestIndex)
+            scrollViewPagerToItem(if (lastViewedId > INVALID_ID) lastViewedId - 1 else latestIndex - 1, false)
+        }
+
+        sd.start(activity?.getSystemService(SENSOR_SERVICE) as SensorManager)
+
+        fab.setOnClickListener { toggleSubFabs(!isFabsShowing) }
+    }
+
+    override fun onDestroyView() {
+        sd.stop()
+        presenter.onDestroy()
+        super.onDestroyView()
+    }
+
+    override fun onStop() {
+        if (viewPager != null && latestIndex > INVALID_ID) {
+            val lastViewed = viewPager!!.currentItem + 1
+            presenter.setLastViewed(lastViewed)
+        }
+        super.onStop()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQ_LIST_ACTIVITY && resultCode == RESULT_OK && data != null) {
+            val targetId = data.getIntExtra(INTENT_TARGET_XKCD_ID, INVALID_ID)
+            if (targetId != INVALID_ID) {
+                scrollViewPagerToItem(targetId - 1, false)
+            }
+        }
+    }
+
+    protected fun fabAnimation(@ColorRes startColor: Int, @ColorRes endColor: Int, @DrawableRes icon: Int) {
+        val animator = ObjectAnimator.ofInt(fab, "backgroundTint",
+                resources.getColor(startColor), resources.getColor(endColor))
+
+        animator.apply {
+            duration = 1800L
+            setEvaluator(ArgbEvaluator())
+            interpolator = DecelerateInterpolator(2f)
+            addUpdateListener {
+                fab?.backgroundTintList = ColorStateList.valueOf(animatedValue as Int)
+            }
+        }.start()
+        fab.setImageResource(icon)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_main, menu)
+
+        menu.findItem(R.id.action_right).actionView = ImageButton(context).apply {
+            setImageResource(R.drawable.ic_action_right)
+            background = null
+            setOnLongClickListener(MenuOnLongClickListener(this@ContentMainBaseFragment, false))
+            setOnClickListener(MenuClickListener(this@ContentMainBaseFragment, false))
+        }
+
+        menu.findItem(R.id.action_left).actionView = ImageButton(context).apply {
+            setImageResource(R.drawable.ic_action_left)
+            background = null
+            setOnLongClickListener(MenuOnLongClickListener(this@ContentMainBaseFragment, true))
+            setOnClickListener(MenuClickListener(this@ContentMainBaseFragment, true))
+        }
+
+        setupSearch(menu)
+    }
+
+    private class MenuClickListener internal constructor(fragment: ContentMainBaseFragment,
+                                                         private val isPrevious: Boolean) : View.OnClickListener {
+
+        private val weakReference: WeakReference<ContentMainBaseFragment> = WeakReference(fragment)
+
+        override fun onClick(v: View) {
+            val fragment = weakReference.get() ?: return
+            val skipCount = fragment.getString(
+                    fragment.resources.getIdentifier(
+                            fragment.sharedPreferences?.getString(PREF_ARROW, "arrow_1"),
+                            "string",
+                            fragment.activity?.packageName))
+            var skip = Integer.parseInt(skipCount)
+            skip = if (isPrevious) -skip else skip
+
+            val current = fragment.viewPager?.currentItem ?: 0
+
+            val smoothScroll = if (Math.abs(skip) != 1) {
+                false
+            } else if (isPrevious && current != 0) {
+                true
+            } else !isPrevious && current != fragment.latestIndex.minus(1)
+
+            fragment.scrollViewPagerToItem(current + skip, smoothScroll)
+
+            fragment.logSubUXEvent(if (isPrevious) FIRE_PREVIOUS_BAR else FIRE_NEXT_BAR)
+        }
+    }
+
+    private class MenuOnLongClickListener internal constructor(fragment: ContentMainBaseFragment,
+                                                               private val isPrevious: Boolean) : View.OnLongClickListener {
+
+        private val weakReference: WeakReference<ContentMainBaseFragment> = WeakReference(fragment)
+
+        override fun onLongClick(v: View): Boolean {
+            val fragment = weakReference.get() ?: return false
+            val current = fragment.viewPager?.currentItem ?: 0
+
+            val smoothScroll = if (isPrevious && current != 0) {
+                true
+            } else !isPrevious && current != fragment.latestIndex.minus(1)
+
+            fragment.scrollViewPagerToItem(if (isPrevious) 0 else fragment.latestIndex - 1, smoothScroll)
+            fragment.logSubUXEvent(if (isPrevious) FIRE_PREVIOUS_BAR_LONG else FIRE_NEXT_BAR_LONG)
+            return true
+        }
+    }
+
+    override fun hearShake() {
+        if (!isResumed) {
+            return
+        }
+
+        val prefRandom = sharedPreferences!!.getString(PREF_RANDOM, "random_all")
+
+        if ("random_disabled" == prefRandom) {
+            return
+        }
+
+        latestIndex = presenter.latest
+        if (latestIndex != INVALID_ID) {
+            val randomId = if ("random_all" == prefRandom) {
+                Random().nextInt(latestIndex + 1)
+            } else {
+                presenter.randomUntouchedIndex.toInt()
+            }
+            scrollViewPagerToItem(randomId - 1, false)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            activity?.window?.decorView?.performHapticFeedback(CONTEXT_CLICK, FLAG_IGNORE_GLOBAL_SETTING)
+        }
+        logSubUXEvent(FIRE_SHAKE)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_search -> logSubUXEvent(FIRE_SEARCH)
+            R.id.action_specific, R.id.action_what_if_specific -> {
+                if (latestIndex == INVALID_ID) {
+                    return false
+                }
+                val pickerDialogFragment = childFragmentManager.findFragmentByTag(NumberPickerDialogFragment.TAG)
+                        as NumberPickerDialogFragment? ?: NumberPickerDialogFragment()
+                pickerDialogFragment.apply {
+                    setNumberRange(1, latestIndex)
+                    setListener(pickerListener)
+                    setTitle(pickerTitleTextRes)
+                }.show(childFragmentManager, NumberPickerDialogFragment.TAG)
+
+                logSubUXEvent(FIRE_SPECIFIC_MENU)
+            }
+            R.id.test_notification -> if (titleTextRes == TAG_XKCD) {
+                val xkcd = BoxManager.getXkcd(latestIndex.toLong())
+                BoxManager.xkcdBox.remove(latestIndex.toLong())
+                latestIndex -= 1
+                presenter.latest = latestIndex
+                presenter.setLastViewed(10)
+                expand(latestIndex)
+                xkcdNoti(xkcd!!)
+            } else if (titleTextRes == TAG_WHAT_IF) {
+                val whatIfArticle = BoxManager.getWhatIf(latestIndex.toLong())
+                BoxManager.whatIfBox.remove(latestIndex.toLong())
+                latestIndex -= 1
+                presenter.latest = latestIndex
+                presenter.setLastViewed(10)
+                expand(latestIndex)
+                whatIfNoti(whatIfArticle!!)
+            }
+        }
+        return false
+    }
+
+    private fun xkcdNoti(xkcdPic: XkcdPic) {
+        if (latestIndex >= xkcdPic.num) {
+            return  // User already read the latest comic
+        } else {
+            SharedPrefManager.latestXkcd = latestIndex.toLong()
+            BoxManager.updateAndSave(xkcdPic)
+        }
+        if (activity != null) {
+            NotificationUtils.showNotification(activity, xkcdPic)
+        }
+    }
+
+    private fun whatIfNoti(whatIfArticle: WhatIfArticle) {
+        if (latestIndex >= whatIfArticle.num) {
+            return  // User already read the what if
+        } else {
+            SharedPrefManager.latestWhatIf = latestIndex.toLong()
+            BoxManager.updateAndSaveWhatIf(mutableListOf(whatIfArticle))
+        }
+        if (activity != null) {
+            NotificationUtils.showNotification(activity, whatIfArticle)
+        }
+    }
+
+    fun scrollViewPagerToItem(id: Int, smoothScroll: Boolean) {
+        viewPager.setCurrentItem(id, smoothScroll)
+        fab.hide()
+        toggleSubFabs(false)
+        if (!smoothScroll) {
+            presenter.getInfoAndShowFab(currentIndex)
+        }
+    }
+
+    fun expand(size: Int) {
+        adapter.setSize(size)
+    }
+
+    protected fun toggleSubFabs(showSubFabs: Boolean) {
+        if (fab?.width == 0) {
+            return
+        }
+
+        if (showSubFabs) {
+            btnThumb.animateShow(-subFabAnimationDistance)
+            btnFav.animateShow(-subFabAnimationDistance * 2f)
+        } else {
+            btnThumb.animateHide(0f)
+            btnFav.animateHide(-subFabAnimationDistance)
+        }
+
+        isFabsShowing = showSubFabs
+    }
+
+    protected fun showToast(context: Context, text: String) {
+        try {
+            toast!!.view.isShown
+            toast!!.setText(text)
+        } catch (e: Exception) {
+            @SuppressLint("ShowToast")
+            toast = Toast.makeText(context.applicationContext, text, Toast.LENGTH_SHORT)
+        }
+
+        toast!!.show()
+    }
+
+    protected fun latestLoaded() {
+        adapter?.setSize(latestIndex)
+        if (isFre) {
+            scrollViewPagerToItem(latestIndex - 1, false)
+        }
+        presenter.latest = latestIndex
+    }
+
+    private fun setupSearch(menu: Menu) {
+        val searchManager = activity?.getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        val searchItem = menu.findItem(R.id.action_search)
+        (searchItem.actionView as? SearchView)?.apply {
+            queryHint = searchHint
+            setSearchableInfo(searchManager.getSearchableInfo(activity?.componentName))
+            findViewById<SearchView.SearchAutoComplete>(androidx.appcompat.R.id.search_src_text)?.threshold = 1
+            suggestionsAdapter = searchAdapter
+            setOnSuggestionListener(object : SearchView.OnSuggestionListener {
+                override fun onSuggestionSelect(position: Int): Boolean {
+                    return false
+                }
+
+                override fun onSuggestionClick(position: Int): Boolean {
+                    suggestionClicked(position)
+                    clearFocus()
+                    searchItem.collapseActionView()
+                    return true
+                }
+            })
+            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String): Boolean {
+                    return true
+                }
+
+                override fun onQueryTextChange(newText: String): Boolean {
+                    if (newText.isBlank()) {
+                        return false
+                    }
+                    presenter.searchContent(newText.trim())
+                    return true
+                }
+            })
+        }
+
+        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(menuItem: MenuItem): Boolean {
+                if (activity != null) {
+                    (activity as MainActivity).toggleDrawerAvailability(false)
+                    setItemsVisibility(menu, intArrayOf(R.id.action_left, R.id.action_right, R.id.action_xkcd_list, R.id.action_what_if_list), false)
+                }
+                return true
+            }
+
+            override fun onMenuItemActionCollapse(menuItem: MenuItem): Boolean {
+                if (activity != null) {
+                    (activity as MainActivity).toggleDrawerAvailability(true)
+                    setItemsVisibility(menu, intArrayOf(R.id.action_left, R.id.action_right, R.id.action_xkcd_list, R.id.action_what_if_list), true)
+                }
+                return true
+            }
+        })
+    }
+
+    private fun setItemsVisibility(menu: Menu, hideItems: IntArray, visible: Boolean) {
+        for (hideItem in hideItems) {
+            menu.findItem(hideItem)?.isVisible = visible
+        }
+    }
+
+    private fun logSubUXEvent(event: String, params: Map<String, String>? = null) {
+        val suffix = if (titleTextRes == TAG_XKCD) "" else FIRE_WHAT_IF_SUFFIX
+        logUXEvent(event + suffix, params)
+    }
+
+    companion object {
+
+        const val REQ_LIST_ACTIVITY = 10
+    }
+}

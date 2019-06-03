@@ -17,17 +17,18 @@ import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import java.util.List;
-
 import androidx.annotation.ColorInt;
 import androidx.annotation.ColorRes;
 import androidx.annotation.DrawableRes;
 import androidx.core.content.ContextCompat;
+
+import java.util.List;
+
 import xyz.jienan.xkcd.R;
 
 
 public class LikeButton extends FrameLayout implements View.OnClickListener {
-    private static final DecelerateInterpolator DECCELERATE_INTERPOLATOR = new DecelerateInterpolator();
+    private static final DecelerateInterpolator DECELERATE_INTERPOLATOR = new DecelerateInterpolator();
     private static final AccelerateDecelerateInterpolator ACCELERATE_DECELERATE_INTERPOLATOR = new AccelerateDecelerateInterpolator();
     private static final OvershootInterpolator OVERSHOOT_INTERPOLATOR = new OvershootInterpolator(4);
 
@@ -163,7 +164,7 @@ public class LikeButton extends FrameLayout implements View.OnClickListener {
             if (isChecked) {
                 likeListener.liked(this);
             } else {
-                likeListener.unLiked(this);
+                likeListener.unliked(this);
             }
         }
 
@@ -183,12 +184,12 @@ public class LikeButton extends FrameLayout implements View.OnClickListener {
 
             ObjectAnimator outerCircleAnimator = ObjectAnimator.ofFloat(circleView, CircleView.OUTER_CIRCLE_RADIUS_PROGRESS, 0.1f, 1f);
             outerCircleAnimator.setDuration(250);
-            outerCircleAnimator.setInterpolator(DECCELERATE_INTERPOLATOR);
+            outerCircleAnimator.setInterpolator(DECELERATE_INTERPOLATOR);
 
             ObjectAnimator innerCircleAnimator = ObjectAnimator.ofFloat(circleView, CircleView.INNER_CIRCLE_RADIUS_PROGRESS, 0.1f, 1f);
             innerCircleAnimator.setDuration(200);
             innerCircleAnimator.setStartDelay(200);
-            innerCircleAnimator.setInterpolator(DECCELERATE_INTERPOLATOR);
+            innerCircleAnimator.setInterpolator(DECELERATE_INTERPOLATOR);
 
             ObjectAnimator starScaleYAnimator = ObjectAnimator.ofFloat(icon, ImageView.SCALE_Y, 0.2f, 1f);
             starScaleYAnimator.setDuration(350);
@@ -259,7 +260,7 @@ public class LikeButton extends FrameLayout implements View.OnClickListener {
                 /*
                 Commented out this line and moved the animation effect to the action up event due to
                 conflicts that were occurring when library is used in sliding type views.
-                icon.animate().scaleX(0.7f).scaleY(0.7f).setDuration(150).setInterpolator(DECCELERATE_INTERPOLATOR);
+                icon.animate().scaleX(0.7f).scaleY(0.7f).setDuration(150).setInterpolator(DECELERATE_INTERPOLATOR);
                 */
                 setPressed(true);
                 break;
@@ -274,8 +275,8 @@ public class LikeButton extends FrameLayout implements View.OnClickListener {
                 break;
 
             case MotionEvent.ACTION_UP:
-                icon.animate().scaleX(0.7f).scaleY(0.7f).setDuration(150).setInterpolator(DECCELERATE_INTERPOLATOR);
-                icon.animate().scaleX(1).scaleY(1).setInterpolator(DECCELERATE_INTERPOLATOR);
+                icon.animate().scaleX(0.7f).scaleY(0.7f).setDuration(150).setInterpolator(DECELERATE_INTERPOLATOR);
+                icon.animate().scaleX(1).scaleY(1).setInterpolator(DECELERATE_INTERPOLATOR);
                 if (isPressed()) {
                     performClick();
                     setPressed(false);
@@ -323,7 +324,7 @@ public class LikeButton extends FrameLayout implements View.OnClickListener {
     }
 
     /**
-     * This drawable will be shown when the button is in on unLiked state.
+     * This drawable will be shown when the button is in on unliked state.
      *
      * @param resId
      */
@@ -340,7 +341,7 @@ public class LikeButton extends FrameLayout implements View.OnClickListener {
     }
 
     /**
-     * This drawable will be shown when the button is in on unLiked state.
+     * This drawable will be shown when the button is in on unliked state.
      *
      * @param unLikeDrawable
      */
@@ -419,7 +420,7 @@ public class LikeButton extends FrameLayout implements View.OnClickListener {
 
     /**
      * Listener that is triggered once the
-     * button is in a liked or unLiked state
+     * button is in a liked or unliked state
      *
      * @param likeListener
      */

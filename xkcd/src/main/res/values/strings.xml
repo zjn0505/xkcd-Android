@@ -25,6 +25,7 @@
     <string name="dialog_cancel">Cancel</string>
 
     <string name="share_to">Share this xkcd to</string>
+    <string name="share_to_what_if">Share this what if to</string>
 
     <string name="notification_content" translatable="false">%d-%s</string>
     <string name="item_search_title" translatable="false">%s - %s</string>

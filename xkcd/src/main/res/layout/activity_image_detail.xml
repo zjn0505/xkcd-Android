@@ -6,22 +6,15 @@
     android:layout_height="match_parent"
     android:background="#000">
 
-    <com.github.chrisbanes.photoview.PhotoView
-        android:id="@+id/photo_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:contentDescription="@string/xkcd_pic" />
-
-
-    <com.github.piasy.biv.view.BigImageView
-        android:id="@+id/big_image_view"
+    <xyz.jienan.xkcd.ui.xkcdimageview.BigImageView
+        android:id="@+id/bigImageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="@string/xkcd_pic"
-        app:optimizeDisplay="true" />
+        app:optimizeDisplay="false"/>
 
     <TextView
-        android:id="@+id/tv_title"
+        android:id="@+id/tvTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#66585858"
@@ -34,7 +27,7 @@
         tools:text="2001 - A Space Odyssey" />
 
     <ProgressBar
-        android:id="@+id/pb_loading"
+        android:id="@+id/pbLoading"
         style="@style/holo_progressbar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -43,7 +36,7 @@
         android:visibility="gone"/>
 
     <LinearLayout
-        android:id="@+id/rl_gif_panel"
+        android:id="@+id/gifPanel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
@@ -64,7 +57,7 @@
                 android:layout_weight="1"/>
 
             <ImageView
-                android:id="@+id/btn_gif_back"
+                android:id="@+id/btnGifBack"
                 app:srcCompat="@drawable/ic_fast_rewind"
                 tools:ignore="ContentDescription"
                 style="@style/btn_gif_control" />
@@ -75,7 +68,7 @@
                 android:layout_weight="1"/>
 
             <ImageView
-                android:id="@+id/btn_gif_play"
+                android:id="@+id/playBtn"
                 app:srcCompat="@drawable/ic_play_arrow"
                 tools:ignore="ContentDescription"
                 style="@style/btn_gif_control" />
@@ -86,7 +79,7 @@
                 android:layout_weight="1"/>
 
             <ImageView
-                android:id="@+id/btn_gif_forward"
+                android:id="@+id/btnGifForward"
                 app:srcCompat="@drawable/ic_fast_forward"
                 tools:ignore="ContentDescription"
                 style="@style/btn_gif_control" />
@@ -99,7 +92,7 @@
         </LinearLayout>
 
         <SeekBar
-            android:id="@+id/sb_movie"
+            android:id="@+id/sbMovie"
             android:layout_width="match_parent"
             android:layout_height="30dp"
             android:visibility="invisible"/>

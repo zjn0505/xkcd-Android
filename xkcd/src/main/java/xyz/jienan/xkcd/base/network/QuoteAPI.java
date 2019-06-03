@@ -8,7 +8,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import xyz.jienan.xkcd.model.Quote;
 
-import static xyz.jienan.xkcd.base.network.NetworkService.QUOTE_LIST;
+import static xyz.jienan.xkcd.base.network.NetworkServiceKt.QUOTE_LIST;
 
 public interface QuoteAPI {
 

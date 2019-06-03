@@ -12,12 +12,13 @@ import android.net.Uri;
 import android.os.Build;
 import android.text.TextUtils;
 
+import androidx.core.app.NotificationCompat;
+
 import com.bumptech.glide.Glide;
 
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
-import androidx.core.app.NotificationCompat;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;

@@ -9,7 +9,7 @@
     android:padding="1dp">
 
     <ImageView
-        android:id="@+id/iv_item_what_if_list"
+        android:id="@+id/itemWhatIfImageView"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_centerVertical="true"
@@ -17,7 +17,7 @@
         tools:src="@mipmap/ic_launcher" />
 
     <ImageView
-        android:id="@+id/iv_fav_what_if_list"
+        android:id="@+id/itemWhatIfFav"
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:layout_alignParentEnd="true"
@@ -30,15 +30,15 @@
         app:srcCompat="@drawable/ic_heart_on" />
 
     <TextView
-        android:id="@+id/tv_item_what_if_title"
+        android:id="@+id/itemWhatIfTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_margin="1dp"
-        android:layout_toEndOf="@id/iv_item_what_if_list"
-        android:layout_toLeftOf="@id/iv_fav_what_if_list"
-        android:layout_toRightOf="@id/iv_item_what_if_list"
-        android:layout_toStartOf="@id/iv_fav_what_if_list"
+        android:layout_toEndOf="@id/itemWhatIfImageView"
+        android:layout_toLeftOf="@id/itemWhatIfFav"
+        android:layout_toRightOf="@id/itemWhatIfImageView"
+        android:layout_toStartOf="@id/itemWhatIfFav"
         android:fontFamily="@font/xkcd_script"
         android:gravity="center_vertical"
         android:paddingLeft="10dp"

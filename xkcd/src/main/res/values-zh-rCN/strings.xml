@@ -20,6 +20,7 @@
     <string name="dialog_cancel">取消</string>
 
     <string name="share_to">分享这篇 xkcd 至</string>
+    <string name="share_to_what_if">分享这篇 what if 至</string>
 
     <string name="btn_reload">刷新</string>
     <string name="go_to_explainxkcd">访问Explainxkcd</string>

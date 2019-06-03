@@ -7,7 +7,7 @@
     tools:context="xyz.jienan.xkcd.home.MainActivity">
 
     <xyz.jienan.xkcd.ui.WhatIfWebView
-        android:id="@+id/webview_what_if"
+        android:id="@+id/webView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

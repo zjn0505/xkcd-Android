@@ -10,7 +10,7 @@
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <TextView
-        android:id="@+id/tv_quote"
+        android:id="@+id/tvQuote"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="3dp"
@@ -22,7 +22,7 @@
         tools:text="&quot;Sudo make me a sandwich&quot;" />
 
     <TextView
-        android:id="@+id/tv_quote_sub"
+        android:id="@+id/tvSubQuote"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="@font/xkcd"

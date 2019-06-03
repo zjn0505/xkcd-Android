@@ -11,7 +11,7 @@ import xyz.jienan.xkcd.model.persist.SharedPrefManager;
 
 public class ExtraMainPresenter implements ExtraMainContract.Presenter {
 
-    private final SharedPrefManager sharedPrefManager = new SharedPrefManager();
+    private final SharedPrefManager sharedPrefManager = SharedPrefManager.INSTANCE;
 
     private final ExtraModel extraModel = ExtraModel.getInstance();
 

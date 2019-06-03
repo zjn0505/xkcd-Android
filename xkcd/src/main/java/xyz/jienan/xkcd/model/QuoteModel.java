@@ -14,7 +14,7 @@ public class QuoteModel {
 
     private static QuoteModel quoteModel;
 
-    private final QuoteAPI quoteAPI = NetworkService.getQuoteAPI();
+    private final QuoteAPI quoteAPI = NetworkService.INSTANCE.getQuoteAPI();
 
     private QuoteModel() {
         // no public constructor

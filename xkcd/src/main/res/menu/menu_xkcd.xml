@@ -5,7 +5,8 @@
         android:id="@+id/action_xkcd_list"
         android:orderInCategory="1"
         android:title="@string/action_xkcd_list"
-        app:showAsAction="never" />
+        android:icon="@drawable/ic_xkcd_list"
+        app:showAsAction="always" />
     <item
         android:id="@+id/action_specific"
         android:orderInCategory="2"

@@ -3,6 +3,8 @@ package xyz.jienan.xkcd.base.glide;
 import android.graphics.Bitmap;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
+
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -11,7 +13,6 @@ import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
-import androidx.annotation.NonNull;
 import xyz.jienan.xkcd.model.XkcdPic;
 import xyz.jienan.xkcd.model.util.XkcdSideloadUtils;
 
@@ -31,8 +32,8 @@ public class GlideUtils {
                             load(glide, pic, model.replaceFirst("https", "http"), imageView);
                             return true;
                         } else if (model.replaceFirst("http", "https").equals(pic.getTargetImg())
-                                && XkcdSideloadUtils.isSpecialComics(pic)) {
-                            load(glide, pic, XkcdSideloadUtils.getPicFromXkcd(pic).getImg(), imageView);
+                                && XkcdSideloadUtils.INSTANCE.isSpecialComics(pic)) {
+                            load(glide, pic, XkcdSideloadUtils.INSTANCE.getPicFromXkcd(pic).getImg(), imageView);
                             return true;
                         }
                         return false;

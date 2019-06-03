@@ -17,8 +17,9 @@
         tools:replace="android:extractNativeLibs"
         android:theme="@style/AppNoBarFontTheme"
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
+
         <activity
-            android:name="xyz.jienan.xkcd.home.MainActivity"
+            android:name=".home.MainActivity"
             android:configChanges="screenSize|keyboardHidden"
             android:launchMode="singleTop"
             android:theme="@style/CustomActionBarTheme">
@@ -54,14 +55,13 @@
             android:label="@string/title_what_if_list" />
 
         <service android:name=".base.firebase.XkcdFirebaseMessagingService"
-            tools:ignore="ExportedService">
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
-        <service android:name=".whatif.WhatIfFastLoadService"
-            android:exported="false"/>
+        <service android:name=".whatif.WhatIfFastLoadService" />
 
         <meta-data
             android:name="xyz.jienan.xkcd.base.glide.OkHttpProgressGlideModule"

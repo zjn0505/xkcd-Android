@@ -16,6 +16,12 @@ import retrofit2.http.Url;
 import xyz.jienan.xkcd.model.ExtraComics;
 import xyz.jienan.xkcd.model.XkcdPic;
 
+import static xyz.jienan.xkcd.base.network.NetworkServiceKt.XKCD_EXTRA_LIST;
+import static xyz.jienan.xkcd.base.network.NetworkServiceKt.XKCD_SEARCH_SUGGESTION;
+import static xyz.jienan.xkcd.base.network.NetworkServiceKt.XKCD_SPECIAL_LIST;
+import static xyz.jienan.xkcd.base.network.NetworkServiceKt.XKCD_THUMBS_UP;
+import static xyz.jienan.xkcd.base.network.NetworkServiceKt.XKCD_TOP;
+
 public interface XkcdAPI {
     @GET("info.0.json")
     Observable<XkcdPic> getLatest();
@@ -31,15 +37,15 @@ public interface XkcdAPI {
     @GET
     Observable<ResponseBody> getExplainWithShortCache(@Url String url, @Header("cacheable") long cache);
 
-    @GET
-    Observable<List<XkcdPic>> getSpecialXkcds(@Url String url);
+    @GET(XKCD_SPECIAL_LIST)
+    Observable<List<XkcdPic>> getSpecialXkcds();
 
-    @GET
-    Observable<List<ExtraComics>> getExtraComics(@Url String url);
+    @GET(XKCD_EXTRA_LIST)
+    Observable<List<ExtraComics>> getExtraComics();
 
     @Headers("cacheable: 600")
-    @GET
-    Observable<List<XkcdPic>> getXkcdsSearchResult(@Url String url, @Query("q") String query);
+    @GET(XKCD_SEARCH_SUGGESTION)
+    Observable<List<XkcdPic>> getXkcdsSearchResult(@Query("q") String query);
 
     /**
      * Get the xkcd list with paging
@@ -55,10 +61,10 @@ public interface XkcdAPI {
                                           @Query("start") int start, @Query("reversed") int reversed, @Query("size") int size);
 
     @FormUrlEncoded
-    @POST
-    Observable<XkcdPic> thumbsUp(@Url String url, @Field("comic_id") int comicId);
+    @POST(XKCD_THUMBS_UP)
+    Observable<XkcdPic> thumbsUp(@Field("comic_id") int comicId);
 
     @Headers("cacheable: 60")
-    @GET
-    Observable<List<XkcdPic>> getTopXkcds(@Url String url, @Query("sortby") String sortby);
+    @GET(XKCD_TOP)
+    Observable<List<XkcdPic>> getTopXkcds(@Query("sortby") String sortby);
 }
