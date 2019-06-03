@@ -30,7 +30,7 @@ public class XkcdPic {
     private String img;
 
     public String getTargetImg() {
-        return XkcdSideloadUtils.sideload(this).img;
+        return XkcdSideloadUtils.INSTANCE.sideload(this).img;
     }
 
     public String getImg() {

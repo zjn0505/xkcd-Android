@@ -15,8 +15,10 @@ import xyz.jienan.xkcd.model.persist.SharedPrefManager;
 
 public class XkcdListPresenter implements XkcdListContract.Presenter {
 
-    private final XkcdModel xkcdModel = XkcdModel.getInstance();
-    private final SharedPrefManager sharedPrefManager = new SharedPrefManager();
+    private final XkcdModel xkcdModel = XkcdModel.INSTANCE;
+
+    private final SharedPrefManager sharedPrefManager = SharedPrefManager.INSTANCE;
+
     private boolean inRequest = false;
     private XkcdListContract.View view;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();

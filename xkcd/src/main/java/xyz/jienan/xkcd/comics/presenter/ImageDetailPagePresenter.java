@@ -20,7 +20,7 @@ import xyz.jienan.xkcd.model.XkcdPic;
 
 public class ImageDetailPagePresenter implements ImageDetailPageContract.Presenter {
 
-    private final XkcdModel xkcdModel = XkcdModel.getInstance();
+    private final XkcdModel xkcdModel = XkcdModel.INSTANCE;
 
     private ImageDetailPageContract.View view;
 

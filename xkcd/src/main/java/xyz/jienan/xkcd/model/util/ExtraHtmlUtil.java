@@ -14,7 +14,7 @@ public class ExtraHtmlUtil {
     private static final String XKCD_LINK = "http://www.xkcd.com/";
 
     public static Observable<String> getContentFromUrl(String url) {
-        return NetworkService.getXkcdAPI().getExplain(url)
+        return NetworkService.INSTANCE.getXkcdAPI().getExplain(url)
                 .map(responseBody -> Jsoup.parse(responseBody.string()))
                 .map(doc -> {
                     doc.head().appendElement("link")

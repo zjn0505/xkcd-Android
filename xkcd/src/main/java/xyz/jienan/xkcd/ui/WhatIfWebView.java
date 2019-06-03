@@ -67,7 +67,7 @@ public class WhatIfWebView extends WebView {
                     if (id != -1) {
                         ImageDetailPageActivity.startActivityFromId(getContext(), id);
                     } else {
-                        ImageDetailPageActivity.startActivity(getContext(), url, 1L, false);
+                        ImageDetailPageActivity.startActivity(getContext(), url, 1L);
                     }
                     if (getContext() instanceof Activity) {
                         ((Activity) getContext()).overridePendingTransition(R.anim.fadein, R.anim.fadeout);

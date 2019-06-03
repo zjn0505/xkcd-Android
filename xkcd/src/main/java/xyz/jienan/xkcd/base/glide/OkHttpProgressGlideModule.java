@@ -51,7 +51,7 @@ public class OkHttpProgressGlideModule implements GlideModule {
 
     @Override
     public void registerComponents(Context context, Glide glide) {
-        OkHttpClient.Builder httpClientBuilder = NetworkService.getOkHttpClientBuilder();
+        OkHttpClient.Builder httpClientBuilder = NetworkService.INSTANCE.getOkHttpClientBuilder();
         httpClientBuilder.addNetworkInterceptor(createInterceptor(new DispatchingProgressListener()));
         OkHttpClient client = httpClientBuilder.build();
         glide.register(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(client));

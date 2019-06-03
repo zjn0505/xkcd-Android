@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
+
 import xyz.jienan.xkcd.R;
 
 /**
@@ -19,6 +20,8 @@ import xyz.jienan.xkcd.R;
  */
 
 public class NumberPickerDialogFragment extends DialogFragment {
+
+    public final static String TAG = "IdPickerDialogFragment";
 
     private final static String INT_MIN = "min";
     private final static String INT_MAX = "max";

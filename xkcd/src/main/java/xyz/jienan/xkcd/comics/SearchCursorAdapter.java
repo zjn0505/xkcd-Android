@@ -8,10 +8,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.cursoradapter.widget.CursorAdapter;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 
-import androidx.cursoradapter.widget.CursorAdapter;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.base.glide.GlideUtils;
 
@@ -29,8 +30,7 @@ public class SearchCursorAdapter extends CursorAdapter {
     }
 
     @Override
-    public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    public View newView(Context context, Cursor cursor, ViewGroup parent) { LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         View view = inflater.inflate(R.layout.item_search_suggestion, parent, false);
 
@@ -57,6 +57,4 @@ public class SearchCursorAdapter extends CursorAdapter {
                         cursor.getString(3),
                         cursor.getString(2)));
     }
-
-
 }

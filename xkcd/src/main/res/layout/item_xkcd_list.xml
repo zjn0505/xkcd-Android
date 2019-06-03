@@ -9,7 +9,7 @@
     android:padding="1dp">
 
     <ImageView
-        android:id="@+id/iv_item_xkcd_list"
+        android:id="@+id/itemXkcdImageView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scaleType="fitCenter"
@@ -18,7 +18,7 @@
         tools:src="@mipmap/ic_launcher" />
 
     <TextView
-        android:id="@+id/tv_item_xkcd_num"
+        android:id="@+id/itemXkcdImageNum"
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:layout_gravity="bottom|end"

@@ -5,7 +5,8 @@
         android:id="@+id/action_what_if_list"
         android:orderInCategory="1"
         android:title="@string/action_what_if_list"
-        app:showAsAction="never" />
+        android:icon="@drawable/ic_what_if_list"
+        app:showAsAction="always" />
     <item
         android:id="@+id/action_what_if_specific"
         android:orderInCategory="2"

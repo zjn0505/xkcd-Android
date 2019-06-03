@@ -16,11 +16,9 @@ import xyz.jienan.xkcd.whatif.contract.WhatIfMainContract;
 
 public class WhatIfMainPresenter implements WhatIfMainContract.Presenter {
 
-    private final SharedPrefManager sharedPrefManager = new SharedPrefManager();
+    private final SharedPrefManager sharedPrefManager = SharedPrefManager.INSTANCE;
 
     private WhatIfMainContract.View view;
-
-    private WhatIfModel whatIfModel = WhatIfModel.getInstance();
 
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
@@ -41,7 +39,7 @@ public class WhatIfMainPresenter implements WhatIfMainContract.Presenter {
         if (index < 1) {
             return;
         }
-        Disposable d = whatIfModel.fav(index, isFav).subscribe(xkcdPic -> {
+        Disposable d = WhatIfModel.INSTANCE.fav(index, isFav).subscribe(xkcdPic -> {
                 },
                 e -> Timber.e(e, "error on get one pic: %d", index));
         compositeDisposable.add(d);
@@ -54,7 +52,7 @@ public class WhatIfMainPresenter implements WhatIfMainContract.Presenter {
             return;
         }
         compositeDisposable.add(
-                whatIfModel
+                WhatIfModel.INSTANCE
                         .thumbsUp(currentIndex)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(view::showThumbUpCount,
@@ -66,9 +64,9 @@ public class WhatIfMainPresenter implements WhatIfMainContract.Presenter {
         if (fabShowDisposable != null && !fabShowDisposable.isDisposed()) {
             fabShowDisposable.dispose();
         }
-        WhatIfArticle article = whatIfModel.loadArticleFromDB(index);
+        WhatIfArticle article = WhatIfModel.INSTANCE.loadArticleFromDB(index);
         if (article == null) {
-            fabShowDisposable = whatIfModel.observe()
+            fabShowDisposable = WhatIfModel.INSTANCE.observe()
                     .filter(article1 -> article1.num == index)
                     .subscribe(view::showFab,
                             e -> Timber.e(e, "what if pipeline observing error"));
@@ -100,7 +98,7 @@ public class WhatIfMainPresenter implements WhatIfMainContract.Presenter {
 
     @Override
     public void loadLatest() {
-        Disposable d = whatIfModel.loadLatest()
+        Disposable d = WhatIfModel.INSTANCE.loadLatest()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(whatIfArticle -> {
                     long latestIndex = whatIfArticle.num;
@@ -117,7 +115,7 @@ public class WhatIfMainPresenter implements WhatIfMainContract.Presenter {
             searchDisposable.dispose();
         }
 
-        searchDisposable = whatIfModel.searchWhatIf(query, sharedPrefManager.getWhatIfSearchPref())
+        searchDisposable = WhatIfModel.INSTANCE.searchWhatIf(query, sharedPrefManager.getWhatIfSearchPref())
                 .map(list -> {
                     if (isNumQuery(query)) {
                         long num = Long.parseLong(query);
@@ -140,7 +138,7 @@ public class WhatIfMainPresenter implements WhatIfMainContract.Presenter {
                     Timber.e(e, "search what if error");
                     if (isNumQuery(query)) {
                         long num = Long.parseLong(query);
-                        WhatIfArticle article = whatIfModel.loadArticleFromDB(num);
+                        WhatIfArticle article = WhatIfModel.INSTANCE.loadArticleFromDB(num);
                         if (article != null) {
                             view.renderWhatIfSearch(Collections.singletonList(article));
                         }
@@ -157,7 +155,7 @@ public class WhatIfMainPresenter implements WhatIfMainContract.Presenter {
 
     @Override
     public long getRandomUntouchedIndex() {
-        final List<WhatIfArticle> list = whatIfModel.getUntouchedList();
+        final List<WhatIfArticle> list = WhatIfModel.INSTANCE.getUntouchedList();
         if (list.isEmpty()) {
             return 0;
         } else {

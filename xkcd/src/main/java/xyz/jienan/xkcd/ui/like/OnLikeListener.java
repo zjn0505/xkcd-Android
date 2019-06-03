@@ -6,5 +6,5 @@ package xyz.jienan.xkcd.ui.like;
 public interface OnLikeListener {
     void liked(LikeButton likeButton);
 
-    void unLiked(LikeButton likeButton);
+    void unliked(LikeButton likeButton);
 }

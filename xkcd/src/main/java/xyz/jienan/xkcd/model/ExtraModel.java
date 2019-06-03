@@ -17,7 +17,7 @@ public class ExtraModel {
 
     private static ExtraModel extraModel;
 
-    private final BoxManager boxManager = BoxManager.getInstance();
+    private final BoxManager boxManager = BoxManager.INSTANCE;
 
     private ExtraModel() {
         // no public constructor
@@ -48,7 +48,7 @@ public class ExtraModel {
             return Observable.just(explainFromDB);
         }
 
-        return NetworkService.getXkcdAPI().getExplain(url).subscribeOn(Schedulers.io())
+        return NetworkService.INSTANCE.getXkcdAPI().getExplain(url).subscribeOn(Schedulers.io())
                 .map(responseBody -> XkcdExplainUtil.getExplainFromHtml(responseBody, url));
     }
 

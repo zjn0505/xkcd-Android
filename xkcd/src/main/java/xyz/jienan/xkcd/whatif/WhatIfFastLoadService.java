@@ -4,9 +4,10 @@ import android.annotation.SuppressLint;
 import android.app.IntentService;
 import android.content.Intent;
 
+import androidx.annotation.Nullable;
+
 import java.util.concurrent.TimeUnit;
 
-import androidx.annotation.Nullable;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.disposables.Disposables;
@@ -26,7 +27,7 @@ public class WhatIfFastLoadService extends IntentService {
 
     public WhatIfFastLoadService() {
         super("WhatIfFastLoadService");
-        whatIfModel = WhatIfModel.getInstance();
+        whatIfModel = WhatIfModel.INSTANCE;
     }
 
     @SuppressLint("CheckResult")

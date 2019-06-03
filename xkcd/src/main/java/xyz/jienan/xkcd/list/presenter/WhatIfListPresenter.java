@@ -16,8 +16,8 @@ import xyz.jienan.xkcd.model.persist.SharedPrefManager;
 
 public class WhatIfListPresenter implements WhatIfListContract.Presenter {
 
-    private final WhatIfModel whatIfModel = WhatIfModel.getInstance();
-    private final SharedPrefManager sharedPrefManager = new SharedPrefManager();
+    private final WhatIfModel whatIfModel = WhatIfModel.INSTANCE;
+    private final SharedPrefManager sharedPrefManager = SharedPrefManager.INSTANCE;
     private WhatIfListContract.View view;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 

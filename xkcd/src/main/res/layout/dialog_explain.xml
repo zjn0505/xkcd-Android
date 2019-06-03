@@ -10,7 +10,7 @@
         android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tv_explain"
+            android:id="@+id/tvExplain"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
@@ -20,7 +20,7 @@
     </ScrollView>
 
     <ProgressBar
-        android:id="@+id/pb_explaining"
+        android:id="@+id/pbLoading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

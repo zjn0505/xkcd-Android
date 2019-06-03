@@ -7,7 +7,7 @@
     tools:showIn="@layout/fragment_comic_main">
 
     <xyz.jienan.xkcd.ui.like.LikeButton
-        android:id="@+id/btn_fav"
+        android:id="@+id/btnFav"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -18,13 +18,14 @@
         android:visibility="gone"
         android:layout_alignLeft="@+id/fab"
         android:layout_alignStart="@id/fab"
+        android:alpha="0"
         app:icon_size="24dp"
         app:icon_type="heart"
         tools:visibility="visible"
         tools:background="@mipmap/ic_launcher"/>
 
     <xyz.jienan.xkcd.ui.like.LikeButton
-        android:id="@+id/btn_thumb"
+        android:id="@+id/btnThumb"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -35,6 +36,7 @@
         android:visibility="gone"
         android:layout_alignLeft="@id/fab"
         android:layout_alignStart="@id/fab"
+        android:alpha="0"
         app:icon_size="24dp"
         app:icon_type="thumb"
         app:persist_liked="true"
