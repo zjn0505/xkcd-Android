@@ -47,16 +47,13 @@
         <item name="android:textColorHint">@color/hint_text_color</item>
     </style>
 
-
     <style name="ToolbarSubtitleAppearance" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
         <item name="android:ellipsize">none</item>
         <item name="android:textColor">@color/white</item>
     </style>
 
     <style name="ToolbarPopup" parent="@style/ThemeOverlay.AppCompat.DayNight">
-        <item name="android:textColorPrimary">@color/primary_text_default_material_light</item>
         <item name="android:actionMenuTextColor">@color/white</item>
-        <item name="android:colorBackground">@color/white</item>
     </style>
 
     <style name="image_progress_bar">

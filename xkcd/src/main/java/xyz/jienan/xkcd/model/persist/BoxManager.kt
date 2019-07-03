@@ -143,7 +143,7 @@ object BoxManager {
         return article
     }
 
-    fun searchWhatIf(query: String, option: String): List<WhatIfArticle> {
+    fun searchWhatIf(query: String, option: String): MutableList<WhatIfArticle> {
         var builder = whatIfBox.query().contains(WhatIfArticle_.title, query)
         if (StringUtil.isNumeric(query)) {
             builder = builder.or().equal(WhatIfArticle_.num, java.lang.Long.valueOf(query))

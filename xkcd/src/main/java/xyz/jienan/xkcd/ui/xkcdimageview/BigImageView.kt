@@ -2,10 +2,8 @@ package xyz.jienan.xkcd.ui.xkcdimageview
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.util.AttributeSet
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AlphaAnimation
@@ -19,7 +17,6 @@ import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import xyz.jienan.xkcd.R
 import xyz.jienan.xkcd.ui.xkcdimageview.ImageInfoExtractor.TYPE_BITMAP
-import xyz.jienan.xkcd.ui.xkcdimageview.ImageInfoExtractor.TYPE_STILL_IMAGE
 import java.io.File
 
 /**
@@ -34,42 +31,37 @@ open class BigImageView @JvmOverloads constructor(context: Context, attrs: Attri
         ImageLoader.Callback {
 
     private val mImageLoader: ImageLoader?
+
     private val mTempImages: MutableList<File>
+
     private val mInternalCallback: ImageLoader.Callback
 
     private var mViewFactory: ImageViewFactory? = null
 
     private var mMainView: View? = null
+
     private var mThumbnailView: View? = null
+
     var ssiv: SubsamplingScaleImageView? = null
         private set
 
-    private var mProgressIndicatorView: View? = null
     private var mFailureImageView: ImageView? = null
 
     private var mUserCallback: ImageLoader.Callback? = null
-    var currentImageFile: File? = null
-        private set
+
+    private var currentImageFile: File? = null
+
     private var mUri: Uri? = null
+
     private var mThumbnail: Uri? = null
 
     private var mOnClickListener: OnClickListener? = null
+
     private var mOnLongClickListener: OnLongClickListener? = null
-    private val mFailureImageClickListener = object : OnClickListener {
-        override fun onClick(v: View) {
-            // Retry loading when failure image is clicked
-            if (mTapToRetry) {
-                showImage(mThumbnail, mUri)
-            }
-            if (mOnClickListener != null) {
-                mOnClickListener!!.onClick(v)
-            }
-        }
-    }
 
     private var mInitScaleType: Int = 0
+
     private var mOptimizeDisplay: Boolean = false
-    private var mTapToRetry: Boolean = false
 
     init {
 
@@ -132,7 +124,7 @@ open class BigImageView @JvmOverloads constructor(context: Context, attrs: Attri
         showImage(Uri.EMPTY, uri)
     }
 
-    fun showImage(thumbnail: Uri?, uri: Uri?) {
+    private fun showImage(thumbnail: Uri?, uri: Uri?) {
         mThumbnail = thumbnail
         mUri = uri
 
@@ -209,9 +201,6 @@ open class BigImageView @JvmOverloads constructor(context: Context, attrs: Attri
             if (mThumbnailView != null) {
                 mThumbnailView!!.animation = set
             }
-            if (mProgressIndicatorView != null) {
-                mProgressIndicatorView!!.animation = set
-            }
 
             animation.setAnimationListener(object : Animation.AnimationListener {
                 override fun onAnimationStart(animation: Animation) {}
@@ -219,9 +208,6 @@ open class BigImageView @JvmOverloads constructor(context: Context, attrs: Attri
                 override fun onAnimationEnd(animation: Animation) {
                     if (mThumbnailView != null) {
                         mThumbnailView!!.setVisibility(GONE)
-                    }
-                    if (mProgressIndicatorView != null) {
-                        mProgressIndicatorView!!.setVisibility(GONE)
                     }
                 }
 
@@ -266,7 +252,7 @@ open class BigImageView @JvmOverloads constructor(context: Context, attrs: Attri
         }
     }
 
-    protected val isOriginalSized : Boolean
+    protected val isOriginalSized: Boolean
         get() = (ssiv?.scale ?: 0f) == (ssiv?.minScale ?: 0f)
 
     private fun clearThumbnailAndProgressIndicator() {
@@ -274,22 +260,9 @@ open class BigImageView @JvmOverloads constructor(context: Context, attrs: Attri
             removeView(mThumbnailView)
             mThumbnailView = null
         }
-        if (mProgressIndicatorView != null) {
-            removeView(mProgressIndicatorView)
-            mProgressIndicatorView = null
-        }
     }
 
     companion object {
-        val INIT_SCALE_TYPE_FIT_CENTER = 3
-
-        val DEFAULT_IMAGE_SCALE_TYPE = 3
-        val IMAGE_SCALE_TYPES = arrayOf<ScaleType>(ScaleType.CENTER, ScaleType.CENTER_CROP, ScaleType.CENTER_INSIDE, ScaleType.FIT_CENTER, ScaleType.FIT_END, ScaleType.FIT_START, ScaleType.FIT_XY)
-
-        fun scaleType(value: Int): ScaleType {
-            return if (0 <= value && value < IMAGE_SCALE_TYPES.size) {
-                IMAGE_SCALE_TYPES[value]
-            } else IMAGE_SCALE_TYPES[DEFAULT_IMAGE_SCALE_TYPE]
-        }
+        const val INIT_SCALE_TYPE_FIT_CENTER = 3
     }
 }
