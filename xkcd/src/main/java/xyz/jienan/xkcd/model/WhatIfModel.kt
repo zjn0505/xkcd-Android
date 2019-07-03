@@ -77,7 +77,7 @@ object WhatIfModel {
         return BoxManager.getWhatIf(id)
     }
 
-    fun searchWhatIf(query: String, option: String): Single<List<WhatIfArticle>> {
+    fun searchWhatIf(query: String, option: String): Single<MutableList<WhatIfArticle>> {
         return Observable.just(BoxManager.searchWhatIf(query, option))
                 .singleOrError()
     }

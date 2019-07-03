@@ -200,8 +200,6 @@ class SingleExtraFragment : BaseFragment(), SingleExtraContract.View {
                 logUXEvent(FIRE_GO_EXTRA_MENU)
                 return true
             }
-            else -> {
-            }
         }
         return false
     }

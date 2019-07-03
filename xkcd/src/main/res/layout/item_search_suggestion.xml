@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="64dp"
-    android:background="#FFF"
+    android:background="?android:attr/colorBackground"
     android:gravity="center_vertical">
 
     <ImageView
@@ -29,6 +29,7 @@
         android:maxLines="2"
         android:textSize="18sp"
         android:textStyle="bold"
+        android:textColor="?android:attr/textColorSecondary"
         tools:text="This is the sample title text" />
 
 </RelativeLayout>
