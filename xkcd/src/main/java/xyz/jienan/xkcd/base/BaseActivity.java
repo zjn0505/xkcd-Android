@@ -30,6 +30,23 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        setTheme();
+        super.onCreate(savedInstanceState);
+    }
+
+    protected void logUXEvent(String event) {
+        logUXEvent(event, null);
+    }
+
+    protected void logUXEvent(String event, Bundle bundle) {
+        if (bundle == null) {
+            bundle = new Bundle();
+        }
+        bundle.putString(FIRE_UX_ACTION, event);
+        mFirebaseAnalytics.logEvent(FIRE_UX_ACTION, bundle);
+    }
+
+    public void setTheme() {
         boolean fontPref = sharedPreferences.getBoolean(PREF_FONT, false);
         if (fontPref) {
             if (this instanceof MainActivity) {
@@ -48,19 +65,5 @@ public abstract class BaseActivity extends AppCompatActivity {
                 setTheme(R.style.AppNoBarFontTheme);
             }
         }
-
-        super.onCreate(savedInstanceState);
-    }
-
-    protected void logUXEvent(String event) {
-        logUXEvent(event, null);
-    }
-
-    protected void logUXEvent(String event, Bundle bundle) {
-        if (bundle == null) {
-            bundle = new Bundle();
-        }
-        bundle.putString(FIRE_UX_ACTION, event);
-        mFirebaseAnalytics.logEvent(FIRE_UX_ACTION, bundle);
     }
 }

@@ -1,12 +1,16 @@
 package xyz.jienan.xkcd.home
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.net.ConnectivityManager
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.MenuItem
+import androidx.annotation.AttrRes
+import androidx.annotation.ColorInt
+import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -44,6 +48,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             return fragmentManager.fragments.firstOrNull { it.isVisible }
         }
 
+    private var currentFontPref = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // init view
@@ -52,7 +58,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         navigationView.setNavigationItemSelectedListener(this)
-        navigationView.itemIconTintList = null
+        navigationView.itemIconTintList = ColorStateList.valueOf(getColorResCompat(android.R.attr.textColorPrimary))
         if (savedInstanceState == null) {
 
             val fragmentTag = if (intent?.getIntExtra(INDEX_ON_NOTI_INTENT, 0) != 0) {
@@ -70,7 +76,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQ_SETTINGS && resultCode == Activity.RESULT_OK) {
+        if (requestCode == REQ_SETTINGS && currentFontPref != sharedPreferences.getBoolean(PREF_FONT, false)) {
             recreate()
         }
     }
@@ -120,6 +126,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             R.id.nav_setting -> {
                 val settingsIntent = Intent(this, PreferenceActivity::class.java)
                 startActivityForResult(settingsIntent, REQ_SETTINGS)
+                currentFontPref = sharedPreferences.getBoolean(PREF_FONT, false)
                 logUXEvent(FIRE_SETTING_MENU)
             }
         }
@@ -191,6 +198,14 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             msgIntent.putExtra(WHAT_IF_LATEST_INDEX, SharedPrefManager.latestWhatIf)
             startService(msgIntent)
         }
+    }
+
+    @ColorInt
+    private fun Context.getColorResCompat(@AttrRes id: Int): Int {
+        val resolvedAttr = TypedValue()
+        theme.resolveAttribute(id, resolvedAttr, true)
+        val colorRes = resolvedAttr.run { if (resourceId != 0) resourceId else data }
+        return ContextCompat.getColor(this, colorRes)
     }
 
     companion object {

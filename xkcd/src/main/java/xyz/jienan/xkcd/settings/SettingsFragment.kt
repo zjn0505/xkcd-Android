@@ -1,6 +1,5 @@
 package xyz.jienan.xkcd.settings
 
-import android.app.Activity
 import android.os.Bundle
 import android.preference.ListPreference
 import android.preference.Preference
@@ -55,7 +54,6 @@ class SettingsFragment : PreferenceFragment(), Preference.OnPreferenceChangeList
             PREF_FONT -> {
                 (preference as SwitchPreference).isChecked = newValue as Boolean
                 activity.recreate()
-                needRecreateForParent = true
             }
             PREF_ZOOM -> {
                 (preference as ListPreference).value = newValue.toString()
@@ -70,13 +68,4 @@ class SettingsFragment : PreferenceFragment(), Preference.OnPreferenceChangeList
         }
         return false
     }
-
-    override fun onStop() {
-        if (needRecreateForParent) {
-            activity.setResult(Activity.RESULT_OK)
-        }
-        super.onStop()
-    }
-
-    private var needRecreateForParent = false
 }
