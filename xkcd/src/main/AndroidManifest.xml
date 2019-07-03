@@ -36,6 +36,7 @@
         <activity
             android:name="xyz.jienan.xkcd.comics.activity.ImageDetailPageActivity"
             android:configChanges="screenSize|orientation|keyboardHidden"
+            android:theme="@style/TransparentBackgroundTheme"
             android:launchMode="singleTask" />
 
         <activity

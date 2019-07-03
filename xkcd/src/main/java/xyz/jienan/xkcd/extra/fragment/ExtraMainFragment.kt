@@ -1,10 +1,7 @@
 package xyz.jienan.xkcd.extra.fragment
 
-import android.app.SearchManager
 import android.content.Intent
-import android.database.MatrixCursor
 import android.os.Bundle
-import android.provider.BaseColumns
 import android.text.TextUtils
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
@@ -21,21 +18,14 @@ import xyz.jienan.xkcd.list.activity.XkcdListActivity
 import xyz.jienan.xkcd.model.ExtraComics
 
 class ExtraMainFragment : ContentMainBaseFragment(), ExtraMainContract.View {
+
     override val layoutResId = R.layout.fragment_comic_main
 
-    //    @BindString(R.string.search_hint_extra)
-    public override var searchHint: String = "123"
-//        internal set
+    override var searchHint = ""
 
-//    @BindString(R.string.menu_extra)
-    override var titleTextRes: String = "123"
-//        internal set
+    override val titleTextRes by lazy { getString(R.string.menu_extra) }
 
-    private var searchSuggestions: List<ExtraComics>? = null
-
-    override// no-ops
-    val pickerTitleTextRes: Int
-        get() = 0
+    override val pickerTitleTextRes = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +45,6 @@ class ExtraMainFragment : ContentMainBaseFragment(), ExtraMainContract.View {
         if (actionBar != null && TextUtils.isEmpty(actionBar.subtitle)) {
             actionBar.subtitle = "1"
         }
-        super.onViewCreated(view, savedInstanceState)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -77,27 +66,14 @@ class ExtraMainFragment : ContentMainBaseFragment(), ExtraMainContract.View {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val id = item.itemId
-        when (id) {
+        when (item.itemId) {
             R.id.action_xkcd_list -> {
                 val intent = Intent(activity, XkcdListActivity::class.java)
-                startActivityForResult(intent, ContentMainBaseFragment.REQ_LIST_ACTIVITY)
+                startActivityForResult(intent, REQ_LIST_ACTIVITY)
                 logUXEvent(FIRE_BROWSE_LIST_MENU)
             }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun renderXkcdSearch(xkcdPics: List<ExtraComics>) {
-        searchSuggestions = xkcdPics
-        val columns = arrayOf(BaseColumns._ID, SearchManager.SUGGEST_COLUMN_TEXT_1, SearchManager.SUGGEST_COLUMN_TEXT_2, SearchManager.SUGGEST_COLUMN_INTENT_DATA)
-        val cursor = MatrixCursor(columns, xkcdPics.size)
-        //        for (int i = 0; i < searchSuggestions.size(); i++) {
-        //            XkcdPic xkcdPic = searchSuggestions.get(i);
-        //            String[] tmp = {Integer.toString(i), xkcdPic.getTargetImg(), xkcdPic.getTitle(), String.valueOf(xkcdPic.num)};
-        //            cursor.addRow(tmp);
-        //        }
-        searchAdapter!!.swapCursor(cursor)
     }
 
     override fun showExtras(extraComics: List<ExtraComics>) {
@@ -106,10 +82,7 @@ class ExtraMainFragment : ContentMainBaseFragment(), ExtraMainContract.View {
     }
 
     override fun suggestionClicked(position: Int) {
-        //        if (searchSuggestions != null && searchSuggestions.size() > position) {
-        //            XkcdPic xkcd = searchSuggestions.get(position);
-        //            scrollViewPagerToItem((int) (xkcd.num - 1), false);
-        //        }
+        // no-ops
     }
 
     override fun updateFab() {

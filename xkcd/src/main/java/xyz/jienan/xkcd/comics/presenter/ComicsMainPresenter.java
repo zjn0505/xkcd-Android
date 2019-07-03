@@ -72,6 +72,7 @@ public class ComicsMainPresenter implements ComicsMainContract.Presenter {
         if (latestIndex <= 0) {
             return;
         }
+        Timber.d("Start fast load");
         Disposable d = xkcdModel.fastLoad(latestIndex)
                 .subscribe(ignore -> Timber.d("Fast load succeed"),
                         e -> Timber.e(e, "Error in fast load"));

@@ -35,7 +35,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             if (this instanceof MainActivity) {
                 setTheme(R.style.CustomActionBarTheme);
             } else if (this instanceof ImageDetailPageActivity) {
-                setTheme(R.style.FullScreenTheme);
+                setTheme(R.style.TransparentBackgroundTheme);
             } else {
                 setTheme(R.style.AppNoBarTheme);
             }
@@ -43,7 +43,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             if (this instanceof MainActivity) {
                 setTheme(R.style.CustomActionBarFontTheme);
             } else if (this instanceof ImageDetailPageActivity) {
-                setTheme(R.style.FullScreenTheme);
+                setTheme(R.style.TransparentBackgroundTheme);
             } else {
                 setTheme(R.style.AppNoBarFontTheme);
             }

@@ -22,6 +22,7 @@ import xyz.jienan.xkcd.ui.RefreshFooterView
 import xyz.jienan.xkcd.ui.RefreshHeaderView
 import xyz.jienan.xkcd.whatif.fragment.SingleWhatIfFragment
 import java.util.concurrent.TimeUnit
+import kotlin.math.abs
 
 /**
  * Created by jienanzhang on 03/03/2018.
@@ -126,7 +127,7 @@ class SingleExtraWebViewFragment : SingleWhatIfFragment() {
 
         val links = extraComics.links
 
-        ExtraModel.getInstance().parseContentFromUrl(links[Math.abs(pageIndex % links.size)])
+        ExtraModel.parseContentFromUrl(links[abs(pageIndex % links.size)])
                 .subscribe({ html ->
                     webView.loadDataWithBaseURL("file:///android_asset/.",
                             html, "text/html", "UTF-8", null)
@@ -136,7 +137,7 @@ class SingleExtraWebViewFragment : SingleWhatIfFragment() {
 
     private fun updateReleaseText() {
         if (extraComics.num == 1L) {
-            if (Math.abs(currentPage) % 2 != 0) {
+            if (abs(currentPage) % 2 != 0) {
                 (refreshLayout!!.headerView as ClassicHeader<*>).setReleaseToRefreshRes(R.string.release_for_puzzle)
                 (refreshLayout!!.footerView as ClassicFooter<*>).setReleaseToLoadRes(R.string.release_for_puzzle)
             } else {

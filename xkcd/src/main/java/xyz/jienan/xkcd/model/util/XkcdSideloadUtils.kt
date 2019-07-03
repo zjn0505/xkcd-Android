@@ -15,7 +15,6 @@ import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
 import java.io.StringWriter
-import java.util.*
 
 /**
  * Created by Jienan on 2018/3/2.
@@ -23,7 +22,7 @@ import java.util.*
 
 object XkcdSideloadUtils {
 
-    private val xkcdSideloadMap = HashMap<Int, XkcdPic>()
+    private val xkcdSideloadMap = hashMapOf<Int, XkcdPic>()
 
     @SuppressLint("CheckResult")
     fun init(context: Context) {
@@ -33,11 +32,8 @@ object XkcdSideloadUtils {
                 .observeOn(Schedulers.io())
                 .doOnSubscribe { initXkcdSideloadMap(context) }
                 .singleOrError()
-                .subscribe({ xkcdPics ->
-                    for (pic in xkcdPics) {
-                        xkcdSideloadMap[pic.num.toInt()] = pic
-                    }
-                }, { e -> Timber.e(e, "Failed to init special list") })
+                .subscribe({ xkcdPics -> xkcdPics.forEach { xkcdSideloadMap[it.num.toInt()] = it } },
+                        { e -> Timber.e(e, "Failed to init special list") })
 
         NetworkService.xkcdAPI
                 .extraComics
@@ -45,13 +41,11 @@ object XkcdSideloadUtils {
                 .observeOn(Schedulers.io())
                 .doOnSubscribe { initExtraSideloadMap(context) }
                 .singleOrError()
-                .subscribe({ extraComics -> ExtraModel.getInstance().update(extraComics) },
+                .subscribe({ extraComics -> ExtraModel.update(extraComics) },
                         { e -> Timber.e(e, "Failed to init special list") })
     }
 
-    fun isSpecialComics(xkcdPic: XkcdPic): Boolean {
-        return xkcdSideloadMap.containsKey(xkcdPic.num.toInt())
-    }
+    fun isSpecialComics(xkcdPic: XkcdPic) = xkcdSideloadMap.containsKey(xkcdPic.num.toInt())
 
     fun getPicFromXkcd(xkcdPic: XkcdPic): XkcdPic {
         return if (xkcdPic.num >= 1084) {
@@ -93,9 +87,8 @@ object XkcdSideloadUtils {
         val sideloadList = Gson().fromJson<List<XkcdPic>>(writer.toString(), object : TypeToken<List<XkcdPic>>() {
 
         }.type)
-        for (pic in sideloadList) {
-            xkcdSideloadMap[pic.num.toInt()] = pic
-        }
+
+        sideloadList.forEach { xkcdSideloadMap[it.num.toInt()] = it }
     }
 
     @Throws(IOException::class)
@@ -113,6 +106,6 @@ object XkcdSideloadUtils {
         val sideloadList = Gson().fromJson<List<ExtraComics>>(writer.toString(), object : TypeToken<List<ExtraComics>>() {
 
         }.type)
-        ExtraModel.getInstance().update(sideloadList)
+        ExtraModel.update(sideloadList)
     }
 }

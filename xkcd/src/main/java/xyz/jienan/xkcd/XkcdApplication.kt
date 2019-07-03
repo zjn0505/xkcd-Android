@@ -18,7 +18,7 @@ class XkcdApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        if (!DebugUtils.init(this)) {
+        if (!DebugUtils.init()) {
             return
         }
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)

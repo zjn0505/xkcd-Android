@@ -6,7 +6,7 @@ import io.objectbox.BoxStore;
 import timber.log.Timber;
 
 public class DebugUtils {
-    public static boolean init(Context context) {
+    public static boolean init() {
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
         }

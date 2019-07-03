@@ -48,7 +48,6 @@ android {
         exclude "/META-INF/*.md"
     }
     compileSdkVersion 28
-    buildToolsVersion '28.0.3'
 
     defaultConfig {
         applicationId "xyz.jienan.xkcd"
@@ -111,27 +110,26 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.3'
-    debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.3'
-    implementation 'androidx.appcompat:appcompat:1.1.0-alpha05'
-    implementation 'androidx.media:media:1.1.0-beta01'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-alpha-2'
+    implementation 'androidx.appcompat:appcompat:1.1.0-beta01'
+    implementation 'androidx.media:media:1.1.0-rc01'
     implementation 'androidx.exifinterface:exifinterface:1.0.0'
 
-    implementation 'androidx.recyclerview:recyclerview:1.1.0-alpha05'
-    implementation 'com.google.android.material:material:1.1.0-alpha06'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0-alpha06'
+    implementation 'com.google.android.material:material:1.1.0-alpha07'
 
     implementation 'androidx.percentlayout:percentlayout:1.0.0'
     implementation 'org.jsoup:jsoup:1.11.3'
 //    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
-    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.5.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.6.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.13.1'
     implementation ('com.squareup.okhttp3:okhttp:3.12.1') {
         force = true
     }
     implementation 'com.squareup:seismic:1.0.2'
-    implementation 'io.reactivex.rxjava2:rxjava:2.2.7'
-    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.9'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
     implementation 'com.jakewharton.rxbinding3:rxbinding:3.0.0-alpha2'
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation ('com.github.bumptech.glide:glide:3.8.0') {
@@ -140,8 +138,8 @@ dependencies {
     implementation ('com.github.bumptech.glide:okhttp3-integration:1.5.0') {
         force = true
     }
-    implementation 'com.google.firebase:firebase-core:16.0.9'
-    implementation 'com.google.firebase:firebase-messaging:18.0.0'
+    implementation 'com.google.firebase:firebase-core:17.0.0'
+    implementation 'com.google.firebase:firebase-messaging:19.0.1'
     implementation 'com.dinuscxj:circleprogressbar:1.1.1'
 
     implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
