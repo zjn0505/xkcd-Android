@@ -67,7 +67,7 @@ public class WhatIfMainPresenter implements WhatIfMainContract.Presenter {
         WhatIfArticle article = WhatIfModel.INSTANCE.loadArticleFromDB(index);
         if (article == null) {
             fabShowDisposable = WhatIfModel.INSTANCE.observe()
-                    .filter(article1 -> article1.num == index)
+                    .filter(article1 -> article1.getNum() == index)
                     .subscribe(view::showFab,
                             e -> Timber.e(e, "what if pipeline observing error"));
             compositeDisposable.add(fabShowDisposable);
@@ -101,7 +101,7 @@ public class WhatIfMainPresenter implements WhatIfMainContract.Presenter {
         Disposable d = WhatIfModel.INSTANCE.loadLatest()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(whatIfArticle -> {
-                    long latestIndex = whatIfArticle.num;
+                    long latestIndex = whatIfArticle.getNum();
                     sharedPrefManager.setLatestWhatIf(latestIndex);
                     view.latestWhatIfLoaded(whatIfArticle);
                 }, e -> Timber.e(e, "load what if article error"));
@@ -121,7 +121,7 @@ public class WhatIfMainPresenter implements WhatIfMainContract.Presenter {
                         long num = Long.parseLong(query);
                         WhatIfArticle matchNumArticle = null;
                         for (WhatIfArticle article : list) {
-                            if (article.num == num) {
+                            if (article.getNum() == num) {
                                 matchNumArticle = article;
                                 break;
                             }
@@ -159,7 +159,7 @@ public class WhatIfMainPresenter implements WhatIfMainContract.Presenter {
         if (list.isEmpty()) {
             return 0;
         } else {
-            return list.get(new Random().nextInt(list.size())).num;
+            return list.get(new Random().nextInt(list.size())).getNum();
         }
     }
 

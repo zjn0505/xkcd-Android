@@ -87,7 +87,7 @@ open class SingleWhatIfFragment : BaseFragment(), ImgInterface.ImgCallback, RefI
                     .doOnSuccess{ WhatIfModel.push(it) }
                     .subscribe({
                         webView?.loadDataWithBaseURL("file:///android_asset/",
-                                it.content.replace("\\$".toRegex(), "&#36;"),
+                                it.content?.replace("\\$".toRegex(), "&#36;"),
                                 "text/html",
                                 "UTF-8",
                                 null)

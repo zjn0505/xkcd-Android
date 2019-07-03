@@ -45,14 +45,14 @@ public class XkcdListPresenter implements XkcdListContract.Presenter {
             inRequest = true;
             Disposable d = xkcdModel.loadRange(start, 400)
                     .observeOn(AndroidSchedulers.mainThread())
-                    .map(list -> list.get(list.size() - 1).num)
+                    .map(list -> list.get(list.size() - 1).getNum())
                     .doOnDispose(() -> inRequest = false)
                     .singleOrError()
                     .subscribe(this::updateView,
                             e -> Timber.e(e, "update xkcd failed"));
             compositeDisposable.add(d);
         } else if (dataSize > 0) {
-            updateView(data.get(dataSize - 1).num);
+            updateView(data.get(dataSize - 1).getNum());
         }
     }
 

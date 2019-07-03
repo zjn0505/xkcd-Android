@@ -86,7 +86,7 @@ class SingleExtraFragment : BaseFragment(), SingleExtraContract.View {
 
             fragment.btnReload!!.visibility = View.VISIBLE
 
-            fragment.btnReload!!.setOnClickListener { view ->
+            fragment.btnReload!!.setOnClickListener {
                 fragment.pbLoading!!.clearAnimation()
                 fragment.pbLoading!!.animation = AnimationUtils.loadAnimation(fragment.pbLoading!!.context, R.anim.rotate)
                 Glide.with(fragment.activity).load(fragment.currentExtra!!.img).asBitmap().fitCenter()

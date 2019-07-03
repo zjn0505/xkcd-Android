@@ -63,8 +63,8 @@ public class SingleComicPresenter implements SingleComicContract.Presenter {
 
     @Override
     public void updateXkcdSize(XkcdPic xkcdPic, Bitmap resource) {
-        if (xkcdPic != null && (xkcdPic.width == 0 || xkcdPic.height == 0) && resource != null) {
-            xkcdModel.updateSize(xkcdPic.num, resource.getWidth(), resource.getHeight());
+        if (xkcdPic != null && (xkcdPic.getWidth() == 0 || xkcdPic.getHeight() == 0) && resource != null) {
+            xkcdModel.updateSize(xkcdPic.getNum(), resource.getWidth(), resource.getHeight());
         }
     }
 

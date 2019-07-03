@@ -36,7 +36,7 @@ public class ComicsMainPresenter implements ComicsMainContract.Presenter {
         Disposable d = xkcdModel.loadLatest()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(xkcdPic -> {
-                    long latestIndex = xkcdPic.num;
+                    long latestIndex = xkcdPic.getNum();
                     sharedPrefManager.setLatestXkcd(latestIndex);
                     view.latestXkcdLoaded(xkcdPic);
                 }, e -> Timber.e(e, "load xkcd pic error"));
@@ -87,7 +87,7 @@ public class ComicsMainPresenter implements ComicsMainContract.Presenter {
         XkcdPic xkcdPic = xkcdModel.loadXkcdFromDB(index);
         if (xkcdPic == null) {
             fabShowDisposable = xkcdModel.observe()
-                    .filter(xkcdPic1 -> xkcdPic1.num == index)
+                    .filter(xkcdPic1 -> xkcdPic1.getNum() == index)
                     .subscribe(view::showFab,
                             e -> Timber.e("pic pipeline observing error"));
             compositeDisposable.add(fabShowDisposable);
@@ -145,7 +145,7 @@ public class ComicsMainPresenter implements ComicsMainContract.Presenter {
                             matchedPic = numPic;
                         } else {
                             for (XkcdPic pic : list) {
-                                if (pic.num == num) {
+                                if (pic.getNum() == num) {
                                     matchedPic = pic;
                                     break;
                                 }
@@ -177,7 +177,7 @@ public class ComicsMainPresenter implements ComicsMainContract.Presenter {
         if (list.isEmpty()) {
             return 0;
         } else {
-            return list.get(new Random().nextInt(list.size())).num;
+            return list.get(new Random().nextInt(list.size())).getNum();
         }
     }
 
