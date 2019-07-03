@@ -53,7 +53,7 @@ public class WhatIfListPresenter implements WhatIfListContract.Presenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(ignored -> view.setLoading(true))
                 .flatMapSingle(whatIfArticles -> Observable.fromIterable(whatIfArticles)
-                        .map(article -> article.num)
+                        .map(article -> article.getNum())
                         .filter(num -> num <= sharedPrefManager.getLatestWhatIf())
                         .map(whatIfModel::loadArticleFromDB)
                         .toList())

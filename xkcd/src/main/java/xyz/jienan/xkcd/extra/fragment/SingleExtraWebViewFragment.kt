@@ -52,7 +52,7 @@ class SingleExtraWebViewFragment : SingleWhatIfFragment() {
             currentPage = savedInstanceState.getInt("current", 0)
         }
         loadLinkPage(currentPage)
-        if (extraComics.links.size > 1) {
+        if (extraComics.links?.size ?: 0 > 1) {
 
             refreshLayout?.apply {
                 setDisableLoadMore(false)
@@ -102,14 +102,14 @@ class SingleExtraWebViewFragment : SingleWhatIfFragment() {
             R.id.action_share -> {
                 val shareIntent = Intent()
                 shareIntent.action = Intent.ACTION_SEND
-                shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_text_article_extra, extraComics!!.links[0]))
+                shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_text_article_extra, extraComics.links?.get(0)))
                 shareIntent.type = "text/plain"
                 startActivity(Intent.createChooser(shareIntent, resources.getText(R.string.share_to)))
                 logUXEvent(FIRE_SHARE_BAR + FIRE_EXTRA_SUFFIX)
                 return true
             }
             R.id.action_go_explain -> {
-                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(extraComics!!.explainUrl))
+                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(extraComics.explainUrl))
                 startActivity(browserIntent)
                 logUXEvent(FIRE_GO_EXTRA_MENU)
                 return true
@@ -127,12 +127,14 @@ class SingleExtraWebViewFragment : SingleWhatIfFragment() {
 
         val links = extraComics.links
 
-        ExtraModel.parseContentFromUrl(links[abs(pageIndex % links.size)])
-                .subscribe({ html ->
-                    webView.loadDataWithBaseURL("file:///android_asset/.",
-                            html, "text/html", "UTF-8", null)
-                },{ Timber.e(it) })
-                .also { compositeDisposable.add(it) }
+        if (links != null) {
+            ExtraModel.parseContentFromUrl(links[abs(pageIndex % links.size)])
+                    .subscribe({ html ->
+                        webView.loadDataWithBaseURL("file:///android_asset/.",
+                                html, "text/html", "UTF-8", null)
+                    }, { Timber.e(it) })
+                    .also { compositeDisposable.add(it) }
+        }
     }
 
     private fun updateReleaseText() {

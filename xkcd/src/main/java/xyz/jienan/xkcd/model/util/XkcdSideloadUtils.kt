@@ -49,7 +49,7 @@ object XkcdSideloadUtils {
 
     fun getPicFromXkcd(xkcdPic: XkcdPic): XkcdPic {
         return if (xkcdPic.num >= 1084) {
-            val clone = xkcdPic.clone()
+            val clone = xkcdPic.copy()
             val img = xkcdPic.img
             val insert = img.indexOf(".png")
             if (insert > 0)

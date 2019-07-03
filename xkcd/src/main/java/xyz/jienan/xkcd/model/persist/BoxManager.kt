@@ -185,18 +185,10 @@ object BoxManager {
         extraBox.put(extraComics)
     }
 
-    fun getExtra(index: Int): ExtraComics {
-        return extraBox.get(index.toLong())
-    }
+    fun getExtra(index: Int): ExtraComics = extraBox.get(index.toLong())
 
-    fun loadExtraExplain(url: String): String {
-        val extraComics = extraBox.query().equal(ExtraComics_.explainUrl, url).build().findFirst()
-        return if (extraComics != null && !extraComics.explainContent.isNullOrBlank()) {
-            extraComics.explainContent
-        } else {
-            ""
-        }
-    }
+    fun loadExtraExplain(url: String) =
+            extraBox.query().equal(ExtraComics_.explainUrl, url).build().findFirst()?.explainContent
 
     fun updateExtra(url: String, explainContent: String) {
         val extraComics = extraBox.query().equal(ExtraComics_.explainUrl, url).build().findFirst()

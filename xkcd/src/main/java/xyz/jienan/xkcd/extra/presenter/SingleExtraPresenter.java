@@ -12,7 +12,7 @@ import xyz.jienan.xkcd.model.ExtraModel;
 
 public class SingleExtraPresenter implements SingleExtraContract.Presenter {
 
-    private final ExtraModel extraModel = ExtraModel.Companion.getInstance();
+    private final ExtraModel extraModel = ExtraModel.INSTANCE;
 
     private SingleExtraContract.View view;
 
