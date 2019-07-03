@@ -174,7 +174,7 @@ public class RecyclerViewFastScroller extends LinearLayout {
         bubble.setVisibility(VISIBLE);
         if (currentAnimator != null)
             currentAnimator.cancel();
-        currentAnimator = ObjectAnimator.ofFloat(bubble, "alpha", 0f, 1f).setDuration(BUBBLE_ANIMATION_DURATION);
+        currentAnimator = ObjectAnimator.ofFloat(bubble, ALPHA, 0f, 1f).setDuration(BUBBLE_ANIMATION_DURATION);
         currentAnimator.start();
     }
 
@@ -183,7 +183,7 @@ public class RecyclerViewFastScroller extends LinearLayout {
             return;
         if (currentAnimator != null)
             currentAnimator.cancel();
-        currentAnimator = ObjectAnimator.ofFloat(bubble, "alpha", 1f, 0f).setDuration(BUBBLE_ANIMATION_DURATION);
+        currentAnimator = ObjectAnimator.ofFloat(bubble, ALPHA, 1f, 0f).setDuration(BUBBLE_ANIMATION_DURATION);
         currentAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {

@@ -3,14 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#000">
+    android:layout_height="match_parent">
 
-    <xyz.jienan.xkcd.ui.xkcdimageview.BigImageView
+    <xyz.jienan.xkcd.ui.xkcdimageview.DragImageView
         android:id="@+id/bigImageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="@string/xkcd_pic"
+        android:background="@android:color/black"
         app:optimizeDisplay="false"/>
 
     <TextView

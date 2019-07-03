@@ -40,11 +40,11 @@ public class SingleComicPresenter implements SingleComicContract.Presenter {
         final long latestIndex = sharedPrefManager.getLatestXkcd();
         final XkcdPic xkcdPicInDB = xkcdModel.loadXkcdFromDB(index);
         final boolean shouldQueryNetwork = latestIndex - index < 10;
+        view.setLoading(true);
 
-        if (shouldQueryNetwork) {
+        if (shouldQueryNetwork || xkcdPicInDB == null) {
             final Disposable d = xkcdModel.loadXkcd(index)
                     .observeOn(AndroidSchedulers.mainThread())
-                    .doOnSubscribe(ignored -> view.setLoading(true))
                     .doOnNext(ignored -> view.setLoading(false))
                     .subscribe(xkcdPic -> {
                         if (xkcdPicInDB == null) {

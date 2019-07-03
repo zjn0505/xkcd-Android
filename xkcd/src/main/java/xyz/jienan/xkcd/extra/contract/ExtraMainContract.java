@@ -10,14 +10,9 @@ public interface ExtraMainContract {
 
     interface View extends BaseView<Presenter> {
 
-        void renderXkcdSearch(List<ExtraComics> extraComics);
-
         void showExtras(List<ExtraComics> extraComics);
     }
 
     interface Presenter extends ContentMainBasePresenter {
-
-        void fastLoad(int latestIndex);
-
     }
 }

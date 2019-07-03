@@ -60,8 +60,7 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
 
     protected var latestIndex = INVALID_ID
 
-    private val isFre: Boolean
-        get() = latestIndex == INVALID_ID
+    private var isFre = false
 
     private val sharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(context) }
 
@@ -176,6 +175,7 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
             }
             activity!!.intent = null
         }
+        isFre = latestIndex == INVALID_ID
         if (latestIndex > INVALID_ID) {
             adapter.setSize(latestIndex)
             scrollViewPagerToItem(if (lastViewedId > INVALID_ID) lastViewedId - 1 else latestIndex - 1, false)

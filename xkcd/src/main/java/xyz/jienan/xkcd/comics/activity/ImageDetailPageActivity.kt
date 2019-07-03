@@ -31,7 +31,7 @@ import xyz.jienan.xkcd.comics.presenter.ImageDetailPagePresenter
 import xyz.jienan.xkcd.model.XkcdPic
 import xyz.jienan.xkcd.ui.AnimUtils
 import xyz.jienan.xkcd.ui.ToastUtils
-import xyz.jienan.xkcd.ui.xkcdimageview.BigImageView.Companion.INIT_SCALE_TYPE_CUSTOM
+import xyz.jienan.xkcd.ui.xkcdimageview.DragImageView
 import xyz.jienan.xkcd.ui.xkcdimageview.ImageLoader
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -106,6 +106,10 @@ class ImageDetailPageActivity : BaseActivity(), ImageDetailPageContract.View {
         btnGifBack.setOnTouchListener { v, event -> onGifSpeedPressed(v, event) }
         btnGifForward.setOnTouchListener { v, event -> onGifSpeedPressed(v, event) }
         playBtn.setOnClickListener { onGifPlayClicked() }
+        bigImageView.onExitListener =  {
+            finish()
+            overridePendingTransition(R.anim.fadein, R.anim.fadeout_drop)
+        }
     }
 
     override fun onBackPressed() {
@@ -280,7 +284,6 @@ class ImageDetailPageActivity : BaseActivity(), ImageDetailPageContract.View {
     private fun loadGifWithoutControl(url: String) {
         pbLoading!!.visibility = View.VISIBLE
         bigImageView.showImage(Uri.parse(url))
-        bigImageView.setInitScaleType(INIT_SCALE_TYPE_CUSTOM)
         bigImageView.setImageLoaderCallback(object : ImageLoader.Callback {
             override fun onFinish() {
                 Timber.d("")
@@ -291,19 +294,60 @@ class ImageDetailPageActivity : BaseActivity(), ImageDetailPageContract.View {
                 ssiv.setOnImageEventListener(object : SubsamplingScaleImageView.OnImageEventListener {
                     override fun onImageLoaded() {
                         Timber.d("")
-                        pbLoading!!.visibility = View.GONE
-
-                        ssiv.setDoubleTapZoomDpi(80);
-                        ssiv.setDoubleTapZoomScale(200f)
-                        ssiv.maxScale = 10f
-                        ssiv.setDoubleTapZoomDuration(200)
-//                                ssiv.setDoubleTapZoomStyle(ZOOM_FOCUS_FIXED);
-                        ssiv.isQuickScaleEnabled = true
-                        ssiv.resetScaleAndCenter()
                     }
 
                     override fun onReady() {
+
+                        pbLoading!!.visibility = View.GONE
+                        ssiv.setDoubleTapZoomDuration(200)
                         Timber.d("")
+                        var result = 0.5f
+                        val imageWidth = ssiv.sWidth
+                        val imageHeight = ssiv.sHeight
+                        val viewWidth = ssiv.width
+                        val viewHeight = ssiv.height
+
+                        var hasZeroValue = false
+                        if (imageWidth == 0 || imageHeight == 0 || viewWidth == 0 || viewHeight == 0) {
+                            result = 0.5f
+                            hasZeroValue = true
+                        }
+
+                        val viewWHRatio = viewWidth/viewHeight.toFloat()
+                        val imageWHRatio = imageWidth/imageHeight.toFloat()
+
+                        if (!hasZeroValue) {
+                            result = if (imageWHRatio <= viewWHRatio) {
+                                viewWidth / imageWidth.toFloat()
+                            } else {
+                                viewHeight / imageHeight.toFloat()
+                            }
+                        }
+
+                        val maxScale = Math.max(viewWidth / imageWidth.toFloat(), viewHeight / imageHeight.toFloat())
+                        if (maxScale > 1) {
+                            // image is smaller than screen, it should be zoomed out to its origin size
+                            ssiv.minScale = 1f
+
+                            // and it should be zoomed in to fill the screen
+                            val defaultMaxScale = ssiv.maxScale
+                            ssiv.maxScale = Math.max(defaultMaxScale, maxScale * 1.2F)
+
+                            val fitScreenRatio = viewWHRatio / imageWHRatio
+
+                            if (fitScreenRatio < 1.2 && fitScreenRatio > 0.9) {
+                                result *= 2
+                            }
+                        } else {
+                            // image is bigger than screen, it should be zoomed out to fit the screen
+                            val minScale = Math.min(viewWidth / imageWidth.toFloat(),
+                                    viewHeight / imageHeight.toFloat())
+                            ssiv.minScale = minScale
+                            // but no need to set max scale
+                        }
+                        // scale to fit screen, and center
+                        ssiv.setDoubleTapZoomScale(result)
+                        ssiv.resetScaleAndCenter()
                     }
 
                     override fun onTileLoadError(e: Exception?) {

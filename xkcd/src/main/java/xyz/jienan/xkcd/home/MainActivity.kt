@@ -158,8 +158,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     private fun getDailyQuote() {
-        QuoteModel.getInstance()
-            .getQuoteOfTheDay(SharedPrefManager.previousQuote)
+        QuoteModel.getQuoteOfTheDay(SharedPrefManager.previousQuote)
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext { SharedPrefManager.saveNewQuote(it) }
             .subscribe({ quote ->

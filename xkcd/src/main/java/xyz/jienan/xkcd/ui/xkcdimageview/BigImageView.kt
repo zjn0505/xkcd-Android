@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AlphaAnimation
@@ -28,7 +29,7 @@ import java.io.File
  * Use FrameLayout for extensibility.
  */
 
-class BigImageView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
+open class BigImageView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
         FrameLayout(context, attrs, defStyleAttr),
         ImageLoader.Callback {
 
@@ -46,7 +47,6 @@ class BigImageView @JvmOverloads constructor(context: Context, attrs: AttributeS
     private var mProgressIndicatorView: View? = null
     private var mFailureImageView: ImageView? = null
 
-//    private var mImageSaveCallback: ImageSaveCallback? = null
     private var mUserCallback: ImageLoader.Callback? = null
     var currentImageFile: File? = null
         private set
@@ -67,11 +67,7 @@ class BigImageView @JvmOverloads constructor(context: Context, attrs: AttributeS
         }
     }
 
-//    private var mProgressIndicator: ProgressIndicator? = null
-//    private var mDisplayOptimizeListener: DisplayOptimizeListener? = null
     private var mInitScaleType: Int = 0
-    private var mThumbnailScaleType: ScaleType? = null
-    private var mFailureImageScaleType: ScaleType? = null
     private var mOptimizeDisplay: Boolean = false
     private var mTapToRetry: Boolean = false
 
@@ -81,25 +77,6 @@ class BigImageView @JvmOverloads constructor(context: Context, attrs: AttributeS
                 .obtainStyledAttributes(attrs, R.styleable.BigImageView, defStyleAttr, 0)
         mInitScaleType = array.getInteger(R.styleable.BigImageView_initScaleType,
                 INIT_SCALE_TYPE_FIT_CENTER)
-
-        if (array.hasValue(R.styleable.BigImageView_failureImage)) {
-            val scaleTypeIndex = array.getInteger(
-                    R.styleable.BigImageView_failureImageInitScaleType,
-                    DEFAULT_IMAGE_SCALE_TYPE)
-            mFailureImageScaleType = scaleType(scaleTypeIndex)
-            val mFailureImageDrawable = array.getDrawable(
-                    R.styleable.BigImageView_failureImage)
-            setFailureImage(mFailureImageDrawable)
-        }
-        if (array.hasValue(R.styleable.BigImageView_thumbnailScaleType)) {
-            val scaleTypeIndex = array.getInteger(
-                    R.styleable.BigImageView_thumbnailScaleType,
-                    DEFAULT_IMAGE_SCALE_TYPE)
-            mThumbnailScaleType = scaleType(scaleTypeIndex)
-        }
-
-        mOptimizeDisplay = array.getBoolean(R.styleable.BigImageView_optimizeDisplay, true)
-        mTapToRetry = array.getBoolean(R.styleable.BigImageView_tapToRetry, true)
 
         array.recycle()
 
@@ -112,7 +89,7 @@ class BigImageView @JvmOverloads constructor(context: Context, attrs: AttributeS
 
         mViewFactory = ImageViewFactory()
 
-        mTempImages = ArrayList()
+        mTempImages = arrayListOf()
     }
 
     override fun setOnClickListener(listener: OnClickListener?) {
@@ -129,120 +106,9 @@ class BigImageView @JvmOverloads constructor(context: Context, attrs: AttributeS
         }
     }
 
-    fun setImageViewFactory(viewFactory: ImageViewFactory?) {
-        if (viewFactory == null) {
-            return
-        }
-
-        mViewFactory = viewFactory
-    }
-
-    fun setFailureImageInitScaleType(scaleType: ScaleType) {
-        mFailureImageScaleType = scaleType
-    }
-
-    fun setFailureImage(failureImage: Drawable?) {
-        // Failure image is not set
-        if (failureImage == null) {
-            return
-        }
-
-        if (mFailureImageView == null) {
-            // Init failure image
-            mFailureImageView = ImageView(context)
-            mFailureImageView!!.setVisibility(GONE)
-            mFailureImageView!!.setOnClickListener(mFailureImageClickListener)
-
-            if (mFailureImageScaleType != null) {
-                mFailureImageView!!.setScaleType(mFailureImageScaleType)
-            }
-
-            addView(mFailureImageView)
-        }
-
-        mFailureImageView!!.setImageDrawable(failureImage)
-    }
-
-    fun setInitScaleType(initScaleType: Int) {
-        if (ssiv == null) {
-            return
-        }
-
-        mInitScaleType = initScaleType
-        when (initScaleType) {
-            INIT_SCALE_TYPE_CENTER_CROP -> ssiv!!.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_CROP)
-            INIT_SCALE_TYPE_CUSTOM -> ssiv!!.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CUSTOM)
-            INIT_SCALE_TYPE_START -> ssiv!!.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_START)
-            INIT_SCALE_TYPE_CENTER_INSIDE -> ssiv!!.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
-            else -> ssiv!!.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
-        }
-//        if (mDisplayOptimizeListener != null) {
-//            mDisplayOptimizeListener!!.setInitScaleType(initScaleType)
-//        }
-    }
-
-    fun setThumbnailScaleType(scaleType: ScaleType) {
-        mThumbnailScaleType = scaleType
-    }
-
-    fun setOptimizeDisplay(optimizeDisplay: Boolean) {
-        if (ssiv == null) {
-            return
-        }
-
-        mOptimizeDisplay = optimizeDisplay
-        if (mOptimizeDisplay) {
-//            mDisplayOptimizeListener = DisplayOptimizeListener(ssiv)
-//            ssiv!!.setOnImageEventListener(mDisplayOptimizeListener)
-        } else {
-//            mDisplayOptimizeListener = null
-            ssiv!!.setOnImageEventListener(null)
-        }
-    }
-
-    fun setTapToRetry(tapToRetry: Boolean) {
-        mTapToRetry = tapToRetry
-    }
-
-//    fun setImageSaveCallback(imageSaveCallback: ImageSaveCallback) {
-//        mImageSaveCallback = imageSaveCallback
-//    }
-//
-//    fun setProgressIndicator(progressIndicator: ProgressIndicator) {
-//        mProgressIndicator = progressIndicator
-//    }
-
     fun setImageLoaderCallback(imageLoaderCallback: ImageLoader.Callback) {
         mUserCallback = imageLoaderCallback
     }
-
-//    @RequiresPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-//    fun saveImageIntoGallery() {
-//        if (currentImageFile == null) {
-//            if (mImageSaveCallback != null) {
-//                mImageSaveCallback!!.onFail(IllegalStateException("image not downloaded yet"))
-//            }
-//
-//            return
-//        }
-//
-//        try {
-//            val result = MediaStore.Images.Media.insertImage(context.contentResolver,
-//                    currentImageFile!!.absolutePath, currentImageFile!!.name, "")
-//            if (mImageSaveCallback != null) {
-//                if (!TextUtils.isEmpty(result)) {
-//                    mImageSaveCallback!!.onSuccess(result)
-//                } else {
-//                    mImageSaveCallback!!.onFail(RuntimeException("saveImageIntoGallery fail"))
-//                }
-//            }
-//        } catch (e: FileNotFoundException) {
-//            if (mImageSaveCallback != null) {
-//                mImageSaveCallback!!.onFail(e)
-//            }
-//        }
-//
-//    }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
@@ -302,33 +168,12 @@ class BigImageView @JvmOverloads constructor(context: Context, attrs: AttributeS
     }
 
     override fun onStart() {
-        // why show thumbnail in onStart? because we may not need download it from internet
-        if (mThumbnail !== Uri.EMPTY) {
-            mThumbnailView = mViewFactory!!.createThumbnailView(context, mThumbnail!!,
-                    mThumbnailScaleType!!)
-            if (mThumbnailView != null) {
-                addView(mThumbnailView, ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT)
-            }
-        }
-
-//        if (mProgressIndicator != null) {
-//            mProgressIndicatorView = mProgressIndicator!!.getView(this@BigImageView)
-//            mProgressIndicator!!.onStart()
-//            if (mProgressIndicatorView != null) {
-//                addView(mProgressIndicatorView)
-//            }
-//        }
-
         if (mUserCallback != null) {
             mUserCallback!!.onStart()
         }
     }
 
     override fun onProgress(progress: Int) {
-//        if (mProgressIndicator != null) {
-//            mProgressIndicator!!.onProgress(progress)
-//        }
         if (mUserCallback != null) {
             mUserCallback!!.onProgress(progress)
         }
@@ -348,8 +193,6 @@ class BigImageView @JvmOverloads constructor(context: Context, attrs: AttributeS
     }
 
     override fun onFail(error: Exception) {
-        showFailImage()
-
         if (mUserCallback != null) {
             mUserCallback!!.onFail(error)
         }
@@ -370,10 +213,6 @@ class BigImageView @JvmOverloads constructor(context: Context, attrs: AttributeS
                 mProgressIndicatorView!!.animation = set
             }
 
-//            if (mProgressIndicator != null) {
-//                mProgressIndicator!!.onFinish()
-//            }
-
             animation.setAnimationListener(object : Animation.AnimationListener {
                 override fun onAnimationStart(animation: Animation) {}
 
@@ -384,23 +223,11 @@ class BigImageView @JvmOverloads constructor(context: Context, attrs: AttributeS
                     if (mProgressIndicatorView != null) {
                         mProgressIndicatorView!!.setVisibility(GONE)
                     }
-
-                    // fix:
-                    // java.lang.NullPointerException:
-                    // Attempt to read from field 'int android.view.View.mViewFlags'
-                    // on a null object reference
-                    // ref: https://stackoverflow.com/q/33242776/3077508
-                    if (mThumbnailView != null || mProgressIndicatorView != null) {
-                        post { clearThumbnailAndProgressIndicator() }
-                    }
                 }
 
                 override fun onAnimationRepeat(animation: Animation) {}
             })
         } else {
-//            if (mProgressIndicator != null) {
-//                mProgressIndicator!!.onFinish()
-//            }
             clearThumbnailAndProgressIndicator()
         }
     }
@@ -427,9 +254,6 @@ class BigImageView @JvmOverloads constructor(context: Context, attrs: AttributeS
 
             ssiv!!.setMinimumTileDpi(160)
 
-            setOptimizeDisplay(mOptimizeDisplay)
-            setInitScaleType(mInitScaleType)
-
             if (image != null) {
                 ssiv!!.setImage(ImageSource.uri(Uri.fromFile(image)))
             } else if (bitmap != null) {
@@ -442,19 +266,8 @@ class BigImageView @JvmOverloads constructor(context: Context, attrs: AttributeS
         }
     }
 
-    @UiThread
-    private fun showFailImage() {
-        // Failure image is not set
-        if (mFailureImageView == null) {
-            return
-        }
-        if (mMainView != null) {
-            removeView(mMainView)
-        }
-
-        mFailureImageView!!.visibility = View.VISIBLE
-        clearThumbnailAndProgressIndicator()
-    }
+    protected val isOriginalSized : Boolean
+        get() = (ssiv?.scale ?: 0f) == (ssiv?.minScale ?: 0f)
 
     private fun clearThumbnailAndProgressIndicator() {
         if (mThumbnailView != null) {
@@ -468,15 +281,7 @@ class BigImageView @JvmOverloads constructor(context: Context, attrs: AttributeS
     }
 
     companion object {
-        val INIT_SCALE_TYPE_CENTER = 0
-        val INIT_SCALE_TYPE_CENTER_CROP = 1
-        val INIT_SCALE_TYPE_CENTER_INSIDE = 2
         val INIT_SCALE_TYPE_FIT_CENTER = 3
-        val INIT_SCALE_TYPE_FIT_END = 4
-        val INIT_SCALE_TYPE_FIT_START = 5
-        val INIT_SCALE_TYPE_FIT_XY = 6
-        val INIT_SCALE_TYPE_CUSTOM = 7
-        val INIT_SCALE_TYPE_START = 8
 
         val DEFAULT_IMAGE_SCALE_TYPE = 3
         val IMAGE_SCALE_TYPES = arrayOf<ScaleType>(ScaleType.CENTER, ScaleType.CENTER_CROP, ScaleType.CENTER_INSIDE, ScaleType.FIT_CENTER, ScaleType.FIT_END, ScaleType.FIT_START, ScaleType.FIT_XY)

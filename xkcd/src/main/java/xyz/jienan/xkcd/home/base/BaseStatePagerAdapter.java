@@ -8,6 +8,8 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import java.util.HashMap;
 
+import timber.log.Timber;
+
 public abstract class BaseStatePagerAdapter extends FragmentStatePagerAdapter {
 
     protected HashMap<Integer, Fragment> fragmentsMap = new HashMap<>();
