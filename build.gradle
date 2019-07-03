@@ -9,7 +9,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.4.1'
-        classpath 'com.google.gms:google-services:4.3.0'
+        classpath 'com.google.gms:google-services:4.2.0'
         classpath 'io.fabric.tools:gradle:1.28.1'
         classpath "io.objectbox:objectbox-gradle-plugin:$objectboxVersion"
         classpath "com.tencent.mm:AndResGuard-gradle-plugin:1.2.16"

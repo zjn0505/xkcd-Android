@@ -1,64 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory
-        android:title="@string/pref_general"
-        android:key="pref_key_general">
+        app:title="@string/pref_general"
+        app:key="pref_key_general"
+        app:iconSpaceReserved="false">
 
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="pref_font"
-            android:summaryOff="@string/pref_font_xkcd"
-            android:summaryOn="@string/pref_font_normal"
-            android:title="@string/pref_font" />
-
-        <ListPreference
-            android:defaultValue="arrow_1"
-            android:dialogTitle="@string/pref_arrow_content"
-            android:entries="@array/arrow_switch_by"
-            android:entryValues="@array/arrow_switch_by_value"
-            android:key="pref_arrow"
-            android:title="@string/pref_arrow" />
+        <SwitchPreferenceCompat
+            app:defaultValue="false"
+            app:key="pref_font"
+            app:summaryOff="@string/pref_font_xkcd"
+            app:summaryOn="@string/pref_font_normal"
+            app:title="@string/pref_font"
+            app:iconSpaceReserved="false" />
 
         <ListPreference
-            android:defaultValue="random_all"
-            android:dialogTitle="@string/pref_random_title"
-            android:entries="@array/random_option_value"
-            android:entryValues="@array/random_option"
-            android:key="pref_random"
-            android:title="@string/pref_random_title" />
+            app:defaultValue="arrow_1"
+            app:dialogTitle="@string/pref_arrow_content"
+            app:entries="@array/arrow_switch_by"
+            app:entryValues="@array/arrow_switch_by_value"
+            app:key="pref_arrow"
+            app:title="@string/pref_arrow"
+            app:iconSpaceReserved="false" />
+
+        <ListPreference
+            app:defaultValue="random_all"
+            app:dialogTitle="@string/pref_random_title"
+            app:entries="@array/random_option_value"
+            app:entryValues="@array/random_option"
+            app:key="pref_random"
+            app:title="@string/pref_random_title"
+            app:iconSpaceReserved="false" />
 
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="@string/pref_xkcd"
-        android:key="pref_key_xkcd">
+        app:title="@string/pref_xkcd"
+        app:key="pref_key_xkcd"
+        app:iconSpaceReserved="false">
 
-        <SwitchPreference
-            android:defaultValue="true"
-            android:key="pref_xkcd_gif_eco_mode"
-            android:summaryOff="@string/pref_xkcd_gif_eco_mode_off"
-            android:summaryOn="@string/pref_xkcd_gif_eco_mode_on"
-            android:title="@string/pref_xkcd_gif_eco_mode_title" />
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:key="pref_xkcd_gif_eco_mode"
+            app:summaryOff="@string/pref_xkcd_gif_eco_mode_off"
+            app:summaryOn="@string/pref_xkcd_gif_eco_mode_on"
+            app:title="@string/pref_xkcd_gif_eco_mode_title"
+            app:iconSpaceReserved="false" />
 
     </PreferenceCategory>
 
     <PreferenceCategory
-    android:title="@string/pref_what_if"
-    android:key="pref_key_what_if">
+        app:key="pref_key_what_if"
+        app:title="@string/pref_what_if"
+        app:iconSpaceReserved="false">
 
         <ListPreference
-            android:defaultValue="zoom_100"
-            android:key="pref_zoom"
-            android:entries="@array/zoom_value"
-            android:entryValues="@array/zoom"
-            android:title="@string/pref_what_if_zoom" />
+            app:defaultValue="zoom_100"
+            app:key="pref_zoom"
+            app:entries="@array/zoom_value"
+            app:entryValues="@array/zoom"
+            app:title="@string/pref_what_if_zoom"
+            app:iconSpaceReserved="false" />
+
         <ListPreference
-            android:defaultValue="ignore_content"
-            android:key="pref_what_if_search"
-            android:entries="@array/search_pref_value"
-            android:entryValues="@array/search_pref"
-            android:title="@string/pref_what_if_search" />
+            app:defaultValue="ignore_content"
+            app:key="pref_what_if_search"
+            app:entries="@array/search_pref_value"
+            app:entryValues="@array/search_pref"
+            app:title="@string/pref_what_if_search"
+            app:iconSpaceReserved="false" />
 
     </PreferenceCategory>
 
