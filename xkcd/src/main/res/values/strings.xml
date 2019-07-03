@@ -14,7 +14,6 @@
     <string name="action_xkcd">Go to xkcd.com</string>
     <string name="action_explain">Go to explainxkcd</string>
     <string name="search_hint_xkcd">Search xkcd</string>
-    <string name="search_hint_extra">Search extra</string>
 
     <string name="dialog_got_it">Got it</string>
     <string name="dialog_more_details">More details</string>
