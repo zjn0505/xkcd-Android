@@ -2,8 +2,6 @@ package xyz.jienan.xkcd.settings
 
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.appcompat.app.ActionBar
-
 import xyz.jienan.xkcd.base.BaseActivity
 
 /**
@@ -14,7 +12,7 @@ class PreferenceActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        fragmentManager.beginTransaction()
+        supportFragmentManager.beginTransaction()
                 .replace(android.R.id.content, SettingsFragment()).commit()
         val actionBar = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
