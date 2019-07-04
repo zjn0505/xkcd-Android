@@ -9,11 +9,11 @@ cache:
   - "$HOME/.android/build-cache"
 android:
   components:
-  - build-tools-29.0.3
+  - build-tools-29.0.0
   - android-29
 before_install:
 - yes | sdkmanager "platforms;android-29"
-- yes | sdkmanager "build-tools;29.0.3"
+- yes | sdkmanager "build-tools;29.0.0"
 - yes | sdkmanager "build-tools;28.0.3"
 - openssl aes-256-cbc -K $encrypted_89744ce7a44a_key -iv $encrypted_89744ce7a44a_iv -in secrets.tar.enc -out secrets.tar -d
 - tar xvf secrets.tar
