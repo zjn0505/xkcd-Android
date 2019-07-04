@@ -25,7 +25,7 @@ abstract class BaseActivity : AppCompatActivity() {
     protected val sharedPreferences: SharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        //        setTheme();
+        setTheme()
         super.onCreate(savedInstanceState)
     }
 
