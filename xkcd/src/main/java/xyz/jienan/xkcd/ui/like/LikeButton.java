@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
@@ -17,8 +18,6 @@ import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import androidx.annotation.ColorInt;
-import androidx.annotation.ColorRes;
 import androidx.annotation.DrawableRes;
 import androidx.core.content.ContextCompat;
 
@@ -37,9 +36,6 @@ public class LikeButton extends FrameLayout implements View.OnClickListener {
     private CircleView circleView;
     private Icon currentIcon;
     private OnLikeListener likeListener;
-    private OnAnimationEndListener animationEndListener;
-    private int circleStartColor;
-    private int circleEndColor;
     private int iconSize;
 
     private float animationScaleFactor;
@@ -103,25 +99,6 @@ public class LikeButton extends FrameLayout implements View.OnClickListener {
             if (!iconType.isEmpty())
                 currentIcon = parseIconType(iconType);
 
-
-        circleStartColor = array.getColor(R.styleable.LikeButton_circle_start_color, 0);
-
-        if (circleStartColor != 0)
-            circleView.setStartColor(circleStartColor);
-
-        circleEndColor = array.getColor(R.styleable.LikeButton_circle_end_color, 0);
-
-        if (circleEndColor != 0)
-            circleView.setEndColor(circleEndColor);
-
-        int dotPrimaryColor = array.getColor(R.styleable.LikeButton_dots_primary_color, 0);
-        int dotSecondaryColor = array.getColor(R.styleable.LikeButton_dots_secondary_color, 0);
-
-        if (dotPrimaryColor != 0 && dotSecondaryColor != 0) {
-            dotsView.setColors(dotPrimaryColor, dotSecondaryColor);
-        }
-
-
         if (likeDrawable == null && unLikeDrawable == null) {
             if (currentIcon != null) {
                 setIcon();
@@ -182,11 +159,13 @@ public class LikeButton extends FrameLayout implements View.OnClickListener {
 
             animatorSet = new AnimatorSet();
 
-            ObjectAnimator outerCircleAnimator = ObjectAnimator.ofFloat(circleView, CircleView.OUTER_CIRCLE_RADIUS_PROGRESS, 0.1f, 1f);
+            @SuppressLint("AnimatorKeep")
+            ObjectAnimator outerCircleAnimator = ObjectAnimator.ofFloat(circleView, "outerCircleRadiusProgress", 0.1f, 1f);
             outerCircleAnimator.setDuration(250);
             outerCircleAnimator.setInterpolator(DECELERATE_INTERPOLATOR);
 
-            ObjectAnimator innerCircleAnimator = ObjectAnimator.ofFloat(circleView, CircleView.INNER_CIRCLE_RADIUS_PROGRESS, 0.1f, 1f);
+            @SuppressLint("AnimatorKeep")
+            ObjectAnimator innerCircleAnimator = ObjectAnimator.ofFloat(circleView, "innerCircleRadiusProgress", 0.1f, 1f);
             innerCircleAnimator.setDuration(200);
             innerCircleAnimator.setStartDelay(200);
             innerCircleAnimator.setInterpolator(DECELERATE_INTERPOLATOR);
@@ -201,13 +180,14 @@ public class LikeButton extends FrameLayout implements View.OnClickListener {
             starScaleXAnimator.setStartDelay(250);
             starScaleXAnimator.setInterpolator(OVERSHOOT_INTERPOLATOR);
 
-            ObjectAnimator dotsAnimator = ObjectAnimator.ofFloat(dotsView, DotsView.DOTS_PROGRESS, 0, 1f);
+            @SuppressLint("AnimatorKeep")
+            ObjectAnimator dotsAnimator = ObjectAnimator.ofFloat(dotsView, "currentProgress", 0f, 1f);
             dotsAnimator.setDuration(900);
             dotsAnimator.setStartDelay(50);
             dotsAnimator.setInterpolator(ACCELERATE_DECELERATE_INTERPOLATOR);
 
             if (isChecked) {
-                ObjectAnimator bgAnimator = ObjectAnimator.ofFloat(icon, ALPHA, 0, 1f);
+                ObjectAnimator bgAnimator = ObjectAnimator.ofFloat(icon, ALPHA, 0f, 1f);
                 bgAnimator.setDuration(800);
                 bgAnimator.setStartDelay(150);
                 bgAnimator.setInterpolator(ACCELERATE_DECELERATE_INTERPOLATOR);
@@ -229,13 +209,6 @@ public class LikeButton extends FrameLayout implements View.OnClickListener {
                     dotsView.setCurrentProgress(0);
                     icon.setScaleX(1);
                     icon.setScaleY(1);
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    if (animationEndListener != null) {
-                        animationEndListener.onAnimationEnd(LikeButton.this);
-                    }
                 }
             });
 
@@ -429,47 +402,6 @@ public class LikeButton extends FrameLayout implements View.OnClickListener {
     }
 
     /**
-     * Listener that is triggered once the
-     * button animation is completed
-     *
-     * @param animationEndListener
-     */
-    public void setOnAnimationEndListener(OnAnimationEndListener animationEndListener) {
-        this.animationEndListener = animationEndListener;
-    }
-
-
-    /**
-     * This set sets the colours that are used for the little dots
-     * that will be exploding once the like button is clicked.
-     *
-     * @param primaryColor
-     * @param secondaryColor
-     */
-    public void setExplodingDotColorsRes(@ColorRes int primaryColor, @ColorRes int secondaryColor) {
-        dotsView.setColors(ContextCompat.getColor(getContext(), primaryColor), ContextCompat.getColor(getContext(), secondaryColor));
-    }
-
-    public void setExplodingDotColorsInt(@ColorInt int primaryColor, @ColorInt int secondaryColor) {
-        dotsView.setColors(primaryColor, secondaryColor);
-    }
-
-    public void setCircleStartColorRes(@ColorRes int circleStartColor) {
-        this.circleStartColor = ContextCompat.getColor(getContext(), circleStartColor);
-        circleView.setStartColor(this.circleStartColor);
-    }
-
-    public void setCircleStartColorInt(@ColorInt int circleStartColor) {
-        this.circleStartColor = circleStartColor;
-        circleView.setStartColor(circleStartColor);
-    }
-
-    public void setCircleEndColorRes(@ColorRes int circleEndColor) {
-        this.circleEndColor = ContextCompat.getColor(getContext(), circleEndColor);
-        circleView.setEndColor(this.circleEndColor);
-    }
-
-    /**
      * This function updates the dots view and the circle
      * view with the respective sizes based on the size
      * of the icon being used.
@@ -519,5 +451,4 @@ public class LikeButton extends FrameLayout implements View.OnClickListener {
 
         setEffectsViewSize();
     }
-
 }

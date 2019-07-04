@@ -22,15 +22,16 @@ import xyz.jienan.xkcd.R;
  * Created by Joel on 23/12/2015.
  */
 public class LikeUtils {
-    public static double mapValueFromRangeToRange(double value, double fromLow, double fromHigh, double toLow, double toHigh) {
+
+    static double mapValueFromRangeToRange(double value, double fromLow, double fromHigh, double toLow, double toHigh) {
         return toLow + ((value - fromLow) / (fromHigh - fromLow) * (toHigh - toLow));
     }
 
-    public static double clamp(double value, double low, double high) {
+    static double clamp(double value, double low, double high) {
         return Math.min(Math.max(value, low), high);
     }
 
-    public static List<Icon> getIcons() {
+    static List<Icon> getIcons() {
         List<Icon> icons = new ArrayList<>();
         icons.add(new Icon(R.drawable.ic_heart_on, R.drawable.ic_heart_off, IconType.Heart));
         icons.add(new Icon(R.drawable.ic_thumb_on, R.drawable.ic_thumb_off, IconType.Thumb));
@@ -38,12 +39,12 @@ public class LikeUtils {
         return icons;
     }
 
-    public static Drawable resizeDrawable(Context context, Drawable drawable, int width, int height) {
+    static Drawable resizeDrawable(Context context, Drawable drawable, int width, int height) {
         Bitmap bitmap = getBitmap(drawable, width, height);
         return new BitmapDrawable(context.getResources(), Bitmap.createScaledBitmap(bitmap, width, height, true));
     }
 
-    public static Bitmap getBitmap(Drawable drawable, int width, int height) {
+    private static Bitmap getBitmap(Drawable drawable, int width, int height) {
         if (drawable instanceof BitmapDrawable) {
             return ((BitmapDrawable) drawable).getBitmap();
         } else if (drawable instanceof VectorDrawableCompat) {
@@ -74,10 +75,5 @@ public class LikeUtils {
         vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
         vectorDrawable.draw(canvas);
         return bitmap;
-    }
-
-    public static float dipToPixels(Context context, float dipValue) {
-        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dipValue, metrics);
     }
 }
