@@ -4,6 +4,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposables
 import timber.log.Timber
+import xyz.jienan.xkcd.model.WhatIfArticle
 import xyz.jienan.xkcd.model.WhatIfModel
 import xyz.jienan.xkcd.model.persist.SharedPrefManager
 import xyz.jienan.xkcd.whatif.contract.WhatIfMainContract
@@ -90,26 +91,14 @@ class WhatIfMainPresenter constructor(private val view: WhatIfMainContract.View)
                 .map { list ->
                     if (isNumQuery(query)) {
                         val num = query.toLong()
-
-                        val matchNumArticle = list.firstOrNull { it.num == num }
-
-                        if (matchNumArticle != null) {
-                            list.remove(matchNumArticle)
-                            list.add(0, matchNumArticle)
-                        }
+                        moveNumberQueryToFirstPlace(list, num)
                     }
                     list
                 }
                 .subscribe({ view.renderWhatIfSearch(it) },
                         { e ->
                             Timber.e(e, "search what if error")
-                            if (isNumQuery(query)) {
-                                val num = java.lang.Long.parseLong(query)
-                                val article = WhatIfModel.loadArticleFromDB(num)
-                                if (article != null) {
-                                    view.renderWhatIfSearch(listOf(article))
-                                }
-                            }
+                            fallbackIfNumberQuery(query)
                         })
     }
 
@@ -125,6 +114,25 @@ class WhatIfMainPresenter constructor(private val view: WhatIfMainContract.View)
             0
         } else {
             list[Random.nextInt(list.size)].num
+        }
+    }
+
+    private fun moveNumberQueryToFirstPlace(list: MutableList<WhatIfArticle>, num: Long) {
+        val matchNumArticle = list.firstOrNull { it.num == num }
+
+        if (matchNumArticle != null) {
+            list.remove(matchNumArticle)
+            list.add(0, matchNumArticle)
+        }
+    }
+
+    private fun fallbackIfNumberQuery(query: String) {
+        if (isNumQuery(query)) {
+            val num = query.toLong()
+            val article = WhatIfModel.loadArticleFromDB(num)
+            if (article != null) {
+                view.renderWhatIfSearch(listOf(article))
+            }
         }
     }
 

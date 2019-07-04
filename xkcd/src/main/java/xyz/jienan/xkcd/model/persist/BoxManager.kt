@@ -146,7 +146,7 @@ object BoxManager {
     fun searchWhatIf(query: String, option: String): MutableList<WhatIfArticle> {
         var builder = whatIfBox.query().contains(WhatIfArticle_.title, query)
         if (StringUtil.isNumeric(query)) {
-            builder = builder.or().equal(WhatIfArticle_.num, java.lang.Long.valueOf(query))
+            builder = builder.or().equal(WhatIfArticle_.num, query.toLong())
         }
         when (option) {
             PREF_WHAT_IF_SEARCH_INCLUDE_READ -> builder = builder.or()
