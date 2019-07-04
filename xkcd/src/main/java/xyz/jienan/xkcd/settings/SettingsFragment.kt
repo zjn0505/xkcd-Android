@@ -1,5 +1,8 @@
 package xyz.jienan.xkcd.settings
 
+import android.content.Intent
+import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.ListPreference
@@ -76,10 +79,26 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
             PREF_DARK_THEME -> {
                 (preference as ListPreference).value = newValue.toString()
                 darkPref?.summary = darkPref?.entry.toString()
-                AppCompatDelegate.setDefaultNightMode(newValue.toString().toInt())
+                if (Build.VERSION.SDK_INT < 21) {
+                    activity?.setResult(RES_DARK, Intent().also { it.putExtra(PREF_DARK_THEME, newValue.toString().toInt()) })
+                    activity?.finish()
+                } else {
+                    AppCompatDelegate.setDefaultNightMode(newValue.toString().toInt())
+                }
             }
             PREF_XKCD_GIF_ECO -> (preference as SwitchPreferenceCompat).isChecked = newValue as Boolean
         }
         return false
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        if (Build.VERSION.SDK_INT >= 21) {
+            activity?.recreate()
+        }
+    }
+
+    companion object {
+        private const val RES_DARK = 101
     }
 }
