@@ -36,7 +36,7 @@ abstract class BaseActivity : AppCompatActivity() {
         })
     }
 
-    fun setTheme() {
+    private fun setTheme() {
         val fontPref = sharedPreferences.getBoolean(PREF_FONT, false)
         if (fontPref) {
             when {
