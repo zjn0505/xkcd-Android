@@ -217,7 +217,7 @@ class XkcdListActivity : BaseActivity(), XkcdListContract.View, ListFilterDialog
         ALL_COMICS(0),
         MY_FAVORITE(1),
         PEOPLES_CHOICE(2);
-        
+
         companion object {
             fun fromValue(value: Int): Selection = values().find { it.id == value } ?: ALL_COMICS
         }

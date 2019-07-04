@@ -31,7 +31,6 @@ import xyz.jienan.xkcd.comics.presenter.ImageDetailPagePresenter
 import xyz.jienan.xkcd.model.XkcdPic
 import xyz.jienan.xkcd.ui.AnimUtils
 import xyz.jienan.xkcd.ui.ToastUtils
-import xyz.jienan.xkcd.ui.xkcdimageview.DragImageView
 import xyz.jienan.xkcd.ui.xkcdimageview.ImageLoader
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -106,7 +105,7 @@ class ImageDetailPageActivity : BaseActivity(), ImageDetailPageContract.View {
         btnGifBack.setOnTouchListener { v, event -> onGifSpeedPressed(v, event) }
         btnGifForward.setOnTouchListener { v, event -> onGifSpeedPressed(v, event) }
         playBtn.setOnClickListener { onGifPlayClicked() }
-        bigImageView.onExitListener =  {
+        bigImageView.onExitListener = {
             finish()
             overridePendingTransition(R.anim.fadein, R.anim.fadeout_drop)
         }
@@ -313,8 +312,8 @@ class ImageDetailPageActivity : BaseActivity(), ImageDetailPageContract.View {
                             hasZeroValue = true
                         }
 
-                        val viewWHRatio = viewWidth/viewHeight.toFloat()
-                        val imageWHRatio = imageWidth/imageHeight.toFloat()
+                        val viewWHRatio = viewWidth / viewHeight.toFloat()
+                        val imageWHRatio = imageWidth / imageHeight.toFloat()
 
                         if (!hasZeroValue) {
                             result = if (imageWHRatio <= viewWHRatio) {

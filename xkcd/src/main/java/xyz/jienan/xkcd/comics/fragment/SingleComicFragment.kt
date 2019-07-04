@@ -161,7 +161,7 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
         }
         ivXkcdPic.setOnLongClickListener {
             if (currentPic == null) {
-                 false
+                false
             } else {
                 dialogFragment = SimpleInfoDialogFragment()
                 dialogFragment!!.setPic(currentPic!!)
@@ -228,7 +228,7 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
     }
 
     private fun initGlide() {
-        target = MyProgressTarget(BitmapImageViewTarget((ivXkcdPic as ImageView?)!!), pbLoading, ivXkcdPic as ImageView?)
+        target = MyProgressTarget(BitmapImageViewTarget(ivXkcdPic!!), pbLoading, ivXkcdPic)
     }
 
     private fun launchDetailPageActivity() {

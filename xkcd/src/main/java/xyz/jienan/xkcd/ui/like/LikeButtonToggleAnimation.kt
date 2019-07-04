@@ -8,11 +8,11 @@ import android.view.View
 
 private val ANIMATING = "animating".hashCode()
 
-fun LikeButton.animateShow(destTranslateX : Float) {
+fun LikeButton.animateShow(destTranslateX: Float) {
     animate(true, destTranslateX)
 }
 
-fun LikeButton.animateHide(destTranslateX : Float) {
+fun LikeButton.animateHide(destTranslateX: Float) {
     animate(false, destTranslateX)
 }
 

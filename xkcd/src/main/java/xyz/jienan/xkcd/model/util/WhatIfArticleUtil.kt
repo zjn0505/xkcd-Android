@@ -1,18 +1,13 @@
 package xyz.jienan.xkcd.model.util
 
+import okhttp3.ResponseBody
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.jsoup.nodes.Element
-import org.jsoup.select.Elements
-
+import xyz.jienan.xkcd.model.WhatIfArticle
 import java.io.IOException
 import java.text.ParseException
 import java.text.SimpleDateFormat
-import java.util.ArrayList
 import java.util.Locale
-
-import okhttp3.ResponseBody
-import xyz.jienan.xkcd.model.WhatIfArticle
 
 object WhatIfArticleUtil {
 

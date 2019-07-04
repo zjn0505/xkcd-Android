@@ -13,14 +13,14 @@ import android.widget.TextView;
 
 public class CustomMovementMethod extends LinkMovementMethod {
 
+    private static CustomMovementMethod sInstance;
+
     public static MovementMethod getInstance() {
         if (sInstance == null)
             sInstance = new CustomMovementMethod();
 
         return sInstance;
     }
-
-    private static CustomMovementMethod sInstance;
 
     @Override
     public boolean canSelectArbitrarily() {

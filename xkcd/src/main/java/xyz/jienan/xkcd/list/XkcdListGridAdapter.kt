@@ -41,7 +41,7 @@ internal class XkcdListGridAdapter : RecyclerView.Adapter<XkcdListGridAdapter.Xk
     override fun getItemCount(): Int = pics?.size ?: 0
 
     override fun getTextToShowInBubble(pos: Int): String {
-        return if (pics != null && pics!![pos]?.num > 0) {
+        return if (pics != null && pics!![pos].num > 0) {
             pics!![pos].num.toString()
         } else {
             (pos + 1).toString()

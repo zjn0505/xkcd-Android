@@ -2,17 +2,14 @@ package xyz.jienan.xkcd.base
 
 import android.content.SharedPreferences
 import android.os.Bundle
-import androidx.preference.PreferenceManager
 import androidx.appcompat.app.AppCompatActivity
-
+import androidx.preference.PreferenceManager
 import com.google.firebase.analytics.FirebaseAnalytics
-
+import xyz.jienan.xkcd.Const.FIRE_UX_ACTION
+import xyz.jienan.xkcd.Const.PREF_FONT
 import xyz.jienan.xkcd.R
 import xyz.jienan.xkcd.comics.activity.ImageDetailPageActivity
 import xyz.jienan.xkcd.home.MainActivity
-
-import xyz.jienan.xkcd.Const.FIRE_UX_ACTION
-import xyz.jienan.xkcd.Const.PREF_FONT
 
 /**
  * Created by Jienan on 2018/3/9.

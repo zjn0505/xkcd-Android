@@ -11,20 +11,17 @@ import android.util.AttributeSet
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
-
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.request.FutureTarget
-
-import java.io.File
-import java.io.FileInputStream
-import java.util.ArrayList
-
 import timber.log.Timber
 import xyz.jienan.xkcd.R
 import xyz.jienan.xkcd.comics.activity.ImageDetailPageActivity
 import xyz.jienan.xkcd.model.util.XkcdExplainUtil
 import xyz.jienan.xkcd.whatif.interfaces.LatexInterface
+import java.io.File
+import java.io.FileInputStream
+import java.util.*
 
 class WhatIfWebView(context: Context, attrs: AttributeSet) : WebView(context, attrs) {
 

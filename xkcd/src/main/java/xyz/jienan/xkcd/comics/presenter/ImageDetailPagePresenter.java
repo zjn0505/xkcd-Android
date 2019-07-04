@@ -173,6 +173,6 @@ public class ImageDetailPagePresenter implements ImageDetailPageContract.Present
     }
 
     private int getEcoModeValue() {
-        return isEcoMode ?  1 : step;
+        return isEcoMode ? 1 : step;
     }
 }

@@ -213,7 +213,7 @@ class SingleExtraFragment : BaseFragment(), SingleExtraContract.View {
     }
 
     private fun initGlide() {
-        target = MyProgressTarget(BitmapImageViewTarget((ivXkcdPic as ImageView?)!!), pbLoading, ivXkcdPic as ImageView?)
+        target = MyProgressTarget(BitmapImageViewTarget(ivXkcdPic!!), pbLoading, ivXkcdPic)
     }
 
     /**
@@ -260,6 +260,6 @@ class SingleExtraFragment : BaseFragment(), SingleExtraContract.View {
 
     companion object {
         fun newInstance(comicId: Int) =
-            SingleExtraFragment().apply { arguments = Bundle(1).apply { putInt("ind", comicId) } }
+                SingleExtraFragment().apply { arguments = Bundle(1).apply { putInt("ind", comicId) } }
     }
 }

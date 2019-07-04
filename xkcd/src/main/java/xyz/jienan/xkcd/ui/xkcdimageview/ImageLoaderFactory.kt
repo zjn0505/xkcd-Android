@@ -39,11 +39,10 @@ object ImageLoaderFactory {
 
     lateinit var imageLoader: ImageLoader
 
-    fun initialize(imageLoader: ImageLoader) : ImageLoader {
+    fun initialize(imageLoader: ImageLoader): ImageLoader {
         this.imageLoader = imageLoader
         return imageLoader
     }
-
 
 
 }

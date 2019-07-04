@@ -28,7 +28,7 @@ open class ImageViewFactory {
     }
 
     open fun createAnimatedImageView(context: Context, imageType: Int, imageFile: File?,
-                                               initScaleType: Int): View? {
+                                     initScaleType: Int): View? {
         return null
     }
 

@@ -28,7 +28,7 @@ class ComicsMainFragment : ContentMainBaseFragment(), ComicsMainContract.View {
 
     private lateinit var searchSuggestions: List<XkcdPic>
 
-    override val pickerTitleTextRes= R.string.dialog_pick_content
+    override val pickerTitleTextRes = R.string.dialog_pick_content
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         presenter = ComicsMainPresenter(this)

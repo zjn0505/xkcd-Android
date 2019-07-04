@@ -11,7 +11,6 @@ import android.view.animation.Animation
 import android.view.animation.AnimationSet
 import android.widget.FrameLayout
 import android.widget.ImageView
-import android.widget.ImageView.ScaleType
 import androidx.annotation.UiThread
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
@@ -207,7 +206,7 @@ open class BigImageView @JvmOverloads constructor(context: Context, attrs: Attri
 
                 override fun onAnimationEnd(animation: Animation) {
                     if (mThumbnailView != null) {
-                        mThumbnailView!!.setVisibility(GONE)
+                        mThumbnailView!!.visibility = GONE
                     }
                 }
 
