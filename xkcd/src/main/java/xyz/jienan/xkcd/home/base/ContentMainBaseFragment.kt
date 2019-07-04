@@ -56,7 +56,9 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
 
     protected lateinit var presenter: ContentMainBasePresenter
 
-    protected val searchAdapter by lazy { SearchCursorAdapter(activity, null, 0) }
+    protected open var searchItemBackgroundRes: Int? = null
+
+    protected val searchAdapter by lazy { SearchCursorAdapter(context, itemBgColor = searchItemBackgroundRes) }
 
     protected var latestIndex = INVALID_ID
 

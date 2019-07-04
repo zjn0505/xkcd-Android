@@ -11,6 +11,11 @@ div {
     line-height: 1.1em;
     font-weight: 700;
     padding: 1em;
+    font-size: 1.6em;
+}
+
+div ul li {
+    font-size: 0.7em;
 }
 
 table {

@@ -3,6 +3,7 @@ package xyz.jienan.xkcd.whatif.fragment
 import android.app.SearchManager
 import android.content.Intent
 import android.database.MatrixCursor
+import android.graphics.Color
 import android.os.Bundle
 import android.provider.BaseColumns
 import android.view.*
@@ -25,6 +26,8 @@ import java.util.concurrent.TimeUnit
 class WhatIfMainFragment : ContentMainBaseFragment(), WhatIfMainContract.View {
 
     override val layoutResId= R.layout.fragment_comic_main
+
+    override var searchItemBackgroundRes: Int? = Color.parseColor("#EBEBEB")
 
     override val titleTextRes: String by lazy { resources.getString(R.string.menu_whatif) }
 
