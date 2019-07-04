@@ -4,9 +4,11 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.text.HtmlCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -41,11 +43,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     private val compositeDisposable = CompositeDisposable()
 
     private val visibleFragment: Fragment?
-        get() {
-            return fragmentManager.fragments.firstOrNull { it.isVisible }
-        }
+        get() = fragmentManager.fragments.firstOrNull { it.isVisible }
 
     private var currentFontPref = false
+
+    private var currentDarkPref = -10 // a compromise for 5.0- devices since some recreate issues
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,10 +73,20 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         fastLoad()
     }
 
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQ_SETTINGS && currentFontPref != sharedPreferences.getBoolean(PREF_FONT, false)) {
+        @SuppressLint("WrongConstant")
+        if (requestCode == REQ_SETTINGS &&
+                (currentFontPref != sharedPreferences.getBoolean(PREF_FONT, false) ||
+                        currentDarkPref != AppCompatDelegate.getDefaultNightMode())) {
             recreate()
+        } else if (resultCode == REQ_SETTINGS && resultCode == RES_DARK) {
+            val darkMode = data?.extras?.getInt(PREF_DARK_THEME)
+            if (darkMode != null && AppCompatDelegate.getDefaultNightMode() != darkMode) {
+                AppCompatDelegate.setDefaultNightMode(darkMode)
+                recreate()
+            }
         }
     }
 
@@ -123,6 +135,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             R.id.nav_setting -> {
                 val settingsIntent = Intent(this, PreferenceActivity::class.java)
                 startActivityForResult(settingsIntent, REQ_SETTINGS)
+                @SuppressLint("WrongConstant")
+                currentDarkPref = AppCompatDelegate.getDefaultNightMode()
                 currentFontPref = sharedPreferences.getBoolean(PREF_FONT, false)
                 logUXEvent(FIRE_SETTING_MENU)
             }
@@ -197,8 +211,15 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         }
     }
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        recreate()
+    }
+
     companion object {
 
         private const val REQ_SETTINGS = 101
+
+        private const val RES_DARK = 101
     }
 }
