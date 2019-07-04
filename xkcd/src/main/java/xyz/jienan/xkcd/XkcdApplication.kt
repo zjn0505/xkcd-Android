@@ -2,6 +2,7 @@ package xyz.jienan.xkcd
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.preference.PreferenceManager
 import com.google.firebase.messaging.FirebaseMessaging
 import xyz.jienan.xkcd.base.glide.GlideImageLoader
 import xyz.jienan.xkcd.model.MyObjectBox
@@ -22,6 +23,10 @@ class XkcdApplication : Application() {
             return
         }
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
+        AppCompatDelegate.setDefaultNightMode((PreferenceManager
+                .getDefaultSharedPreferences(this)
+                .getString("pref_dark", "1") ?: "1")
+                .toInt())
         instance = this
         val boxStore = MyObjectBox.builder().androidContext(this).maxReaders(300).build()
         DebugUtils.debugDB(this, boxStore)

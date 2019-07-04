@@ -2,7 +2,7 @@ package xyz.jienan.xkcd.model.persist
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.preference.PreferenceManager
+import androidx.preference.PreferenceManager
 import android.text.TextUtils
 import com.google.gson.Gson
 import xyz.jienan.xkcd.Const.*

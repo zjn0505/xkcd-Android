@@ -1,0 +1,15 @@
+body {
+    background: #3A3A3A;
+}
+
+p, blockquote, div, body ul li, body ol li, tbody tr td {
+    color: #EBEBEB;
+}
+
+a:link, #question, #attribute, .refnum, sup span {
+    color: #ADD8E6 !important;
+}
+
+.illustration {
+    background: #AAA;
+}

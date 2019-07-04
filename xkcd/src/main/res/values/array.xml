@@ -51,4 +51,16 @@
         <item>@string/pref_what_if_search_search_all</item>
     </string-array>
 
+    <string-array name="dark_mode_option">
+        <item>1</item>
+        <item>2</item>
+        <item>-1</item>
+    </string-array>
+
+    <string-array name="dark_mode_option_value">
+        <item>@string/pref_dark_mode_off</item>
+        <item>@string/pref_dark_mode_on</item>
+        <item>@string/pref_dark_mode_system</item>
+    </string-array>
+
 </resources>

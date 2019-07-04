@@ -12,7 +12,7 @@ import android.content.res.ColorStateList
 import android.hardware.SensorManager
 import android.os.Build
 import android.os.Bundle
-import android.preference.PreferenceManager
+import androidx.preference.PreferenceManager
 import android.view.*
 import android.view.HapticFeedbackConstants.CONTEXT_CLICK
 import android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING

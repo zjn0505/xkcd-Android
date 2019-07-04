@@ -47,9 +47,14 @@
     <string name="pref_font">Increase legibility</string>
     <string name="pref_arrow_content">Set the number of comics to skip when arrow clicked</string>
     <string name="pref_random_title">Shake for random</string>
+    <string name="pref_appearance">Appearance</string>
+    <string name="pref_dark_mode">Dark theme</string>
+    <string name="pref_dark_mode_on">ON</string>
+    <string name="pref_dark_mode_off">OFF</string>
+    <string name="pref_dark_mode_system">System default</string>
     <string name="pref_font_xkcd">Using xkcd font</string>
     <string name="pref_font_normal">Using normal font</string>
-    <string name="pref_general">General</string>
+    <string name="pref_control">Control</string>
     <string name="pref_xkcd_gif_eco_mode_title">xkcd gif eco mode</string>
     <string name="pref_xkcd_gif_eco_mode_on">Better performance, 10 frames per second</string>
     <string name="pref_xkcd_gif_eco_mode_off">Better details, higher fps when playing</string>
