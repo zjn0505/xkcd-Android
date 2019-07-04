@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit
 
 class WhatIfMainFragment : ContentMainBaseFragment(), WhatIfMainContract.View {
 
-    override val layoutResId= R.layout.fragment_comic_main
+    override val layoutResId = R.layout.fragment_comic_main
 
     override var searchItemBackgroundRes: Int? = Color.parseColor("#EBEBEB")
 
@@ -37,7 +37,7 @@ class WhatIfMainFragment : ContentMainBaseFragment(), WhatIfMainContract.View {
 
     private val compositeDisposable = CompositeDisposable()
 
-    override val pickerTitleTextRes= R.string.dialog_pick_content_what_if
+    override val pickerTitleTextRes = R.string.dialog_pick_content_what_if
 
     override fun suggestionClicked(position: Int) {
         if (searchSuggestions.size > position) {
@@ -57,7 +57,7 @@ class WhatIfMainFragment : ContentMainBaseFragment(), WhatIfMainContract.View {
                 .delay(100, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ fab.hide() },
-                    { e -> Timber.e(e, "fab observing error") })
+                        { e -> Timber.e(e, "fab observing error") })
                 .let { compositeDisposable.add(it) }
         view.setBackgroundResource(R.drawable.what_if_webview_bg)
         super.onViewCreated(view, savedInstanceState)

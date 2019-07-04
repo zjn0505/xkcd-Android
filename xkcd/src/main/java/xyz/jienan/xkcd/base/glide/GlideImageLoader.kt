@@ -67,9 +67,7 @@ class GlideImageLoader private constructor(private val context: Context) : Image
                 callback.onProgress(progress)
             }
 
-            override fun getGranualityPercentage(): Float {
-                return 0f
-            }
+            override fun getGranualityPercentage() = 0f
 
             override fun onDownloadStart() {
                 callback.onStart()
@@ -117,13 +115,11 @@ class GlideImageLoader private constructor(private val context: Context) : Image
     }
 
     override fun cancelAll() {
-
+        // no-ops
     }
 
     companion object {
 
-        fun with(context: Context): GlideImageLoader {
-            return GlideImageLoader(context)
-        }
+        fun with(context: Context) = GlideImageLoader(context)
     }
 }

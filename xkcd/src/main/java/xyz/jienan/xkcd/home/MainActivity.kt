@@ -160,10 +160,10 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     private fun openFragment(fragmentTag: String): Boolean {
         var targetFragment = fragmentManager.findFragmentByTag(fragmentTag)
         if (targetFragment == null) {
-            targetFragment = when(fragmentTag) {
+            targetFragment = when (fragmentTag) {
                 TAG_XKCD -> ComicsMainFragment()
                 TAG_WHAT_IF -> WhatIfMainFragment()
-                TAG_EXTRA ->  ExtraMainFragment()
+                TAG_EXTRA -> ExtraMainFragment()
                 else -> ComicsMainFragment()
             }
         }
@@ -177,24 +177,24 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     private fun getDailyQuote() {
         QuoteModel.getQuoteOfTheDay(SharedPrefManager.previousQuote)
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext { SharedPrefManager.saveNewQuote(it) }
-            .subscribe({ quote ->
-                val header = navigationView.getHeaderView(0)
-                if (header != null && tvQuote != null && tvSubQuote != null) {
-                    @SuppressLint("SetTextI18n")
-                    tvQuote.text = "\"${HtmlCompat.fromHtml(quote.content, HtmlCompat.FROM_HTML_MODE_LEGACY)}\""
-                    tvSubQuote.text = getString(R.string.quote_sub_text, quote.author, quote.source[0], quote.num)
-                    header.setOnClickListener {
-                        val intent = Intent(this, MainActivity::class.java)
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                        intent.putExtra(INDEX_ON_NOTI_INTENT, quote.num)
-                        intent.putExtra(LANDING_TYPE, quote.source)
-                        startActivity(intent)
-                        drawerLayout.closeDrawer(GravityCompat.START)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext { SharedPrefManager.saveNewQuote(it) }
+                .subscribe({ quote ->
+                    val header = navigationView.getHeaderView(0)
+                    if (header != null && tvQuote != null && tvSubQuote != null) {
+                        @SuppressLint("SetTextI18n")
+                        tvQuote.text = "\"${HtmlCompat.fromHtml(quote.content, HtmlCompat.FROM_HTML_MODE_LEGACY)}\""
+                        tvSubQuote.text = getString(R.string.quote_sub_text, quote.author, quote.source[0], quote.num)
+                        header.setOnClickListener {
+                            val intent = Intent(this, MainActivity::class.java)
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                            intent.putExtra(INDEX_ON_NOTI_INTENT, quote.num)
+                            intent.putExtra(LANDING_TYPE, quote.source)
+                            startActivity(intent)
+                            drawerLayout.closeDrawer(GravityCompat.START)
+                        }
                     }
-                }
-            }, { e -> Timber.e(e, "failed to get daily quote") })
+                }, { e -> Timber.e(e, "failed to get daily quote") })
                 .also { compositeDisposable.add(it) }
     }
 

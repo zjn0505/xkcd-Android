@@ -29,11 +29,11 @@ class WhatIfListActivity : BaseActivity(), WhatIfListContract.View, ListFilterDi
 
     private val mAdapter by lazy { WhatIfListAdapter() }
 
-    private val linearLayoutManager by lazy { LinearLayoutManager(this) } 
+    private val linearLayoutManager by lazy { LinearLayoutManager(this) }
 
     private var currentSelection = ALL_WHAT_IF
 
-    private val whatIfListPresenter by lazy { WhatIfListPresenter(this) } 
+    private val whatIfListPresenter by lazy { WhatIfListPresenter(this) }
 
     private val rvScrollListener = object : RecyclerView.OnScrollListener() {
 
@@ -196,7 +196,7 @@ class WhatIfListActivity : BaseActivity(), WhatIfListContract.View, ListFilterDi
         ALL_WHAT_IF(0),
         MY_FAVORITE(1),
         PEOPLES_CHOICE(2);
-        
+
         companion object {
             fun fromValue(value: Int): Selection = values().find { it.id == value } ?: ALL_WHAT_IF
         }

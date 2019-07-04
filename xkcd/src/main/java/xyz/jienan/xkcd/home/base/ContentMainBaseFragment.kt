@@ -12,7 +12,6 @@ import android.content.res.ColorStateList
 import android.hardware.SensorManager
 import android.os.Build
 import android.os.Bundle
-import androidx.preference.PreferenceManager
 import android.view.*
 import android.view.HapticFeedbackConstants.CONTEXT_CLICK
 import android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
@@ -23,6 +22,7 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.preference.PreferenceManager
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager.widget.ViewPager.SCROLL_STATE_DRAGGING
 import androidx.viewpager.widget.ViewPager.SCROLL_STATE_IDLE
@@ -425,7 +425,7 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
     }
 
     protected fun latestLoaded() {
-        adapter?.setSize(latestIndex)
+        adapter.setSize(latestIndex)
         if (isFre) {
             scrollViewPagerToItem(latestIndex - 1, false)
         }

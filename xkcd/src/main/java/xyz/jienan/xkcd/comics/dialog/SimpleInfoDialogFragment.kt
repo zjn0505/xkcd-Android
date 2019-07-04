@@ -58,9 +58,9 @@ class SimpleInfoDialogFragment : DialogFragment() {
                             }
 
                             override fun explanationFailed() {
-                                if (dialog?.isShowing) {
+                                if (dialog.isShowing) {
                                     Toast.makeText(v.context, R.string.toast_more_explain_failed, Toast.LENGTH_SHORT).show()
-                                    pbLoading?.visibility = View.GONE
+                                    pbLoading.visibility = View.GONE
                                     it.setText(R.string.more_on_explainxkcd)
                                     hasExplainedMore = true
                                     isLoading = false
@@ -87,7 +87,7 @@ class SimpleInfoDialogFragment : DialogFragment() {
     }
 
     fun setExtraExplain(string: String?) {
-        pbLoading!!.visibility = View.GONE
+        pbLoading.visibility = View.GONE
         if (!TextUtils.isEmpty(string)) {
             ExplainLinkUtil.setTextViewHTML(tvExplain, string)
         }

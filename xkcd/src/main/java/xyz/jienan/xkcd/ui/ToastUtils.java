@@ -9,7 +9,7 @@ public class ToastUtils {
     private static Toast toast;
 
     public static void showToast(Context context, String text) {
-        try{
+        try {
             toast.getView().isShown();
             toast.setText(text);
         } catch (Exception e) {

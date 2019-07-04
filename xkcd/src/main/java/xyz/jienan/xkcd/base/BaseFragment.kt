@@ -16,9 +16,8 @@ abstract class BaseFragment : Fragment() {
     @get:LayoutRes
     protected abstract val layoutResId: Int
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(layoutResId, container, false)
-    }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+            inflater.inflate(layoutResId, container, false)
 
     @JvmOverloads
     protected fun logUXEvent(event: String, params: Map<String, String>? = null) {

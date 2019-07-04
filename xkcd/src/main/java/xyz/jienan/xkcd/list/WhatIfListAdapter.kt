@@ -40,7 +40,7 @@ internal class WhatIfListAdapter :
     override fun getItemCount(): Int = articles?.size ?: 0
 
     override fun getTextToShowInBubble(pos: Int): String {
-        return if (articles != null && articles!![pos]?.num > 0) {
+        return if (articles != null && articles!![pos].num > 0) {
             articles!![pos].num.toString()
         } else {
             (pos + 1).toString()

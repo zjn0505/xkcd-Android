@@ -86,7 +86,7 @@ open class SingleWhatIfFragment : BaseFragment(), ImgInterface.ImgCallback, RefI
         }
         if (ind != -1) {
             WhatIfModel.loadArticle(ind.toLong())
-                    .doOnSuccess{ WhatIfModel.push(it) }
+                    .doOnSuccess { WhatIfModel.push(it) }
                     .map {
                         if (context?.getUiNightModeFlag() == Configuration.UI_MODE_NIGHT_YES) {
                             val doc = Jsoup.parse(it.content)

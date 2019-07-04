@@ -29,17 +29,17 @@ public class SingleExtraPresenter implements SingleExtraContract.Presenter {
         explainDisposable.dispose();
         explainDisposable = extraModel.loadExplain(url)
                 .observeOn(AndroidSchedulers.mainThread()).subscribe(
-                    explainContent -> {
-                        view.explainLoaded(explainContent);
-                        if (!TextUtils.isEmpty(explainContent)) {
-                            extraModel.saveExtraWithExplain(url, explainContent);
+                        explainContent -> {
+                            view.explainLoaded(explainContent);
+                            if (!TextUtils.isEmpty(explainContent)) {
+                                extraModel.saveExtraWithExplain(url, explainContent);
+                            }
+                        },
+                        e -> {
+                            view.explainFailed();
+                            Timber.e(e);
                         }
-                    },
-                    e -> {
-                        view.explainFailed();
-                        Timber.e(e);
-                    }
-        );
+                );
         compositeDisposable.add(explainDisposable);
     }
 

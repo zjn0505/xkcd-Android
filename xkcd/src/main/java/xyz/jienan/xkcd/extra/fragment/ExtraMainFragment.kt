@@ -49,8 +49,8 @@ class ExtraMainFragment : ContentMainBaseFragment(), ExtraMainContract.View {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        if (viewPager != null && viewPager.getCurrentItem() >= 0) {
-            outState.putInt(LAST_VIEW_XKCD_ID, viewPager.getCurrentItem() + 1)
+        if (viewPager != null && viewPager.currentItem >= 0) {
+            outState.putInt(LAST_VIEW_XKCD_ID, viewPager.currentItem + 1)
         }
     }
 
@@ -77,7 +77,7 @@ class ExtraMainFragment : ContentMainBaseFragment(), ExtraMainContract.View {
     }
 
     override fun showExtras(extraComics: List<ExtraComics>) {
-        adapter!!.setSize(extraComics.size)
+        adapter.setSize(extraComics.size)
         (adapter as ExtraPagerAdapter).setEntities(extraComics)
     }
 
