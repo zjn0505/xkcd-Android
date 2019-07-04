@@ -6,11 +6,7 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.net.ConnectivityManager
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.MenuItem
-import androidx.annotation.AttrRes
-import androidx.annotation.ColorInt
-import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -30,6 +26,7 @@ import xyz.jienan.xkcd.home.base.ContentMainBaseFragment
 import xyz.jienan.xkcd.model.QuoteModel
 import xyz.jienan.xkcd.model.persist.SharedPrefManager
 import xyz.jienan.xkcd.settings.PreferenceActivity
+import xyz.jienan.xkcd.ui.getColorResCompat
 import xyz.jienan.xkcd.whatif.WhatIfFastLoadService
 import xyz.jienan.xkcd.whatif.fragment.WhatIfMainFragment
 
@@ -198,14 +195,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             msgIntent.putExtra(WHAT_IF_LATEST_INDEX, SharedPrefManager.latestWhatIf)
             startService(msgIntent)
         }
-    }
-
-    @ColorInt
-    private fun Context.getColorResCompat(@AttrRes id: Int): Int {
-        val resolvedAttr = TypedValue()
-        theme.resolveAttribute(id, resolvedAttr, true)
-        val colorRes = resolvedAttr.run { if (resourceId != 0) resourceId else data }
-        return ContextCompat.getColor(this, colorRes)
     }
 
     companion object {

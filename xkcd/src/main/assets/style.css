@@ -23,6 +23,11 @@ table {
     font-weight: 500;
 }
 
+body center table tbody tr td {
+    font-size: 1.4em;
+    line-height: 1.5;
+}
+
 sup {
     font-family: Verdana, sans-serif;
 }

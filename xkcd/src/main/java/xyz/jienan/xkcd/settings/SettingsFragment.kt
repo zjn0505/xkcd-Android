@@ -1,6 +1,7 @@
 package xyz.jienan.xkcd.settings
 
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -16,9 +17,14 @@ import xyz.jienan.xkcd.model.WhatIfModel
 class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener {
 
     private val arrowPref by lazy { findPreference<ListPreference>(PREF_ARROW) }
+
     private val randomPref by lazy { findPreference<ListPreference>(PREF_RANDOM) }
+
     private val zoomPref by lazy { findPreference<ListPreference>(PREF_ZOOM) }
+
     private val searchPref by lazy { findPreference<ListPreference>(PREF_WHAT_IF_SEARCH) }
+
+    private val darkPref by lazy { findPreference<ListPreference>(PREF_DARK_THEME) }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.prefs, rootKey)
@@ -38,6 +44,9 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
 
         zoomPref?.summary = zoomPref?.entry.toString()
         zoomPref?.onPreferenceChangeListener = this
+
+        darkPref?.summary = darkPref?.entry.toString()
+        darkPref?.onPreferenceChangeListener = this
     }
 
     override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
@@ -63,6 +72,11 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
             PREF_WHAT_IF_SEARCH -> {
                 (preference as ListPreference).value = newValue.toString()
                 searchPref?.summary = searchPref?.entry.toString()
+            }
+            PREF_DARK_THEME -> {
+                (preference as ListPreference).value = newValue.toString()
+                darkPref?.summary = darkPref?.entry.toString()
+                AppCompatDelegate.setDefaultNightMode(newValue.toString().toInt())
             }
             PREF_XKCD_GIF_ECO -> (preference as SwitchPreferenceCompat).isChecked = newValue as Boolean
         }

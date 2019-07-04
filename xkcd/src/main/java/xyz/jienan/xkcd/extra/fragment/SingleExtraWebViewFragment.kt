@@ -1,18 +1,22 @@
 package xyz.jienan.xkcd.extra.fragment
 
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.webkit.WebSettings
+import android.widget.TextView
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.fragment_extra_single.*
 import me.dkzwm.widget.srl.SmoothRefreshLayout
 import me.dkzwm.widget.srl.extra.footer.ClassicFooter
 import me.dkzwm.widget.srl.extra.header.ClassicHeader
+import org.jsoup.Jsoup
 import timber.log.Timber
 import xyz.jienan.xkcd.Const.*
 import xyz.jienan.xkcd.R
@@ -20,6 +24,8 @@ import xyz.jienan.xkcd.model.ExtraComics
 import xyz.jienan.xkcd.model.ExtraModel
 import xyz.jienan.xkcd.ui.RefreshFooterView
 import xyz.jienan.xkcd.ui.RefreshHeaderView
+import xyz.jienan.xkcd.ui.getColorResCompat
+import xyz.jienan.xkcd.ui.getUiNightModeFlag
 import xyz.jienan.xkcd.whatif.fragment.SingleWhatIfFragment
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
@@ -86,6 +92,10 @@ class SingleExtraWebViewFragment : SingleWhatIfFragment() {
 
             updateReleaseText()
         }
+        val color = ColorStateList.valueOf(context!!.getColorResCompat(android.R.attr.textColorPrimary))
+        refreshLayout!!.findViewById<TextView>(R.id.sr_classic_title).setTextColor(color)
+        refreshLayout!!.findViewById<TextView>(R.id.sr_classic_last_update).setTextColor(color)
+        (refreshLayout!!.footerView as ClassicFooter<*>).findViewById<TextView>(R.id.sr_classic_title).setTextColor(color)
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -129,6 +139,19 @@ class SingleExtraWebViewFragment : SingleWhatIfFragment() {
 
         if (links != null) {
             ExtraModel.parseContentFromUrl(links[abs(pageIndex % links.size)])
+                    .map {
+                        if (context?.getUiNightModeFlag() == Configuration.UI_MODE_NIGHT_YES) {
+                            val doc = Jsoup.parse(it)
+                            doc.head().appendElement("link")
+                                    .attr("rel", "stylesheet")
+                                    .attr("type", "text/css")
+                                    .attr("href", "night_style.css")
+
+                            doc.html()
+                        } else {
+                            it
+                        }
+                    }
                     .subscribe({ html ->
                         webView.loadDataWithBaseURL("file:///android_asset/.",
                                 html, "text/html", "UTF-8", null)
