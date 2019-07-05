@@ -20,6 +20,7 @@
 - FCM, crashlytics from [Firebase](firebase.google.com)
 - xkcd staggered list, server implemented in this [repo](https://github.com/zjn0505/xkcd)
 - Favorite :heart: and thumbs-up :thumbsup:, modified from [LikeButton](https://github.com/jd-alexander/LikeButton)
+- **Dark theme**
 
 
 So, I just put all these great services and modules together, and offering the best experience to explore xkcd comic on mobile phone.
