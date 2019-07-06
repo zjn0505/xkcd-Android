@@ -76,7 +76,7 @@ open class BigImageView @JvmOverloads constructor(context: Context, attrs: Attri
         } else {
             mImageLoader = ImageLoaderFactory.imageLoader
         }
-        mInternalCallback = ThreadedCallbacks.create(ImageLoader.Callback::class.java, this)
+        mInternalCallback = this
 
         mViewFactory = ImageViewFactory()
 
@@ -140,52 +140,66 @@ open class BigImageView @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     override fun onCacheHit(imageType: Int, image: File) {
-        currentImageFile = image
-        doShowImage(imageType, image)
+        post {
+            currentImageFile = image
+            doShowImage(imageType, image)
 
-        if (mUserCallback != null) {
-            mUserCallback!!.onCacheHit(imageType, image)
+            if (mUserCallback != null) {
+                mUserCallback!!.onCacheHit(imageType, image)
+            }
         }
     }
 
     override fun onCacheMiss(imageType: Int, image: File) {
-        currentImageFile = image
-        mTempImages.add(image)
-        doShowImage(imageType, image)
+        post {
+            currentImageFile = image
+            mTempImages.add(image)
+            doShowImage(imageType, image)
 
-        if (mUserCallback != null) {
-            mUserCallback!!.onCacheMiss(imageType, image)
+            if (mUserCallback != null) {
+                mUserCallback!!.onCacheMiss(imageType, image)
+            }
         }
     }
 
     override fun onStart() {
-        if (mUserCallback != null) {
-            mUserCallback!!.onStart()
+        post {
+            if (mUserCallback != null) {
+                mUserCallback!!.onStart()
+            }
         }
     }
 
     override fun onProgress(progress: Int) {
-        if (mUserCallback != null) {
-            mUserCallback!!.onProgress(progress)
+        post {
+            if (mUserCallback != null) {
+                mUserCallback!!.onProgress(progress)
+            }
         }
     }
 
     override fun onFinish() {
-        doOnFinish()
-        if (mUserCallback != null) {
-            mUserCallback!!.onFinish()
+        post {
+            doOnFinish()
+            if (mUserCallback != null) {
+                mUserCallback!!.onFinish()
+            }
         }
     }
 
     override fun onSuccess(image: File) {
-        if (mUserCallback != null) {
-            mUserCallback!!.onSuccess(image)
+        post {
+            if (mUserCallback != null) {
+                mUserCallback!!.onSuccess(image)
+            }
         }
     }
 
     override fun onFail(error: Exception) {
-        if (mUserCallback != null) {
-            mUserCallback!!.onFail(error)
+        post {
+            if (mUserCallback != null) {
+                mUserCallback!!.onFail(error)
+            }
         }
     }
 

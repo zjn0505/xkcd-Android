@@ -1,15 +1,18 @@
 package xyz.jienan.xkcd.comics.activity
 
+import android.annotation.TargetApi
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.SeekBar
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.gif.GifDrawable
@@ -58,7 +61,9 @@ class ImageDetailPageActivity : BaseActivity(), ImageDetailPageContract.View {
 
     private val glide by lazy { Glide.with(this) }
 
-    private var url : String? = ""
+    private val titlePx by lazy { resources.getDimension(R.dimen.top_title_padding).toInt() }
+
+    private var url: String? = ""
 
     private val isEcoMode by lazy { sharedPreferences.getBoolean(PREF_XKCD_GIF_ECO, true) }
 
@@ -108,6 +113,26 @@ class ImageDetailPageActivity : BaseActivity(), ImageDetailPageContract.View {
         bigImageView.onExitListener = {
             finish()
             overridePendingTransition(R.anim.fadein, R.anim.fadeout_drop)
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+            bigImageView.setOnApplyWindowInsetsListener { _, windowInsets ->
+                adjustContentForCutouts()
+                windowInsets
+            }
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.P)
+    private fun adjustContentForCutouts() {
+        window.decorView.rootWindowInsets?.displayCutout?.apply {
+            tvTitle.apply {
+                setPadding(titlePx + safeInsetLeft, titlePx, titlePx + safeInsetRight, titlePx)
+                layoutParams = (layoutParams as RelativeLayout.LayoutParams).apply { topMargin = safeInsetTop }
+            }
+            bigImageView.apply { setPadding(safeInsetLeft, safeInsetTop, safeInsetRight, safeInsetBottom) }
+            pbLoading.apply { setPadding(safeInsetLeft, safeInsetTop, safeInsetRight, safeInsetBottom) }
+            gifPanel.apply { setPadding(safeInsetLeft, safeInsetTop, safeInsetRight, safeInsetBottom) }
         }
     }
 
@@ -225,7 +250,7 @@ class ImageDetailPageActivity : BaseActivity(), ImageDetailPageContract.View {
         isGifInPlayState = !isGifInPlayState
         stopPlayingGif()
         if (isGifInPlayState) {
-            startPlayingGif(true, false)
+            startPlayingGif(isForward = true, isFromUserLongPress = false)
         }
     }
 

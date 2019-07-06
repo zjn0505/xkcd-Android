@@ -9,9 +9,9 @@
         android:id="@+id/bigImageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:contentDescription="@string/xkcd_pic"
         android:background="@android:color/black"
-        app:optimizeDisplay="false"/>
+        android:contentDescription="@string/xkcd_pic"
+        app:optimizeDisplay="false" />
 
     <TextView
         android:id="@+id/tvTitle"
@@ -19,12 +19,13 @@
         android:layout_height="wrap_content"
         android:background="#66585858"
         android:gravity="center"
-        android:padding="10dp"
+        android:padding="@dimen/top_title_padding"
         android:textColor="#FFF"
         android:textSize="18sp"
         android:textStyle="bold"
         android:visibility="gone"
-        tools:text="2001 - A Space Odyssey" />
+        tools:text="2001 - A Space Odyssey"
+        tools:visibility="visible" />
 
     <ProgressBar
         android:id="@+id/pbLoading"
@@ -33,61 +34,63 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:indeterminate="true"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        tools:visibility="visible" />
 
     <LinearLayout
         android:id="@+id/gifPanel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_margin="10dp"
         android:orientation="vertical"
-        android:layout_alignParentBottom="true"
-        android:visibility="gone">
+        android:visibility="gone"
+        tools:visibility="visible">
 
         <LinearLayout
             android:id="@+id/ll_gif_control"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="5dp">
+            android:layout_marginBottom="5dp"
+            android:orientation="horizontal">
 
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_weight="1"/>
+                android:layout_weight="1" />
 
             <ImageView
                 android:id="@+id/btnGifBack"
+                style="@style/btn_gif_control"
                 app:srcCompat="@drawable/ic_fast_rewind"
-                tools:ignore="ContentDescription"
-                style="@style/btn_gif_control" />
+                tools:ignore="ContentDescription" />
 
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_weight="1"/>
+                android:layout_weight="1" />
 
             <ImageView
                 android:id="@+id/playBtn"
+                style="@style/btn_gif_control"
                 app:srcCompat="@drawable/ic_play_arrow"
-                tools:ignore="ContentDescription"
-                style="@style/btn_gif_control" />
+                tools:ignore="ContentDescription" />
 
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_weight="1"/>
+                android:layout_weight="1" />
 
             <ImageView
                 android:id="@+id/btnGifForward"
+                style="@style/btn_gif_control"
                 app:srcCompat="@drawable/ic_fast_forward"
-                tools:ignore="ContentDescription"
-                style="@style/btn_gif_control" />
+                tools:ignore="ContentDescription" />
 
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_weight="1"/>
+                android:layout_weight="1" />
 
         </LinearLayout>
 
@@ -95,7 +98,8 @@
             android:id="@+id/sbMovie"
             android:layout_width="match_parent"
             android:layout_height="30dp"
-            android:visibility="invisible"/>
+            android:visibility="invisible"
+            tools:visibility="visible"/>
 
     </LinearLayout>
 
