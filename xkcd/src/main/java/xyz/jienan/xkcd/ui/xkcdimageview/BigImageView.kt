@@ -1,6 +1,7 @@
 package xyz.jienan.xkcd.ui.xkcdimageview
 
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.net.Uri
 import android.util.AttributeSet
@@ -195,6 +196,13 @@ open class BigImageView @JvmOverloads constructor(context: Context, attrs: Attri
         }
     }
 
+    override fun onConfigurationChanged(newConfig: Configuration?) {
+        super.onConfigurationChanged(newConfig)
+        if (isOriginalSized) {
+            ssiv?.postDelayed({ ssiv?.resetScaleAndCenter() }, 100)
+        }
+    }
+
     override fun onFail(error: Exception) {
         post {
             if (mUserCallback != null) {
@@ -266,7 +274,7 @@ open class BigImageView @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     protected val isOriginalSized: Boolean
-        get() = (ssiv?.scale ?: 0f) == (ssiv?.minScale ?: 0f)
+        get() = (ssiv?.scale ?: 1f) / (ssiv?.minScale ?: 1f) < MIN_ORIGINAL_DIFF
 
     private fun clearThumbnailAndProgressIndicator() {
         if (mThumbnailView != null) {
@@ -277,5 +285,6 @@ open class BigImageView @JvmOverloads constructor(context: Context, attrs: Attri
 
     companion object {
         const val INIT_SCALE_TYPE_FIT_CENTER = 3
+        private const val MIN_ORIGINAL_DIFF = 1.09f
     }
 }
