@@ -45,5 +45,14 @@
             <enum name="fitStart" value="5" />
             <enum name="fitXY" value="6" />
         </attr>
+
+    </declare-styleable>
+
+    <declare-styleable name="CircleProgressBar">
+        <attr name="background_color" format="color|reference" />
+        <attr name="progress_start_color" format="color|reference" />
+        <attr name="progress_end_color" format="color|reference" />
+        <attr name="progress_stroke_width" format="dimension|reference" />
+        <attr name="progress_background_color" format="color|reference" />
     </declare-styleable>
 </resources>

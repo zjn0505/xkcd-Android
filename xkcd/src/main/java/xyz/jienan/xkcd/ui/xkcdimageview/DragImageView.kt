@@ -28,6 +28,10 @@ class DragImageView @JvmOverloads constructor(context: Context, attr: AttributeS
     private var oneFingerTouch = true
 
     private var firstPointerId = 0
+    
+    init {
+        systemUiVisibility = SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+    }
 
     override fun dispatchDraw(canvas: Canvas) {
         canvas.translate(translateX, translateY)

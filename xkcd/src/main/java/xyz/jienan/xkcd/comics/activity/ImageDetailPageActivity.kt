@@ -58,7 +58,7 @@ class ImageDetailPageActivity : BaseActivity(), ImageDetailPageContract.View {
 
     private val glide by lazy { Glide.with(this) }
 
-    private var url = ""
+    private var url : String? = ""
 
     private val isEcoMode by lazy { sharedPreferences.getBoolean(PREF_XKCD_GIF_ECO, true) }
 
@@ -77,7 +77,7 @@ class ImageDetailPageActivity : BaseActivity(), ImageDetailPageContract.View {
         setContentView(R.layout.activity_image_detail)
         url = intent.getStringExtra(KEY_URL)
         if (!url.isNullOrBlank()) {
-            renderPic(url)
+            renderPic(url!!)
         } else if (index != 0) {
             imageDetailPagePresenter.requestImage(index)
         } else {
@@ -272,7 +272,7 @@ class ImageDetailPageActivity : BaseActivity(), ImageDetailPageContract.View {
 
     private fun loadGifWithControl() {
         pbLoading!!.visibility = View.VISIBLE
-        GlideUtils.loadGif(glide!!, url, object : SimpleTarget<GifDrawable>() {
+        GlideUtils.loadGif(glide!!, url!!, object : SimpleTarget<GifDrawable>() {
 
             override fun onResourceReady(resource: GifDrawable, glideAnimation: GlideAnimation<in GifDrawable>) {
                 imageDetailPagePresenter.parseGifData(resource.data)

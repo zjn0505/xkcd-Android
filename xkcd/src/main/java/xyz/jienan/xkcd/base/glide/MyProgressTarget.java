@@ -8,14 +8,16 @@ import android.widget.ProgressBar;
 import com.bumptech.glide.request.target.Target;
 
 import xyz.jienan.xkcd.R;
+import xyz.jienan.xkcd.ui.IProgressbar;
+import xyz.jienan.xkcd.ui.Progressable;
 
 import static android.view.View.VISIBLE;
 
 public class MyProgressTarget<Z> extends ProgressTarget<String, Z> {
-    private final ProgressBar progressbar;
+    private final IProgressbar progressbar;
     private final ImageView image;
 
-    public MyProgressTarget(Target<Z> target, ProgressBar progress, ImageView image) {
+    public MyProgressTarget(Target<Z> target, IProgressbar progress, ImageView image) {
         super(target);
         this.progressbar = progress;
         this.image = image;
@@ -54,7 +56,7 @@ public class MyProgressTarget<Z> extends ProgressTarget<String, Z> {
         progress = progress <= 0 ? 1 : progress;
         progressbar.setProgress(progress);
         if (progressbar.getAnimation() == null || !progressbar.getAnimation().hasStarted()) {
-            progressbar.startAnimation(AnimationUtils.loadAnimation(progressbar.getContext(), R.anim.rotate));
+            progressbar.startAnimation(AnimationUtils.loadAnimation(image.getContext(), R.anim.rotate));
         }
         image.setImageLevel((int) (10000 * bytesRead / expectedLength));
     }

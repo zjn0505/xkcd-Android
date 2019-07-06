@@ -16,3 +16,8 @@ fun Context.getColorResCompat(@AttrRes id: Int): Int {
 }
 
 fun Context.getUiNightModeFlag() = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+
+fun dip2px(context: Context, dpValue: Float): Int {
+    val scale = context.resources.displayMetrics.density
+    return (dpValue * scale + 0.5f).toInt()
+}

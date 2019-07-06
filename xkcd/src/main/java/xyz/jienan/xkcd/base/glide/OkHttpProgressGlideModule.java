@@ -95,7 +95,6 @@ public class OkHttpProgressGlideModule implements GlideModule {
 
         @Override
         public void update(HttpUrl url, final long bytesRead, final long contentLength) {
-            //System.out.printf("%s: %d/%d = %.2f%%%n", url, bytesRead, contentLength, (100f * bytesRead) / contentLength);
             String key = url.toString();
             final UIProgressListener listener = LISTENERS.get(key);
             if (listener == null) {

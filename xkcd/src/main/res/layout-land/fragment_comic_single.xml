@@ -90,7 +90,7 @@
 
     </LinearLayout>
 
-    <com.dinuscxj.progressbar.CircleProgressBar
+    <xyz.jienan.xkcd.ui.CircleProgressBar
         android:id="@+id/pbLoading"
         style="@style/image_progress_bar" />
 
