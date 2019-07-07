@@ -11,7 +11,6 @@ import android.view.HapticFeedbackConstants.LONG_PRESS
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.AnimationUtils
-import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestListener
@@ -33,8 +32,6 @@ import xyz.jienan.xkcd.comics.dialog.SimpleInfoDialogFragment.ISimpleInfoDialogL
 import xyz.jienan.xkcd.comics.presenter.SingleComicPresenter
 import xyz.jienan.xkcd.model.XkcdPic
 import java.lang.ref.WeakReference
-import java.text.DateFormat
-import java.util.*
 
 /**
  * Created by jienanzhang on 03/03/2018.
@@ -155,20 +152,14 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
         if (savedInstanceState != null) {
             dialogFragment = childFragmentManager
                     .findFragmentByTag("AltInfoDialogFragment") as SimpleInfoDialogFragment?
-            if (dialogFragment != null) {
-                dialogFragment!!.setListener(dialogListener)
-            }
+            dialogFragment?.setListener(dialogListener)
         }
         ivXkcdPic.setOnLongClickListener {
             if (currentPic == null) {
                 false
             } else {
-                dialogFragment = SimpleInfoDialogFragment()
-                dialogFragment!!.setPic(currentPic!!)
-                dialogFragment!!.setListener(dialogListener)
-                dialogFragment!!.show(childFragmentManager, "AltInfoDialogFragment")
+                showInfoDialog()
                 it.performHapticFeedback(LONG_PRESS, FLAG_IGNORE_GLOBAL_SETTING)
-                logUXEvent(FIRE_LONG_PRESS)
                 true
             }
         }
@@ -239,6 +230,14 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
         activity!!.overridePendingTransition(R.anim.fadein, R.anim.fadeout)
     }
 
+    private fun showInfoDialog() {
+        dialogFragment = SimpleInfoDialogFragment()
+        dialogFragment!!.setPic(currentPic!!)
+        dialogFragment!!.setListener(dialogListener)
+        dialogFragment!!.show(childFragmentManager, "AltInfoDialogFragment")
+        logUXEvent(FIRE_LONG_PRESS)
+    }
+
     override fun renderXkcdPic(xPic: XkcdPic) {
         if (activity == null || activity!!.isFinishing) {
             return
@@ -253,16 +252,7 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
         @SuppressLint("SetTextI18n")
         tvTitle!!.text = "${xPic.num}. ${xPic.title}"
         tvCreateDate!!.text = String.format(getString(R.string.created_on), xPic.year, xPic.month, xPic.day)
-
-        val format = DateFormat.getDateInstance()
-
-        val date = Calendar.getInstance()
-        date.set(xPic.year.toInt(), xPic.month.toInt(), xPic.day.toInt())
-        Timber.d("local ${Locale.getDefault()}, time ${format.format(date.time)}")
-
-        if (tvDescription != null) {
-            tvDescription!!.text = xPic.alt
-        }
+        tvDescription?.text = xPic.alt
     }
 
     private fun load(url: String) {
