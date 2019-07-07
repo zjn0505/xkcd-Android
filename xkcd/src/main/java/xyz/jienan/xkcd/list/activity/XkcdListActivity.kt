@@ -132,7 +132,6 @@ class XkcdListActivity : BaseActivity(), XkcdListContract.View, ListFilterDialog
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list)
         rvScroller?.setRecyclerView(rvList)
-        rvScroller?.setViewsToUse(R.layout.rv_scroller, R.id.fastscroller_bubble, R.id.fastscroller_handle)
         rvList?.adapter = mAdapter
         rvList?.setHasFixedSize(true)
         rvList?.addOnItemTouchListener(RecyclerItemClickListener(this, rvList, object : RecyclerItemClickListener.OnItemClickListener {

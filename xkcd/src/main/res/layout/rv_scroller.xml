@@ -13,7 +13,7 @@
         android:gravity="center"
         android:textColor="#FFffffff"
         android:textSize="28sp"
-        android:visibility="visible"
+        android:visibility="invisible"
         tools:text="A" />
 
     <ImageView
