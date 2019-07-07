@@ -78,7 +78,7 @@ class ImageDetailPageActivity : BaseActivity(), ImageDetailPageContract.View {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        imageDetailPagePresenter.setEcoMode(isEcoMode)
+        imageDetailPagePresenter.isEcoMode = isEcoMode
         setContentView(R.layout.activity_image_detail)
         url = intent.getStringExtra(KEY_URL)
         if (!url.isNullOrBlank()) {
