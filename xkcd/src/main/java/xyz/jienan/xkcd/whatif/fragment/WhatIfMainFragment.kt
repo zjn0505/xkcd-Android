@@ -121,7 +121,7 @@ class WhatIfMainFragment : ContentMainBaseFragment(), WhatIfMainContract.View {
         val cursor = MatrixCursor(columns)
 
         searchSuggestions.forEachIndexed { index, article ->
-            cursor.addRow(arrayOf(Integer.toString(index), article.featureImg, article.title, article.num.toString()))
+            cursor.addRow(arrayOf(index.toString(), article.featureImg, article.title, article.num.toString()))
         }
         searchAdapter.swapCursor(cursor)
     }

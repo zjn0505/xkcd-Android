@@ -3,11 +3,13 @@ package xyz.jienan.xkcd.whatif.presenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposables
+import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import xyz.jienan.xkcd.model.WhatIfArticle
 import xyz.jienan.xkcd.model.WhatIfModel
 import xyz.jienan.xkcd.model.persist.SharedPrefManager
 import xyz.jienan.xkcd.whatif.contract.WhatIfMainContract
+import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 
 class WhatIfMainPresenter constructor(private val view: WhatIfMainContract.View) : WhatIfMainContract.Presenter {
@@ -33,8 +35,8 @@ class WhatIfMainPresenter constructor(private val view: WhatIfMainContract.View)
             return
         }
 
-        WhatIfModel
-                .thumbsUp(currentIndex)
+        WhatIfModel.thumbsUp(currentIndex)
+                .debounce(100, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ view.showThumbUpCount(it) },
                         { e -> Timber.e(e, "Thumbs up failed") })
@@ -88,6 +90,7 @@ class WhatIfMainPresenter constructor(private val view: WhatIfMainContract.View)
         }
 
         searchDisposable = WhatIfModel.searchWhatIf(query, SharedPrefManager.whatIfSearchPref)
+                .subscribeOn(Schedulers.io())
                 .map { list ->
                     if (isNumQuery(query)) {
                         val num = query.toLong()
@@ -95,6 +98,7 @@ class WhatIfMainPresenter constructor(private val view: WhatIfMainContract.View)
                     }
                     list
                 }
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ view.renderWhatIfSearch(it) },
                         { e ->
                             Timber.e(e, "search what if error")

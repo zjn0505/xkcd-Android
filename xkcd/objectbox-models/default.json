@@ -69,7 +69,7 @@
     },
     {
       "id": "2:5390338631784931612",
-      "lastPropertyId": "11:4606230756309457134",
+      "lastPropertyId": "12:7195370541997785951",
       "name": "WhatIfArticle",
       "properties": [
         {
@@ -99,6 +99,10 @@
         {
           "id": "7:1068276546638640699",
           "name": "thumbCount"
+        },
+        {
+          "id": "12:7195370541997785951",
+          "name": "dateInString"
         }
       ],
       "relations": []
