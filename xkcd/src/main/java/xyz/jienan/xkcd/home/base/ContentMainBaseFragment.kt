@@ -212,7 +212,15 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
         }
     }
 
-    protected fun fabAnimation(@ColorRes startColor: Int, @ColorRes endColor: Int, @DrawableRes icon: Int) {
+    fun toggleFab(isFavorite: Boolean) {
+        if (isFavorite) {
+            fabAnimation(R.color.pink, R.color.white, R.drawable.ic_heart_on)
+        } else {
+            fabAnimation(R.color.white, R.color.pink, R.drawable.ic_heart_white)
+        }
+    }
+
+    private fun fabAnimation(@ColorRes startColor: Int, @ColorRes endColor: Int, @DrawableRes icon: Int) {
         val animator = ObjectAnimator.ofInt(fab, "backgroundTint",
                 resources.getColor(startColor), resources.getColor(endColor))
 

@@ -103,14 +103,6 @@ class WhatIfMainFragment : ContentMainBaseFragment(), WhatIfMainContract.View {
         fab.show()
     }
 
-    override fun toggleFab(isFavorite: Boolean) {
-        if (isFavorite) {
-            fabAnimation(R.color.pink, R.color.white, R.drawable.ic_heart_on)
-        } else {
-            fabAnimation(R.color.white, R.color.pink, R.drawable.ic_heart_white)
-        }
-    }
-
     override fun onDestroyView() {
         compositeDisposable.dispose()
         super.onDestroyView()
