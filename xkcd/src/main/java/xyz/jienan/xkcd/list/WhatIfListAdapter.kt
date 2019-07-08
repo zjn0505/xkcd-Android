@@ -13,12 +13,12 @@ import xyz.jienan.xkcd.R
 import xyz.jienan.xkcd.model.WhatIfArticle
 
 internal class WhatIfListAdapter :
-        RecyclerView.Adapter<WhatIfListAdapter.WhatIfViewHolder>(),
+        ListBaseAdapter<WhatIfListAdapter.WhatIfViewHolder>(),
         RecyclerViewFastScroller.BubbleTextGetter {
 
     private lateinit var glide: RequestManager
 
-    var pauseLoading: Boolean
+    override var pauseLoading: Boolean
         set(pauseLoading) {
             if (pauseLoading) glide.pauseRequests() else glide.resumeRequests()
         }

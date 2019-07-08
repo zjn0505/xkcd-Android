@@ -1,5 +1,6 @@
 package xyz.jienan.xkcd.model
 
+import com.google.gson.annotations.SerializedName
 import io.objectbox.annotation.Entity
 import io.objectbox.annotation.Id
 
@@ -10,7 +11,9 @@ data class WhatIfArticle constructor(
         var title: String,
         var featureImg: String?,
         var content: String? = null,
-        var date: Long,
+        @Transient var date: Long,
+        @SerializedName("date")
+        var dateInString: String = "",
         var isFavorite: Boolean = false,
         var hasThumbed: Boolean = false,
         var thumbCount: Long = 0

@@ -14,7 +14,7 @@ import xyz.jienan.xkcd.model.WhatIfArticle;
 import xyz.jienan.xkcd.model.WhatIfModel;
 import xyz.jienan.xkcd.model.persist.SharedPrefManager;
 
-public class WhatIfListPresenter implements WhatIfListContract.Presenter {
+public class WhatIfListPresenter implements ListPresenter {
 
     private final WhatIfModel whatIfModel = WhatIfModel.INSTANCE;
     private final SharedPrefManager sharedPrefManager = SharedPrefManager.INSTANCE;
@@ -26,7 +26,7 @@ public class WhatIfListPresenter implements WhatIfListContract.Presenter {
     }
 
     @Override
-    public void loadList() {
+    public void loadList(int startIndex) {
         view.setLoading(true);
         List<WhatIfArticle> data = whatIfModel.loadArticlesFromDB();
         int dataSize = data.size();
@@ -53,7 +53,7 @@ public class WhatIfListPresenter implements WhatIfListContract.Presenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(ignored -> view.setLoading(true))
                 .flatMapSingle(whatIfArticles -> Observable.fromIterable(whatIfArticles)
-                        .map(article -> article.getNum())
+                        .map(WhatIfArticle::getNum)
                         .filter(num -> num <= sharedPrefManager.getLatestWhatIf())
                         .map(whatIfModel::loadArticleFromDB)
                         .toList())

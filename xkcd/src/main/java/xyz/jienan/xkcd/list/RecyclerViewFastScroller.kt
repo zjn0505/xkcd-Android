@@ -10,8 +10,6 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.annotation.IdRes
-import androidx.annotation.LayoutRes
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView

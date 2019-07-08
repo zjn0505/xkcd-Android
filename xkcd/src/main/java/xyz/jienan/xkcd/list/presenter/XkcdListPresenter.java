@@ -13,7 +13,7 @@ import xyz.jienan.xkcd.model.XkcdModel;
 import xyz.jienan.xkcd.model.XkcdPic;
 import xyz.jienan.xkcd.model.persist.SharedPrefManager;
 
-public class XkcdListPresenter implements XkcdListContract.Presenter {
+public class XkcdListPresenter implements ListPresenter {
 
     private final XkcdModel xkcdModel = XkcdModel.INSTANCE;
 

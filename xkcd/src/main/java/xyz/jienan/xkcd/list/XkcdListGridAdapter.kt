@@ -15,14 +15,14 @@ import xyz.jienan.xkcd.base.glide.GlideUtils
 import xyz.jienan.xkcd.model.XkcdModel
 import xyz.jienan.xkcd.model.XkcdPic
 
-internal class XkcdListGridAdapter : RecyclerView.Adapter<XkcdListGridAdapter.XkcdViewHolder>(), RecyclerViewFastScroller.BubbleTextGetter {
+internal class XkcdListGridAdapter : ListBaseAdapter<XkcdListGridAdapter.XkcdViewHolder>(), RecyclerViewFastScroller.BubbleTextGetter {
 
     private lateinit var glide: RequestManager
 
     var pics: List<XkcdPic>? = listOf()
         private set
 
-    var pauseLoading: Boolean
+    override var pauseLoading: Boolean
         set(pauseLoading) {
             if (pauseLoading) glide.pauseRequests() else glide.resumeRequests()
         }
