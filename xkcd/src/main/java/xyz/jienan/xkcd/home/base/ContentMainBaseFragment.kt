@@ -367,7 +367,7 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
             BoxManager.updateAndSave(xkcdPic)
         }
         if (activity != null) {
-            NotificationUtils.showNotification(context!!, xkcdPic)
+            NotificationUtils.showNotification(context!!.applicationContext, xkcdPic)
         }
     }
 
@@ -379,7 +379,7 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
             BoxManager.updateAndSaveWhatIf(mutableListOf(whatIfArticle))
         }
         if (activity != null) {
-            NotificationUtils.showNotification(context!!, whatIfArticle)
+            NotificationUtils.showNotification(context!!.applicationContext, whatIfArticle)
         }
     }
 

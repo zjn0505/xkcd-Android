@@ -1,6 +1,7 @@
 package xyz.jienan.xkcd.ui
 
 import android.annotation.SuppressLint
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -23,7 +24,6 @@ import xyz.jienan.xkcd.R
 import xyz.jienan.xkcd.home.MainActivity
 import xyz.jienan.xkcd.model.WhatIfArticle
 import xyz.jienan.xkcd.model.XkcdPic
-import java.util.*
 import java.util.concurrent.ExecutionException
 
 object NotificationUtils {
@@ -32,19 +32,31 @@ object NotificationUtils {
 
     private const val WHAT_IF_LOGO = "https://what-if.xkcd.com/imgs/whatif-logo.png"
 
+    private val SOUND_URI = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+
+    @SuppressLint("CheckResult")
     fun showNotification(context: Context, xkcdPic: XkcdPic) {
         var width = xkcdPic.width
         var height = xkcdPic.height
         val num = xkcdPic.num.toInt()
         width = if (width == 0) 400 else width
         height = if (height == 0) 400 else height
-
         val imgUrl = if (xkcdPic.img.contains("xkcd")) xkcdPic.targetImg else xkcdPic.img
 
-        showNotification(context, width, height, num, xkcdPic.title, imgUrl, TAG_XKCD)
+        with(context) {
+            val title = resources.getStringArray(R.array.notification_titles).random().format(TAG_XKCD)
+            val content = getString(R.string.notification_content, num, title)
+            val builder = createNotificationBuilder(title, content, TAG_XKCD)
+                    .setContentIntent(getPendingIntent(num, TAG_XKCD))
+
+            getNotificationImgMaybe(width, height, imgUrl, TAG_XKCD)
+                    .map { bitmap -> builder.appendLargeBitmap(bitmap).build() }
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({ notification -> showNotification(notification, TAG_XKCD) }, { Timber.e(it) })
+        }
     }
 
-
+    @SuppressLint("CheckResult")
     fun showNotification(context: Context, article: WhatIfArticle) {
         val width = 400
         val height = 400
@@ -54,64 +66,79 @@ object NotificationUtils {
         if (TextUtils.isEmpty(imgUrl)) {
             imgUrl = WHAT_IF_LOGO
         }
-        showNotification(context, width, height, num, article.title, imgUrl!!, TAG_WHAT_IF)
+
+        with(context) {
+            val title = resources.getStringArray(R.array.notification_titles).random().format(TAG_WHAT_IF)
+            val content = getString(R.string.notification_content, num, title)
+            val builder = createNotificationBuilder(title, content, TAG_WHAT_IF)
+                    .setContentIntent(getPendingIntent(num, TAG_WHAT_IF))
+
+            getNotificationImgMaybe(width, height, imgUrl!!, TAG_WHAT_IF)
+                    .map { bitmap -> builder.appendLargeBitmap(bitmap).build() }
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({ notification -> showNotification(notification, TAG_WHAT_IF) }, { Timber.e(it) })
+        }
     }
 
-    @SuppressLint("CheckResult")
-    private fun showNotification(context: Context, width: Int, height: Int, num: Int, title: String, imgUrl: String, tag: String) {
-        val intent = Intent(context, MainActivity::class.java)
+    private fun Context.showNotification(notification: Notification, tag: String) {
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        // Since android Oreo notification channel is needed.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(tag, tag,
+                    NotificationManager.IMPORTANCE_DEFAULT)
+            notificationManager.createNotificationChannel(channel)
+        }
+        notificationManager.notify(if (tag == TAG_XKCD) 0 else 1, notification)
+    }
+
+    private fun Context.getPendingIntent(num: Int, tag: String): PendingIntent {
+        val intent = Intent(this, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         intent.putExtra(INDEX_ON_NOTI_INTENT, num)
         intent.putExtra(LANDING_TYPE, tag)
-        val pendingIntent = PendingIntent.getActivity(context, 0 /* Request code */, intent,
+        return PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT)
+    }
 
-        val titles = context.resources.getStringArray(R.array.notification_titles)
-        val index = Random().nextInt(titles.size)
+    private fun Context.createNotificationBuilder(title: String, content: String, tag: String) =
+            NotificationCompat.Builder(this, tag)
+                    .setSmallIcon(R.drawable.ic_notification)
+                    .setContentTitle(title)
+                    .setContentText(content)
+                    .setAutoCancel(true)
+                    .setSound(SOUND_URI)
 
-        val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        Single.just(imgUrl)
-                .subscribeOn(Schedulers.io())
-                .map { url -> Glide.with(context).load(url).asBitmap().into(width, height).get() }
-                .onErrorResumeNext(Single.just(tag)
-                        .map { if (tag == TAG_XKCD) XKCD_LOGO else WHAT_IF_LOGO }
-                        .map { logo -> Glide.with(context).load(logo).asBitmap().into(width, height).get() })
-                .toMaybe()
-                .onErrorResumeNext(MaybeSource {
-                    if (it is ExecutionException) {
-                        Maybe.empty<Bitmap>()
-                    } else {
-                        Maybe.error(it as Throwable)
-                    }
-                })
-                .defaultIfEmpty(Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888))
-                .map { bitmap ->
-                    val builder = NotificationCompat.Builder(context, tag)
-                            .setSmallIcon(R.drawable.ic_notification)
-                            .setContentTitle(String.format(titles[index], tag))
-                            .setContentText(context.getString(R.string.notification_content, num, title))
-                            .setAutoCancel(true)
-                            .setSound(defaultSoundUri)
-                            .setContentIntent(pendingIntent)
-                    if (bitmap.width != 1 && bitmap.height != 1) {
-                        builder.setLargeIcon(bitmap)
-                                .setStyle(NotificationCompat.BigPictureStyle()
-                                        .bigPicture(bitmap)
-                                        .bigLargeIcon(null))
-                    }
-                    builder.build()
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ notification ->
-                    val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                    // Since android Oreo notification channel is needed.
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        val channel = NotificationChannel(tag, tag,
-                                NotificationManager.IMPORTANCE_DEFAULT)
-                        notificationManager.createNotificationChannel(channel)
-                    }
-                    notificationManager.notify(if (tag == TAG_XKCD) 0 else 1, notification)
+    private fun NotificationCompat.Builder.appendLargeBitmap(bitmap: Bitmap): NotificationCompat.Builder {
+        if (bitmap.width != 1 && bitmap.height != 1) {
+            setLargeIcon(bitmap)
+                    .setStyle(NotificationCompat.BigPictureStyle()
+                            .bigPicture(bitmap)
+                            .bigLargeIcon(null))
+        }
+        return this
+    }
 
-                }, { Timber.e(it) })
+    private fun Context.getNotificationImgMaybe(width: Int, height: Int, url: String, tag: String) =
+            Single.just(url)
+                    .subscribeOn(Schedulers.io())
+                    .map { Glide.with(this).load(url).asBitmap().into(width, height).get() }
+                    .onErrorResumeNext(getLogoBitmapSingle(this, tag, width, height))
+                    .toMaybe()
+                    .onErrorResumeNext(maybeSource)
+                    .defaultIfEmpty(Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888))
+
+
+    private fun getLogoBitmapSingle(context: Context, tag: String, width: Int, height: Int) =
+            Single.just(tag)
+                    .map { if (tag == TAG_XKCD) XKCD_LOGO else WHAT_IF_LOGO }
+                    .map { logo -> Glide.with(context).load(logo).asBitmap().into(width, height).get() }
+
+
+    private val maybeSource = MaybeSource<Bitmap> {
+        if (it is ExecutionException) {
+            Maybe.empty<Bitmap>()
+        } else {
+            Maybe.error(it as Throwable)
+        }
     }
 }
