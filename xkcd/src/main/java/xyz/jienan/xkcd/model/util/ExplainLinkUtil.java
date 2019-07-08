@@ -39,8 +39,8 @@ public class ExplainLinkUtil {
         ClickableSpan clickable = new ClickableSpan() {
             public void onClick(View view) {
                 String url = span.getURL();
-                if (XkcdExplainUtil.isXkcdImageLink(url)) {
-                    final long id = XkcdExplainUtil.getXkcdIdFromExplainImageLink(url);
+                if (XkcdExplainUtil.INSTANCE.isXkcdImageLink(url)) {
+                    final long id = XkcdExplainUtil.INSTANCE.getXkcdIdFromExplainImageLink(url);
                     ImageDetailPageActivity.startActivityFromId(context, id);
                 } else if (URLUtil.isNetworkUrl(url)) {
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));

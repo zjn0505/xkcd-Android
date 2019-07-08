@@ -2,7 +2,7 @@ package xyz.jienan.xkcd.model.persist
 
 import io.objectbox.Box
 import io.objectbox.BoxStore
-import org.jsoup.helper.StringUtil
+import org.jsoup.internal.StringUtil
 import xyz.jienan.xkcd.Const.PREF_WHAT_IF_SEARCH_ALL
 import xyz.jienan.xkcd.Const.PREF_WHAT_IF_SEARCH_INCLUDE_READ
 import xyz.jienan.xkcd.model.*
