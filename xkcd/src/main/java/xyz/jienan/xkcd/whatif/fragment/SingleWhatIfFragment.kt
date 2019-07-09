@@ -66,61 +66,19 @@ open class SingleWhatIfFragment : BaseFragment(), ImgInterface.ImgCallback, RefI
         setHasOptionsMenu(true)
     }
 
-    @SuppressLint("AddJavascriptInterface")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        webView.settings.apply {
-            builtInZoomControls = true
-            useWideViewPort = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
-            @SuppressLint("SetJavaScriptEnabled")
-            javaScriptEnabled = true
-            displayZoomControls = false
-            loadWithOverviewMode = true
-            allowFileAccess = true
-            setAppCacheEnabled(true)
-            cacheMode = WebSettings.LOAD_DEFAULT
-            textZoom = sharedPref.whatIfZoom
-        }
+        setHasOptionsMenu(true)
 
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
-            WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG)
-        }
         if (ind != -1) {
-            WhatIfModel.loadArticle(ind.toLong())
-                    .doOnSuccess { WhatIfModel.push(it) }
-                    .map {
-                        if (context?.getUiNightModeFlag() == Configuration.UI_MODE_NIGHT_YES) {
-                            val doc = Jsoup.parse(it.content)
-                            doc.head()!!.appendCss("night_style.css")
-                            it.content = doc.html()
-                        }
-                        it
-                    }
-                    .subscribe({
-                        webView?.loadDataWithBaseURL("file:///android_asset/",
-                                it.content?.replace("\\$".toRegex(), "&#36;"),
-                                "text/html",
-                                "UTF-8",
-                                null)
-                    }, { Timber.e(it) })
-                    .let { compositeDisposable.add(it) }
+            webView.loadArticle(ind)
 
-            webView.apply {
-                setCallback(WebViewScrollCallback(this@SingleWhatIfFragment))
-                setLatexScrollInterface(latexInterface)
-                addJavascriptInterface(latexInterface, "AndroidLatex")
-                addJavascriptInterface(ImgInterface(this@SingleWhatIfFragment), "AndroidImg")
-                addJavascriptInterface(RefInterface(this@SingleWhatIfFragment), "AndroidRef")
-            }
+            webView.enableJsInterfaces()
 
             if (getParentFragment() is WhatIfMainFragment) {
                 parentFragment = getParentFragment() as WhatIfMainFragment?
             }
         }
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
-            WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG)
-        }
-        setHasOptionsMenu(true)
         WhatIfModel.observeZoom()
                 .subscribe({ zoom -> webView.settings.textZoom = zoom!! },
                         { e -> Timber.e(e, "observing zoom error") })
@@ -199,15 +157,17 @@ open class SingleWhatIfFragment : BaseFragment(), ImgInterface.ImgCallback, RefI
         dialog = AlertDialog.Builder(context!!).create()
         @SuppressLint("InflateParams")
         val view = layoutInflater.inflate(R.layout.dialog_explain, null) as LinearLayout
-        val document = Jsoup.parse(content).also {
-            it.select("img.illustration").forEach { element ->
-                element.remove()
-                ImageView(context).also { iv ->
-                    Glide.with(context).load(element.absUrl("src")).fitCenter().into(iv)
-                    view.addView(iv)
+        val document = Jsoup.parse(content)
+        document.select("img.illustration")
+                .map { element ->
+                    element.remove()
+                    element.absUrl("src")
+                }.map { url ->
+                    val imgView = ImageView(context)
+                    Glide.with(context).load(url).fitCenter().into(imgView)
+                    view.addView(imgView)
                 }
-            }
-        }
+
         view.findViewById<TextView>(R.id.tvExplain).apply {
             text = HtmlCompat.fromHtml(document.html(), HtmlCompat.FROM_HTML_MODE_LEGACY)
             movementMethod = LinkMovementMethod.getInstance()
@@ -225,6 +185,36 @@ open class SingleWhatIfFragment : BaseFragment(), ImgInterface.ImgCallback, RefI
             val fragment = weakReference.get() ?: return
             fragment.scrolledToTheEnd(isTheEnd)
         }
+    }
+
+    private fun WhatIfWebView.loadArticle(index: Int) {
+        WhatIfModel.loadArticle(index.toLong())
+                .doOnSuccess { WhatIfModel.push(it) }
+                .map {
+                    if (context?.getUiNightModeFlag() == Configuration.UI_MODE_NIGHT_YES) {
+                        val doc = Jsoup.parse(it.content)
+                        doc.head()!!.appendCss("night_style.css")
+                        it.content = doc.html()
+                    }
+                    it
+                }
+                .subscribe({
+                    loadDataWithBaseURL("file:///android_asset/",
+                            it.content?.replace("\\$".toRegex(), "&#36;"),
+                            "text/html",
+                            "UTF-8",
+                            null)
+                }, { Timber.e(it) })
+                .let { compositeDisposable.add(it) }
+    }
+
+    @SuppressLint("AddJavascriptInterface")
+    private fun WhatIfWebView.enableJsInterfaces() {
+        setCallback(WebViewScrollCallback(this@SingleWhatIfFragment))
+        setLatexScrollInterface(latexInterface)
+        addJavascriptInterface(latexInterface, "AndroidLatex")
+        addJavascriptInterface(ImgInterface(this@SingleWhatIfFragment), "AndroidImg")
+        addJavascriptInterface(RefInterface(this@SingleWhatIfFragment), "AndroidRef")
     }
 
     companion object {

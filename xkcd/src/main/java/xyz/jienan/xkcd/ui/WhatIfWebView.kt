@@ -1,5 +1,6 @@
 package xyz.jienan.xkcd.ui
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -9,19 +10,23 @@ import android.net.Uri
 import android.os.Build
 import android.util.AttributeSet
 import android.webkit.WebResourceResponse
+import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.request.FutureTarget
 import timber.log.Timber
+import xyz.jienan.xkcd.BuildConfig
 import xyz.jienan.xkcd.R
 import xyz.jienan.xkcd.comics.activity.ImageDetailPageActivity
+import xyz.jienan.xkcd.model.persist.SharedPrefManager
 import xyz.jienan.xkcd.model.util.XkcdExplainUtil
 import xyz.jienan.xkcd.whatif.interfaces.LatexInterface
 import java.io.File
 import java.io.FileInputStream
 import java.util.*
+import kotlin.math.floor
 
 class WhatIfWebView(context: Context, attrs: AttributeSet) : WebView(context, attrs) {
 
@@ -29,21 +34,17 @@ class WhatIfWebView(context: Context, attrs: AttributeSet) : WebView(context, at
 
     private var latexScrollInterface: LatexInterface? = null
 
-    private val glide: RequestManager
+    private val glide by lazy { Glide.with(context) }
 
     private val imageTasks = ArrayList<FutureTarget<File>>()
 
     init {
-
-        val nightModeFlags = context.getUiNightModeFlag()
-
-        if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) {
+        if (context.getUiNightModeFlag() == Configuration.UI_MODE_NIGHT_YES) {
             setBackgroundColor(Color.parseColor("#3A3A3A"))
         } else {
             setBackgroundColor(Color.TRANSPARENT)
         }
 
-        glide = Glide.with(context)
         webViewClient = object : WebViewClient() {
 
             override fun shouldInterceptRequest(view: WebView, url: String): WebResourceResponse? {
@@ -85,6 +86,8 @@ class WhatIfWebView(context: Context, attrs: AttributeSet) : WebView(context, at
                 return true
             }
         }
+
+        updateSettings()
     }
 
     fun setLatexScrollInterface(latexScrollInterface: LatexInterface) {
@@ -96,7 +99,7 @@ class WhatIfWebView(context: Context, attrs: AttributeSet) : WebView(context, at
     }
 
     fun distanceToEnd(): Int {
-        val height = Math.floor((this.contentHeight * this.scale).toDouble()).toInt()
+        val height = floor((this.contentHeight * this.scale).toDouble()).toInt()
         val webViewHeight = this.measuredHeight
         return height - scrollY - webViewHeight
     }
@@ -146,6 +149,25 @@ class WhatIfWebView(context: Context, attrs: AttributeSet) : WebView(context, at
                 t.clear()
                 Timber.e("OkHttp: cleared tasks %d", imageTasks.size)
             }
+        }
+    }
+
+    private fun updateSettings() {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+            setWebContentsDebuggingEnabled(BuildConfig.DEBUG)
+        }
+
+        settings.apply {
+            builtInZoomControls = true
+            useWideViewPort = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
+            @SuppressLint("SetJavaScriptEnabled")
+            javaScriptEnabled = true
+            displayZoomControls = false
+            loadWithOverviewMode = true
+            allowFileAccess = true
+            setAppCacheEnabled(true)
+            cacheMode = WebSettings.LOAD_DEFAULT
+            textZoom = SharedPrefManager.whatIfZoom
         }
     }
 
