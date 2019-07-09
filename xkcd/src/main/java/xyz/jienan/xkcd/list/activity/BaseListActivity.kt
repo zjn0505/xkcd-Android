@@ -1,5 +1,6 @@
 package xyz.jienan.xkcd.list.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -7,6 +8,7 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_list.*
 import xyz.jienan.xkcd.Const
+import xyz.jienan.xkcd.Const.INTENT_TARGET_XKCD_ID
 import xyz.jienan.xkcd.R
 import xyz.jienan.xkcd.base.BaseActivity
 import xyz.jienan.xkcd.list.ListBaseAdapter
@@ -67,7 +69,16 @@ abstract class BaseListActivity : BaseActivity(), BaseListView, ListFilterDialog
 
     protected open var currentSelection = Selection.ALL
 
-    protected abstract fun onItemClick(view: View, position: Int)
+    private fun onItemClick(position: Int) {
+        if (position >= 0) {
+            val intent = Intent()
+            intent.putExtra(INTENT_TARGET_XKCD_ID, getItemIndexOnPosition(position))
+            setResult(RESULT_OK, intent)
+            finish()
+        }
+    }
+
+    protected abstract fun getItemIndexOnPosition(position: Int): Int?
 
     protected abstract fun lastItemReached(): Boolean
 
@@ -84,7 +95,7 @@ abstract class BaseListActivity : BaseActivity(), BaseListView, ListFilterDialog
 
             addOnItemTouchListener(RecyclerItemClickListener(this, object : RecyclerItemClickListener.OnItemClickListener() {
                 override fun onItemClick(view: View, position: Int) {
-                    this@BaseListActivity.onItemClick(view, position)
+                    onItemClick(position)
                 }
             }))
             layoutManager = this@BaseListActivity.layoutManager

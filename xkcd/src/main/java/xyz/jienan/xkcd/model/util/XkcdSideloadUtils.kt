@@ -2,6 +2,7 @@ package xyz.jienan.xkcd.model.util
 
 import android.annotation.SuppressLint
 import android.content.Context
+import androidx.annotation.RawRes
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import io.reactivex.schedulers.Schedulers
@@ -24,25 +25,9 @@ object XkcdSideloadUtils {
 
     private val xkcdSideloadMap = hashMapOf<Int, XkcdPic>()
 
-    @SuppressLint("CheckResult")
     fun init(context: Context) {
-        NetworkService.xkcdAPI
-                .specialXkcds
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .doOnSubscribe { initXkcdSideloadMap(context) }
-                .singleOrError()
-                .subscribe({ xkcdPics -> xkcdPics.forEach { xkcdSideloadMap[it.num.toInt()] = it } },
-                        { e -> Timber.e(e, "Failed to init special list") })
-
-        NetworkService.xkcdAPI
-                .extraComics
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .doOnSubscribe { initExtraSideloadMap(context) }
-                .singleOrError()
-                .subscribe({ extraComics -> ExtraModel.update(extraComics) },
-                        { e -> Timber.e(e, "Failed to init special list") })
+        loadSpecial(context)
+        loadExtra(context)
     }
 
     fun isSpecialComics(xkcdPic: XkcdPic) = xkcdSideloadMap.containsKey(xkcdPic.num.toInt())
@@ -72,40 +57,69 @@ object XkcdSideloadUtils {
         return clone // original or 2x
     }
 
+    @SuppressLint("CheckResult")
+    private fun loadSpecial(context: Context) {
+        NetworkService.xkcdAPI
+                .specialXkcds
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .singleOrError()
+                .doOnSubscribe { initXkcdSideloadMap(context) }
+                .subscribe({ xkcdPics -> xkcdPics.forEach { xkcdSideloadMap[it.num.toInt()] = it } },
+                        { e -> Timber.e(e, "Failed to init special list") })
+    }
+
     @Throws(IOException::class)
     private fun initXkcdSideloadMap(context: Context) {
         val writer = StringWriter()
         val buffer = CharArray(1024)
-        context.resources.openRawResource(R.raw.xkcd_special).use { `is` ->
-            val reader = BufferedReader(InputStreamReader(`is`, "UTF-8"))
+        context.resources.openRawResource(R.raw.xkcd_special).use {
+            val reader = BufferedReader(InputStreamReader(it, "UTF-8"))
             var n = reader.read(buffer)
             while (n != -1) {
                 writer.write(buffer, 0, n)
                 n = reader.read(buffer)
             }
         }
-        val sideloadList = Gson().fromJson<List<XkcdPic>>(writer.toString(), object : TypeToken<List<XkcdPic>>() {
+        val sideloadList = Gson().fromJson<List<XkcdPic>>(context.loadFromRaw(R.raw.xkcd_special), object : TypeToken<List<XkcdPic>>() {
 
         }.type)
 
         sideloadList.forEach { xkcdSideloadMap[it.num.toInt()] = it }
     }
 
+    @SuppressLint("CheckResult")
+    private fun loadExtra(context: Context) {
+        NetworkService.xkcdAPI
+                .extraComics
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .singleOrError()
+                .doOnSubscribe { initExtraSideloadMap(context) }
+                .subscribe({ extraComics -> ExtraModel.update(extraComics) },
+                        { e -> Timber.e(e, "Failed to init extra list") })
+    }
+
     @Throws(IOException::class)
     private fun initExtraSideloadMap(context: Context) {
+        val sideloadList = Gson().fromJson<List<ExtraComics>>(
+                context.loadFromRaw(R.raw.xkcd_extra), object : TypeToken<List<ExtraComics>>() {
+        }.type)
+        ExtraModel.update(sideloadList)
+    }
+
+    @Throws(IOException::class)
+    private fun Context.loadFromRaw(@RawRes raw: Int): String {
         val writer = StringWriter()
         val buffer = CharArray(1024)
-        context.resources.openRawResource(R.raw.xkcd_extra).use { `is` ->
-            val reader = BufferedReader(InputStreamReader(`is`, "UTF-8"))
+        resources.openRawResource(raw).use {
+            val reader = BufferedReader(InputStreamReader(it, "UTF-8"))
             var n = reader.read(buffer)
             while (n != -1) {
                 writer.write(buffer, 0, n)
                 n = reader.read(buffer)
             }
         }
-        val sideloadList = Gson().fromJson<List<ExtraComics>>(writer.toString(), object : TypeToken<List<ExtraComics>>() {
-
-        }.type)
-        ExtraModel.update(sideloadList)
+        return writer.toString()
     }
 }

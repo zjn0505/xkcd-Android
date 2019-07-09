@@ -1,11 +1,8 @@
 package xyz.jienan.xkcd.list.activity
 
-import android.content.Intent
-import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import xyz.jienan.xkcd.Const.FIRE_WHAT_IF_SUFFIX
-import xyz.jienan.xkcd.Const.INTENT_TARGET_XKCD_ID
 import xyz.jienan.xkcd.R
 import xyz.jienan.xkcd.list.ListBaseAdapter
 import xyz.jienan.xkcd.list.WhatIfListAdapter
@@ -42,12 +39,6 @@ class WhatIfListActivity : BaseListActivity(), WhatIfListContract.View {
         (mAdapter as WhatIfListAdapter).updateData(articles)
     }
 
-    override fun onItemClick(view: View, position: Int) {
-        if (position >= 0) {
-            val intent = Intent()
-            intent.putExtra(INTENT_TARGET_XKCD_ID, (mAdapter as WhatIfListAdapter).getArticle(position)?.num?.toInt())
-            setResult(RESULT_OK, intent)
-            finish()
-        }
-    }
+    override fun getItemIndexOnPosition(position: Int) =
+            (mAdapter as WhatIfListAdapter).getArticle(position)?.num?.toInt()
 }

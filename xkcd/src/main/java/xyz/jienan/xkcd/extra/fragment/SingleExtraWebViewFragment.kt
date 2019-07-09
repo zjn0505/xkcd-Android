@@ -22,6 +22,7 @@ import xyz.jienan.xkcd.Const.*
 import xyz.jienan.xkcd.R
 import xyz.jienan.xkcd.model.ExtraComics
 import xyz.jienan.xkcd.model.ExtraModel
+import xyz.jienan.xkcd.model.util.appendCss
 import xyz.jienan.xkcd.ui.RefreshFooterView
 import xyz.jienan.xkcd.ui.RefreshHeaderView
 import xyz.jienan.xkcd.ui.getColorResCompat
@@ -44,52 +45,36 @@ class SingleExtraWebViewFragment : SingleWhatIfFragment() {
 
     override val layoutResId = R.layout.fragment_extra_single
 
+    private val refreshListener = object : SmoothRefreshLayout.OnRefreshListener {
+        override fun onRefreshing() {
+            Timber.d("Refresh")
+            loadLinkPage(--currentPage)
+            refreshLayout!!.refreshComplete()
+            updateReleaseText()
+        }
+
+        override fun onLoadingMore() {
+            Timber.d("LoadMore")
+            loadLinkPage(++currentPage)
+            refreshLayout!!.refreshComplete()
+            Observable.timer(700, TimeUnit.MILLISECONDS)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnNext { webView.scrollTo(0, 0) }
+                    .subscribe()
+            updateReleaseText()
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        customWebViewSettings()
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            webView.settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-        }
-        webView.settings.textZoom = (sharedPref.whatIfZoom * 1.5).toInt()
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-            webView.settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.SINGLE_COLUMN
-        }
         if (savedInstanceState != null) {
             currentPage = savedInstanceState.getInt("current", 0)
         }
         loadLinkPage(currentPage)
         if (extraComics.links?.size ?: 0 > 1) {
-
-            refreshLayout?.apply {
-                setDisableLoadMore(false)
-                setDisablePerformRefresh(false)
-                setDisablePerformLoadMore(false)
-                setEnableKeepRefreshView(false)
-                setOnRefreshListener(object : SmoothRefreshLayout.OnRefreshListener {
-                    override fun onRefreshing() {
-                        Timber.d("Refresh")
-                        loadLinkPage(--currentPage)
-                        refreshLayout!!.refreshComplete()
-                        updateReleaseText()
-                    }
-
-                    override fun onLoadingMore() {
-                        Timber.d("LoadMore")
-                        loadLinkPage(++currentPage)
-                        refreshLayout!!.refreshComplete()
-                        Observable.timer(700, TimeUnit.MILLISECONDS)
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .doOnNext { webView.scrollTo(0, 0) }
-                                .subscribe()
-                        updateReleaseText()
-                    }
-                })
-                setEnableAutoRefresh(true)
-                setEnableAutoLoadMore(true)
-                setHeaderView(RefreshHeaderView(context).apply { setTextSize(refreshTextSize) })
-                setFooterView(RefreshFooterView(context).apply { setTextSize(refreshTextSize) })
-            }
-
+            refreshLayout?.setupMultipage()
             updateReleaseText()
         }
         val color = ColorStateList.valueOf(context!!.getColorResCompat(android.R.attr.textColorPrimary))
@@ -142,11 +127,7 @@ class SingleExtraWebViewFragment : SingleWhatIfFragment() {
                     .map {
                         if (context?.getUiNightModeFlag() == Configuration.UI_MODE_NIGHT_YES) {
                             val doc = Jsoup.parse(it)
-                            doc.head().appendElement("link")
-                                    .attr("rel", "stylesheet")
-                                    .attr("type", "text/css")
-                                    .attr("href", "night_style.css")
-
+                            doc.head().appendCss("night_style.css")
                             doc.html()
                         } else {
                             it
@@ -162,14 +143,37 @@ class SingleExtraWebViewFragment : SingleWhatIfFragment() {
 
     private fun updateReleaseText() {
         if (extraComics.num == 1L) {
-            if (abs(currentPage) % 2 != 0) {
-                (refreshLayout!!.headerView as ClassicHeader<*>).setReleaseToRefreshRes(R.string.release_for_puzzle)
-                (refreshLayout!!.footerView as ClassicFooter<*>).setReleaseToLoadRes(R.string.release_for_puzzle)
+            val texRes = if (abs(currentPage) % 2 != 0) {
+                R.string.release_for_puzzle
             } else {
-                (refreshLayout!!.headerView as ClassicHeader<*>).setReleaseToRefreshRes(R.string.release_for_solution)
-                (refreshLayout!!.footerView as ClassicFooter<*>).setReleaseToLoadRes(R.string.release_for_solution)
+                R.string.release_for_solution
             }
+
+            (refreshLayout!!.headerView as ClassicHeader<*>).setReleaseToRefreshRes(texRes)
+            (refreshLayout!!.footerView as ClassicFooter<*>).setReleaseToLoadRes(texRes)
         }
+    }
+
+    private fun customWebViewSettings() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            webView.settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+        }
+        webView.settings.textZoom = (sharedPref.whatIfZoom * 1.5).toInt()
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            webView.settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.SINGLE_COLUMN
+        }
+    }
+
+    private fun SmoothRefreshLayout.setupMultipage() {
+        setDisableLoadMore(false)
+        setDisablePerformRefresh(false)
+        setDisablePerformLoadMore(false)
+        setEnableKeepRefreshView(false)
+        setOnRefreshListener(refreshListener)
+        setEnableAutoRefresh(true)
+        setEnableAutoLoadMore(true)
+        setHeaderView(RefreshHeaderView(context).apply { setTextSize(refreshTextSize) })
+        setFooterView(RefreshFooterView(context).apply { setTextSize(refreshTextSize) })
     }
 
     companion object {
