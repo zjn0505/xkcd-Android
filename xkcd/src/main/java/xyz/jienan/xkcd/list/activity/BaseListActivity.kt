@@ -84,7 +84,7 @@ abstract class BaseListActivity : BaseActivity(), BaseListView, ListFilterDialog
 
             addOnItemTouchListener(RecyclerItemClickListener(this, object : RecyclerItemClickListener.OnItemClickListener() {
                 override fun onItemClick(view: View, position: Int) {
-                    onItemClick(view, position)
+                    this@BaseListActivity.onItemClick(view, position)
                 }
             }))
             layoutManager = this@BaseListActivity.layoutManager
