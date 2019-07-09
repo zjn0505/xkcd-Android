@@ -1,6 +1,7 @@
 package xyz.jienan.xkcd.model.util
 
 import android.text.TextUtils
+import com.bumptech.glide.load.model.stream.BaseGlideUrlLoader
 import okhttp3.ResponseBody
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -14,6 +15,7 @@ object XkcdExplainUtil {
     @Throws(IOException::class)
     fun getExplainFromHtml(responseBody: ResponseBody, url: String): String? {
         val doc = Jsoup.parse(responseBody.string())
+        doc.setBaseUri(url)
 
         val h2Explain = doc.selectFirst("h2:has(span#Explanation)")
 
@@ -21,12 +23,8 @@ object XkcdExplainUtil {
 
         val explainElements = h2Explain.parent().children().subList(h2Explain.elementSiblingIndex() + 1, nextH2Index)
 
-        explainElements.map { it.allElements }.forEach { elements ->
-            elements.select("h3.editsection, h3.mw-editsection, h4.editsection, h4.mw-editsection").remove()
-            elements.select("p sup").filter { it.toString().contains("<i>citation needed</i>") }.map { it.remove() }
-            elements.select("a[href]").forEach { refillToFullUrl(it, url) }
-            elements.select("tbody").flatMap { it.children() }.map { it.append("<br />") }
-        }
+        explainElements.map { it.allElements }.forEach { it.cleanUp() }
+
         return Elements(explainElements).outerHtml()
     }
 
@@ -57,15 +55,22 @@ object XkcdExplainUtil {
         }
     }
 
-    private fun refillToFullUrl(it: Element, url: String) {
-        val href = it.attr("href")
+    private fun Elements.cleanUp() {
+        map { it.allElements }.forEach { elements ->
+            elements.select("h3.editsection, h3.mw-editsection, h4.editsection, h4.mw-editsection").remove()
+            elements.select("p sup").filter { it.toString().contains("<i>citation needed</i>") }.map { it.remove() }
+            elements.select("a[href]").forEach { it.refillToFullUrl() }
+            elements.select("tbody").flatMap { it.children() }.map { it.append("<br />") }
+        }
+    }
+
+    private fun Element.refillToFullUrl() {
+        val href = attr("href")
         if (!TextUtils.isEmpty(href)) {
-            if (href.startsWith("/wiki")) {
-                it.attr("href", "https://www.explainxkcd.com$href")
-            } else if (href.startsWith("#")) {
-                it.attr("href", url + href)
+            if (href.startsWith("/wiki") || href.startsWith("#")) {
+                attr("href", absUrl("href"))
             } else if (href.startsWith("//www.explainxkcd") && href.endsWith("action=edit")) {
-                it.attr("href", URI_XKCD_EXPLAIN_EDIT)
+                attr("href", URI_XKCD_EXPLAIN_EDIT)
             }
         }
     }
