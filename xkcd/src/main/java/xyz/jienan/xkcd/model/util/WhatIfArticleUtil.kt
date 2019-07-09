@@ -21,33 +21,14 @@ object WhatIfArticleUtil {
         val doc = Jsoup.parse(responseBody.string(), BASE_URI)
         val articleDivs = doc.selectFirst("div#archive-wrapper").children()
 
-        return articleDivs.map {
-            val a = it.selectFirst("a[href]")
-            val href = a.attr("href").split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-            val archiveDate = it.selectFirst("h2.archive-date").html()
-            val sdf = SimpleDateFormat("MMMMM d, yyyy", Locale.ENGLISH)
-
-            WhatIfArticle(num = href.last().toLong(),
-                    title = it.selectFirst("h1.archive-title").child(0).html(),
-                    featureImg = a.child(0).absUrl("src"),
-                    date = sdf.parse(archiveDate).time)
-        }
+        return articleDivs.map { it.getWhatIfArticleFromArchiveEntry() }
     }
 
     @Throws(IOException::class)
     fun getArticleFromHtml(responseBody: ResponseBody): Document {
         val doc = Jsoup.parse(responseBody.string(), BASE_URI)
 
-        with(doc.head()) {
-            empty()
-            appendCss("style.css")
-            appendElement("script")
-                    .attr("src", TEX_JS)
-                    .attr("async", "")
-            appendElement("script").attr("src", "LatexInterface.js")
-            appendElement("script").attr("src", "ImgInterface.js")
-            appendElement("script").attr("src", "RefInterface.js")
-        }
+        doc.head().appendScriptsToHead()
 
         doc.selectFirst("article.entry").apply {
             select("img.illustration").forEach { it.convertToFullHttpsImgUrl() }
@@ -78,6 +59,29 @@ object WhatIfArticleUtil {
                 html(taggedLatex)
             }
         }
+    }
+
+    private fun Element.appendScriptsToHead() {
+        empty()
+        appendCss("style.css")
+        appendElement("script")
+                .attr("src", TEX_JS)
+                .attr("async", "")
+        appendElement("script").attr("src", "LatexInterface.js")
+        appendElement("script").attr("src", "ImgInterface.js")
+        appendElement("script").attr("src", "RefInterface.js")
+    }
+
+    private fun Element.getWhatIfArticleFromArchiveEntry(): WhatIfArticle {
+        val a = selectFirst("a[href]")
+        val href = a.attr("href").split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        val archiveDate = selectFirst("h2.archive-date").html()
+        val sdf = SimpleDateFormat("MMMMM d, yyyy", Locale.ENGLISH)
+
+        return WhatIfArticle(num = href.last().toLong(),
+                title = selectFirst("h1.archive-title").child(0).html(),
+                featureImg = a.child(0).absUrl("src"),
+                date = sdf.parse(archiveDate).time)
     }
 }
 

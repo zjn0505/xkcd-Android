@@ -10,8 +10,6 @@ import android.text.method.LinkMovementMethod
 import android.view.HapticFeedbackConstants.*
 import android.view.MenuItem
 import android.view.View
-import android.webkit.WebSettings
-import android.webkit.WebView
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -23,8 +21,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_what_if_single.*
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Element
 import timber.log.Timber
-import xyz.jienan.xkcd.BuildConfig
 import xyz.jienan.xkcd.Const.*
 import xyz.jienan.xkcd.R
 import xyz.jienan.xkcd.base.BaseFragment
@@ -158,15 +156,7 @@ open class SingleWhatIfFragment : BaseFragment(), ImgInterface.ImgCallback, RefI
         @SuppressLint("InflateParams")
         val view = layoutInflater.inflate(R.layout.dialog_explain, null) as LinearLayout
         val document = Jsoup.parse(content)
-        document.select("img.illustration")
-                .map { element ->
-                    element.remove()
-                    element.absUrl("src")
-                }.map { url ->
-                    val imgView = ImageView(context)
-                    Glide.with(context).load(url).fitCenter().into(imgView)
-                    view.addView(imgView)
-                }
+        document.convertImgToView().map { view.addView(it) }
 
         view.findViewById<TextView>(R.id.tvExplain).apply {
             text = HtmlCompat.fromHtml(document.html(), HtmlCompat.FROM_HTML_MODE_LEGACY)
@@ -175,6 +165,17 @@ open class SingleWhatIfFragment : BaseFragment(), ImgInterface.ImgCallback, RefI
         dialog!!.setView(view)
         dialog!!.show()
     }
+
+    private fun Element.convertImgToView() =
+            select("img.illustration")
+                    .map { element ->
+                        element.remove()
+                        element.absUrl("src")
+                    }.map { url ->
+                        val imgView = ImageView(context)
+                        Glide.with(context).load(url).fitCenter().into(imgView)
+                        imgView
+                    }
 
     private inner class WebViewScrollCallback internal constructor(fragment: SingleWhatIfFragment)
         : WhatIfWebView.ScrollToEndCallback {
