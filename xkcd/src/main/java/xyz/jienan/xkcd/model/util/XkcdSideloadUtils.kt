@@ -71,20 +71,9 @@ object XkcdSideloadUtils {
 
     @Throws(IOException::class)
     private fun initXkcdSideloadMap(context: Context) {
-        val writer = StringWriter()
-        val buffer = CharArray(1024)
-        context.resources.openRawResource(R.raw.xkcd_special).use {
-            val reader = BufferedReader(InputStreamReader(it, "UTF-8"))
-            var n = reader.read(buffer)
-            while (n != -1) {
-                writer.write(buffer, 0, n)
-                n = reader.read(buffer)
-            }
-        }
-        val sideloadList = Gson().fromJson<List<XkcdPic>>(context.loadFromRaw(R.raw.xkcd_special), object : TypeToken<List<XkcdPic>>() {
-
+        val sideloadList = Gson().fromJson<List<XkcdPic>>(
+                context.loadFromRaw(R.raw.xkcd_special), object : TypeToken<List<XkcdPic>>() {
         }.type)
-
         sideloadList.forEach { xkcdSideloadMap[it.num.toInt()] = it }
     }
 
