@@ -19,7 +19,9 @@ class CircleProgressBar @JvmOverloads constructor(context: Context, attrs: Attri
     private val mProgressBackgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG)
 
     private var mRadius = 0f
+
     private var mCenterX = 0f
+
     private var mCenterY = 0f
 
     override var progress: Int = 0
@@ -29,33 +31,27 @@ class CircleProgressBar @JvmOverloads constructor(context: Context, attrs: Attri
         }
 
     //Stroke width of the progress of the progress bar
-    private var mProgressStrokeWidth = 0f
+    private val mProgressStrokeWidth: Float
 
     //Start color of the progress of the progress bar
-    private var mProgressStartColor = 0
+    private val mProgressStartColor: Int
+
     //End color of the progress of the progress bar
-    private var mProgressEndColor = 0
+    private val mProgressEndColor: Int
 
     //Background color of the progress of the progress bar
-    private var mProgressBackgroundColor = 0
+    private val mProgressBackgroundColor: Int
 
     init {
-        initFromAttributes(context, attrs)
-        initPaint()
-    }
-
-    /**
-     * Basic data initialization
-     */
-    private fun initFromAttributes(context: Context, attrs: AttributeSet?) {
         val a = context.obtainStyledAttributes(attrs, R.styleable.CircleProgressBar)
 
         mProgressStrokeWidth = a.getDimensionPixelSize(R.styleable.CircleProgressBar_progress_stroke_width, dp2px(getContext(), DEFAULT_PROGRESS_STROKE_WIDTH)).toFloat()
         mProgressStartColor = a.getColor(R.styleable.CircleProgressBar_progress_start_color, Color.parseColor(COLOR_FFF2A670))
         mProgressEndColor = a.getColor(R.styleable.CircleProgressBar_progress_end_color, Color.parseColor(COLOR_FFF2A670))
         mProgressBackgroundColor = a.getColor(R.styleable.CircleProgressBar_progress_background_color, Color.parseColor(COLOR_FFD3D3D5))
-
         a.recycle()
+
+        initPaint()
     }
 
     /**

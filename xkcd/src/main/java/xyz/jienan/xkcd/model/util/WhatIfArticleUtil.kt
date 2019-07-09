@@ -31,13 +31,18 @@ object WhatIfArticleUtil {
         doc.head().appendScriptsToHead()
 
         doc.selectFirst("article.entry").apply {
-            select("img.illustration").forEach { it.convertToFullHttpsImgUrl() }
-            select("p").filter { it.html().split("\\[").size > 1 }.forEach { it.tagLatex() }
-            select("a").map { it.attr("href", it.absUrl("href")) }
-            doc.body().html(html()).appendElement("p")
+            cleanUp()
+            appendElement("p")
+            doc.body().html(html())
         }
 
         return doc
+    }
+
+    private fun Element.cleanUp() {
+        select("img.illustration").forEach { it.convertToFullHttpsImgUrl() }
+        select("p").filter { it.html().split("\\[").size > 1 }.forEach { it.tagLatex() }
+        select("a").map { it.attr("href", it.absUrl("href")) }
     }
 
     private fun Element.convertToFullHttpsImgUrl() {
