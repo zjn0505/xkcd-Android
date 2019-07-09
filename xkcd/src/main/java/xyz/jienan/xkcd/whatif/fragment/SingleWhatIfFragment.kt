@@ -30,6 +30,7 @@ import xyz.jienan.xkcd.R
 import xyz.jienan.xkcd.base.BaseFragment
 import xyz.jienan.xkcd.model.WhatIfModel
 import xyz.jienan.xkcd.model.persist.SharedPrefManager
+import xyz.jienan.xkcd.model.util.appendCss
 import xyz.jienan.xkcd.ui.WhatIfWebView
 import xyz.jienan.xkcd.ui.getUiNightModeFlag
 import xyz.jienan.xkcd.whatif.interfaces.ImgInterface
@@ -90,11 +91,7 @@ open class SingleWhatIfFragment : BaseFragment(), ImgInterface.ImgCallback, RefI
                     .map {
                         if (context?.getUiNightModeFlag() == Configuration.UI_MODE_NIGHT_YES) {
                             val doc = Jsoup.parse(it.content)
-                            doc.head().appendElement("link")
-                                    .attr("rel", "stylesheet")
-                                    .attr("type", "text/css")
-                                    .attr("href", "night_style.css")
-
+                            doc.head()!!.appendCss("night_style.css")
                             it.content = doc.html()
                         }
                         it

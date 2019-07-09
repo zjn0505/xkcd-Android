@@ -3,11 +3,12 @@ package xyz.jienan.xkcd.model.util
 import okhttp3.ResponseBody
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.nodes.Element
 import xyz.jienan.xkcd.model.WhatIfArticle
 import java.io.IOException
 import java.text.ParseException
 import java.text.SimpleDateFormat
-import java.util.Locale
+import java.util.*
 
 object WhatIfArticleUtil {
 
@@ -16,66 +17,73 @@ object WhatIfArticleUtil {
     private const val TEX_JS = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/latest.js?config=TeX-MML-AM_CHTML"
 
     @Throws(IOException::class, ParseException::class)
-    fun getArticlesFromArchive(responseBody: ResponseBody): MutableList<WhatIfArticle> {
+    fun getArticlesFromArchive(responseBody: ResponseBody): List<WhatIfArticle> {
         val doc = Jsoup.parse(responseBody.string(), BASE_URI)
-        val divArchive = doc.select("div#archive-wrapper")
-        val articles = mutableListOf<WhatIfArticle>()
-        for (element in divArchive.first().children()) {
+        val articleDivs = doc.selectFirst("div#archive-wrapper").children()
 
-
-            val a = element.selectFirst("a[href]")
+        return articleDivs.map {
+            val a = it.selectFirst("a[href]")
             val href = a.attr("href").split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-            val archiveDate = element.selectFirst("h2.archive-date").html()
+            val archiveDate = it.selectFirst("h2.archive-date").html()
             val sdf = SimpleDateFormat("MMMMM d, yyyy", Locale.ENGLISH)
 
-            val article = WhatIfArticle(num = href[href.size - 1].toLong(),
-                    title = element.selectFirst("h1.archive-title").child(0).html(),
+            WhatIfArticle(num = href.last().toLong(),
+                    title = it.selectFirst("h1.archive-title").child(0).html(),
                     featureImg = a.child(0).absUrl("src"),
                     date = sdf.parse(archiveDate).time)
-
-            articles.add(article)
         }
-        return articles
     }
 
     @Throws(IOException::class)
     fun getArticleFromHtml(responseBody: ResponseBody): Document {
         val doc = Jsoup.parse(responseBody.string(), BASE_URI)
-        val elements = doc.select("article.entry")
-        elements.remove(elements[0].children().first())
 
-        val imageElements = doc.select("img.illustration")
-        for (element in imageElements) {
-            element.attr("src", element.absUrl("src"))
-            if (element.attr("src").startsWith("http://what-if.xkcd")) {
-                element.attr("src", element.attr("src").replaceFirst("http:".toRegex(), "https:"))
-            }
+        with(doc.head()) {
+            empty()
+            appendCss("style.css")
+            appendElement("script")
+                    .attr("src", TEX_JS)
+                    .attr("async", "")
+            appendElement("script").attr("src", "LatexInterface.js")
+            appendElement("script").attr("src", "ImgInterface.js")
+            appendElement("script").attr("src", "RefInterface.js")
         }
 
-        val pElements = doc.select("p")
-        for (element in pElements) {
-            if (element.html().split("\\[".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray().size > 1) {
-                element.attr("class", "latex")
-            }
+        doc.selectFirst("article.entry").apply {
+            select("img.illustration").forEach { it.convertToFullHttpsImgUrl() }
+            select("p").filter { it.html().split("\\[").size > 1 }.forEach { it.tagLatex() }
+            select("a").map { it.attr("href", it.absUrl("href")) }
+            doc.body().html(html()).appendElement("p")
         }
 
-        val aElements = doc.select("a")
-        for (element in aElements) {
-            element.attr("href", element.absUrl("href"))
-        }
-
-        doc.head().html("")
-        doc.head().appendElement("link")
-                .attr("rel", "stylesheet")
-                .attr("type", "text/css")
-                .attr("href", "style.css")
-        doc.head().appendElement("script")
-                .attr("src", TEX_JS)
-                .attr("async", "")
-        doc.head().appendElement("script").attr("src", "LatexInterface.js")
-        doc.head().appendElement("script").attr("src", "ImgInterface.js")
-        doc.head().appendElement("script").attr("src", "RefInterface.js")
-        doc.body().html(elements.html()).appendElement("p")
         return doc
     }
+
+    private fun Element.convertToFullHttpsImgUrl() {
+        attr("src", absUrl("src").replaceFirst("^http://what".toRegex(), "https://what"))
+    }
+
+    private fun Element.tagLatex() {
+        when {
+            html().startsWith("\\[") -> attr("class", "latex")
+            parent().html().contains("<a href=\"//what-if.xkcd.com/124/\">") -> {
+                val contents = html()
+                contents.replace("\\(", "\\[")
+                contents.replace("\\)", "\\]")
+                html(contents).appendElement("br")
+            }
+            else -> {
+                val taggedLatex = html().replace("(?=\\\\\\[)".toRegex(), "<p class=\"latex\">")
+                        .replace("(?<=\\\\\\])".toRegex(), "<p>")
+                html(taggedLatex)
+            }
+        }
+    }
+}
+
+fun Element.appendCss(cssName: String) {
+    appendElement("link")
+            .attr("rel", "stylesheet")
+            .attr("type", "text/css")
+            .attr("href", cssName)
 }
