@@ -37,6 +37,48 @@ class WhatIfWebView(context: Context, attrs: AttributeSet) : WebView(context, at
 
     private val imageTasks = ArrayList<FutureTarget<File>>()
 
+    private val webViewClient = object : WebViewClient() {
+
+        override fun shouldInterceptRequest(view: WebView, url: String): WebResourceResponse? {
+            var url = url
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT && url.contains("what-if.xkcd.com/imgs/a/") || url.contains("imgs.xkcd.com/comics")) {
+                url = url.replace("http://", "https://")
+                val t = glide.load(url).downloadOnly(10, 10)
+                imageTasks.add(t)
+                try {
+                    return WebResourceResponse("image/png", "deflate", FileInputStream(t.get()))
+                } catch (e: Exception) {
+                    Timber.e(e)
+                }
+
+                return null
+            } else {
+                return super.shouldInterceptRequest(view, url)
+            }
+        }
+
+        override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+            if (XkcdExplainUtil.isXkcdImageLink(url)) {
+                val id = XkcdExplainUtil.getXkcdIdFromXkcdImageLink(url)
+                if (id != -1L) {
+                    ImageDetailPageActivity.startActivityFromId(getContext(), id)
+                } else {
+                    ImageDetailPageActivity.startActivity(getContext(), url, 1L)
+                }
+                if (getContext() is Activity) {
+                    (getContext() as Activity).overridePendingTransition(R.anim.fadein, R.anim.fadeout)
+                }
+
+            } else {
+                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                if (browserIntent.resolveActivity(view.context.packageManager) != null) {
+                    view.context.startActivity(browserIntent)
+                }
+            }
+            return true
+        }
+    }
+
     init {
         if (context.getUiNightModeFlag() == Configuration.UI_MODE_NIGHT_YES) {
             setBackgroundColor(Color.parseColor("#3A3A3A"))
@@ -44,47 +86,7 @@ class WhatIfWebView(context: Context, attrs: AttributeSet) : WebView(context, at
             setBackgroundColor(Color.TRANSPARENT)
         }
 
-        webViewClient = object : WebViewClient() {
-
-            override fun shouldInterceptRequest(view: WebView, url: String): WebResourceResponse? {
-                var url = url
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT && url.contains("what-if.xkcd.com/imgs/a/") || url.contains("imgs.xkcd.com/comics")) {
-                    url = url.replace("http://", "https://")
-                    val t = glide.load(url).downloadOnly(10, 10)
-                    imageTasks.add(t)
-                    try {
-                        return WebResourceResponse("image/png", "deflate", FileInputStream(t.get()))
-                    } catch (e: Exception) {
-                        Timber.e(e)
-                    }
-
-                    return null
-                } else {
-                    return super.shouldInterceptRequest(view, url)
-                }
-            }
-
-            override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-                if (XkcdExplainUtil.isXkcdImageLink(url)) {
-                    val id = XkcdExplainUtil.getXkcdIdFromXkcdImageLink(url)
-                    if (id != -1L) {
-                        ImageDetailPageActivity.startActivityFromId(getContext(), id)
-                    } else {
-                        ImageDetailPageActivity.startActivity(getContext(), url, 1L)
-                    }
-                    if (getContext() is Activity) {
-                        (getContext() as Activity).overridePendingTransition(R.anim.fadein, R.anim.fadeout)
-                    }
-
-                } else {
-                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                    if (browserIntent.resolveActivity(view.context.packageManager) != null) {
-                        view.context.startActivity(browserIntent)
-                    }
-                }
-                return true
-            }
-        }
+        setWebViewClient(webViewClient)
 
         updateSettings()
     }

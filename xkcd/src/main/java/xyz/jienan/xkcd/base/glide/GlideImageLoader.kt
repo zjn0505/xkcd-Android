@@ -28,6 +28,7 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestManager
 import com.bumptech.glide.request.animation.GlideAnimation
 import com.bumptech.glide.request.target.SimpleTarget
 import xyz.jienan.xkcd.ui.xkcdimageview.ImageInfoExtractor
@@ -40,52 +41,58 @@ import java.util.concurrent.ConcurrentHashMap
  */
 
 class GlideImageLoader private constructor(private val context: Context) : ImageLoader {
+
     private val mRequestTargetMap = ConcurrentHashMap<Int, ImageDownloadTarget>()
 
-    override fun loadImage(requestId: Int, uri: Uri, callback: ImageLoader.Callback) {
-        val target = object : ImageDownloadTarget(uri.toString()) {
+    private class LoaderTarget(private val uri: Uri,
+                               private val callback: ImageLoader.Callback,
+                               private val requestManager: RequestManager) : ImageDownloadTarget(uri.toString()) {
 
-            override fun onResourceReady(resource: File, glideAnimation: GlideAnimation<in File>) {
-                super.onResourceReady(resource, glideAnimation)
-                // we don't need delete this image file, so it behaves live cache hit
-                callback.onCacheHit(ImageInfoExtractor.getImageType(resource), resource)
-                callback.onSuccess(resource)
-            }
-
-            override fun onLoadFailed(e: Exception?, errorDrawable: Drawable?) {
-                super.onLoadFailed(e, errorDrawable)
-                if (uri.path != null && uri.path!!.startsWith("https")) {
-                    Glide.with(context).load(Uri.parse(uri.path!!.replaceFirst("https".toRegex(), "http")))
-                            .downloadOnly<ImageDownloadTarget>(this)
-                    return
-                }
-                callback.onFail(GlideLoaderException(errorDrawable))
-            }
-
-            override fun onProgress(bytesRead: Long, expectedLength: Long) {
-                val progress = (bytesRead.toFloat() / expectedLength * 100).toInt()
-                callback.onProgress(progress)
-            }
-
-            override fun getGranualityPercentage() = 0f
-
-            override fun onDownloadStart() {
-                callback.onStart()
-            }
-
-            override fun onProgress(progress: Int) {
-                callback.onProgress(progress)
-            }
-
-            override fun onDownloadFinish() {
-                callback.onFinish()
-            }
+        override fun onResourceReady(resource: File, glideAnimation: GlideAnimation<in File>) {
+            super.onResourceReady(resource, glideAnimation)
+            // we don't need delete this image file, so it behaves live cache hit
+            callback.onCacheHit(ImageInfoExtractor.getImageType(resource), resource)
+            callback.onSuccess(resource)
         }
+
+        override fun onLoadFailed(e: Exception?, errorDrawable: Drawable?) {
+            super.onLoadFailed(e, errorDrawable)
+            if (uri.path != null && uri.path!!.startsWith("https")) {
+                requestManager.load(Uri.parse(uri.path!!.replaceFirst("https".toRegex(), "http")))
+                        .downloadOnly(this)
+                return
+            }
+            callback.onFail(GlideLoaderException(errorDrawable))
+        }
+
+        override fun onProgress(bytesRead: Long, expectedLength: Long) {
+            val progress = (bytesRead.toFloat() / expectedLength * 100).toInt()
+            callback.onProgress(progress)
+        }
+
+        override fun getGranualityPercentage() = 0f
+
+        override fun onDownloadStart() {
+            callback.onStart()
+        }
+
+        override fun onProgress(progress: Int) {
+            callback.onProgress(progress)
+        }
+
+        override fun onDownloadFinish() {
+            callback.onFinish()
+        }
+    }
+
+    override fun loadImage(requestId: Int, uri: Uri, callback: ImageLoader.Callback) {
+        val requestManager = Glide.with(context)
+
+        val target = LoaderTarget(uri, callback, requestManager)
         clearTarget(requestId)
         saveTarget(requestId, target)
 
-        Glide.with(context)
-                .load(uri)
+        requestManager.load(uri)
                 .downloadOnly<ImageDownloadTarget>(target)
     }
 
@@ -105,7 +112,7 @@ class GlideImageLoader private constructor(private val context: Context) : Image
                 .load(uri)
                 .downloadOnly(object : SimpleTarget<File>() {
                     override fun onResourceReady(resource: File, glideAnimation: GlideAnimation<in File>) {
-
+                        // no-ops
                     }
                 })
     }
