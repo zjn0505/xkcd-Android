@@ -124,21 +124,11 @@ object NotificationUtils {
                     .map { Glide.with(this).load(url).asBitmap().into(width, height).get() }
                     .onErrorResumeNext(getLogoBitmapSingle(this, tag, width, height))
                     .toMaybe()
-                    .onErrorResumeNext(maybeSource)
+                    .onErrorResumeNext(Maybe.empty<Bitmap>())
                     .defaultIfEmpty(Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888))
-
 
     private fun getLogoBitmapSingle(context: Context, tag: String, width: Int, height: Int) =
             Single.just(tag)
                     .map { if (tag == TAG_XKCD) XKCD_LOGO else WHAT_IF_LOGO }
                     .map { logo -> Glide.with(context).load(logo).asBitmap().into(width, height).get() }
-
-
-    private val maybeSource = MaybeSource<Bitmap> {
-        if (it is ExecutionException) {
-            Maybe.empty<Bitmap>()
-        } else {
-            Maybe.error(it as Throwable)
-        }
-    }
 }

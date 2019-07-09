@@ -34,6 +34,6 @@ class WhatIfFastLoadService : IntentService("WhatIfFastLoadService") {
 
         private const val WHAT_IF_FASTLOAD_DELAY = 3L
 
-        private const val WHAT_IF_FASTLOAD_TIMEOUT = 13L
+        private const val WHAT_IF_FASTLOAD_TIMEOUT = 23L
     }
 }

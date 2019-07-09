@@ -115,13 +115,9 @@ object BoxManager {
         return xkcdPics
     }
 
-    fun updateAndSave(xkcdPic: XkcdPic): XkcdPic {
-        return updateAndSave(listOf(xkcdPic))[0]
-    }
+    fun updateAndSave(xkcdPic: XkcdPic): XkcdPic = updateAndSave(listOf(xkcdPic))[0]
 
-    fun getWhatIf(index: Long): WhatIfArticle? {
-        return whatIfBox.get(index)
-    }
+    fun getWhatIf(index: Long): WhatIfArticle? = whatIfBox.get(index)
 
     fun updateAndSaveWhatIf(whatIfArticles: MutableList<WhatIfArticle>): List<WhatIfArticle> {
         for (article in whatIfArticles) {

@@ -54,7 +54,7 @@ object WhatIfModel {
                 .subscribeOn(Schedulers.io())
                 .singleOrError()
                 .map { WhatIfArticleUtil.getArticlesFromArchive(it) }
-                .map { BoxManager.updateAndSaveWhatIf(it) }
+                .map { BoxManager.updateAndSaveWhatIf(it.toMutableList()) }
     }
 
     fun loadLatest(): Single<WhatIfArticle> {
@@ -97,25 +97,24 @@ object WhatIfModel {
                 .map { it.thumbCount }
     }
 
-    fun fastLoadWhatIfs(index: Long): Completable {
-        return Observable.just(index)
-                .flatMap<Long> {
-                    if (index == 0L) {
-                        loadLatest().map { it.num }
-                                .flatMapObservable { Observable.rangeLong(1, it) }
-                    } else {
-                        Observable.rangeLong(1, index)
+    fun fastLoadWhatIfs(index: Long): Completable =
+            Observable.just(index)
+                    .flatMap<Long> {
+                        if (index == 0L) {
+                            loadLatest().map { it.num }
+                                    .flatMapObservable { Observable.rangeLong(1, it) }
+                        } else {
+                            Observable.rangeLong(1, index)
+                        }
+                    }.flatMap {
+                        if (loadArticleFromDB(it) == null || loadArticleFromDB(it)!!.content.isNullOrBlank()) {
+                            loadArticleFromAPI(it)
+                        } else {
+                            Observable.just(it)
+                        }
                     }
-                }.flatMap {
-                    if (loadArticleFromDB(it) == null || loadArticleFromDB(it)!!.content.isNullOrBlank()) {
-                        loadArticleFromAPI(it)
-                    } else {
-                        Observable.just(it)
-                    }
-                }
-                .toList()
-                .ignoreElement()
-    }
+                    .toList()
+                    .ignoreElement()
 
     private fun loadArticleFromAPI(id: Long): Observable<WhatIfArticle> {
         return whatIfAPI.getArticle(id)
