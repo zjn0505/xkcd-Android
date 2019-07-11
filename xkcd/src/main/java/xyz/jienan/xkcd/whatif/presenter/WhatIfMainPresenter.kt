@@ -89,8 +89,8 @@ class WhatIfMainPresenter constructor(private val view: WhatIfMainContract.View)
             searchDisposable.dispose()
         }
 
+        // Can't subscribe on io thread and observe on main thread, otherwise cursor behaves weirdly
         searchDisposable = WhatIfModel.searchWhatIf(query, SharedPrefManager.whatIfSearchPref)
-                .subscribeOn(Schedulers.io())
                 .map { list ->
                     if (isNumQuery(query)) {
                         val num = query.toLong()
@@ -98,7 +98,6 @@ class WhatIfMainPresenter constructor(private val view: WhatIfMainContract.View)
                     }
                     list
                 }
-                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ view.renderWhatIfSearch(it) },
                         { e ->
                             Timber.e(e, "search what if error")
