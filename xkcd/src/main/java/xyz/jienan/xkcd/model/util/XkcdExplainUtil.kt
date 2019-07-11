@@ -57,7 +57,7 @@ object XkcdExplainUtil {
 
     private fun Elements.cleanUp() {
         map { it.allElements }.forEach { elements ->
-            elements.select("h3.editsection, h3.mw-editsection, h4.editsection, h4.mw-editsection").remove()
+            elements.select("h3 .editsection, h3 .mw-editsection, h4 .editsection, h4 .mw-editsection").remove()
             elements.select("p sup").filter { it.toString().contains("<i>citation needed</i>") }.map { it.remove() }
             elements.select("a[href]").forEach { it.refillToFullUrl() }
             elements.select("tbody").flatMap { it.children() }.map { it.append("<br />") }
