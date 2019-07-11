@@ -1,4 +1,4 @@
 deploy:
   dropbox_path: /Xkcd-Builds # The path to the folder on Dropbox where the files will go
-  artifacts_path: xkcd/build/outputs/mapping/r8/release/upload # can be a single file, or a path
+  artifacts_path: xkcd/build/outputs/mapping/release/upload # can be a single file, or a path
   debug: true # if you want to see more logs
