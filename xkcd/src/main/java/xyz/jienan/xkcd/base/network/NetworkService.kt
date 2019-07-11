@@ -160,19 +160,14 @@ object NetworkService {
     private val isNetworkAvailable: Boolean
         get() {
             val connectivity = XkcdApplication.instance?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
+                    ?: return false
 
-            if (connectivity == null) {
-                return false
-            } else {
-                val info = connectivity.allNetworkInfo
-                if (info != null) {
-                    for (anInfo in info) {
-                        if (anInfo.state == NetworkInfo.State.CONNECTED) {
-                            return true
-                        }
-                    }
+            connectivity.allNetworkInfo?.forEach {
+                if (it.state == NetworkInfo.State.CONNECTED) {
+                    return true
                 }
             }
+
             return false
         }
 }

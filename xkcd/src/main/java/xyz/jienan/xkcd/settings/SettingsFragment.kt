@@ -79,7 +79,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
             PREF_DARK_THEME -> {
                 (preference as ListPreference).value = newValue.toString()
                 darkPref?.summary = darkPref?.entry.toString()
-                if (Build.VERSION.SDK_INT < 21) {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
                     activity?.setResult(RES_DARK, Intent().also { it.putExtra(PREF_DARK_THEME, newValue.toString().toInt()) })
                     activity?.finish()
                 } else {
@@ -93,7 +93,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        if (Build.VERSION.SDK_INT >= 21) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             activity?.recreate()
         }
     }
