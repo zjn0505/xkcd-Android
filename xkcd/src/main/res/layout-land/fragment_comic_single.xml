@@ -26,7 +26,6 @@
                 android:gravity="center"
                 android:textSize="25sp"
                 android:textStyle="bold"
-                android:visibility="gone"
                 tools:text="0. Default Image" />
 
             <ScrollView
