@@ -9,7 +9,7 @@
 
 <a href='https://play.google.com/store/apps/details?id=xyz.jienan.xkcd&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' width="240" height="93"/></a>
 
-![screenshots](https://raw.githubusercontent.com/zjn0505/Xkcd-Android/master/screenshots/xkcd.png)
+![screenshots](https://raw.githubusercontent.com/zjn0505/Xkcd-Android/master/screenshots/screenshot-github.jpg)
 
 - [xkcd](https://xkcd.com) comics viewer, based on the [json interface](https://xkcd.com/json.html).
 - [what if](https://what-if.xkcd.com) articles browser, with the best rendering of embedded LaTeX.
