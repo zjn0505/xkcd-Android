@@ -115,7 +115,7 @@ class ImageDetailPageActivity : BaseActivity(), ImageDetailPageContract.View {
             overridePendingTransition(R.anim.fadein, R.anim.fadeout_drop)
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             bigImageView.setOnApplyWindowInsetsListener { _, windowInsets ->
                 adjustContentForCutouts()
                 windowInsets
