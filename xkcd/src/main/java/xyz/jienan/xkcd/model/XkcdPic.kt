@@ -14,25 +14,25 @@ import xyz.jienan.xkcd.model.util.XkcdSideloadUtils
 
 @Entity
 data class XkcdPic constructor(
-        val year: String,
-        val month: String,
-        val day: String,
+        val year: String = "",
+        val month: String = "",
+        val day: String = "",
         @Id(assignable = true)
-        var num: Long,
+        var num: Long = 0L,
         @NameInDb("alt")
         @SerializedName("alt")
-        val _alt: String,
-        var large: Boolean,
-        var special: Boolean,
+        val _alt: String = "",
+        var large: Boolean = false,
+        var special: Boolean = false,
         var width: Int = 0,
         var height: Int = 0,
-        var isFavorite: Boolean,
-        var hasThumbed: Boolean,
-        val thumbCount: Long,
+        var isFavorite: Boolean = false,
+        var hasThumbed: Boolean = false,
+        val thumbCount: Long = 0L,
         @NameInDb("title")
         @SerializedName("title")
-        val _title: String,
-        var img: String) {
+        val _title: String = "",
+        var img: String = "") {
 
     val targetImg: String
         get() = XkcdSideloadUtils.sideload(this).img

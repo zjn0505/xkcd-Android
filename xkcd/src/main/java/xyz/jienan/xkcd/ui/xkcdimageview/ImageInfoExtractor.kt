@@ -11,11 +11,12 @@ import kotlin.experimental.and
  */
 
 object ImageInfoExtractor {
-    val TYPE_STILL_IMAGE = 0
-    val TYPE_GIF = 1
-    val TYPE_ANIMATED_WEBP = 2
-    val TYPE_STILL_WEBP = 3
-    val TYPE_BITMAP = 4
+
+    const val TYPE_STILL_IMAGE = 0
+    const val TYPE_GIF = 1
+    const val TYPE_ANIMATED_WEBP = 2
+    const val TYPE_STILL_WEBP = 3
+    const val TYPE_BITMAP = 4
 
     private const val ANIMATED_WEBP_MASK: Byte = 0x02
 
@@ -53,26 +54,33 @@ object ImageInfoExtractor {
         return type
     }
 
-    fun typeName(type: Int): String {
-        return when (type) {
-            TYPE_GIF -> "GIF"
-            TYPE_STILL_WEBP -> "STILL_WEBP"
-            TYPE_ANIMATED_WEBP -> "ANIMATED_WEBP"
-            TYPE_STILL_IMAGE -> "STILL_IMAGE"
-            else -> "STILL_IMAGE"
-        }
+    fun typeName(type: Int) = when (type) {
+        TYPE_GIF -> "GIF"
+        TYPE_STILL_WEBP -> "STILL_WEBP"
+        TYPE_ANIMATED_WEBP -> "ANIMATED_WEBP"
+        TYPE_STILL_IMAGE -> "STILL_IMAGE"
+        else -> "STILL_IMAGE"
     }
 
-    private fun isGifHeader(header: ByteArray): Boolean {
-        return header[0] == 'G'.toByte() && header[1] == 'I'.toByte() && header[2] == 'F'.toByte()
-    }
 
-    private fun isWebpHeader(header: ByteArray): Boolean {
-        return (header[0] == 'R'.toByte() && header[1] == 'I'.toByte() && header[2] == 'F'.toByte() && header[3] == 'F'.toByte()
-                && header[8] == 'W'.toByte() && header[9] == 'E'.toByte() && header[10] == 'B'.toByte() && header[11] == 'P'.toByte())
-    }
+    private fun isGifHeader(header: ByteArray) =
+            header[0] == 'G'.toByte() && header[1] == 'I'.toByte() && header[2] == 'F'.toByte()
 
-    private fun isExtendedWebp(header: ByteArray): Boolean {
-        return header[12] == 'V'.toByte() && header[13] == 'P'.toByte() && header[14] == '8'.toByte() && header[15] == 'X'.toByte()
-    }
+    private fun isWebpHeader(header: ByteArray) =
+            header[0] == 'R'.toByte()
+                    && header[1] == 'I'.toByte()
+                    && header[2] == 'F'.toByte()
+                    && header[3] == 'F'.toByte()
+                    && header[8] == 'W'.toByte()
+                    && header[9] == 'E'.toByte()
+                    && header[10] == 'B'.toByte()
+                    && header[11] == 'P'.toByte()
+
+
+    private fun isExtendedWebp(header: ByteArray) =
+        header[12] == 'V'.toByte()
+                && header[13] == 'P'.toByte()
+                && header[14] == '8'.toByte()
+                && header[15] == 'X'.toByte()
+
 }

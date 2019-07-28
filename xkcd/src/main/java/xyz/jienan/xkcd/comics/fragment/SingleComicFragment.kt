@@ -77,7 +77,7 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
 
         private val weakReference: WeakReference<SingleComicFragment> = WeakReference(singleComicFragment)
 
-        override fun onException(e: Exception, model: String,
+        override fun onException(e: Exception?, model: String,
                                  target: Target<Bitmap>, isFirstResource: Boolean): Boolean {
 
             val fragment = weakReference.get() ?: return false

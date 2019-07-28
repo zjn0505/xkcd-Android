@@ -22,6 +22,9 @@ public class ExtraPagerAdapter extends BaseStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
+        if (position > extraComicsList.size()) {
+            position = extraComicsList.size() - 1;
+        }
         ExtraComics extraComics = extraComicsList.get(position);
         if (extraComics.getLinks() != null && !extraComics.getLinks().isEmpty() && !TextUtils.isEmpty(extraComics.getLinks().get(0))) {
             SingleExtraWebViewFragment fragment = SingleExtraWebViewFragment.Companion.newInstance(extraComics);

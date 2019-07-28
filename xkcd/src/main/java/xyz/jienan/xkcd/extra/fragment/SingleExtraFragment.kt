@@ -69,7 +69,7 @@ class SingleExtraFragment : BaseFragment(), SingleExtraContract.View {
 
         private val weakReference: WeakReference<SingleExtraFragment> = WeakReference(singleExtraFragment)
 
-        override fun onException(e: Exception, model: String,
+        override fun onException(e: Exception?, model: String,
                                  target: Target<Bitmap>, isFirstResource: Boolean): Boolean {
 
             val fragment = weakReference.get() ?: return false

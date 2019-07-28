@@ -8,10 +8,11 @@ import io.objectbox.annotation.Id
 data class WhatIfArticle constructor(
         @Id(assignable = true)
         var num: Long = 0,
-        var title: String,
-        var featureImg: String?,
+        var title: String = "",
+        var featureImg: String? = null,
         var content: String? = null,
-        @Transient var date: Long,
+        @Transient
+        var date: Long = 0L,
         @SerializedName("date")
         var dateInString: String = "",
         var isFavorite: Boolean = false,

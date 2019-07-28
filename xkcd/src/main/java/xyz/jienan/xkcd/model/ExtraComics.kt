@@ -11,14 +11,14 @@ import java.io.Serializable
 data class ExtraComics constructor(
         @Id(assignable = true)
         var num: Long = 0,
-        val title: String,
-        val date: String,
-        val img: String,
+        val title: String = "",
+        val date: String = "",
+        val img: String = "",
         @SerializedName("explain")
-        val explainUrl: String,
-        var explainContent: String?,
+        val explainUrl: String = "",
+        var explainContent: String? = null,
         @Convert(converter = ListConverter::class, dbType = String::class)
-        var links: List<String>?) : Serializable {
+        var links: List<String>? = null) : Serializable {
 
     class ListConverter : PropertyConverter<List<String>, String> {
 

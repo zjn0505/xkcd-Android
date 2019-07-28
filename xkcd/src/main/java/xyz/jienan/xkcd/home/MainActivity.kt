@@ -207,7 +207,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         if (isUnlimitedConnected) {
             val msgIntent = Intent(this, WhatIfFastLoadService::class.java)
             msgIntent.putExtra(WHAT_IF_LATEST_INDEX, SharedPrefManager.latestWhatIf)
-            startService(msgIntent)
+            WhatIfFastLoadService.enqueueWork(this, msgIntent)
         }
     }
 
