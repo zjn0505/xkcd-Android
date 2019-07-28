@@ -4,6 +4,7 @@ apply plugin: 'io.fabric'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'com.didiglobal.booster'
 
 andResGuard {
     mappingFile = file("./resource_mapping.txt")
@@ -154,7 +155,7 @@ dependencies {
 //    implementation 'androidx.slice:slice-core:1.0.0'
 //    implementation 'androidx.slice:slice-builders:1.0.0'
 
-//    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
 //
 //    androidTestImplementation "androidx.arch.core:core-testing:2.0.1"
 //    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
