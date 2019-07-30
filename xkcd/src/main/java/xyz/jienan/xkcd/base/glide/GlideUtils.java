@@ -28,7 +28,9 @@ public class GlideUtils {
                 .listener(new RequestListener<String, Bitmap>() {
                     @Override
                     public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
-                        if (model.startsWith("https")) {
+                        if (model.isEmpty()) {
+                            return false;
+                        } else if (model.startsWith("https")) {
                             load(glide, pic, model.replaceFirst("https", "http"), imageView);
                             return true;
                         } else if (model.replaceFirst("http", "https").equals(pic.getTargetImg())
