@@ -54,8 +54,8 @@ android {
         applicationId "xyz.jienan.xkcd"
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 38
-        versionName "2.5.2"
+        versionCode 39
+        versionName "2.5.3"
         vectorDrawables.useSupportLibrary = true
         resConfigs "zh-rCN"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -117,8 +117,8 @@ dependencies {
     implementation 'androidx.media:media:1.1.0-rc01'
     implementation 'androidx.exifinterface:exifinterface:1.0.0'
 
-    implementation 'androidx.recyclerview:recyclerview:1.1.0-alpha06'
-    implementation 'com.google.android.material:material:1.1.0-alpha07'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0-beta01'
+    implementation 'com.google.android.material:material:1.1.0-alpha08'
 
 
     implementation 'androidx.percentlayout:percentlayout:1.0.0'
@@ -126,9 +126,10 @@ dependencies {
 //    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.6.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.13.1'
-    implementation ('com.squareup.okhttp3:okhttp:3.12.1') {
-        force = true
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.14.2'
+    implementation ('com.squareup.okhttp3:okhttp:3.12.3') {
+        force = true // from 3.13, okhttp only support Android 5+
+        // https://cashapp.github.io/2019-02-05/okhttp-3-13-requires-android-5
     }
     implementation 'com.squareup:seismic:1.0.2'
     implementation 'io.reactivex.rxjava2:rxjava:2.2.10'
@@ -141,7 +142,7 @@ dependencies {
     implementation ('com.github.bumptech.glide:okhttp3-integration:1.5.0') {
         force = true
     }
-    implementation 'com.google.firebase:firebase-core:17.0.0'
+    implementation 'com.google.firebase:firebase-core:17.0.1'
     implementation 'com.google.firebase:firebase-messaging:19.0.1'
 
     implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
