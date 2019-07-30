@@ -45,7 +45,7 @@ object NotificationUtils {
 
         with(context) {
             val title = resources.getStringArray(R.array.notification_titles).random().format(TAG_XKCD)
-            val content = getString(R.string.notification_content, num, title)
+            val content = getString(R.string.notification_content, num, xkcdPic.title)
             val builder = createNotificationBuilder(title, content, TAG_XKCD)
                     .setContentIntent(getPendingIntent(num, TAG_XKCD))
 
@@ -69,7 +69,7 @@ object NotificationUtils {
 
         with(context) {
             val title = resources.getStringArray(R.array.notification_titles).random().format(TAG_WHAT_IF)
-            val content = getString(R.string.notification_content, num, title)
+            val content = getString(R.string.notification_content, num, article.title)
             val builder = createNotificationBuilder(title, content, TAG_WHAT_IF)
                     .setContentIntent(getPendingIntent(num, TAG_WHAT_IF))
 
