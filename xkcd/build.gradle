@@ -157,14 +157,19 @@ dependencies {
 //    implementation 'androidx.slice:slice-builders:1.0.0'
 
     testImplementation 'junit:junit:4.12'
-//
-//    androidTestImplementation "androidx.arch.core:core-testing:2.0.1"
-//    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
-//    androidTestImplementation "androidx.test.espresso:espresso-intents:3.1.1"
-//    androidTestImplementation "androidx.test.espresso:espresso-contrib:3.1.1"
-//
-//    implementation 'androidx.multidex:multidex:2.0.1'
 
+//    androidTestImplementation "androidx.arch.core:core-testing:2.0.1"
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    androidTestImplementation "androidx.test.espresso:espresso-intents:3.2.0"
+    androidTestImplementation "androidx.test.espresso:espresso-contrib:3.2.0"
+    androidTestImplementation (
+            'org.hamcrest:hamcrest-core:1.1',
+            'org.hamcrest:hamcrest-integration:1.1',
+            'org.hamcrest:hamcrest-library:1.1'
+    )
+
+//    implementation 'androidx.multidex:multidex:2.0.1'
 }
 
 buildscript {
