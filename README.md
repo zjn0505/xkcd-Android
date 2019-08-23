@@ -13,7 +13,7 @@
 
 - [xkcd](https://xkcd.com) comics viewer, based on the [json interface](https://xkcd.com/json.html).
 - [what if](https://what-if.xkcd.com) articles browser, with the best rendering of embedded LaTeX.
-- Full support to all large comics, with the help from [Glide](https://github.com/bumptech/glide), [PhotoView](https://github.com/chrisbanes/PhotoView), and [BigImageViewer](https://github.com/Piasy/BigImageViewer).
+- Full support to all large comics, with the help from [Glide](https://github.com/bumptech/glide), and [BigImageViewer](https://github.com/Piasy/BigImageViewer).
 - Frame by frame animated comics browser. Don't miss a single detail in [1190 - Time](https://xkcd.com/1190) and [1446 - Landing](https://xkcd.com/1446)
 - Quick view of [ExplainXKCD](https://www.explainxkcd.com/), with the help from [Jsoup](https://jsoup.org/).
 - Caching with [ObjectBox](http://objectbox.io/) and [OkHttp](https://github.com/square/okhttp/)

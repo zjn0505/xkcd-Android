@@ -94,7 +94,6 @@
 -dontnote io.reactivex.Observable
 -dontnote okhttp3.**
 -dontnote retrofit2.**
--dontnote com.github.chrisbanes.photoview.PhotoView
 -dontnote com.github.piasy.biv.view.BigImageView
 -dontnote com.google.**
 -dontnote io.fabric.sdk.android.**
