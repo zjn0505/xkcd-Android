@@ -240,5 +240,9 @@
     "num": 1970,
     "img": "https://imgs.xkcd.com/comics/name_dominos_large.png",
     "large": true
+  },
+  {
+    "num": 2198,
+    "img": "https://www.explainxkcd.com/wiki/images/6/6a/throw.png"
   }
 ]
