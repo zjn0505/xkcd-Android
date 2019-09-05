@@ -1,11 +1,13 @@
 package xyz.jienan.xkcd
 
 import android.app.Application
+import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
 import com.google.firebase.messaging.FirebaseMessaging
 import xyz.jienan.xkcd.base.glide.GlideImageLoader
 import xyz.jienan.xkcd.model.MyObjectBox
+import xyz.jienan.xkcd.model.XkcdModel
 import xyz.jienan.xkcd.model.persist.BoxManager
 import xyz.jienan.xkcd.model.persist.SharedPrefManager
 import xyz.jienan.xkcd.model.util.XkcdSideloadUtils
@@ -33,6 +35,9 @@ class XkcdApplication : Application() {
         BoxManager.init(boxStore)
         XkcdSideloadUtils.init(this)
         SharedPrefManager.init(this)
+
+        XkcdModel.localizedUrl = resources.getString(R.string.api_xkcd_localization)
+
         ImageLoaderFactory.initialize(GlideImageLoader.with(this))
         FirebaseMessaging.getInstance().apply {
             subscribeToTopic(FCM_TOPIC_NEW_COMICS)
@@ -48,5 +53,10 @@ class XkcdApplication : Application() {
 
         var instance: XkcdApplication? = null
             private set
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        XkcdModel.localizedUrl = resources.getString(R.string.api_xkcd_localization)
     }
 }

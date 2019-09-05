@@ -3,6 +3,7 @@ package xyz.jienan.xkcd.base.network;
 import java.util.List;
 
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import okhttp3.ResponseBody;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -67,4 +68,8 @@ public interface XkcdAPI {
     @Headers("cacheable: 60")
     @GET(XKCD_TOP)
     Observable<List<XkcdPic>> getTopXkcds(@Query("sortby") String sortby);
+
+    @Headers("cacheable: 600")
+    @GET
+    Single<XkcdPic> getLocalizedXkcd(@Url String url);
 }
