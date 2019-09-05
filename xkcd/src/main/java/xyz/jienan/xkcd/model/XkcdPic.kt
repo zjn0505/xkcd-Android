@@ -22,7 +22,6 @@ data class XkcdPic constructor(
         @NameInDb("alt")
         @SerializedName("alt")
         val _alt: String = "",
-        var large: Boolean = false,
         var special: Boolean = false,
         var width: Int = 0,
         var height: Int = 0,
