@@ -17,17 +17,19 @@ public class XkcdPicDeserializer implements JsonDeserializer {
         Gson gson = new Gson();
         String string = json.toString();
 
-        String enString;
-        try {
-            enString = new String(string.getBytes("ISO-8859-1"), Charset.forName("UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            enString = string.replaceAll("\\u00e2\\u0080\\u0099", "'")
-                    .replaceAll("\\u00e2\\u0080\\u009c", "\"")
-                    .replaceAll("\\u00e2\\u0080\\u009d", "\"")
-                    .replaceAll("\\u00e2\\u0080\\u0093", "-")
-                    .replaceAll("\\u00c3\\u00a9", "é") // 1705
-                    .replaceAll("\\u00ed", "í"); // 2175
-        }
-        return gson.fromJson(enString, XkcdPic.class);
+//        String enString;
+//        try {
+//            enString = new String(string.getBytes("ISO-8859-1"), Charset.forName("UTF-8"));
+//        } catch (UnsupportedEncodingException e) {
+//            enString = string.replaceAll("\\u00e2\\u0080\\u0099", "'")
+//                    .replaceAll("\\u00e2\\u0080\\u009c", "\"")
+//                    .replaceAll("\\u00e2\\u0080\\u009d", "\"")
+//                    .replaceAll("\\u00e2\\u0080\\u0093", "-")
+//                    .replaceAll("\\u00c3\\u00a9", "é") // 1705
+//                    .replaceAll("\\u00ed", "í"); // 2175
+//        }
+//        return gson.fromJson(enString, XkcdPic.class);
+        // TODO
+        return gson.fromJson(string, XkcdPic.class);
     }
 }

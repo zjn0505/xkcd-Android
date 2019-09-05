@@ -1,6 +1,7 @@
 package xyz.jienan.xkcd.model
 
 
+import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
@@ -13,6 +14,8 @@ import xyz.jienan.xkcd.model.persist.BoxManager
 import xyz.jienan.xkcd.model.util.XkcdExplainUtil
 
 object XkcdModel {
+
+    var localizedUrl: String = ""
 
     private const val SLICE = 400
 
@@ -149,4 +152,13 @@ object XkcdModel {
         return observable.subscribeOn(Schedulers.io())
                 .map { XkcdExplainUtil.getExplainFromHtml(it, url) }
     }
+
+    fun loadLocalizedXkcd(index: Long): Maybe<XkcdPic> {
+        return if (localizedUrl.isBlank()) {
+             Maybe.empty()
+        } else {
+            NetworkService.xkcdAPI.getLocalizedXkcd(localizedUrl.format(index)).toMaybe()
+        }
+    }
+
 }

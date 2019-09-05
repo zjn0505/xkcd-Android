@@ -1,9 +1,9 @@
 package xyz.jienan.xkcd.comics.presenter
 
 import android.graphics.Bitmap
-
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import xyz.jienan.xkcd.comics.contract.SingleComicContract
 import xyz.jienan.xkcd.model.XkcdModel
@@ -37,7 +37,7 @@ class SingleComicPresenter(private val view: SingleComicContract.View) : SingleC
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnNext { view.setLoading(false) }
                     .filter { xkcdPicInDB == null }
-                    .subscribe( { this.renderComic(it) },
+                    .subscribe({ this.renderComic(it) },
                             { e -> Timber.e(e, "load xkcd pic error") })
                     .also { compositeDisposable.add(it) }
         }
@@ -58,7 +58,28 @@ class SingleComicPresenter(private val view: SingleComicContract.View) : SingleC
     }
 
     private fun renderComic(xkcdPic: XkcdPic) {
-        view.renderXkcdPic(xkcdPic)
         XkcdModel.push(xkcdPic)
+        XkcdModel.loadLocalizedXkcd(xkcdPic.num)
+                .subscribeOn(Schedulers.io())
+                .defaultIfEmpty(xkcdPic)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    view.renderXkcdPic(XkcdPic(
+                            year = xkcdPic.year,
+                            month = xkcdPic.month,
+                            day = xkcdPic.day,
+                            width = xkcdPic.width,
+                            height = xkcdPic.height,
+                            isFavorite = xkcdPic.isFavorite,
+                            hasThumbed = xkcdPic.hasThumbed,
+                            num = xkcdPic.num,
+                            _alt = it._alt,
+                            _title = it._title,
+                            img = it.img
+                    ))
+                }, {
+                    view.renderXkcdPic(xkcdPic)
+                })
+                .also { compositeDisposable.add(it) }
     }
 }
