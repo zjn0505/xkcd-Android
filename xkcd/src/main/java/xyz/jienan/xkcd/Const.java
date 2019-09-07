@@ -90,4 +90,7 @@ public class Const {
     public static final String SHARED_PREF_KEY_PRE_QUOTE = "shared_pref_key_pre_quote";
 
     public static final String LANDING_TYPE = "landing_type";
+
+    public static final String XKCD_BOOKMARK = "xkcd_bookmark";
+    public static final String WHAT_IF_BOOKMARK = "what_if_bookmark";
 }

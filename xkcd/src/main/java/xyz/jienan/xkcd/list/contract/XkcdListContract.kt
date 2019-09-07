@@ -9,7 +9,7 @@ interface XkcdListContract {
 
     interface View : BaseView<ListPresenter>, BaseListView {
 
-        fun updateData(xkcdPics: List<XkcdPic>)
+        fun updateData(pics: List<XkcdPic>)
 
         fun isLoadingMore(isLoadingMore: Boolean)
     }

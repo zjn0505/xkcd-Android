@@ -74,4 +74,12 @@ object SharedPrefManager {
     fun saveNewQuote(quote: Quote) {
         editor.putString(SHARED_PREF_KEY_PRE_QUOTE, gson.toJson(quote)).apply()
     }
+
+    fun setBookmark(key: String, index: Long) {
+        editor.putLong(key, index).apply()
+    }
+
+    fun getBookmark(key: String) : Long {
+        return sharedPreferences.getLong(key, 0L)
+    }
 }

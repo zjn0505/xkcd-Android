@@ -102,7 +102,7 @@ class SingleExtraFragment : BaseFragment(), SingleExtraContract.View {
 
             fragment.btnReload!!.visibility = View.GONE
             if (fragment.ivXkcdPic != null) {
-                fragment.ivXkcdPic!!.setOnClickListener { v -> fragment.launchDetailPageActivity() }
+                fragment.ivXkcdPic!!.setOnClickListener { fragment.launchDetailPageActivity() }
             }
             return false
         }

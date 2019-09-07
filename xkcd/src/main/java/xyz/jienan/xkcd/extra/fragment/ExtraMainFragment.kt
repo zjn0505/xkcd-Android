@@ -1,9 +1,7 @@
 package xyz.jienan.xkcd.extra.fragment
 
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.*
-import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.fab_sub_icons.*
 import kotlinx.android.synthetic.main.fragment_comic_main.*
 import xyz.jienan.xkcd.Const.LAST_VIEW_XKCD_ID
@@ -38,10 +36,6 @@ class ExtraMainFragment : ContentMainBaseFragment(), ExtraMainContract.View {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         fab.visibility = View.GONE
-        val actionBar = (activity as AppCompatActivity).supportActionBar
-        if (actionBar != null && TextUtils.isEmpty(actionBar.subtitle)) {
-            actionBar.subtitle = "1"
-        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -72,6 +66,14 @@ class ExtraMainFragment : ContentMainBaseFragment(), ExtraMainContract.View {
     }
 
     override fun updateFab() {
+        // no-ops
+    }
+
+    override fun onTabTitleDoubleTap() {
+        // no-ops
+    }
+
+    override fun onTabTitleLongPress() {
         // no-ops
     }
 }

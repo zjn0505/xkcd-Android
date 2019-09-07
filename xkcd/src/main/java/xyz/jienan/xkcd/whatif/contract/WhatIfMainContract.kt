@@ -19,5 +19,9 @@ interface WhatIfMainContract {
         fun renderWhatIfSearch(articles: List<WhatIfArticle>)
     }
 
-    interface Presenter : ContentMainBasePresenter
+    interface Presenter : ContentMainBasePresenter {
+        fun getBookmark() : Long
+
+        fun setBookmark(index: Long) : Boolean
+    }
 }

@@ -8,6 +8,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
@@ -208,7 +209,7 @@ class ImageDetailPageActivity : BaseActivity(), ImageDetailPageContract.View {
 
     override fun showGifPlaySpeed(speed: Int) {
         if (isGifInPlayState) {
-            ToastUtils.showToast(this, String.format(if (speed < 0) "<< %d" else "%d >>", speed))
+            ToastUtils.showToast(this, String.format(if (speed < 0) "<< %d" else "%d >>", speed), position = Gravity.CENTER)
         } else {
             ToastUtils.cancelToast()
         }

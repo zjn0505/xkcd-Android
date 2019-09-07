@@ -111,4 +111,6 @@
 
     <string name="release_for_solution">Release for solution</string>
     <string name="release_for_puzzle">Release for puzzle</string>
+
+    <string name="bookmark_saved">Bookmark saved</string>
 </resources>

@@ -3,8 +3,8 @@ package xyz.jienan.xkcd.whatif.presenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposables
-import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
+import xyz.jienan.xkcd.Const.WHAT_IF_BOOKMARK
 import xyz.jienan.xkcd.model.WhatIfArticle
 import xyz.jienan.xkcd.model.WhatIfModel
 import xyz.jienan.xkcd.model.persist.SharedPrefManager
@@ -103,6 +103,17 @@ class WhatIfMainPresenter constructor(private val view: WhatIfMainContract.View)
                             Timber.e(e, "search what if error")
                             fallbackIfNumberQuery(query)
                         })
+    }
+
+    override fun getBookmark() = SharedPrefManager.getBookmark(WHAT_IF_BOOKMARK)
+
+    override fun setBookmark(index: Long) : Boolean {
+        return if (index > 0) {
+            SharedPrefManager.setBookmark(WHAT_IF_BOOKMARK, index)
+            true
+        } else {
+            false
+        }
     }
 
     override fun onDestroy() {

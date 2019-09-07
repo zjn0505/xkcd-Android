@@ -2,7 +2,6 @@ package xyz.jienan.xkcd.home.base
 
 import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
-import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.app.SearchManager
 import android.content.Context
@@ -13,10 +12,10 @@ import android.hardware.SensorManager
 import android.os.Build
 import android.os.Bundle
 import android.view.*
-import android.view.HapticFeedbackConstants.CONTEXT_CLICK
-import android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
+import android.view.HapticFeedbackConstants.*
 import android.view.animation.DecelerateInterpolator
 import android.widget.ImageButton
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
@@ -29,6 +28,7 @@ import androidx.viewpager.widget.ViewPager.SCROLL_STATE_IDLE
 import com.squareup.seismic.ShakeDetector
 import kotlinx.android.synthetic.main.fab_sub_icons.*
 import kotlinx.android.synthetic.main.fragment_comic_main.*
+import timber.log.Timber
 import xyz.jienan.xkcd.Const.*
 import xyz.jienan.xkcd.R
 import xyz.jienan.xkcd.base.BaseFragment
@@ -40,6 +40,7 @@ import xyz.jienan.xkcd.model.XkcdPic
 import xyz.jienan.xkcd.model.persist.BoxManager
 import xyz.jienan.xkcd.model.persist.SharedPrefManager
 import xyz.jienan.xkcd.ui.NotificationUtils
+import xyz.jienan.xkcd.ui.ToastUtils
 import xyz.jienan.xkcd.ui.like.LikeButton
 import xyz.jienan.xkcd.ui.like.OnLikeListener
 import xyz.jienan.xkcd.ui.like.animateHide
@@ -110,6 +111,22 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
         }
     }
 
+    private val titleGestureListener = object : GestureDetector.SimpleOnGestureListener() {
+
+        override fun onDoubleTap(e: MotionEvent?): Boolean {
+            onTabTitleDoubleTap()
+            return true
+        }
+
+        override fun onLongPress(e: MotionEvent?) {
+            onTabTitleLongPress()
+        }
+
+        override fun onDown(e: MotionEvent?) = true
+    }
+
+    private val titleGestureDetector = GestureDetector(activity, titleGestureListener)
+
     protected abstract val titleTextRes: String
 
     protected abstract val pickerTitleTextRes: Int
@@ -122,6 +139,10 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
     protected abstract fun suggestionClicked(position: Int)
 
     protected abstract fun updateFab()
+
+    protected abstract fun onTabTitleLongPress()
+
+    protected abstract fun onTabTitleDoubleTap()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
@@ -137,7 +158,21 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
         val actionBar = (activity as AppCompatActivity).supportActionBar
         if (actionBar != null) {
             actionBar.title = titleTextRes
-            actionBar.subtitle = null
+            actionBar.subtitle = "1     "
+        }
+
+        val toolbar = (activity as AppCompatActivity).window.decorView.findViewById<ViewGroup>(R.id.toolbar)
+
+        val views = mutableListOf<View>()
+        for (index in 0 until toolbar.childCount) {
+            val child = toolbar.getChildAt(index)
+            Timber.d("toool $child")
+            if (child is TextView) {
+                views.add(child)
+            }
+        }
+        views.forEach {
+            it.setOnTouchListener { _, motionEvent ->  titleGestureDetector.onTouchEvent(motionEvent) }
         }
 
         viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
@@ -156,14 +191,14 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
 
             override fun onPageSelected(position: Int) {
                 (activity as MainActivity).toggleDrawerAvailability(true)
-                actionBar?.subtitle = (position + 1).toString()
+                actionBar?.subtitle = "%-5d".format(position + 1)
             }
         })
         presenter.loadLatest()
         latestIndex = presenter.latest
         lastViewedId = presenter.getLastViewed(latestIndex)
         if (savedInstanceState != null) {
-            actionBar?.subtitle = lastViewedId.toString()
+            actionBar?.subtitle = "%-5d".format(lastViewedId)
             val pickerDialog = childFragmentManager.findFragmentByTag(NumberPickerDialogFragment.TAG) as NumberPickerDialogFragment?
             pickerDialog?.setListener(pickerListener)
         } else if (activity?.intent != null) {
@@ -289,7 +324,7 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
 
         private val weakReference: WeakReference<ContentMainBaseFragment> = WeakReference(fragment)
 
-        override fun onLongClick(v: View): Boolean {
+        override fun onLongClick(view: View): Boolean {
             val fragment = weakReference.get() ?: return false
             val current = fragment.viewPager?.currentItem ?: 0
 
@@ -299,6 +334,7 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
 
             fragment.scrollViewPagerToItem(if (isPrevious) 0 else fragment.latestIndex - 1, smoothScroll)
             fragment.logSubUXEvent(if (isPrevious) FIRE_PREVIOUS_BAR_LONG else FIRE_NEXT_BAR_LONG)
+            view.performHapticFeedback(LONG_PRESS)
             return true
         }
     }
@@ -323,9 +359,7 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
             }
             scrollViewPagerToItem(randomId - 1, false)
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            activity?.window?.decorView?.performHapticFeedback(CONTEXT_CLICK, FLAG_IGNORE_GLOBAL_SETTING)
-        }
+        view?.performHapticFeedback(LONG_PRESS, FLAG_IGNORE_GLOBAL_SETTING)
         logSubUXEvent(FIRE_SHAKE)
     }
 
@@ -421,15 +455,7 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
     }
 
     protected fun showToast(context: Context, text: String) {
-        try {
-            toast!!.view.isShown
-            toast!!.setText(text)
-        } catch (e: Exception) {
-            @SuppressLint("ShowToast")
-            toast = Toast.makeText(context.applicationContext, text, Toast.LENGTH_SHORT)
-        }
-
-        toast!!.show()
+        ToastUtils.showToast(context, text)
     }
 
     protected fun latestLoaded() {
