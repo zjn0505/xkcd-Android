@@ -86,7 +86,7 @@ object WhatIfArticleUtil {
         return WhatIfArticle(num = href.last().toLong(),
                 title = selectFirst("h1.archive-title").child(0).html(),
                 featureImg = a.child(0).absUrl("src"),
-                date = sdf.parse(archiveDate).time)
+                date = sdf!!.parse(archiveDate).time)
     }
 }
 

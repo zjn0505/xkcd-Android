@@ -6,6 +6,8 @@ import android.database.MatrixCursor
 import android.os.Bundle
 import android.provider.BaseColumns
 import android.view.*
+import android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
+import android.view.HapticFeedbackConstants.LONG_PRESS
 import kotlinx.android.synthetic.main.fab_sub_icons.*
 import kotlinx.android.synthetic.main.fragment_comic_main.*
 import xyz.jienan.xkcd.Const.FIRE_BROWSE_LIST_MENU
@@ -101,6 +103,22 @@ class ComicsMainFragment : ContentMainBaseFragment(), ComicsMainContract.View {
         if (searchSuggestions.size > position) {
             val xkcd = searchSuggestions[position]
             scrollViewPagerToItem((xkcd.num - 1).toInt(), false)
+        }
+    }
+
+    override fun onTabTitleDoubleTap() {
+        if (currentIndex > 0) {
+            (presenter as ComicsMainPresenter).bookmark = currentIndex.toLong()
+            showToast(context!!, getString(R.string.bookmark_saved))
+            view?.performHapticFeedback(LONG_PRESS, FLAG_IGNORE_GLOBAL_SETTING)
+        }
+    }
+
+    override fun onTabTitleLongPress() {
+        val index = (presenter as ComicsMainPresenter).bookmark.toInt()
+        if (index > 0) {
+            scrollViewPagerToItem(index - 1, true)
+            view?.performHapticFeedback(LONG_PRESS, FLAG_IGNORE_GLOBAL_SETTING)
         }
     }
 }

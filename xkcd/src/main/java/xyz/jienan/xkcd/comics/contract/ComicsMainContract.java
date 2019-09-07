@@ -25,5 +25,8 @@ public interface ComicsMainContract {
 
         void fastLoad(int latestIndex);
 
+        long getBookmark();
+
+        boolean setBookmark(long index);
     }
 }

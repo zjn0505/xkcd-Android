@@ -12,11 +12,11 @@ interface ImageDetailPageContract {
 
         fun setLoading(isLoading: Boolean)
 
-        fun renderPic(targetImgUrl: String)
+        fun renderPic(url: String)
 
         fun renderTitle(xkcdPic: XkcdPic)
 
-        fun renderSeekBar(d: Int)
+        fun renderSeekBar(duration: Int)
 
         fun renderFrame(bitmap: Bitmap)
 

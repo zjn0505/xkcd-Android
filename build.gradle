@@ -15,7 +15,7 @@ buildscript {
         classpath 'io.fabric.tools:gradle:1.28.1'
         classpath "io.objectbox:objectbox-gradle-plugin:$objectboxVersion"
         classpath "com.tencent.mm:AndResGuard-gradle-plugin:1.2.16"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.41"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.50"
         classpath "com.didiglobal.booster:booster-gradle-plugin:$booster_version"
         classpath "com.didiglobal.booster:booster-task-all:$booster_version"
         classpath "com.didiglobal.booster:booster-transform-all:$booster_version"

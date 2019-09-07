@@ -5,6 +5,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposables
 import timber.log.Timber
+import xyz.jienan.xkcd.Const.XKCD_BOOKMARK
 import xyz.jienan.xkcd.comics.contract.ComicsMainContract
 import xyz.jienan.xkcd.model.XkcdModel
 import xyz.jienan.xkcd.model.XkcdPic
@@ -143,6 +144,17 @@ class ComicsMainPresenter(private val view: ComicsMainContract.View) : ComicsMai
             0
         } else {
             list[Random().nextInt(list.size)].num
+        }
+    }
+
+    override fun getBookmark() = SharedPrefManager.getBookmark(XKCD_BOOKMARK)
+
+    override fun setBookmark(index: Long) : Boolean {
+        return if (index > 0) {
+            SharedPrefManager.setBookmark(XKCD_BOOKMARK, index)
+            true
+        } else {
+            false
         }
     }
 
