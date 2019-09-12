@@ -9,14 +9,13 @@ import android.content.Context.SENSOR_SERVICE
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.hardware.SensorManager
-import android.os.Build
 import android.os.Bundle
 import android.view.*
-import android.view.HapticFeedbackConstants.*
+import android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
+import android.view.HapticFeedbackConstants.LONG_PRESS
 import android.view.animation.DecelerateInterpolator
 import android.widget.ImageButton
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
@@ -68,8 +67,6 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
     private val sharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(context) }
 
     private var isFabsShowing = false
-
-    private var toast: Toast? = null
 
     private val sd by lazy { ShakeDetector(this) }
 

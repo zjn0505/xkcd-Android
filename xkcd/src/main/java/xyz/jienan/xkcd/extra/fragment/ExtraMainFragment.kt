@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.*
 import kotlinx.android.synthetic.main.fab_sub_icons.*
 import kotlinx.android.synthetic.main.fragment_comic_main.*
+import xyz.jienan.xkcd.Const
 import xyz.jienan.xkcd.Const.LAST_VIEW_XKCD_ID
 import xyz.jienan.xkcd.R
 import xyz.jienan.xkcd.extra.ExtraPagerAdapter
@@ -70,10 +71,10 @@ class ExtraMainFragment : ContentMainBaseFragment(), ExtraMainContract.View {
     }
 
     override fun onTabTitleDoubleTap() {
-        // no-ops
+        logUXEvent(Const.FIRE_EXTRA_BOOKMARK_DOUBLE_TAP)
     }
 
     override fun onTabTitleLongPress() {
-        // no-ops
+        logUXEvent(Const.FIRE_EXTRA_BOOKMARK_LONG_PRESS)
     }
 }

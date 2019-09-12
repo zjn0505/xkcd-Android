@@ -72,6 +72,16 @@ public class Const {
     public static final String FIRE_WHAT_IF_IMG_LONG = "fire_what_if_img_long";
     public static final String FIRE_WHAT_IF_SUFFIX = "_what_if";
     public static final String FIRE_EXTRA_SUFFIX = "_extra";
+
+    public static final String FIRE_XKCD_BOOKMARK_DOUBLE_TAP = "fire_xkcd_bookmark_double_tap";
+    public static final String FIRE_WHAT_IF_BOOKMARK_DOUBLE_TAP = "fire_what_if_bookmark_double_tap";
+    public static final String FIRE_EXTRA_BOOKMARK_DOUBLE_TAP = "fire_extra_bookmark_double_tap";
+
+    public static final String FIRE_XKCD_BOOKMARK_LONG_PRESS = "fire_xkcd_bookmark_long_press";
+    public static final String FIRE_WHAT_IF_BOOKMARK_LONG_PRESS = "fire_what_if_bookmark_long_press";
+    public static final String FIRE_EXTRA_BOOKMARK_LONG_PRESS = "fire_extra_bookmark_long_press";
+
+
     // user actions end
 
     public static final String URI_XKCD_EXPLAIN_EDIT = "xkcd://explain.edit";

@@ -13,6 +13,8 @@ import android.webkit.URLUtil;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import xyz.jienan.xkcd.BuildConfig;
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.comics.activity.ImageDetailPageActivity;
@@ -37,7 +39,7 @@ public class ExplainLinkUtil {
         int end = strBuilder.getSpanEnd(span);
         int flags = strBuilder.getSpanFlags(span);
         ClickableSpan clickable = new ClickableSpan() {
-            public void onClick(View view) {
+            public void onClick(@NonNull View view) {
                 String url = span.getURL();
                 if (XkcdExplainUtil.INSTANCE.isXkcdImageLink(url)) {
                     final long id = XkcdExplainUtil.INSTANCE.getXkcdIdFromExplainImageLink(url);

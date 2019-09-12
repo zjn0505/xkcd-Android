@@ -10,6 +10,7 @@ import android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
 import android.view.HapticFeedbackConstants.LONG_PRESS
 import kotlinx.android.synthetic.main.fab_sub_icons.*
 import kotlinx.android.synthetic.main.fragment_comic_main.*
+import xyz.jienan.xkcd.Const
 import xyz.jienan.xkcd.Const.FIRE_BROWSE_LIST_MENU
 import xyz.jienan.xkcd.Const.LAST_VIEW_XKCD_ID
 import xyz.jienan.xkcd.R
@@ -111,6 +112,7 @@ class ComicsMainFragment : ContentMainBaseFragment(), ComicsMainContract.View {
             (presenter as ComicsMainPresenter).bookmark = currentIndex.toLong()
             showToast(context!!, getString(R.string.bookmark_saved))
             view?.performHapticFeedback(LONG_PRESS, FLAG_IGNORE_GLOBAL_SETTING)
+            logUXEvent(Const.FIRE_XKCD_BOOKMARK_DOUBLE_TAP)
         }
     }
 
@@ -119,6 +121,7 @@ class ComicsMainFragment : ContentMainBaseFragment(), ComicsMainContract.View {
         if (index > 0) {
             scrollViewPagerToItem(index - 1, true)
             view?.performHapticFeedback(LONG_PRESS, FLAG_IGNORE_GLOBAL_SETTING)
+            logUXEvent(Const.FIRE_XKCD_BOOKMARK_LONG_PRESS)
         }
     }
 }
