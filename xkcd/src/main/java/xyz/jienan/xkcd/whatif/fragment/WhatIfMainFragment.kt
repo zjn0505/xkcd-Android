@@ -144,6 +144,7 @@ class WhatIfMainFragment : ContentMainBaseFragment(), WhatIfMainContract.View {
             (presenter as WhatIfMainPresenter).setBookmark(currentIndex.toLong())
             showToast(context!!, getString(R.string.bookmark_saved))
             view?.performHapticFeedback(LONG_PRESS, FLAG_IGNORE_GLOBAL_SETTING)
+            logUXEvent(FIRE_WHAT_IF_BOOKMARK_DOUBLE_TAP)
         }
     }
 
@@ -152,6 +153,7 @@ class WhatIfMainFragment : ContentMainBaseFragment(), WhatIfMainContract.View {
         if (index > 0) {
             scrollViewPagerToItem(index - 1, true)
             view?.performHapticFeedback(LONG_PRESS, FLAG_IGNORE_GLOBAL_SETTING)
+            logUXEvent(FIRE_WHAT_IF_BOOKMARK_LONG_PRESS)
         }
     }
 }
