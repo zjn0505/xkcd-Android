@@ -26,6 +26,7 @@ import xyz.jienan.xkcd.base.glide.ProgressTarget
 import xyz.jienan.xkcd.base.network.XKCD_BASE_URL
 import xyz.jienan.xkcd.base.network.XKCD_EXPLAIN_URL
 import xyz.jienan.xkcd.comics.activity.ImageDetailPageActivity
+import xyz.jienan.xkcd.comics.activity.ImageWebViewActivity
 import xyz.jienan.xkcd.comics.contract.SingleComicContract
 import xyz.jienan.xkcd.comics.dialog.SimpleInfoDialogFragment
 import xyz.jienan.xkcd.comics.dialog.SimpleInfoDialogFragment.ISimpleInfoDialogListener
@@ -226,7 +227,14 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
         if (currentPic == null || TextUtils.isEmpty(currentPic!!.targetImg)) {
             return
         }
-        ImageDetailPageActivity.startActivity(activity!!, currentPic!!.targetImg, currentPic!!.num)
+        val interactiveComics = resources.getIntArray(R.array.interactive_comics)
+        val prefInteractive = true // TODO add pref
+
+        if (interactiveComics.contains(currentPic!!.num.toInt()) && prefInteractive) {
+            ImageWebViewActivity.startActivity(activity!!, currentPic!!.num)
+        } else {
+            ImageDetailPageActivity.startActivity(activity!!, currentPic!!.targetImg, currentPic!!.num)
+        }
         activity!!.overridePendingTransition(R.anim.fadein, R.anim.fadeout)
     }
 

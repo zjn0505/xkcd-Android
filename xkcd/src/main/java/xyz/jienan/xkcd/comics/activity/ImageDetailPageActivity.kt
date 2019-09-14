@@ -156,7 +156,7 @@ class ImageDetailPageActivity : BaseActivity(), ImageDetailPageContract.View {
         if (url.endsWith("gif")) {
             loadGifWithControl()
         } else {
-            loadGifWithoutControl(url)
+            loadImgWithoutControl(url)
         }
 
         Bundle(3).apply {
@@ -306,7 +306,7 @@ class ImageDetailPageActivity : BaseActivity(), ImageDetailPageContract.View {
         })
     }
 
-    private fun loadGifWithoutControl(url: String) {
+    private fun loadImgWithoutControl(url: String) {
         pbLoading!!.visibility = View.VISIBLE
         bigImageView.showImage(Uri.parse(url))
         bigImageView.setImageLoaderCallback(object : ImageLoader.Callback {
@@ -396,7 +396,7 @@ class ImageDetailPageActivity : BaseActivity(), ImageDetailPageContract.View {
 
             override fun onFail(error: Exception) {
                 if (url.startsWith("https")) {
-                    loadGifWithoutControl(url.replaceFirst("https".toRegex(), "http"))
+                    loadImgWithoutControl(url.replaceFirst("https".toRegex(), "http"))
                 }
             }
 
