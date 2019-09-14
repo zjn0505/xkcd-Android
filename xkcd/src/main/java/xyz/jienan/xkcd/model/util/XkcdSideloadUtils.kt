@@ -36,7 +36,7 @@ object XkcdSideloadUtils {
         return if (xkcdPic.num >= 1084) {
             val clone = xkcdPic.copy()
             val img = xkcdPic.img
-            val insert = img.indexOf(".png")
+            val insert = img.indexOf(".png") // TODO consider other format
             if (insert > 0)
                 clone.img = img.substring(0, insert) + "_2x" + img.substring(insert, img.length)
             clone
@@ -49,7 +49,7 @@ object XkcdSideloadUtils {
         val clone = getPicFromXkcd(xkcdPic)
         if (isSpecialComics(xkcdPic)) {
             val sideload = xkcdSideloadMap[xkcdPic.num.toInt()]
-            if (sideload!!.img != null) {
+            if (!sideload!!.img.isNullOrBlank()) {
                 clone.img = sideload.img
             }
             return clone // special

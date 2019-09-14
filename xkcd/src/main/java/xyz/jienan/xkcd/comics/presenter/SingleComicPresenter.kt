@@ -59,7 +59,7 @@ class SingleComicPresenter(private val view: SingleComicContract.View) : SingleC
 
     private fun renderComic(xkcdPic: XkcdPic) {
         XkcdModel.push(xkcdPic)
-        XkcdModel.loadLocalizedXkcd(xkcdPic.num)
+        XkcdModel.loadLocalizedXkcd(xkcdPic.num) // TODO add pref
                 .subscribeOn(Schedulers.io())
                 .defaultIfEmpty(xkcdPic)
                 .observeOn(AndroidSchedulers.mainThread())
