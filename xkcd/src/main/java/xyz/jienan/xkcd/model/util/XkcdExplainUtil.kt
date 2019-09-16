@@ -1,7 +1,6 @@
 package xyz.jienan.xkcd.model.util
 
 import android.text.TextUtils
-import com.bumptech.glide.load.model.stream.BaseGlideUrlLoader
 import okhttp3.ResponseBody
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element

@@ -3,13 +3,11 @@ package xyz.jienan.xkcd.base.glide;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 
 import com.bumptech.glide.request.target.Target;
 
 import xyz.jienan.xkcd.R;
 import xyz.jienan.xkcd.ui.IProgressbar;
-import xyz.jienan.xkcd.ui.Progressable;
 
 import static android.view.View.VISIBLE;
 

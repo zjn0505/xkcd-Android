@@ -153,26 +153,27 @@ class WhatIfWebView(context: Context, attrs: AttributeSet) : WebView(context, at
         }
     }
 
-    private fun updateSettings() {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
-            setWebContentsDebuggingEnabled(BuildConfig.DEBUG)
-        }
-
-        settings.apply {
-            builtInZoomControls = true
-            useWideViewPort = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
-            @SuppressLint("SetJavaScriptEnabled")
-            javaScriptEnabled = true
-            displayZoomControls = false
-            loadWithOverviewMode = true
-            allowFileAccess = true
-            setAppCacheEnabled(true)
-            cacheMode = WebSettings.LOAD_DEFAULT
-            textZoom = SharedPrefManager.whatIfZoom
-        }
-    }
-
     interface ScrollToEndCallback {
         fun scrolledToTheEnd(isTheEnd: Boolean)
+    }
+}
+
+fun WebView.updateSettings() {
+    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+        WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG)
+    }
+
+    settings.apply {
+        builtInZoomControls = true
+        useWideViewPort = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
+        @SuppressLint("SetJavaScriptEnabled")
+        javaScriptEnabled = true
+        displayZoomControls = false
+        loadWithOverviewMode = true
+        allowFileAccess = true
+        setAppCacheEnabled(true)
+        domStorageEnabled = true
+        cacheMode = WebSettings.LOAD_DEFAULT
+        textZoom = SharedPrefManager.whatIfZoom
     }
 }

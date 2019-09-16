@@ -36,16 +36,16 @@ abstract class BaseActivity : AppCompatActivity() {
     private fun setTheme() {
         val fontPref = sharedPreferences.getBoolean(PREF_FONT, false)
         if (fontPref) {
-            when {
-                this is MainActivity -> setTheme(R.style.CustomActionBarTheme)
-                this is ImageDetailPageActivity -> setTheme(R.style.TransparentBackgroundTheme)
-                else -> setTheme(R.style.AppNoBarTheme)
+            when (this) {
+                is MainActivity -> setTheme(R.style.CustomActionBarTheme)
+                is ImageDetailPageActivity -> setTheme(R.style.TransparentBackgroundTheme)
+                else -> setTheme(R.style.AppBarTheme)
             }
         } else {
-            when {
-                this is MainActivity -> setTheme(R.style.CustomActionBarFontTheme)
-                this is ImageDetailPageActivity -> setTheme(R.style.TransparentBackgroundTheme)
-                else -> setTheme(R.style.AppNoBarFontTheme)
+            when (this) {
+                is MainActivity -> setTheme(R.style.CustomActionBarFontTheme)
+                is ImageDetailPageActivity -> setTheme(R.style.TransparentBackgroundTheme)
+                else -> setTheme(R.style.AppBarFontTheme)
             }
         }
     }

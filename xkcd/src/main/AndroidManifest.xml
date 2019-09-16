@@ -16,7 +16,7 @@
         android:extractNativeLibs="true"
         tools:replace="android:extractNativeLibs"
         android:networkSecurityConfig="@xml/network_security_config"
-        android:theme="@style/AppNoBarFontTheme"
+        android:theme="@style/AppBarFontTheme"
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
 
         <activity
@@ -43,6 +43,8 @@
         <activity
             android:name=".comics.activity.ImageWebViewActivity"
             android:configChanges="screenSize|orientation|keyboardHidden"
+            android:theme="@style/TransparentBackgroundTheme"
+            android:label=" "
             android:launchMode="singleTask" />
 
         <activity

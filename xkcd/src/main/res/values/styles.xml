@@ -1,7 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
-    <style name="AppNoBarFontTheme" parent="AppNoBarTheme">
+    <style name="AppBarFontTheme" parent="AppBarTheme">
         <item name="android:textViewStyle">@style/MyTextViewStyle</item>
     </style>
 
@@ -29,7 +29,7 @@
         <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="o_mr1">shortEdges</item>
     </style>
 
-    <style name="AppNoBarTheme" parent="Theme.AppCompat.DayNight.DarkActionBar">
+    <style name="AppBarTheme" parent="Theme.AppCompat.DayNight.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>

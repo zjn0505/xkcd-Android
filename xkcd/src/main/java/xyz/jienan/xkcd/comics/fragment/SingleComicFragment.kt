@@ -11,6 +11,7 @@ import android.view.HapticFeedbackConstants.LONG_PRESS
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.AnimationUtils
+import androidx.preference.PreferenceManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestListener
@@ -48,11 +49,13 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
 
     private var currentPic: XkcdPic? = null
 
+    private var alterPic: XkcdPic? = null
+
     private var target: ProgressTarget<String, Bitmap>? = null
 
     private var explainingCallback: SimpleInfoDialogFragment.ExplainingCallback? = null
 
-    private var singleComicPresenter: SingleComicContract.Presenter? = null
+    private val singleComicPresenter : SingleComicContract.Presenter by lazy { SingleComicPresenter(this, PreferenceManager.getDefaultSharedPreferences(context)) }
 
     private val dialogListener = object : ISimpleInfoDialogListener {
         override fun onPositiveClick() {
@@ -69,7 +72,7 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
         @SuppressLint("StaticFieldLeak", "CheckResult")
         override fun onExplainMoreClick(explainingCallback: SimpleInfoDialogFragment.ExplainingCallback) {
             this@SingleComicFragment.explainingCallback = explainingCallback
-            singleComicPresenter!!.getExplain(currentPic!!.num)
+            singleComicPresenter.getExplain(currentPic!!.num)
             logUXEvent(FIRE_MORE_EXPLAIN)
         }
     }
@@ -117,10 +120,48 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
 
             fragment.btnReload?.visibility = View.GONE
             fragment.ivXkcdPic?.setOnClickListener { fragment.launchDetailPageActivity() }
-            fragment.singleComicPresenter?.updateXkcdSize(fragment.currentPic, resource)
+            fragment.singleComicPresenter.updateXkcdSize(fragment.currentPic, resource)
             return false
         }
     }
+
+    private val sharedPref by lazy { PreferenceManager.getDefaultSharedPreferences(context) }
+
+    private var translationMode = -1 // -1 unavailable, 0 off, 1 on
+        set(value) {
+            when (value) {
+                -1 -> btnSeeTranslation?.visibility = View.GONE
+                0 -> {
+                    btnSeeTranslation?.visibility = View.VISIBLE
+                    btnSeeTranslation?.text = resources.getText(R.string.see_translation)
+                    btnSeeTranslation?.setOnClickListener {
+                        val tempPic = currentPic
+                        if (alterPic != null) {
+                            renderXkcdPic(alterPic!!)
+                            alterPic = tempPic
+                            translationMode = 1
+                        } else {
+                            Timber.e("Translation Pic is null")
+                        }
+                    }
+                }
+                1 -> {
+                    btnSeeTranslation?.visibility = View.VISIBLE
+                    btnSeeTranslation?.text = resources.getText(R.string.see_original)
+                    btnSeeTranslation?.setOnClickListener {
+                        val tempPic = currentPic
+                        if (alterPic != null) {
+                            renderXkcdPic(alterPic!!)
+                            alterPic = tempPic
+                            translationMode = 0
+                        } else {
+                            Timber.e("Original Pic is null")
+                        }
+                    }
+                }
+            }
+            field = value
+        }
 
     override fun explainLoaded(result: String) {
         if (!TextUtils.isEmpty(result)) {
@@ -136,7 +177,6 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        singleComicPresenter = SingleComicPresenter(this)
         val args = arguments
         if (args != null) {
             ind = args.getInt("ind")
@@ -148,13 +188,44 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
         pbLoading!!.clearAnimation()
         pbLoading!!.animation = AnimationUtils.loadAnimation(pbLoading!!.context, R.anim.rotate)
         initGlide()
-        singleComicPresenter!!.loadXkcd(ind)
 
         if (savedInstanceState != null) {
             dialogFragment = childFragmentManager
                     .findFragmentByTag("AltInfoDialogFragment") as SimpleInfoDialogFragment?
             dialogFragment?.setListener(dialogListener)
+
+            translationMode = savedInstanceState.getInt(KEY_TRANS_MODE, -1)
+
+            if (savedInstanceState.getSerializable(KEY_PIC_ALTER) != null) {
+                alterPic = savedInstanceState.getSerializable(KEY_PIC_ALTER) as XkcdPic
+            }
+
+            val savedPic = savedInstanceState.getSerializable(KEY_PIC)
+            if (savedPic != null && savedPic is XkcdPic) {
+                if (singleComicPresenter.showLocalXkcd) {
+                    if (translationMode != -1) {
+                        renderXkcdPic(savedPic)
+                    } else {
+                        singleComicPresenter.loadXkcd(ind)
+                    }
+                } else {
+                    translationMode = -1
+                    if (alterPic != null && !alterPic!!.translated) {
+                        renderXkcdPic(alterPic!!)
+                    } else if (!savedPic.translated) {
+                        renderXkcdPic(savedPic)
+                    } else {
+                        singleComicPresenter.loadXkcd(ind)
+                    }
+                }
+            } else {
+                singleComicPresenter.loadXkcd(ind)
+            }
+
+        } else {
+            singleComicPresenter.loadXkcd(ind)
         }
+
         ivXkcdPic.setOnLongClickListener {
             if (currentPic == null) {
                 false
@@ -167,7 +238,7 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
     }
 
     override fun onDestroyView() {
-        singleComicPresenter?.onDestroy()
+        singleComicPresenter.onDestroy()
         dialogFragment = null
         Glide.clear(target!!)
         super.onDestroyView()
@@ -177,6 +248,15 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
         if (dialogFragment != null && dialogFragment!!.isAdded) {
             dialogFragment!!.dismissAllowingStateLoss()
             dialogFragment = null
+        }
+        if (currentPic != null) {
+            outState.putSerializable(KEY_PIC, currentPic)
+        }
+        if (alterPic != null) {
+            outState.putSerializable(KEY_PIC_ALTER, alterPic)
+        }
+        if (translationMode != -1) {
+            outState.putInt(KEY_TRANS_MODE, translationMode)
         }
         super.onSaveInstanceState(outState)
     }
@@ -219,6 +299,17 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
         }
     }
 
+    override fun renderOriginal() {
+        translationMode = -1
+        if (alterPic != null && !alterPic!!.translated) {
+            val tempPic =  alterPic
+            alterPic = currentPic
+            renderXkcdPic(tempPic!!)
+        } else if (currentPic != null && !currentPic!!.translated) {
+            renderXkcdPic(currentPic!!)
+        }
+    }
+
     private fun initGlide() {
         target = MyProgressTarget(BitmapImageViewTarget(ivXkcdPic!!), pbLoading, ivXkcdPic)
     }
@@ -228,14 +319,14 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
             return
         }
         val interactiveComics = resources.getIntArray(R.array.interactive_comics)
-        val prefInteractive = true // TODO add pref
+        val prefInteractive = sharedPref.getBoolean(PREF_XKCD_INTERACTIVE, true)
 
         if (interactiveComics.contains(currentPic!!.num.toInt()) && prefInteractive) {
             ImageWebViewActivity.startActivity(activity!!, currentPic!!.num)
         } else {
             ImageDetailPageActivity.startActivity(activity!!, currentPic!!.targetImg, currentPic!!.num)
+            activity!!.overridePendingTransition(R.anim.fadein, R.anim.fadeout)
         }
-        activity!!.overridePendingTransition(R.anim.fadein, R.anim.fadeout)
     }
 
     private fun showInfoDialog() {
@@ -246,24 +337,32 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
         logUXEvent(FIRE_LONG_PRESS)
     }
 
-    override fun renderXkcdPic(xPic: XkcdPic) {
+    override fun renderXkcdPic(xkcdPic: XkcdPic) {
         if (activity == null || activity!!.isFinishing) {
             return
         }
         if (target!!.model.isNullOrBlank()) {
-            target!!.model = xPic.targetImg
-            load(xPic.targetImg)
+            target!!.model = xkcdPic.targetImg
+            load(xkcdPic.targetImg)
         }
 
-        currentPic = xPic
-        Timber.i("Pic to be loaded: $ind - ${xPic.targetImg}")
+        currentPic = xkcdPic
+        Timber.i("Pic to be loaded: $ind - ${xkcdPic.targetImg}")
         @SuppressLint("SetTextI18n")
-        tvTitle!!.text = "${xPic.num}. ${xPic.title}"
-        tvCreateDate!!.text = String.format(getString(R.string.created_on), xPic.year, xPic.month, xPic.day)
-        tvDescription?.text = xPic.alt
+        tvTitle!!.text = "${xkcdPic.num}. ${xkcdPic.title}"
+        tvCreateDate!!.text = String.format(getString(R.string.created_on), xkcdPic.year, xkcdPic.month, xkcdPic.day)
+        tvDescription?.text = xkcdPic.alt
+    }
+
+    override fun offerTranslation(translatedXkcd: XkcdPic) {
+        translationMode = 0
+        alterPic = translatedXkcd
     }
 
     private fun load(url: String) {
+        if (target != null) {
+            Glide.clear(target)
+        }
         Glide.with(activity)
                 .load(url)
                 .asBitmap()
@@ -271,9 +370,17 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .listener(GlideListener(this))
                 .into(target!!)
+
     }
 
     companion object {
+
+        private const val KEY_TRANS_MODE = "transMode"
+
+        private const val KEY_PIC = "pic"
+
+        private const val KEY_PIC_ALTER = "picAlter"
+
         fun newInstance(comicId: Int) =
                 SingleComicFragment().apply { arguments = Bundle(1).apply { putInt("ind", comicId) } }
     }

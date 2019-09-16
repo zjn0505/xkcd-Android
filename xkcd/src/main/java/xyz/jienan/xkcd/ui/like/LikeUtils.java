@@ -8,8 +8,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.VectorDrawable;
 import android.os.Build;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
 
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 

@@ -6,9 +6,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
-import java.nio.charset.Charset;
 
 public class XkcdPicDeserializer implements JsonDeserializer {
     @Override
