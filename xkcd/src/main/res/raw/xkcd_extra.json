@@ -48,5 +48,12 @@
     "title": "XKCD Marks the Spot",
     "img": "https://www.explainxkcd.com/wiki/images/9/9c/world_polio_day.png",
     "explain": "https://www.explainxkcd.com/wiki/index.php/XKCD_Marks_the_Spot"
+  },
+  {
+    "num": 8,
+    "date": "2019.08.04",
+    "title": "Disappearing Sunday Update",
+    "img": "https://www.explainxkcd.com/wiki/images/6/6c/disappearing_sunday_update.png",
+    "explain": "https://www.explainxkcd.com/wiki/index.php/Disappearing_Sunday_Update"
   }
 ]

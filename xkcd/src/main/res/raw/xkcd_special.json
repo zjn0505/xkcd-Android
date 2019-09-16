@@ -1,9 +1,5 @@
 [
   {
-    "num": 24,
-    "large": true
-  },
-  {
     "num": 62,
     "img": "https://www.explainxkcd.com/wiki/images/7/7b/valentine_karnaugh.png"
   },
@@ -25,32 +21,23 @@
   },
   {
     "num": 657,
-    "img": "https://imgs.xkcd.com/comics/movie_narrative_charts_large.png",
-    "large": true
+    "img": "https://imgs.xkcd.com/comics/movie_narrative_charts_large.png"
   },
   {
     "num": 681,
-    "img": "https://imgs.xkcd.com/comics/gravity_wells_large.png",
-    "large": true
+    "img": "https://imgs.xkcd.com/comics/gravity_wells_large.png"
   },
   {
     "num": 802,
-    "img": "https://imgs.xkcd.com/comics/online_communities_2_large.png",
-    "large": true
-  },
-  {
-    "num": 977,
-    "large": true
+    "img": "https://imgs.xkcd.com/comics/online_communities_2_large.png"
   },
   {
     "num": 980,
-    "img": "https://imgs.xkcd.com/comics/money_huge.png",
-    "large": true
+    "img": "https://imgs.xkcd.com/comics/money_huge.png"
   },
   {
     "num": 1000,
-    "img": "https://imgs.xkcd.com/comics/1000_comics_large.png",
-    "large": true
+    "img": "https://imgs.xkcd.com/comics/1000_comics_large.png"
   },
   {
     "num": 1037,
@@ -58,35 +45,19 @@
   },
   {
     "num": 1040,
-    "img": "https://imgs.xkcd.com/comics/lakes_and_oceans_large.png",
-    "large": true
-  },
-  {
-    "num": 1047,
-    "large": true
-  },
-  {
-    "num": 1054,
-    "title": "The Bacon"
-  },
-  {
-    "num": 1056,
-    "img": "https://imgs.xkcd.com/comics/xkcloud.png"
+    "img": "https://imgs.xkcd.com/comics/lakes_and_oceans_large.png"
   },
   {
     "num": 1071,
-    "img": "https://imgs.xkcd.com/comics/exoplanets_large.png",
-    "large": true
+    "img": "https://imgs.xkcd.com/comics/exoplanets_large.png"
   },
   {
     "num": 1079,
-    "img": "https://imgs.xkcd.com/comics/united_shapes_large.png",
-    "large": true
+    "img": "https://imgs.xkcd.com/comics/united_shapes_large.png"
   },
   {
     "num": 1080,
-    "img": "https://imgs.xkcd.com/comics/visual_field_large.png",
-    "large": true
+    "img": "https://imgs.xkcd.com/comics/visual_field_large.png"
   },
   {
     "num": 1103,
@@ -97,21 +68,8 @@
     "img": "https://www.explainxkcd.com/wiki/images/c/c7/click_and_drag.png"
   },
   {
-    "num": 1122,
-    "large": true
-  },
-  {
     "num": 1127,
-    "img": "https://imgs.xkcd.com/comics/congress_large.png",
-    "large": true
-  },
-  {
-    "num": 1133,
-    "large": true
-  },
-  {
-    "num": 1137,
-    "title": "RTL"
+    "img": "https://imgs.xkcd.com/comics/congress_large.png"
   },
   {
     "num": 1190,
@@ -123,26 +81,15 @@
   },
   {
     "num": 1196,
-    "img": "https://imgs.xkcd.com/comics/subways_large.png",
-    "large": true
-  },
-  {
-    "num": 1226,
-    "large": true
-  },
-  {
-    "num": 1227,
-    "large": true
+    "img": "https://imgs.xkcd.com/comics/subways_large.png"
   },
   {
     "num": 1256,
-    "img": "https://imgs.xkcd.com/comics/questions_large.png",
-    "large": true
+    "img": "https://imgs.xkcd.com/comics/questions_large.png"
   },
   {
     "num": 1298,
-    "img": "https://imgs.xkcd.com/comics/exoplanet_neighborhood_large.png",
-    "large": true
+    "img": "https://imgs.xkcd.com/comics/exoplanet_neighborhood_large.png"
   },
   {
     "num": 1331,
@@ -162,13 +109,11 @@
   },
   {
     "num": 1389,
-    "img": "https://imgs.xkcd.com/comics/surface_area_large.png",
-    "large": true
+    "img": "https://imgs.xkcd.com/comics/surface_area_large.png"
   },
   {
     "num": 1392,
-    "img": "https://imgs.xkcd.com/comics/dominant_players_large.png",
-    "large": true
+    "img": "https://imgs.xkcd.com/comics/dominant_players_large.png"
   },
   {
     "num": 1446,
@@ -180,13 +125,15 @@
   },
   {
     "num": 1461,
-    "img": "https://imgs.xkcd.com/comics/payloads_large.png",
-    "large": true
+    "img": "https://imgs.xkcd.com/comics/payloads_large.png"
   },
   {
     "num": 1491,
-    "img": "https://imgs.xkcd.com/comics/stories_of_the_past_and_future_large.png",
-    "large": true
+    "img": "https://imgs.xkcd.com/comics/stories_of_the_past_and_future_large.png"
+  },
+  {
+    "num": 1506,
+    "img": "https://imgs.xkcd.com/comics/xkcloud.png"
   },
   {
     "num": 1525,
@@ -195,9 +142,6 @@
   {
     "num": 1608,
     "img": "https://www.explainxkcd.com/wiki/images/4/41/hoverboard.png"
-  },
-  {
-    "num": 1649
   },
   {
     "num": 1663,
@@ -209,12 +153,7 @@
   },
   {
     "num": 1688,
-    "img": "https://imgs.xkcd.com/comics/map_age_guide_large.png",
-    "large": true
-  },
-  {
-    "num": 1732,
-    "large": true
+    "img": "https://imgs.xkcd.com/comics/map_age_guide_large.png"
   },
   {
     "num": 1735,
@@ -233,12 +172,11 @@
     "img": "https://imgs.xkcd.com/comics/interest_timescales.png"
   },
   {
-    "num": 1913,
-    "title": "A �"
+    "num": 1970,
+    "img": "https://imgs.xkcd.com/comics/name_dominos_large.png"
   },
   {
-    "num": 1970,
-    "img": "https://imgs.xkcd.com/comics/name_dominos_large.png",
-    "large": true
+    "num": 2202,
+    "img": "https://imgs.xkcd.com/comics/earth_like_exoplanet.png"
   }
 ]
