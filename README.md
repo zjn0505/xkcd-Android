@@ -15,6 +15,7 @@
 - [what if](https://what-if.xkcd.com) articles browser, with the best rendering of embedded LaTeX.
 - Full support to all large comics, with the help from [Glide](https://github.com/bumptech/glide), and [BigImageViewer](https://github.com/Piasy/BigImageViewer).
 - Frame by frame animated comics browser. Don't miss a single detail in [1190 - Time](https://xkcd.com/1190) and [1446 - Landing](https://xkcd.com/1446)
+- Interactive comics support, explore the great world in [1110 - Click and Drag](https://xkcd.com/1110) and [1608 - Hoverboard](https://xkcd.com/1608) with better on the go experience.
 - Quick view of [ExplainXKCD](https://www.explainxkcd.com/), with the help from [Jsoup](https://jsoup.org/).
 - Caching with [ObjectBox](http://objectbox.io/) and [OkHttp](https://github.com/square/okhttp/)
 - FCM, crashlytics from [Firebase](firebase.google.com)
