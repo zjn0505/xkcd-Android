@@ -21,6 +21,8 @@ public class Const {
     public static final String PREF_WHAT_IF_SEARCH_INCLUDE_READ = "include_read";
     public static final String PREF_WHAT_IF_SEARCH_ALL = "search_all";
     public static final String PREF_XKCD_GIF_ECO = "pref_xkcd_gif_eco_mode";
+    public static final String PREF_XKCD_INTERACTIVE = "pref_xkcd_interactive";
+    public static final String PREF_XKCD_TRANSLATION = "pref_xkcd_translation";
     public static final String PREF_DARK_THEME = "pref_dark";
 
 

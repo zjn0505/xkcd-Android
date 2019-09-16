@@ -14,7 +14,6 @@ import android.text.TextUtils
 import androidx.core.app.NotificationCompat
 import com.bumptech.glide.Glide
 import io.reactivex.Maybe
-import io.reactivex.MaybeSource
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -24,7 +23,6 @@ import xyz.jienan.xkcd.R
 import xyz.jienan.xkcd.home.MainActivity
 import xyz.jienan.xkcd.model.WhatIfArticle
 import xyz.jienan.xkcd.model.XkcdPic
-import java.util.concurrent.ExecutionException
 
 object NotificationUtils {
 

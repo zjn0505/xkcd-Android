@@ -1,12 +1,11 @@
 package xyz.jienan.xkcd.extra.presenter
 
-import java.util.ArrayList
-
 import io.reactivex.disposables.CompositeDisposable
 import xyz.jienan.xkcd.extra.contract.ExtraMainContract
 import xyz.jienan.xkcd.model.ExtraComics
 import xyz.jienan.xkcd.model.ExtraModel
 import xyz.jienan.xkcd.model.persist.SharedPrefManager
+import java.util.*
 
 class ExtraMainPresenter(private val view: ExtraMainContract.View) : ExtraMainContract.Presenter {
 

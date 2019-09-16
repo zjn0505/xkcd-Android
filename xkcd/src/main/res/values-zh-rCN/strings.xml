@@ -49,13 +49,21 @@
     <string name="pref_dark_mode_off">关闭</string>
     <string name="pref_dark_mode_system">跟随系统</string>
     <string name="pref_control">控制</string>
-    <string name="pref_xkcd_gif_eco_mode_title">xkcd 动画节能模式</string>
+    <string name="pref_xkcd_gif_eco_mode_title">Gif 动画节能模式</string>
     <string name="pref_xkcd_gif_eco_mode_on">更加节能，每秒钟 10 帧画面</string>
     <string name="pref_xkcd_gif_eco_mode_off">更多细节，帧率提高70%</string>
+    <string name="pref_xkcd_interactive_title">漫画互动功能</string>
+    <string name="pref_xkcd_interactive_on">1525, 1663, 2198等漫画可以点进去玩耍了</string>
+    <string name="pref_xkcd_interactive_off">漫画将保持静止</string>
+    <string name="pref_xkcd_translation_title">漫画翻译 by @蜡象汉化组</string>
+    <string name="pref_xkcd_translation_on">当有对应翻译时，显示翻译切换开关</string>
+    <string name="pref_xkcd_translation_off">已关闭</string>
     <string name="settings">设置</string>
     <string name="share_text">一起来看看这张有趣的 xkcd 漫画吧. %s</string>
     <string name="toast_more_explain_failed">获取失败，请尝试访问 Explainxkcd</string>
     <string name="title_xkcd_list">xkcd列表</string>
+    <string name="see_translation">查看翻译</string>
+    <string name="see_original">查看原图</string>
 
     <string name="thumbs_up">点赞</string>
     <string name="add_to_fav">收藏</string>

@@ -12,6 +12,7 @@ import xyz.jienan.xkcd.base.network.XKCD_EXPLAIN_URL
 import xyz.jienan.xkcd.base.network.XKCD_TOP_SORT_BY_THUMB_UP
 import xyz.jienan.xkcd.model.persist.BoxManager
 import xyz.jienan.xkcd.model.util.XkcdExplainUtil
+import java.util.concurrent.TimeUnit
 
 object XkcdModel {
 
@@ -155,9 +156,12 @@ object XkcdModel {
 
     fun loadLocalizedXkcd(index: Long): Maybe<XkcdPic> {
         return if (localizedUrl.isBlank()) {
-             Maybe.empty()
+             Maybe.error(Exception("Local xkcd not configured"))
         } else {
-            NetworkService.xkcdAPI.getLocalizedXkcd(localizedUrl.format(index)).toMaybe()
+            NetworkService.xkcdAPI
+                    .getLocalizedXkcd(localizedUrl.format(index))
+                    .timeout(3000L, TimeUnit.MILLISECONDS)
+                    .toMaybe()
         }
     }
 

@@ -7,6 +7,7 @@ import io.objectbox.annotation.Entity
 import io.objectbox.annotation.Id
 import io.objectbox.annotation.NameInDb
 import xyz.jienan.xkcd.model.util.XkcdSideloadUtils
+import java.io.Serializable
 
 /**
  * Created by jienanzhang on 09/07/2017.
@@ -30,10 +31,16 @@ data class XkcdPic constructor(
         @NameInDb("title")
         @SerializedName("title")
         val _title: String = "",
-        var img: String = "") {
+        var img: String = "",
+        @Transient
+        val translated: Boolean = false) : Serializable {
 
     val targetImg: String
-        get() = XkcdSideloadUtils.sideload(this).img
+        get() = if (translated) {
+            img
+        } else {
+            XkcdSideloadUtils.sideload(this).img
+        }
 
     val title
         get() = HtmlCompat.fromHtml(_title, HtmlCompat.FROM_HTML_MODE_LEGACY).toString()

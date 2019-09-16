@@ -3,7 +3,7 @@
 
     <string name="menu_xkcd" translatable="false">xkcd</string>
     <string name="menu_whatif" translatable="false">what if</string>
-    <string name="menu_extra" translatable="false">Extra</string>
+    <string name="menu_extra" translatable="false">extra</string>
 
     <string name="action_share">Share this xkcd</string>
     <string name="action_left">Previous</string>
@@ -55,12 +55,20 @@
     <string name="pref_font_xkcd">Using xkcd font</string>
     <string name="pref_font_normal">Using normal font</string>
     <string name="pref_control">Control</string>
-    <string name="pref_xkcd_gif_eco_mode_title">xkcd gif eco mode</string>
+    <string name="pref_xkcd_gif_eco_mode_title">Gif comics eco-mode</string>
     <string name="pref_xkcd_gif_eco_mode_on">Better performance, 10 frames per second</string>
     <string name="pref_xkcd_gif_eco_mode_off">Better details, higher fps when playing</string>
+    <string name="pref_xkcd_interactive_title">Interactive comics</string>
+    <string name="pref_xkcd_interactive_on">Comics 1525, 1663, 2198, etc. are alive</string>
+    <string name="pref_xkcd_interactive_off">Comics stay static</string>
+    <string name="pref_xkcd_translation_title">Translation switch</string>
+    <string name="pref_xkcd_translation_on">A switch will be shown when translation exists</string>
+    <string name="pref_xkcd_translation_off">Ignore translations</string>
     <string name="pref_what_if" translatable="false">what if</string>
     <string name="pref_xkcd" translatable="false">xkcd</string>
     <string name="settings">Settings</string>
+    <string name="see_translation">SEE TRANSLATION</string>
+    <string name="see_original">SEE ORIGINAL</string>
 
     <string name="arrow_1" translatable="false">1</string>
     <string name="arrow_10" translatable="false">10</string>
