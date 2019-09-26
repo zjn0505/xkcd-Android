@@ -77,10 +77,10 @@ class SingleExtraWebViewFragment : SingleWhatIfFragment() {
             refreshLayout?.setupMultipage()
             updateReleaseText()
         }
-        val color = ColorStateList.valueOf(context!!.getColorResCompat(android.R.attr.textColorPrimary))
-        refreshLayout!!.findViewById<TextView>(R.id.sr_classic_title).setTextColor(color)
-        refreshLayout!!.findViewById<TextView>(R.id.sr_classic_last_update).setTextColor(color)
-        (refreshLayout!!.footerView as ClassicFooter<*>).findViewById<TextView>(R.id.sr_classic_title).setTextColor(color)
+        val color = ColorStateList.valueOf(requireContext().getColorResCompat(android.R.attr.textColorPrimary))
+        refreshLayout?.findViewById<TextView>(R.id.sr_classic_title)?.setTextColor(color)
+        refreshLayout?.findViewById<TextView>(R.id.sr_classic_last_update)?.setTextColor(color)
+        (refreshLayout?.footerView as ClassicFooter<*>).findViewById<TextView>(R.id.sr_classic_title).setTextColor(color)
         super.onViewCreated(view, savedInstanceState)
     }
 

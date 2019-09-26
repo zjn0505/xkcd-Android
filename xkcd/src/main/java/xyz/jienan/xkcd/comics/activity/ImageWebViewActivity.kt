@@ -1,8 +1,10 @@
 package xyz.jienan.xkcd.comics.activity
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.webkit.WebChromeClient
@@ -42,16 +44,17 @@ class ImageWebViewActivity : BaseActivity() {
 
     private val compositeDisposable = CompositeDisposable()
 
-    private var permalink1663 : String?
+    private var permalink1663: String?
         get() = sharedPreferences.getString(PERMALINK_1663, "")
         set(value) = sharedPreferences.edit().putString(PERMALINK_1663, value).apply()
 
+    private var index: Long = 1L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_image_webview)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        val index = intent.getLongExtra("index", 1L)
+        index = intent.getLongExtra("index", 1L)
 
         val xkcd = XkcdModel.loadXkcdFromDB(index)
 
@@ -74,9 +77,22 @@ class ImageWebViewActivity : BaseActivity() {
         super.onDestroy()
     }
 
+    @SuppressLint("AddJavascriptInterface")
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        if (index !in listOf(1608L)) {
+            return false
+        }
+        when (index) {
+            1608L -> menu?.add(Menu.NONE, R.id.menu_gandalf, Menu.NONE, "i.am.gandalf")
+        }
+
+        return true
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> onBackPressed()
+            R.id.menu_gandalf -> webView.loadUrl("javascript:i.am.gandalf=true")
         }
         return true
     }
@@ -150,5 +166,5 @@ class ImageWebViewActivity : BaseActivity() {
     }
 
     @VisibleForTesting
-    fun extractUuidFrom1663url(url : String) = url.substring(url.indexOf("/1663/#") + 7)
+    fun extractUuidFrom1663url(url: String) = url.substring(url.indexOf("/1663/#") + 7)
 }

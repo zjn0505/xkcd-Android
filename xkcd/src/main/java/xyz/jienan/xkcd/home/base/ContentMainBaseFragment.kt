@@ -20,6 +20,7 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager.widget.ViewPager.SCROLL_STATE_DRAGGING
@@ -254,7 +255,7 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
 
     private fun fabAnimation(@ColorRes startColor: Int, @ColorRes endColor: Int, @DrawableRes icon: Int) {
         val animator = ObjectAnimator.ofInt(fab, "backgroundTint",
-                resources.getColor(startColor), resources.getColor(endColor))
+                ContextCompat.getColor(requireContext(), startColor), ContextCompat.getColor(requireContext(), endColor))
 
         animator.apply {
             duration = 1800L
