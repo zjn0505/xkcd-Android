@@ -3,6 +3,7 @@ package xyz.jienan.xkcd.list
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
@@ -60,7 +61,7 @@ internal class WhatIfListAdapter :
             glide.load(article.featureImg)
                     .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                     .priority(Priority.HIGH)
-                    .error(R.drawable.ic_megan)
+                    .error(AppCompatResources.getDrawable(itemView.context, R.drawable.ic_megan))
                     .fitCenter()
                     .into(itemView.itemWhatIfImageView!!)
             itemView.itemWhatIfTitle?.text = itemView.resources.getString(R.string.item_what_if_list_title, article.num, article.title)
