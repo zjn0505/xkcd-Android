@@ -118,6 +118,9 @@ class ImageDetailPagePresenter(private val view: ImageDetailPageContract.View) :
     }
 
     override fun adjustGifFrame(isForward: Boolean) {
+        if (duration < 1) {
+            return
+        }
         var progress = if (isForward)
             currentFrame + ecoModeValue * stepMultiplier
         else
