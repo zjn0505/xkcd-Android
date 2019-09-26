@@ -150,11 +150,11 @@ abstract class BaseListActivity : BaseActivity(), BaseListView, ListFilterDialog
             R.id.action_filter -> {
                 val filterDialog = supportFragmentManager.findFragmentByTag("filter")
                         as ListFilterDialogFragment? ?: ListFilterDialogFragment()
-                filterDialog.setFilters(filters)
+                filterDialog.filters = filters
                 if (!filterDialog.isAdded) {
                     filterDialog.show(supportFragmentManager, "filter")
-                    filterDialog.setItemSelectListener(this)
-                    filterDialog.setSelection(currentSelection.ordinal)
+                    filterDialog.itemSelectListener = this
+                    filterDialog.selection = currentSelection.ordinal
                     logUXEvent(Const.FIRE_LIST_FILTER_BAR + logSuffix)
                 }
             }

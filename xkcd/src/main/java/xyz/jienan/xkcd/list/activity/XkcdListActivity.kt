@@ -38,8 +38,8 @@ class XkcdListActivity : BaseListActivity(), XkcdListContract.View {
         (mAdapter as XkcdListGridAdapter).updateData(pics)
     }
 
-    override fun isLoadingMore(loadingMore: Boolean) {
-        this.loadingMore = loadingMore
+    override fun isLoadingMore(isLoadingMore: Boolean) {
+        this.loadingMore = isLoadingMore
     }
 
     override fun getItemIndexOnPosition(position: Int) =
