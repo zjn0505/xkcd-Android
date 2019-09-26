@@ -27,6 +27,7 @@ data class XkcdPic constructor(
         var height: Int = 0,
         var isFavorite: Boolean = false,
         var hasThumbed: Boolean = false,
+        @Transient
         val thumbCount: Long = 0L,
         @NameInDb("title")
         @SerializedName("title")
