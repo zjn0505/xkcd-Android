@@ -1,12 +1,5 @@
-<vector android:height="48dp" android:tint="@color/white"
-    android:viewportHeight="24.0" android:viewportWidth="24.0"
-    android:width="48dp" xmlns:android="http://schemas.android.com/apk/res/android">
-    <group
-        android:name="group"
-        android:pivotX="12"
-        android:pivotY="12">
-        <path android:name="play" android:pathData="@string/path_play_arrow"
-            android:fillColor="@color/white"
-            android:strokeWidth="1"/>
+<vector android:height="48dp" android:tint="@color/white" android:viewportHeight="24.0" android:viewportWidth="24.0" android:width="48dp" xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:name="group" android:pivotX="12" android:pivotY="12">
+        <path android:name="play" android:pathData="M 8 5 L 8 19 L 19 12 Z" android:fillColor="@color/white" android:strokeWidth="1"/>
     </group>
 </vector>

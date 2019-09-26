@@ -1,26 +1,9 @@
-<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:drawable="@drawable/ic_fast_forward"
-    xmlns:aapt="http://schemas.android.com/aapt"
-    tools:targetApi="lollipop">
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" android:drawable="@drawable/ic_fast_forward" xmlns:aapt="http://schemas.android.com/aapt" tools:targetApi="lollipop">
     <target android:name="group">
         <aapt:attr name="android:animation">
             <set>
-                <objectAnimator
-                    android:propertyName="translateX"
-                    android:duration="100"
-                    android:valueFrom="0"
-                    android:valueTo="3"
-                    android:valueType="floatType"
-                    android:interpolator="@android:interpolator/linear"/>
-                <objectAnimator
-                    android:propertyName="translateX"
-                    android:startOffset="100"
-                    android:duration="100"
-                    android:valueFrom="3"
-                    android:valueTo="0"
-                    android:valueType="floatType"
-                    android:interpolator="@android:interpolator/linear"/>
+                <objectAnimator android:propertyName="translateX" android:duration="100" android:valueFrom="0" android:valueTo="3" android:valueType="floatType" android:interpolator="@android:interpolator/linear"/>
+                <objectAnimator android:propertyName="translateX" android:startOffset="100" android:duration="100" android:valueFrom="3" android:valueTo="0" android:valueType="floatType" android:interpolator="@android:interpolator/linear"/>
             </set>
         </aapt:attr>
     </target>

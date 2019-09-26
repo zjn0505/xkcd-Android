@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="path_play_arrow" translatable="false">M 8 5 L 8 19 L 19 12 Z"</string>
-    <string name="path_pause" translatable="false">M 8 5 L 8 19 L 19 12 Z</string>
-</resources>
