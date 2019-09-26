@@ -67,7 +67,7 @@ class CircleView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     }
 
     private fun updateCircleColor() {
-        var colorProgress = LikeUtils.clamp(outerCircleRadiusProgress.toDouble(), 0.5, 1.0).toFloat()
+        var colorProgress = outerCircleRadiusProgress.coerceIn(0.5f, 1.0f)
         colorProgress = LikeUtils.mapValueFromRangeToRange(colorProgress.toDouble(), 0.5, 1.0, 0.0, 1.0).toFloat()
         circlePaint.color = argbEvaluator.evaluate(colorProgress, 0xFF5722, 0xFFC107) as Int
     }

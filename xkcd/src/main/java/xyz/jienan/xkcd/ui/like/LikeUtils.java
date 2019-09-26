@@ -25,10 +25,6 @@ public class LikeUtils {
         return toLow + ((value - fromLow) / (fromHigh - fromLow) * (toHigh - toLow));
     }
 
-    static double clamp(double value, double low, double high) {
-        return Math.min(Math.max(value, low), high);
-    }
-
     static List<Icon> getIcons() {
         List<Icon> icons = new ArrayList<>();
         icons.add(new Icon(R.drawable.ic_heart_on, R.drawable.ic_heart_off, IconType.Heart));

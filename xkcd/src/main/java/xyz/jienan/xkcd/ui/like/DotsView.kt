@@ -108,7 +108,7 @@ class DotsView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
     }
 
     private fun updateDotsAlpha() {
-        val progress = LikeUtils.clamp(currentProgress.toDouble(), 0.6, 1.0).toFloat()
+        val progress = currentProgress.coerceIn(0.6f, 1.0f)
         val alpha = LikeUtils.mapValueFromRangeToRange(progress.toDouble(), 0.6, 1.0, 255.0, 0.0).toInt()
         circlePaints.forEach { it.alpha = alpha }
     }
