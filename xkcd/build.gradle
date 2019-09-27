@@ -11,7 +11,7 @@ andResGuard {
     useSign = true
     keepRoot = false
     mergeDuplicatedRes = true
-
+    fixedResName = "x"
     whiteList = [
             // for icon
             "R.mipmap.ic_launcher",
