@@ -11,20 +11,23 @@ import java.util.regex.Pattern
 
 object XkcdExplainUtil {
 
-    @Throws(IOException::class)
+    @Throws(IOException::class) // TODO Add test: 2207
     fun getExplainFromHtml(responseBody: ResponseBody, url: String): String? {
         val doc = Jsoup.parse(responseBody.string())
         doc.setBaseUri(url)
 
         val h2Explain = doc.selectFirst("h2:has(span#Explanation)")
 
-        val nextH2Index = h2Explain.siblingElements().select("h2").first().elementSiblingIndex()
+        val nextH2Element = h2Explain.siblingElements().select("h2").first()
 
-        val explainElements = h2Explain.parent().children().subList(h2Explain.elementSiblingIndex() + 1, nextH2Index)
+        val h2ExplainElementIndex = h2Explain.parent().childNodes().indexOf(h2Explain)
+        val nextH2ElementIndex = h2Explain.parent().childNodes().indexOf(nextH2Element)
 
-        explainElements.map { it.allElements }.forEach { it.cleanUp() }
+        val explainNodes = h2Explain.parent().childNodes().subList(h2ExplainElementIndex + 1, nextH2ElementIndex)
 
-        return Elements(explainElements).outerHtml()
+        explainNodes.filterIsInstance<Element>().map { it.allElements }.forEach { it.cleanUp() }
+
+        return explainNodes.joinToString("")
     }
 
     fun isXkcdImageLink(url: String): Boolean {
