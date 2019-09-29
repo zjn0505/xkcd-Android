@@ -47,6 +47,7 @@ import xyz.jienan.xkcd.ui.like.animateHide
 import xyz.jienan.xkcd.ui.like.animateShow
 import java.lang.ref.WeakReference
 import java.util.*
+import kotlin.math.abs
 
 abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener {
 
@@ -305,7 +306,7 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
 
             val current = fragment.viewPager?.currentItem ?: 0
 
-            val smoothScroll = if (Math.abs(skip) != 1) {
+            val smoothScroll = if (abs(skip) != 1) {
                 false
             } else if (isPrevious && current != 0) {
                 true
@@ -384,7 +385,7 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
                 latestIndex -= 1
                 presenter.latest = latestIndex
                 presenter.setLastViewed(10)
-                expand(latestIndex)
+                adapter.setSize(latestIndex)
                 xkcdNoti(xkcd!!)
             } else if (titleTextRes == TAG_WHAT_IF) {
                 val whatIfArticle = BoxManager.getWhatIf(latestIndex.toLong())
@@ -392,7 +393,7 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
                 latestIndex -= 1
                 presenter.latest = latestIndex
                 presenter.setLastViewed(10)
-                expand(latestIndex)
+                adapter.setSize(latestIndex)
                 whatIfNoti(whatIfArticle!!)
             }
         }
@@ -413,7 +414,7 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
 
     private fun whatIfNoti(whatIfArticle: WhatIfArticle) {
         if (latestIndex >= whatIfArticle.num) {
-            return  // User already read the what if
+            return  // User already read the what ifF
         } else {
             SharedPrefManager.latestWhatIf = latestIndex.toLong()
             BoxManager.updateAndSaveWhatIf(mutableListOf(whatIfArticle))
@@ -433,7 +434,9 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
     }
 
     fun expand(size: Int) {
-        adapter.setSize(size)
+        if (size > adapter.count) {
+            adapter.setSize(size)
+        }
     }
 
     protected fun toggleSubFabs(showSubFabs: Boolean) {
