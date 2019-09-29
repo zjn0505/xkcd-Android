@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import android.graphics.Bitmap
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposables
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import xyz.jienan.xkcd.Const.PREF_XKCD_TRANSLATION
@@ -15,6 +16,12 @@ import xyz.jienan.xkcd.model.persist.SharedPrefManager
 class SingleComicPresenter(private val view: SingleComicContract.View, private val sharedPreferences: SharedPreferences) : SingleComicContract.Presenter, SharedPreferences.OnSharedPreferenceChangeListener {
 
     private val compositeDisposable = CompositeDisposable()
+
+    private var loadPicDisposable = Disposables.disposed()
+
+    private var loadLocalizedPicDisposable = Disposables.disposed()
+
+    private var loadExplainDisposable = Disposables.disposed()
 
     override val showLocalXkcd: Boolean
         get() = sharedPreferences.getBoolean(PREF_XKCD_TRANSLATION, false)
@@ -29,13 +36,20 @@ class SingleComicPresenter(private val view: SingleComicContract.View, private v
     override fun getExplain(index: Long) {
         val latestIndex = SharedPrefManager.latestXkcd
 
-        val d = XkcdModel.loadExplain(index, latestIndex)
+        if (!loadExplainDisposable.isDisposed) {
+            loadExplainDisposable.dispose()
+        }
+
+        XkcdModel.loadExplain(index, latestIndex)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ view.explainLoaded(it) }, { e ->
                     view.explainFailed()
                     Timber.e(e, "Load explainUrl failed")
                 })
-        compositeDisposable.add(d)
+                .also {
+                    loadExplainDisposable = it
+                    compositeDisposable.add(loadExplainDisposable)
+                }
     }
 
     override fun loadXkcd(index: Int) {
@@ -45,6 +59,10 @@ class SingleComicPresenter(private val view: SingleComicContract.View, private v
         val shouldQueryNetwork = latestIndex - index < 10
         view.setLoading(true)
 
+        if (!loadPicDisposable.isDisposed) {
+            loadPicDisposable.dispose()
+        }
+
         if (shouldQueryNetwork || xkcdPicInDB == null) {
             XkcdModel.loadXkcd(index.toLong())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -52,7 +70,10 @@ class SingleComicPresenter(private val view: SingleComicContract.View, private v
                     .filter { xkcdPicInDB == null }
                     .subscribe({ this.renderComic(it) },
                             { e -> Timber.e(e, "load xkcd pic error") })
-                    .also { compositeDisposable.add(it) }
+                    .also {
+                        loadPicDisposable = it
+                        compositeDisposable.add(it)
+                    }
         }
 
         if (xkcdPicInDB != null) {
@@ -93,6 +114,9 @@ class SingleComicPresenter(private val view: SingleComicContract.View, private v
     }
 
     private fun loadLocalizedXkcd(xkcdPic: XkcdPic) {
+        if (!loadLocalizedPicDisposable.isDisposed) {
+            loadLocalizedPicDisposable.dispose()
+        }
         XkcdModel.loadLocalizedXkcd(xkcdPic.num)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -118,6 +142,9 @@ class SingleComicPresenter(private val view: SingleComicContract.View, private v
                         view.translationMode = 0
                     }
                 }, { Timber.e(it) })
-                .also { compositeDisposable.add(it) }
+                .also {
+                    loadLocalizedPicDisposable = it
+                    compositeDisposable.add(it)
+                }
     }
 }
