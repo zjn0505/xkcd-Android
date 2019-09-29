@@ -61,7 +61,10 @@
                     android:text="@string/see_translation"
                     android:fontFamily="@font/xkcd"
                     android:layout_margin="20dp"
-                    android:textColor="@color/colorAccent"/>
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:textColor="@color/colorAccent"
+                    android:visibility="gone"/>
 
                 <TextView
                     android:id="@+id/tvCreateDate"

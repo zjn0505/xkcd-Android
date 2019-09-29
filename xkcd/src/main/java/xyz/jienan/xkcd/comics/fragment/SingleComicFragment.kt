@@ -309,13 +309,12 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .listener(GlideListener(this))
                 .into(target!!)
-
     }
 
     companion object {
 
         private const val KEY_TRANS_MODE = "transMode"
-        
+
         fun newInstance(comicId: Int) =
                 SingleComicFragment().apply { arguments = Bundle(1).apply { putInt("ind", comicId) } }
     }
