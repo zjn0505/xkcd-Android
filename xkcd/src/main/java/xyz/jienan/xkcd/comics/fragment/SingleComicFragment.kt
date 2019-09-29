@@ -49,8 +49,6 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
 
     private var currentPic: XkcdPic? = null
 
-    private var alterPic: XkcdPic? = null
-
     private var target: ProgressTarget<String, Bitmap>? = null
 
     private var explainingCallback: SimpleInfoDialogFragment.ExplainingCallback? = null
@@ -127,7 +125,7 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
 
     private val sharedPref by lazy { PreferenceManager.getDefaultSharedPreferences(context) }
 
-    private var translationMode = -1 // -1 unavailable, 0 off, 1 on
+    override var translationMode = -1 // -1 unavailable, 0 off, 1 on
         set(value) {
             when (value) {
                 -1 -> btnSeeTranslation?.visibility = View.GONE
@@ -135,28 +133,16 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
                     btnSeeTranslation?.visibility = View.VISIBLE
                     btnSeeTranslation?.text = resources.getText(R.string.see_translation)
                     btnSeeTranslation?.setOnClickListener {
-                        val tempPic = currentPic
-                        if (alterPic != null) {
-                            renderXkcdPic(alterPic!!)
-                            alterPic = tempPic
-                            translationMode = 1
-                        } else {
-                            Timber.e("Translation Pic is null")
-                        }
+                        translationMode = 1
+                        singleComicPresenter.loadXkcd(ind)
                     }
                 }
                 1 -> {
                     btnSeeTranslation?.visibility = View.VISIBLE
                     btnSeeTranslation?.text = resources.getText(R.string.see_original)
                     btnSeeTranslation?.setOnClickListener {
-                        val tempPic = currentPic
-                        if (alterPic != null) {
-                            renderXkcdPic(alterPic!!)
-                            alterPic = tempPic
-                            translationMode = 0
-                        } else {
-                            Timber.e("Original Pic is null")
-                        }
+                        translationMode = 0
+                        singleComicPresenter.loadXkcd(ind)
                     }
                 }
             }
@@ -194,37 +180,12 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
                     .findFragmentByTag("AltInfoDialogFragment") as SimpleInfoDialogFragment?
             dialogFragment?.setListener(dialogListener)
 
-            translationMode = savedInstanceState.getInt(KEY_TRANS_MODE, -1)
-
-            if (savedInstanceState.getSerializable(KEY_PIC_ALTER) != null) {
-                alterPic = savedInstanceState.getSerializable(KEY_PIC_ALTER) as XkcdPic
+            if (singleComicPresenter.showLocalXkcd) {
+                translationMode = savedInstanceState.getInt(KEY_TRANS_MODE, -1)
             }
-
-            val savedPic = savedInstanceState.getSerializable(KEY_PIC)
-            if (savedPic != null && savedPic is XkcdPic) {
-                if (singleComicPresenter.showLocalXkcd) {
-                    if (translationMode != -1) {
-                        renderXkcdPic(savedPic)
-                    } else {
-                        singleComicPresenter.loadXkcd(ind)
-                    }
-                } else {
-                    translationMode = -1
-                    if (alterPic != null && !alterPic!!.translated) {
-                        renderXkcdPic(alterPic!!)
-                    } else if (!savedPic.translated) {
-                        renderXkcdPic(savedPic)
-                    } else {
-                        singleComicPresenter.loadXkcd(ind)
-                    }
-                }
-            } else {
-                singleComicPresenter.loadXkcd(ind)
-            }
-
-        } else {
-            singleComicPresenter.loadXkcd(ind)
         }
+
+        singleComicPresenter.loadXkcd(ind)
 
         ivXkcdPic.setOnLongClickListener {
             if (currentPic == null) {
@@ -248,12 +209,6 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
         if (dialogFragment != null && dialogFragment!!.isAdded) {
             dialogFragment!!.dismissAllowingStateLoss()
             dialogFragment = null
-        }
-        if (currentPic != null) {
-            outState.putSerializable(KEY_PIC, currentPic)
-        }
-        if (alterPic != null) {
-            outState.putSerializable(KEY_PIC_ALTER, alterPic)
         }
         if (translationMode != -1) {
             outState.putInt(KEY_TRANS_MODE, translationMode)
@@ -296,17 +251,6 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
             pbLoading!!.visibility = View.VISIBLE
         } else {
             pbLoading!!.visibility = View.GONE
-        }
-    }
-
-    override fun renderOriginal() {
-        translationMode = -1
-        if (alterPic != null && !alterPic!!.translated) {
-            val tempPic =  alterPic
-            alterPic = currentPic
-            renderXkcdPic(tempPic!!)
-        } else if (currentPic != null && !currentPic!!.translated) {
-            renderXkcdPic(currentPic!!)
         }
     }
 
@@ -354,11 +298,6 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
         tvDescription?.text = xkcdPic.alt
     }
 
-    override fun offerTranslation(translatedXkcd: XkcdPic) {
-        translationMode = 0
-        alterPic = translatedXkcd
-    }
-
     private fun load(url: String) {
         if (target != null) {
             Glide.clear(target)
@@ -376,11 +315,7 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
     companion object {
 
         private const val KEY_TRANS_MODE = "transMode"
-
-        private const val KEY_PIC = "pic"
-
-        private const val KEY_PIC_ALTER = "picAlter"
-
+        
         fun newInstance(comicId: Int) =
                 SingleComicFragment().apply { arguments = Bundle(1).apply { putInt("ind", comicId) } }
     }

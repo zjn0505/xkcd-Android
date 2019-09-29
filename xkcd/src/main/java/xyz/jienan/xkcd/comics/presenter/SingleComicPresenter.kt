@@ -20,13 +20,11 @@ class SingleComicPresenter(private val view: SingleComicContract.View, private v
         get() = sharedPreferences.getBoolean(PREF_XKCD_TRANSLATION, false)
                 && XkcdModel.localizedUrl.isNotBlank()
 
-    var translationSwitch = false
-
     init {
         sharedPreferences.registerOnSharedPreferenceChangeListener(this)
     }
 
-    private var index : Int? = null
+    private var index: Int? = null
 
     override fun getExplain(index: Long) {
         val latestIndex = SharedPrefManager.latestXkcd
@@ -40,7 +38,7 @@ class SingleComicPresenter(private val view: SingleComicContract.View, private v
         compositeDisposable.add(d)
     }
 
-    override fun loadXkcd(index: Int, forceOriginal: Boolean) {
+    override fun loadXkcd(index: Int) {
         this.index = index
         val latestIndex = SharedPrefManager.latestXkcd
         val xkcdPicInDB = XkcdModel.loadXkcdFromDB(index.toLong())
@@ -52,13 +50,13 @@ class SingleComicPresenter(private val view: SingleComicContract.View, private v
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnNext { view.setLoading(false) }
                     .filter { xkcdPicInDB == null }
-                    .subscribe({ this.renderComic(it, forceOriginal) },
+                    .subscribe({ this.renderComic(it) },
                             { e -> Timber.e(e, "load xkcd pic error") })
                     .also { compositeDisposable.add(it) }
         }
 
         if (xkcdPicInDB != null) {
-            renderComic(xkcdPicInDB, forceOriginal)
+            renderComic(xkcdPicInDB)
         }
     }
 
@@ -75,30 +73,31 @@ class SingleComicPresenter(private val view: SingleComicContract.View, private v
 
     override fun onSharedPreferenceChanged(sharedPref: SharedPreferences?, key: String?) {
         if (key == PREF_XKCD_TRANSLATION) {
-            translationSwitch = sharedPref?.getBoolean(PREF_XKCD_TRANSLATION, false)!!
-            Timber.d("Translation config changed $translationSwitch")
-            if (!translationSwitch) {
-                view.renderOriginal()
-            } else if (index != null) {
+            if (!showLocalXkcd) {
+                view.translationMode = -1
+            }
+            if (index != null) {
                 loadXkcd(index!!)
             }
         }
     }
 
-    private fun renderComic(xkcdPic: XkcdPic, forceOriginal: Boolean) {
+    private fun renderComic(xkcdPic: XkcdPic) {
         XkcdModel.push(xkcdPic)
-        if (showLocalXkcd && !forceOriginal) {
-            loadLocalXkcd(xkcdPic)
+        if (showLocalXkcd) {
+            loadLocalizedXkcd(xkcdPic)
         }
-        view.renderXkcdPic(xkcdPic)
+        if (view.translationMode != 1) {
+            view.renderXkcdPic(xkcdPic)
+        }
     }
 
-    private fun loadLocalXkcd(xkcdPic: XkcdPic) {
+    private fun loadLocalizedXkcd(xkcdPic: XkcdPic) {
         XkcdModel.loadLocalizedXkcd(xkcdPic.num)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    view.offerTranslation(XkcdPic(
+                .map {
+                    XkcdPic(
                             year = xkcdPic.year,
                             month = xkcdPic.month,
                             day = xkcdPic.day,
@@ -110,7 +109,14 @@ class SingleComicPresenter(private val view: SingleComicContract.View, private v
                             _alt = it._alt,
                             _title = it._title,
                             img = it.img,
-                            translated = true))
+                            translated = true)
+                }
+                .subscribe({
+                    if (view.translationMode == 1) {
+                        view.renderXkcdPic(it)
+                    } else {
+                        view.translationMode = 0
+                    }
                 }, { Timber.e(it) })
                 .also { compositeDisposable.add(it) }
     }

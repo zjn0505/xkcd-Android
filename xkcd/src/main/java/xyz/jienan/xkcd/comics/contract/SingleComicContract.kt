@@ -10,6 +10,8 @@ interface SingleComicContract {
 
     interface View : BaseView<Presenter> {
 
+        var translationMode : Int
+
         fun explainLoaded(result: String)
 
         fun explainFailed()
@@ -17,15 +19,11 @@ interface SingleComicContract {
         fun renderXkcdPic(xkcdPic: XkcdPic)
 
         fun setLoading(isLoading: Boolean)
-
-        fun offerTranslation(translatedXkcd: XkcdPic)
-
-        fun renderOriginal()
     }
 
     interface Presenter : BasePresenter {
 
-        fun loadXkcd(index: Int, forceOriginal: Boolean = false)
+        fun loadXkcd(index: Int)
 
         fun getExplain(index: Long)
 
