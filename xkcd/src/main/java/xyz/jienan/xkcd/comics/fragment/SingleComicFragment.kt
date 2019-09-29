@@ -285,7 +285,12 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
         if (activity == null || activity!!.isFinishing) {
             return
         }
-        if (target!!.model.isNullOrBlank()) {
+
+        if (target != null) {
+            Glide.clear(target)
+        }
+
+        if (target != null && target!!.model.isNullOrBlank()) {
             target!!.model = xkcdPic.targetImg
             load(xkcdPic.targetImg)
         }
