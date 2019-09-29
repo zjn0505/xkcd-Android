@@ -30,6 +30,7 @@ allprojects {
         maven { url "https://dl.bintray.com/piasy/maven" }
         maven { url 'https://maven.google.com/' }
         maven { url 'https://oss.sonatype.org/content/repositories/public' }
+        maven { url 'https://dl.bintray.com/guardian/android' }
     }
 }
 

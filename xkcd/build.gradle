@@ -171,6 +171,8 @@ dependencies {
     )
 
 //    implementation 'androidx.multidex:multidex:2.0.1'
+
+    debugImplementation 'com.gu.android:toolargetool:0.2.1@aar'
 }
 
 buildscript {

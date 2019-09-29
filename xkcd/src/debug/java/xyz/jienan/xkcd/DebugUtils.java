@@ -1,6 +1,9 @@
 package xyz.jienan.xkcd;
 
+import android.app.Application;
 import android.content.Context;
+
+import com.gu.toolargetool.TooLargeTool;
 
 import io.objectbox.BoxStore;
 import io.objectbox.android.AndroidObjectBrowser;
@@ -17,6 +20,8 @@ public class DebugUtils {
     static void debugDB(Context context, BoxStore boxStore) {
         if (BuildConfig.DEBUG) {
             new AndroidObjectBrowser(boxStore).start(context);
+
+            TooLargeTool.startLogging((Application) context);
         }
     }
 }
