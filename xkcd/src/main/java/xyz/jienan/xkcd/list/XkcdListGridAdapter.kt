@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.percentlayout.widget.PercentFrameLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -67,12 +68,13 @@ internal class XkcdListGridAdapter : ListBaseAdapter<XkcdListGridAdapter.XkcdVie
             info.aspectRatio = width.toFloat() / height
             layoutParams.height = 0
             GlideUtils.load(glide, pic, pic.targetImg, itemView.itemXkcdImageView)
-            itemView.itemXkcdImageNum!!.text = pic.num.toString()
-            if (pic.isFavorite) {
-                itemView.itemXkcdImageNum!!.background = itemView.resources.getDrawable(R.drawable.ic_heart_on)
+            itemView.itemXkcdImageNum?.text = pic.num.toString()
+            itemView.itemXkcdImageNum?.background = if (pic.isFavorite) {
+                ContextCompat.getDrawable(itemView.context, R.drawable.ic_heart_on)
             } else {
-                itemView.itemXkcdImageNum!!.background = itemView.resources.getDrawable(R.drawable.item_num_bg)
+                ContextCompat.getDrawable(itemView.context, R.drawable.item_num_bg)
             }
+
             if (width == 0 || height == 0) {
                 XkcdModel.loadXkcd(pic.num)
                         .subscribe({ xkcdPic ->

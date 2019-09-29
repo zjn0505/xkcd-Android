@@ -18,17 +18,17 @@ import xyz.jienan.xkcd.ui.NotificationUtils
 
 class XkcdFirebaseMessagingService : FirebaseMessagingService() {
 
-    override fun onNewToken(refreshedToken: String?) {
+    override fun onNewToken(refreshedToken: String) {
         super.onNewToken(refreshedToken)
         Timber.d("Refreshed token: %s", refreshedToken)
     }
 
-    override fun onMessageReceived(remoteMessage: RemoteMessage?) {
+    override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
-        Timber.d("onMessageReceived: data ${remoteMessage?.data}")
+        Timber.d("onMessageReceived: data ${remoteMessage.data}")
         sendNotification(remoteMessage)
         if (BuildConfig.DEBUG) {
-            remoteMessage?.data?.forEach { Timber.d("msg data: , ${it.key}, ${it.value}") }
+            remoteMessage.data.forEach { Timber.d("msg data: , ${it.key}, ${it.value}") }
         }
     }
 
