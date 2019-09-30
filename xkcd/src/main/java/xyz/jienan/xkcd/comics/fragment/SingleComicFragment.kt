@@ -11,6 +11,7 @@ import android.view.HapticFeedbackConstants.LONG_PRESS
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.AnimationUtils
+import androidx.core.os.bundleOf
 import androidx.preference.PreferenceManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -321,6 +322,6 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
         private const val KEY_TRANS_MODE = "transMode"
 
         fun newInstance(comicId: Int) =
-                SingleComicFragment().apply { arguments = Bundle(1).apply { putInt("ind", comicId) } }
+                SingleComicFragment().apply { arguments = bundleOf("ind" to comicId) }
     }
 }

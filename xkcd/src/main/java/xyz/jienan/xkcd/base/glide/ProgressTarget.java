@@ -14,11 +14,11 @@ public abstract class ProgressTarget<T, Z> extends WrappingTarget<Z> implements 
     private T model;
     private boolean ignoreProgress = true;
 
-    public ProgressTarget(Target<Z> target) {
+    ProgressTarget(Target<Z> target) {
         this(null, target);
     }
 
-    public ProgressTarget(T model, Target<Z> target) {
+    private ProgressTarget(T model, Target<Z> target) {
         super(target);
         this.model = model;
     }
@@ -41,7 +41,7 @@ public abstract class ProgressTarget<T, Z> extends WrappingTarget<Z> implements 
      * @param model return the representation of the given model, DO NOT use {@link #getModel()} inside this method.
      * @return a stable Url representation of the model, otherwise the progress reporting won't work
      */
-    protected String toUrlString(T model) {
+    private String toUrlString(T model) {
         return String.valueOf(model);
     }
 

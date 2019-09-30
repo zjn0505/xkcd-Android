@@ -15,7 +15,7 @@ import okio.Source;
  * Created by Jienan on 2018/3/7.
  */
 
-public class OkHttpProgressResponseBody extends ResponseBody {
+class OkHttpProgressResponseBody extends ResponseBody {
     private final HttpUrl url;
     private final ResponseBody responseBody;
     private final ResponseProgressListener progressListener;

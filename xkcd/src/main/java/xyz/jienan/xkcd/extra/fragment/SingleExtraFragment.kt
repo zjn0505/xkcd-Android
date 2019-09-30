@@ -10,6 +10,7 @@ import android.view.HapticFeedbackConstants.LONG_PRESS
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.AnimationUtils
+import androidx.core.os.bundleOf
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestListener
@@ -259,6 +260,6 @@ class SingleExtraFragment : BaseFragment(), SingleExtraContract.View {
 
     companion object {
         fun newInstance(comicId: Int) =
-                SingleExtraFragment().apply { arguments = Bundle(1).apply { putInt("ind", comicId) } }
+                SingleExtraFragment().apply { arguments = bundleOf("ind" to comicId) }
     }
 }

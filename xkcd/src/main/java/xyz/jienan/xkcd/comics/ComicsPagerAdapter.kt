@@ -9,7 +9,7 @@ class ComicsPagerAdapter(fm: FragmentManager) : BaseStatePagerAdapter(fm) {
 
     override fun getItem(position: Int): Fragment {
         val fragment = SingleComicFragment.newInstance(position + 1)
-        fragmentsMap[position + 1] = fragment
+        fragmentsMap.put(position + 1, fragment)
         return fragment
     }
 }

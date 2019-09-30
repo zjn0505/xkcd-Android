@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Movie
 import android.util.LruCache
+import androidx.core.graphics.createBitmap
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -94,7 +95,7 @@ class ImageDetailPagePresenter(private val view: ImageDetailPageContract.View) :
             view.renderFrame(bitmap)
         } else {
             if (reusableBitmap == null || canvas == null) {
-                reusableBitmap = Bitmap.createBitmap(movieWidth, movieHeight, Bitmap.Config.RGB_565)
+                reusableBitmap = createBitmap(movieWidth, movieHeight, Bitmap.Config.RGB_565)
                 canvas = Canvas(reusableBitmap!!)
             }
 

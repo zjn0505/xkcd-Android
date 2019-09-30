@@ -19,7 +19,6 @@ abstract class BaseFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
             inflater.inflate(layoutResId, container, false)
 
-    @JvmOverloads
     protected fun logUXEvent(event: String, params: Map<String, String>? = null) {
         val bundle = Bundle()
         bundle.putString(FIRE_UX_ACTION, event)

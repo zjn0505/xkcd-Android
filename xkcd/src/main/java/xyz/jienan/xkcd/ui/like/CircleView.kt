@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
+import androidx.core.graphics.createBitmap
 
 /**
  * Created by Miroslaw Stanek on 21.12.2015.
@@ -54,7 +55,7 @@ class CircleView @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        tempBitmap = Bitmap.createBitmap(width, width, Bitmap.Config.ARGB_8888)
+        tempBitmap = createBitmap(width, width)
         tempCanvas = Canvas(tempBitmap)
     }
 
@@ -68,7 +69,7 @@ class CircleView @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
     private fun updateCircleColor() {
         var colorProgress = outerCircleRadiusProgress.coerceIn(0.5f, 1.0f)
-        colorProgress = LikeUtils.mapValueFromRangeToRange(colorProgress.toDouble(), 0.5, 1.0, 0.0, 1.0).toFloat()
+        colorProgress = colorProgress.mapValueFromRangeToRange(0.5f, 1.0f, 0.0f, 1.0f)
         circlePaint.color = argbEvaluator.evaluate(colorProgress, 0xFF5722, 0xFFC107) as Int
     }
 }

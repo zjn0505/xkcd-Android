@@ -14,6 +14,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
 import com.bumptech.glide.Glide
 import io.reactivex.Observable
@@ -219,6 +220,6 @@ open class SingleWhatIfFragment : BaseFragment(), ImgInterface.ImgCallback, RefI
     companion object {
 
         fun newInstance(articleId: Int) =
-                SingleWhatIfFragment().apply { arguments = Bundle(1).apply { putInt("ind", articleId) } }
+                SingleWhatIfFragment().apply { arguments = bundleOf("ind" to articleId) }
     }
 }

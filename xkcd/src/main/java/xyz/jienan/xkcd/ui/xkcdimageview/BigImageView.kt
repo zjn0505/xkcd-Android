@@ -72,10 +72,10 @@ open class BigImageView @JvmOverloads constructor(context: Context, attrs: Attri
 
         array.recycle()
 
-        if (isInEditMode) {
-            mImageLoader = null
+        mImageLoader = if (isInEditMode) {
+            null
         } else {
-            mImageLoader = ImageLoaderFactory.imageLoader
+            ImageLoaderFactory.imageLoader
         }
         mInternalCallback = this
 
@@ -134,10 +134,6 @@ open class BigImageView @JvmOverloads constructor(context: Context, attrs: Attri
         if (mFailureImageView != null) {
             mFailureImageView!!.visibility = GONE
         }
-    }
-
-    fun cancel() {
-        mImageLoader!!.cancel(hashCode())
     }
 
     override fun onCacheHit(imageType: Int, image: File) {

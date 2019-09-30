@@ -97,7 +97,7 @@ object NetworkService {
      */
     private class NetworkCacheInterceptor : Interceptor {
         @Throws(IOException::class)
-        override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
+        override fun intercept(chain: Interceptor.Chain): Response {
             val request = chain.request()
             val cacheable = request.header("cacheable")
             val originalResponse = chain.proceed(request)
@@ -124,8 +124,8 @@ object NetworkService {
                     TrustManagerFactory.getDefaultAlgorithm())
             trustManagerFactory.init(null as KeyStore?)
             val trustManagers = trustManagerFactory.trustManagers
-            if (trustManagers.size != 1 || trustManagers[0] !is X509TrustManager) {
-                throw IllegalStateException("Unexpected default trust managers:" + Arrays.toString(trustManagers))
+            check(!(trustManagers.size != 1 || trustManagers[0] !is X509TrustManager)) {
+                "Unexpected default trust managers:" + Arrays.toString(trustManagers)
             }
             val trustManager = trustManagers[0] as X509TrustManager
 

@@ -1,7 +1,5 @@
 package xyz.jienan.xkcd.list
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
 import android.content.Context
 import android.util.AttributeSet
@@ -10,6 +8,8 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.animation.doOnCancel
+import androidx.core.animation.doOnEnd
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -153,17 +153,14 @@ class RecyclerViewFastScroller @JvmOverloads constructor(context: Context, attrs
         currentAnimator = ObjectAnimator.ofFloat(bubble, View.ALPHA, 1f, 0f)
                 .setDuration(BUBBLE_ANIMATION_DURATION)
                 .apply {
-                    addListener(object : AnimatorListenerAdapter() {
-                        override fun onAnimationEnd(animation: Animator) {
-                            bubble!!.visibility = View.INVISIBLE
-                            currentAnimator = null
-                        }
-
-                        override fun onAnimationCancel(animation: Animator) {
-                            bubble!!.visibility = View.INVISIBLE
-                            currentAnimator = null
-                        }
-                    })
+                    doOnEnd {
+                        bubble!!.visibility = View.INVISIBLE
+                        currentAnimator = null
+                    }
+                    doOnCancel {
+                        bubble!!.visibility = View.INVISIBLE
+                        currentAnimator = null
+                    }
                     start()
                 }
     }

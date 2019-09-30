@@ -1,7 +1,5 @@
 package xyz.jienan.xkcd.ui.like
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
@@ -18,6 +16,7 @@ import android.view.animation.OvershootInterpolator
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
+import androidx.core.animation.doOnCancel
 import androidx.core.content.ContextCompat
 import xyz.jienan.xkcd.R
 
@@ -71,11 +70,7 @@ class LikeButton @JvmOverloads constructor(context: Context, attrs: AttributeSet
                     ObjectAnimator.ofFloat(icon, View.ALPHA, 0f, 1f)
                             .apply { duration = 800; startDelay = 150; interpolator = ACCELERATE_DECELERATE_INTERPOLATOR }
             )
-            addListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationCancel(animation: Animator) {
-                    resetIcon(false)
-                }
-            })
+            doOnCancel { resetIcon(false) }
         }
     }
 
@@ -114,14 +109,14 @@ class LikeButton @JvmOverloads constructor(context: Context, attrs: AttributeSet
         if (unLikeDrawable != null)
             setUnlikeDrawable(unLikeDrawable!!)
 
-        currentIcon = parseIconType(iconType ?: IconType.Heart.name)
+        currentIcon = parseIconType(iconType ?: IconType.HEART.name)
 
 
         if (likeDrawable == null && unLikeDrawable == null) {
             if (currentIcon != null) {
                 setIcon()
             } else {
-                setIcon(IconType.Heart)
+                setIcon(IconType.HEART)
             }
         }
 
@@ -226,8 +221,8 @@ class LikeButton @JvmOverloads constructor(context: Context, attrs: AttributeSet
     private fun setLikeDrawableRes(@DrawableRes resId: Int) {
         likeDrawable = ContextCompat.getDrawable(context, resId)
 
-        if (iconSize != 0) {
-            likeDrawable = LikeUtils.resizeDrawable(context, likeDrawable, iconSize, iconSize)
+        if (iconSize != 0 && likeDrawable != null) {
+            likeDrawable = likeDrawable!!.resizeDrawable(context, iconSize, iconSize)
         }
 
         if (isLiked) {
@@ -244,7 +239,7 @@ class LikeButton @JvmOverloads constructor(context: Context, attrs: AttributeSet
         this.likeDrawable = likeDrawable
 
         if (iconSize != 0) {
-            this.likeDrawable = LikeUtils.resizeDrawable(context, likeDrawable, iconSize, iconSize)
+            this.likeDrawable = likeDrawable.resizeDrawable(context, iconSize, iconSize)
         }
 
         if (isLiked) {
@@ -260,8 +255,8 @@ class LikeButton @JvmOverloads constructor(context: Context, attrs: AttributeSet
     private fun setUnlikeDrawableRes(@DrawableRes resId: Int) {
         unLikeDrawable = ContextCompat.getDrawable(context, resId)
 
-        if (iconSize != 0) {
-            unLikeDrawable = LikeUtils.resizeDrawable(context, unLikeDrawable, iconSize, iconSize)
+        if (iconSize != 0 && unLikeDrawable != null) {
+            unLikeDrawable = unLikeDrawable!!.resizeDrawable(context, iconSize, iconSize)
         }
 
         if (!isLiked) {
@@ -278,7 +273,7 @@ class LikeButton @JvmOverloads constructor(context: Context, attrs: AttributeSet
         this.unLikeDrawable = unLikeDrawable
 
         if (iconSize != 0) {
-            this.unLikeDrawable = LikeUtils.resizeDrawable(context, unLikeDrawable, iconSize, iconSize)
+            this.unLikeDrawable = unLikeDrawable.resizeDrawable(context, iconSize, iconSize)
         }
 
         if (!isLiked) {
@@ -315,8 +310,6 @@ class LikeButton @JvmOverloads constructor(context: Context, attrs: AttributeSet
      * @return Icon
      */
     private fun parseIconType(iconType: String): Icon {
-        val icons = LikeUtils.getIcons()
-
         for (icon in icons) {
             if (icon.iconType.name.toLowerCase() == iconType.toLowerCase()) {
                 return icon
@@ -336,8 +329,6 @@ class LikeButton @JvmOverloads constructor(context: Context, attrs: AttributeSet
      * @return
      */
     private fun parseIconType(iconType: IconType): Icon {
-        val icons = LikeUtils.getIcons()
-
         for (icon in icons) {
             if (icon.iconType == iconType) {
                 return icon

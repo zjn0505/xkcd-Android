@@ -94,7 +94,7 @@ class ComicsMainFragment : ContentMainBaseFragment(), ComicsMainContract.View {
         val cursor = MatrixCursor(columns, xkcdPics.size)
 
         searchSuggestions.forEachIndexed { index, xkcdPic ->
-            cursor.addRow(arrayOf(Integer.toString(index), xkcdPic.targetImg, xkcdPic.title, xkcdPic.num.toString()))
+            cursor.addRow(arrayOf(index.toString(), xkcdPic.targetImg, xkcdPic.title, xkcdPic.num.toString()))
         }
 
         searchAdapter.swapCursor(cursor)

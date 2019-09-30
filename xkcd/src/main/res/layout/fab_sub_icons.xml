@@ -51,6 +51,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_marginRight="8dp"
+        android:layout_marginEnd="8dp"
         app:backgroundTint="@color/pink"
         app:srcCompat="@drawable/ic_heart_white"
         app:useCompatPadding="true" />

@@ -15,6 +15,7 @@ import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.SeekBar
+import androidx.core.os.bundleOf
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.gif.GifDrawable
 import com.bumptech.glide.request.animation.GlideAnimation
@@ -159,11 +160,7 @@ class ImageDetailPageActivity : BaseActivity(), ImageDetailPageContract.View {
             loadImgWithoutControl(url)
         }
 
-        Bundle(3).apply {
-            putInt(FIRE_COMIC_ID, index)
-            putString(FIRE_COMIC_URL, url)
-            logUXEvent(FIRE_DETAIL_PAGE, this)
-        }
+        logUXEvent(FIRE_DETAIL_PAGE, bundleOf(FIRE_COMIC_ID to index, FIRE_COMIC_URL to url))
 
         Observable.timer(500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -349,14 +346,14 @@ class ImageDetailPageActivity : BaseActivity(), ImageDetailPageContract.View {
                             }
                         }
 
-                        val maxScale = Math.max(viewWidth / imageWidth.toFloat(), viewHeight / imageHeight.toFloat())
+                        val maxScale = (viewWidth / imageWidth.toFloat()).coerceAtLeast(viewHeight / imageHeight.toFloat())
                         if (maxScale > 1) {
                             // image is smaller than screen, it should be zoomed out to its origin size
                             ssiv.minScale = 1f
 
                             // and it should be zoomed in to fill the screen
                             val defaultMaxScale = ssiv.maxScale
-                            ssiv.maxScale = Math.max(defaultMaxScale, maxScale * 1.2F)
+                            ssiv.maxScale = defaultMaxScale.coerceAtLeast(maxScale * 1.2F)
 
                             val fitScreenRatio = viewWHRatio / imageWHRatio
 

@@ -12,6 +12,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ProgressBar
 import androidx.annotation.VisibleForTesting
+import androidx.core.content.edit
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -46,7 +47,7 @@ class ImageWebViewActivity : BaseActivity() {
 
     private var permalink1663: String?
         get() = sharedPreferences.getString(PERMALINK_1663, "")
-        set(value) = sharedPreferences.edit().putString(PERMALINK_1663, value).apply()
+        set(value) = sharedPreferences.edit { putString(PERMALINK_1663, value) }
 
     private var index: Long = 1L
 

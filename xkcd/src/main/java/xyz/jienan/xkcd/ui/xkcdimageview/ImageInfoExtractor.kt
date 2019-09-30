@@ -38,11 +38,11 @@ object ImageInfoExtractor {
             if (read >= 3 && isGifHeader(header)) {
                 type = TYPE_GIF
             } else if (read >= 12 && isWebpHeader(header)) {
-                if (read >= 17 && isExtendedWebp(header)
+                type = if (read >= 17 && isExtendedWebp(header)
                         && (header[16] and ANIMATED_WEBP_MASK).compareTo(0) != 0) {
-                    type = TYPE_ANIMATED_WEBP
+                    TYPE_ANIMATED_WEBP
                 } else {
-                    type = TYPE_STILL_WEBP
+                    TYPE_STILL_WEBP
                 }
             }
 

@@ -12,7 +12,6 @@ import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 
-import java.util.ArrayList
 import java.util.HashMap
 
 import xyz.jienan.xkcd.R

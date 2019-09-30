@@ -12,6 +12,7 @@ import android.media.RingtoneManager
 import android.os.Build
 import android.text.TextUtils
 import androidx.core.app.NotificationCompat
+import androidx.core.graphics.createBitmap
 import com.bumptech.glide.Glide
 import io.reactivex.Maybe
 import io.reactivex.Single
@@ -123,7 +124,7 @@ object NotificationUtils {
                     .onErrorResumeNext(getLogoBitmapSingle(this, tag, width, height))
                     .toMaybe()
                     .onErrorResumeNext(Maybe.empty<Bitmap>())
-                    .defaultIfEmpty(Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888))
+                    .defaultIfEmpty(createBitmap(1, 1))
 
     private fun getLogoBitmapSingle(context: Context, tag: String, width: Int, height: Int) =
             Single.just(tag)

@@ -1,20 +1,19 @@
 package xyz.jienan.xkcd.home.base;
 
+import android.util.SparseArray;
 import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
-import java.util.HashMap;
-
 public abstract class BaseStatePagerAdapter extends FragmentStatePagerAdapter {
 
-    protected HashMap<Integer, Fragment> fragmentsMap = new HashMap<>();
+    protected final SparseArray<Fragment> fragmentsMap = new SparseArray<>();
     private int length;
 
     public BaseStatePagerAdapter(FragmentManager fm) {
-        super(fm);
+        super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
     }
 
     public void setSize(int size) {

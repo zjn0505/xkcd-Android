@@ -11,6 +11,7 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
 import xyz.jienan.xkcd.Const.*
 import xyz.jienan.xkcd.R
+import xyz.jienan.xkcd.model.WhatIfModel
 
 /**
  * Created by Jienan on 2018/3/9.
@@ -22,6 +23,8 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
 
     private val darkPref by lazy { findPreference<ListPreference>(PREF_DARK_THEME) }
 
+    private val zoomPref by lazy { findPreference<ListPreference>(PREF_ZOOM) }
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.prefs, rootKey)
 
@@ -30,7 +33,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
         arrowPref?.summary = resources.getQuantityString(R.plurals.pref_arrow_summary,
                 Integer.valueOf(arrowPref?.entry.toString()), arrowPref?.entry.toString())
         arrowPref?.onPreferenceChangeListener = this
-
+        zoomPref?.onPreferenceChangeListener = this
         darkPref?.onPreferenceChangeListener = this
     }
 
@@ -44,6 +47,10 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
             PREF_FONT -> {
                 (preference as SwitchPreferenceCompat).isChecked = newValue as Boolean
                 activity?.recreate()
+            }
+            PREF_ZOOM -> {
+                (preference as ListPreference).value = newValue.toString()
+                WhatIfModel.setZoom(Integer.valueOf(newValue.toString().substring(5)))
             }
             PREF_DARK_THEME -> {
                 (preference as ListPreference).value = newValue.toString()

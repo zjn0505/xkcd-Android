@@ -11,10 +11,10 @@ import com.bumptech.glide.request.target.Target;
  * Created by jienanzhang on 03/03/2018.
  */
 
-public class WrappingTarget<Z> implements Target<Z> {
-    protected final Target<Z> target;
+class WrappingTarget<Z> implements Target<Z> {
+    private final Target<Z> target;
 
-    public WrappingTarget(Target<Z> target) {
+    WrappingTarget(Target<Z> target) {
         this.target = target;
     }
 

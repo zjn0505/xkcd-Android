@@ -42,28 +42,28 @@ class DotsView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
 
     private val currentRadius1
         get() = if (currentProgress < 0.3f) {
-            LikeUtils.mapValueFromRangeToRange(currentProgress.toDouble(), 0.0, 0.3, 0.0, (maxOuterDotsRadius * 0.8f).toDouble()).toFloat()
+            currentProgress.mapValueFromRangeToRange(0.0f, 0.3f, 0.0f, (maxOuterDotsRadius * 0.8f))
         } else {
-            LikeUtils.mapValueFromRangeToRange(currentProgress.toDouble(), 0.3, 1.0, maxInnerDotsRadius.toDouble(), maxOuterDotsRadius.toDouble()).toFloat()
+            currentProgress.mapValueFromRangeToRange(0.3f, 1.0f, maxInnerDotsRadius, maxOuterDotsRadius)
         }
     private val currentDotSize1
         get() = when {
             currentProgress == 0f -> 0f
             currentProgress < 0.7 -> maxDotSize
-            else -> LikeUtils.mapValueFromRangeToRange(currentProgress.toDouble(), 0.7, 1.0, maxDotSize.toDouble(), 0.0).toFloat()
+            else -> currentProgress.mapValueFromRangeToRange(0.7f, 1.0f, maxDotSize, 0.0f)
         }
 
     private val currentDotSize2
         get() = when {
             currentProgress == 0f -> 0f
             currentProgress < 0.2 -> maxDotSize
-            currentProgress < 0.5 -> LikeUtils.mapValueFromRangeToRange(currentProgress.toDouble(), 0.2, 0.5, maxDotSize.toDouble(), 0.3 * maxDotSize).toFloat()
-            else -> LikeUtils.mapValueFromRangeToRange(currentProgress.toDouble(), 0.5, 1.0, (maxDotSize * 0.3f).toDouble(), 0.0).toFloat()
+            currentProgress < 0.5 -> currentProgress.mapValueFromRangeToRange(0.2f, 0.5f, maxDotSize, 0.3f * maxDotSize)
+            else -> currentProgress.mapValueFromRangeToRange(0.5f, 1.0f, maxDotSize * 0.3f, 0.0f)
         }
 
     private val currentRadius2
         get() = if (currentProgress < 0.3f) {
-            LikeUtils.mapValueFromRangeToRange(currentProgress.toDouble(), 0.0, 0.3, 0.0, maxInnerDotsRadius.toDouble()).toFloat()
+            currentProgress.mapValueFromRangeToRange(0.0f, 0.3f, 0.0f, maxInnerDotsRadius)
         } else {
             maxInnerDotsRadius
         }
@@ -99,17 +99,17 @@ class DotsView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
 
     private fun updateDotsPaints() {
         if (currentProgress < 0.5f) {
-            val progress = LikeUtils.mapValueFromRangeToRange(currentProgress.toDouble(), 0.0, 0.5, 0.0, 1.0).toFloat()
+            val progress = currentProgress.mapValueFromRangeToRange(0.0f, 0.5f, 0.0f, 1.0f)
             circlePaints.forEachIndexed { index, paint -> paint.color = argbEvaluator.evaluate(progress, colors[index], colors[(index + 1) % 4]) as Int }
         } else {
-            val progress = LikeUtils.mapValueFromRangeToRange(currentProgress.toDouble(), 0.5, 1.0, 0.0, 1.0).toFloat()
+            val progress = currentProgress.mapValueFromRangeToRange(0.5f, 1.0f, 0.0f, 1.0f)
             circlePaints.forEachIndexed { index, paint -> paint.color = argbEvaluator.evaluate(progress, colors[(index + 1) % 4], colors[(index + 2) % 4]) as Int }
         }
     }
 
     private fun updateDotsAlpha() {
         val progress = currentProgress.coerceIn(0.6f, 1.0f)
-        val alpha = LikeUtils.mapValueFromRangeToRange(progress.toDouble(), 0.6, 1.0, 255.0, 0.0).toInt()
+        val alpha = progress.mapValueFromRangeToRange(0.6f, 1.0f, 255.0f, 0.0f).toInt()
         circlePaints.forEach { it.alpha = alpha }
     }
 

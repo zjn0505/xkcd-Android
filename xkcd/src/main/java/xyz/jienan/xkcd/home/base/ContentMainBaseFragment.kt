@@ -21,6 +21,7 @@ import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
+import androidx.core.view.forEach
 import androidx.preference.PreferenceManager
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager.widget.ViewPager.SCROLL_STATE_DRAGGING
@@ -154,22 +155,15 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
         viewPager.adapter = adapter
 
         val actionBar = (activity as AppCompatActivity).supportActionBar
-        if (actionBar != null) {
-            actionBar.title = titleTextRes
-            actionBar.subtitle = "1     "
-        }
+        actionBar?.title = titleTextRes
+        actionBar?.subtitle = "1     "
 
         val toolbar = (activity as AppCompatActivity).window.decorView.findViewById<ViewGroup>(R.id.toolbar)
 
-        val views = mutableListOf<View>()
-        for (index in 0 until toolbar.childCount) {
-            val child = toolbar.getChildAt(index)
-            if (child is TextView) {
-                views.add(child)
+        toolbar.forEach {
+            if (it is TextView) {
+                it.setOnTouchListener { _, motionEvent ->  titleGestureDetector.onTouchEvent(motionEvent) }
             }
-        }
-        views.forEach {
-            it.setOnTouchListener { _, motionEvent ->  titleGestureDetector.onTouchEvent(motionEvent) }
         }
 
         viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {

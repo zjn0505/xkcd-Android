@@ -10,6 +10,7 @@ import android.view.MenuItem
 import android.view.View
 import android.webkit.WebSettings
 import android.widget.TextView
+import androidx.core.os.bundleOf
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.fragment_extra_single.*
@@ -178,6 +179,6 @@ class SingleExtraWebViewFragment : SingleWhatIfFragment() {
 
     companion object {
         fun newInstance(extraComics: ExtraComics) =
-                SingleExtraWebViewFragment().apply { arguments = Bundle(1).apply { putSerializable("entity", extraComics) } }
+                SingleExtraWebViewFragment().apply { arguments = bundleOf("entity" to extraComics) }
     }
 }

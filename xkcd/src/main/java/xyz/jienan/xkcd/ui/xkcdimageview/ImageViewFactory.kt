@@ -31,8 +31,4 @@ open class ImageViewFactory {
                                      initScaleType: Int): View? {
         return null
     }
-
-    open fun createThumbnailView(context: Context, thumbnail: Uri, scaleType: ImageView.ScaleType): View? {
-        return null
-    }
 }
