@@ -1,9 +1,7 @@
 package xyz.jienan.xkcd.ui.xkcdimageview
 
 import android.content.Context
-import android.net.Uri
 import android.view.View
-import android.widget.ImageView
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import java.io.File
 

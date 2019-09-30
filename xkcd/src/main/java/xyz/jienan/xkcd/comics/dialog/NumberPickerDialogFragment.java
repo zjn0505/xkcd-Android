@@ -60,8 +60,8 @@ public class NumberPickerDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
         View contentView = inflater.inflate(R.layout.dialog_picker, null);
         final NumberPicker picker = contentView.findViewById(R.id.picker_xkcd_id);
         final EditText editText = picker.findViewById(Resources.getSystem().getIdentifier("numberpicker_input", "id", "android"));

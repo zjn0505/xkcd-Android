@@ -144,14 +144,12 @@ class LikeButton @JvmOverloads constructor(context: Context, attrs: AttributeSet
     override fun onClick(v: View) {
 
         isLiked = !isLiked || isPersisted
-        icon!!.setImageDrawable(if (isLiked) likeDrawable else unLikeDrawable)
+        icon?.setImageDrawable(if (isLiked) likeDrawable else unLikeDrawable)
 
-        if (likeListener != null) {
-            if (isLiked) {
-                likeListener!!.liked(this)
-            } else {
-                likeListener!!.unliked(this)
-            }
+        if (isLiked) {
+            likeListener?.liked(this)
+        } else {
+            likeListener?.unliked(this)
         }
 
         animatorSet.cancel()

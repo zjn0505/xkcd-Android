@@ -3,8 +3,6 @@ package xyz.jienan.xkcd.model.util
 import okhttp3.ResponseBody
 import org.junit.Test
 
-import org.junit.Assert.*
-
 class WhatIfArticleUtilTest {
 
     @Test(expected = NullPointerException::class)

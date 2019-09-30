@@ -362,8 +362,7 @@ class ImageDetailPageActivity : BaseActivity(), ImageDetailPageContract.View {
                             }
                         } else {
                             // image is bigger than screen, it should be zoomed out to fit the screen
-                            val minScale = Math.min(viewWidth / imageWidth.toFloat(),
-                                    viewHeight / imageHeight.toFloat())
+                            val minScale = (viewWidth / imageWidth.toFloat()).coerceAtMost(viewHeight / imageHeight.toFloat())
                             ssiv.minScale = minScale
                             // but no need to set max scale
                         }
