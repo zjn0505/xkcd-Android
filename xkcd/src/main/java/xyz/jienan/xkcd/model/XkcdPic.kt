@@ -27,12 +27,13 @@ data class XkcdPic constructor(
         var height: Int = 0,
         var isFavorite: Boolean = false,
         var hasThumbed: Boolean = false,
-        @Transient
+        @io.objectbox.annotation.Transient
         val thumbCount: Long = 0L,
         @NameInDb("title")
         @SerializedName("title")
         val _title: String = "",
         var img: String = "",
+        @io.objectbox.annotation.Transient
         @Transient
         val translated: Boolean = false) : Serializable {
 
