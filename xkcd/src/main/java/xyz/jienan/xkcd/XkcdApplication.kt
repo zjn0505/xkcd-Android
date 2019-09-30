@@ -63,6 +63,8 @@ class XkcdApplication : Application() {
 
     private fun updateLocale() {
         XkcdModel.localizedUrl = resources.getString(R.string.api_xkcd_localization)
-        Crashlytics.setString("locale", Locale.getDefault().toString())
+        if (!BuildConfig.DEBUG) {
+            Crashlytics.setString("locale", Locale.getDefault().toString())
+        }
     }
 }

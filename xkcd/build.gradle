@@ -87,6 +87,7 @@ android {
             testProguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project-test.pro'
             applicationIdSuffix ".debug"
             multiDexEnabled false
+            ext.enableCrashlytics = false
         }
 
         release {
