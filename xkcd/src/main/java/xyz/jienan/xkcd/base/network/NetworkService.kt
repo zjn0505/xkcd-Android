@@ -15,8 +15,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
 import xyz.jienan.xkcd.BuildConfig
 import xyz.jienan.xkcd.XkcdApplication
-import xyz.jienan.xkcd.model.XkcdPic
-import xyz.jienan.xkcd.model.XkcdPicDeserializer
 import java.io.File
 import java.io.IOException
 import java.security.KeyStore
@@ -57,8 +55,7 @@ object NetworkService {
 
         val builder = Retrofit.Builder()
                 .client(client)
-                .addConverterFactory(GsonConverterFactory.create(
-                        GsonBuilder().registerTypeAdapter(XkcdPic::class.java, XkcdPicDeserializer()).create()))
+                .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
         xkcdAPI = builder.baseUrl(XKCD_BASE_URL).build().create(XkcdAPI::class.java)
         whatIfAPI = builder.baseUrl(WHAT_IF_BASE_URL).build().create(WhatIfAPI::class.java)

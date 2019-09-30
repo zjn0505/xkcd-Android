@@ -88,7 +88,7 @@ class SimpleInfoDialogFragment : DialogFragment() {
 
     fun setExtraExplain(string: String?) {
         pbLoading.visibility = View.GONE
-        if (!TextUtils.isEmpty(string)) {
+        if (!string.isNullOrBlank()) {
             ExplainLinkUtil.setTextViewHTML(tvExplain, string)
         }
     }

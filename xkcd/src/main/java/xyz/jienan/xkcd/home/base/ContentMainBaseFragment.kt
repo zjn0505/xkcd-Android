@@ -28,7 +28,6 @@ import androidx.viewpager.widget.ViewPager.SCROLL_STATE_IDLE
 import com.squareup.seismic.ShakeDetector
 import kotlinx.android.synthetic.main.fab_sub_icons.*
 import kotlinx.android.synthetic.main.fragment_comic_main.*
-import timber.log.Timber
 import xyz.jienan.xkcd.Const.*
 import xyz.jienan.xkcd.R
 import xyz.jienan.xkcd.base.BaseFragment
@@ -165,7 +164,6 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
         val views = mutableListOf<View>()
         for (index in 0 until toolbar.childCount) {
             val child = toolbar.getChildAt(index)
-            Timber.d("toool $child")
             if (child is TextView) {
                 views.add(child)
             }
