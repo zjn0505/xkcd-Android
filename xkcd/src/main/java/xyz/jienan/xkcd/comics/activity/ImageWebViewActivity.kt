@@ -22,6 +22,7 @@ import xyz.jienan.xkcd.base.BaseActivity
 import xyz.jienan.xkcd.model.XkcdModel
 import xyz.jienan.xkcd.model.XkcdPic
 import xyz.jienan.xkcd.ui.updateSettings
+import java.util.*
 
 
 class ImageWebViewActivity : BaseActivity() {
@@ -30,11 +31,10 @@ class ImageWebViewActivity : BaseActivity() {
 
         private const val PERMALINK_1663 = "xkcd_permalink_1663"
 
-        private val githubIoHosts = arrayOf(826L, 1110L, 1416L, 1525L, 1608L, 1663L, 2067L, 2131L, 2198L)
-
-        fun startActivity(context: Context, num: Long) {
+        fun startActivity(context: Context, num: Long, translationMode: Boolean) {
             val intent = Intent(context, ImageWebViewActivity::class.java)
             intent.putExtra("index", num)
+            intent.putExtra("translationMode", translationMode)
             context.startActivity(intent)
         }
     }
@@ -99,7 +99,6 @@ class ImageWebViewActivity : BaseActivity() {
     }
 
     private fun loadXkcdInWebView(xkcd: XkcdPic) {
-        var script = ""
         val url = when (xkcd.num) {
             1663L -> {
                 if (permalink1663.isNullOrBlank()) {
@@ -108,32 +107,17 @@ class ImageWebViewActivity : BaseActivity() {
                     "https://zjn0505.github.io/xkcd-undressed/${xkcd.num}/#${permalink1663}"
                 }
             }
-            in githubIoHosts -> "https://zjn0505.github.io/xkcd-undressed/${xkcd.num}/"
-            else -> {
-                script = """
-                    javascript:
-                    var toDelete = [];
-                    toDelete.push(document.getElementById("topContainer"));
-                    toDelete.push(document.getElementById("bottom"));
-                    toDelete.push(document.getElementById("ctitle"));
-                    toDelete.push(document.getElementsByClassName("comicNav")[0]);
-                    toDelete.push(document.getElementsByClassName("comicNav")[1]);
-                    toDelete.push(document.getElementsByClassName("br")[0]);
-                    toDelete.push(document.getElementsByClassName("br")[1]);
-                    document.getElementById("middleContainer").getElementsByTagName('br')[0].nextSibling.textContent = "";
-                    document.getElementById("middleContainer").getElementsByTagName('br')[1].nextSibling.textContent = "";
-                    toDelete.forEach(function(element) {element.style.display = 'none';});
-                """.trimIndent()
-                "https://xkcd.com/${xkcd.num}"
+            else -> if (!intent.getBooleanExtra("translationMode", false)) {
+                "https://zjn0505.github.io/xkcd-undressed/${xkcd.num}/"
+            } else {
+                Timber.d("region ${Locale.getDefault()}")
+                "https://zjn0505.github.io/xkcd-undressed/${xkcd.num}/?region=${Locale.getDefault().toString().replace("#", "_")}"
             }
         }
         webView.webViewClient = object : WebViewClient() {
 
             override fun onPageFinished(view: WebView, url: String) {
                 this@ImageWebViewActivity.title = view.title
-                if (script.isNotBlank()) {
-                    view.loadUrl(script)
-                }
                 Timber.d("Current page $url")
                 if (url.contains("/1663/#".toRegex())) {
                     if (permalink1663.isNullOrBlank()) {

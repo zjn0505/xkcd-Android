@@ -267,7 +267,7 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
         val prefInteractive = sharedPref.getBoolean(PREF_XKCD_INTERACTIVE, true)
 
         if (interactiveComics.contains(currentPic!!.num.toInt()) && prefInteractive) {
-            ImageWebViewActivity.startActivity(activity!!, currentPic!!.num)
+            ImageWebViewActivity.startActivity(activity!!, currentPic!!.num, translationMode == 1)
         } else {
             ImageDetailPageActivity.startActivity(activity!!, currentPic!!.targetImg, currentPic!!.num)
             activity!!.overridePendingTransition(R.anim.fadein, R.anim.fadeout)
