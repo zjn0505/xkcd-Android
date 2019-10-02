@@ -5,7 +5,7 @@ import androidx.core.text.HtmlCompat
 import com.google.gson.annotations.SerializedName
 import io.objectbox.annotation.Entity
 import io.objectbox.annotation.Id
-import io.objectbox.annotation.NameInDb
+import io.objectbox.annotation.Uid
 import xyz.jienan.xkcd.model.util.XkcdSideloadUtils
 import java.io.Serializable
 
@@ -20,7 +20,7 @@ data class XkcdPic constructor(
         val day: String = "",
         @Id(assignable = true)
         var num: Long = 0L,
-        @NameInDb("alt")
+        @Uid(9035471003790175147L)
         @SerializedName("alt")
         val _alt: String = "",
         var width: Int = 0,
@@ -29,7 +29,7 @@ data class XkcdPic constructor(
         var hasThumbed: Boolean = false,
         @io.objectbox.annotation.Transient
         val thumbCount: Long = 0L,
-        @NameInDb("title")
+        @Uid(7047913805660868881L)
         @SerializedName("title")
         val _title: String = "",
         var img: String = "",
