@@ -11,16 +11,17 @@ import java.util.regex.Pattern
 
 object XkcdExplainUtil {
 
-    @Throws(IOException::class) // TODO Add test: 2207
+    @Throws(IOException::class) // TODO Add test: 2207, 2198
     fun getExplainFromHtml(responseBody: ResponseBody, url: String): String? {
         val doc = Jsoup.parse(responseBody.string())
         doc.setBaseUri(url)
 
         val h2Explain = doc.selectFirst("h2:has(span#Explanation)")
-
-        val nextH2Element = h2Explain.siblingElements().select("h2").first()
+        val nextH2Element = h2Explain.nextElementSiblings().select("h2").first()
 
         val h2ExplainElementIndex = h2Explain.parent().childNodes().indexOf(h2Explain)
+
+
         val nextH2ElementIndex = h2Explain.parent().childNodes().indexOf(nextH2Element)
 
         val explainNodes = h2Explain.parent().childNodes().subList(h2ExplainElementIndex + 1, nextH2ElementIndex)
