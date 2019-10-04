@@ -62,11 +62,7 @@ object BoxManager {
     /********** xkcd  */
 
     fun getXkcd(index: Long): XkcdPic? {
-        return try {
-            xkcdBox.get(index)
-        } catch (e : Exception) {
-            null
-        }
+        return xkcdBox.get(index)
     }
 
     fun saveXkcd(xkcdPic: XkcdPic) {
