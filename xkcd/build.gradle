@@ -128,16 +128,6 @@ android {
     }
 }
 
-configurations.all {
-    resolutionStrategy.eachDependency { details ->
-        if (details.requested.group == 'androidx.arch.core'
-                && !details.requested.name.contains('core-runtime')) {
-            details.useVersion "2.0.1"
-        }
-
-    }
-}
-
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
@@ -191,15 +181,15 @@ dependencies {
 
     testImplementation 'junit:junit:4.12'
 
-//    androidTestImplementation "androidx.arch.core:core-testing:2.0.1"
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation "androidx.arch.core:core-testing:2.1.0"
+    androidTestImplementation "androidx.test.ext:junit:1.1.1"
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     androidTestImplementation "androidx.test.espresso:espresso-intents:3.2.0"
     androidTestImplementation "androidx.test.espresso:espresso-contrib:3.2.0"
     androidTestImplementation(
-            'org.hamcrest:hamcrest-core:1.1',
-            'org.hamcrest:hamcrest-integration:1.1',
-            'org.hamcrest:hamcrest-library:1.1'
+            'org.hamcrest:hamcrest-core:1.3',
+            'org.hamcrest:hamcrest-integration:1.3',
+            'org.hamcrest:hamcrest-library:1.3'
     )
 
 //    implementation 'androidx.multidex:multidex:2.0.1'
