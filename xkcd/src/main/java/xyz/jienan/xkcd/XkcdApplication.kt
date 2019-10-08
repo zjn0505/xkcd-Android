@@ -4,8 +4,6 @@ import android.app.Application
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
-import com.crashlytics.android.Crashlytics
-import com.google.firebase.messaging.FirebaseMessaging
 import xyz.jienan.xkcd.base.glide.GlideImageLoader
 import xyz.jienan.xkcd.model.MyObjectBox
 import xyz.jienan.xkcd.model.XkcdModel
@@ -13,7 +11,6 @@ import xyz.jienan.xkcd.model.persist.BoxManager
 import xyz.jienan.xkcd.model.persist.SharedPrefManager
 import xyz.jienan.xkcd.model.util.XkcdSideloadUtils
 import xyz.jienan.xkcd.ui.xkcdimageview.ImageLoaderFactory
-import java.util.*
 
 /**
  * Created by Jienan on 2018/3/2.
@@ -26,6 +23,7 @@ class XkcdApplication : Application() {
         if (!DebugUtils.init()) {
             return
         }
+        FlavorUtils.init(this)
         updateLocale()
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
         AppCompatDelegate.setDefaultNightMode((PreferenceManager
@@ -40,17 +38,9 @@ class XkcdApplication : Application() {
         SharedPrefManager.init(this)
 
         ImageLoaderFactory.initialize(GlideImageLoader.with(this))
-        FirebaseMessaging.getInstance().apply {
-            subscribeToTopic(FCM_TOPIC_NEW_COMICS)
-            subscribeToTopic(FCM_TOPIC_NEW_WHAT_IF)
-        }
     }
 
     companion object {
-
-        private const val FCM_TOPIC_NEW_COMICS = "new_comics"
-
-        private const val FCM_TOPIC_NEW_WHAT_IF = "new_what_if"
 
         var instance: XkcdApplication? = null
             private set
@@ -63,8 +53,6 @@ class XkcdApplication : Application() {
 
     private fun updateLocale() {
         XkcdModel.localizedUrl = resources.getString(R.string.api_xkcd_localization)
-        if (!BuildConfig.DEBUG) {
-            Crashlytics.setString("locale", Locale.getDefault().toString())
-        }
+        FlavorUtils.updateLocale()
     }
 }

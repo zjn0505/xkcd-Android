@@ -6,14 +6,17 @@ import io.objectbox.BoxStore;
 import timber.log.Timber;
 
 public class DebugUtils {
-    public static boolean init() {
+    static boolean init() {
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
         }
         return true;
     }
 
-    public static void debugDB(Context context, BoxStore boxStore) {
+    static void debugDB(Context context, BoxStore boxStore) {
         // no-ops
+    }
+
+    static void updateLocale() {
     }
 }

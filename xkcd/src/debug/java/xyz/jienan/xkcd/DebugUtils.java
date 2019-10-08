@@ -10,7 +10,7 @@ import io.objectbox.android.AndroidObjectBrowser;
 import timber.log.Timber;
 
 public class DebugUtils {
-    public static boolean init() {
+    static boolean init() {
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
         }
@@ -23,5 +23,8 @@ public class DebugUtils {
 
             TooLargeTool.startLogging((Application) context);
         }
+    }
+
+    static void updateLocale() {
     }
 }

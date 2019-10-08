@@ -4,8 +4,6 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
-import com.google.firebase.analytics.FirebaseAnalytics
-import xyz.jienan.xkcd.Const.FIRE_UX_ACTION
 import xyz.jienan.xkcd.Const.PREF_FONT
 import xyz.jienan.xkcd.R
 import xyz.jienan.xkcd.comics.activity.ImageDetailPageActivity
@@ -17,8 +15,6 @@ import xyz.jienan.xkcd.home.MainActivity
 
 abstract class BaseActivity : AppCompatActivity() {
 
-    private val mFirebaseAnalytics by lazy { FirebaseAnalytics.getInstance(this) }
-
     protected val sharedPreferences: SharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,11 +22,8 @@ abstract class BaseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
     }
 
-    @JvmOverloads
     protected fun logUXEvent(event: String, bundle: Bundle? = null) {
-        mFirebaseAnalytics.logEvent(FIRE_UX_ACTION, (bundle ?: Bundle()).apply {
-            putString(FIRE_UX_ACTION, event)
-        })
+        // analytics disabled
     }
 
     private fun setTheme() {
