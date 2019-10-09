@@ -34,7 +34,7 @@ deploy:
     tags: true
     all_branches: true
 after_deploy:
-- mkdir xkcd/build/outputs/mapping/release/upload
+- mkdir -p xkcd/build/outputs/mapping/release/upload
 - mv xkcd/build/outputs/mapping/foss/release/mapping.txt "xkcd/build/outputs/mapping/release/upload/mapping_foss_${TRAVIS_TAG:5}.txt"
 - mv xkcd/build/outputs/mapping/proprietary/release/mapping.txt "xkcd/build/outputs/mapping/release/upload/mapping_proprietary_${TRAVIS_TAG:5}.txt"
 - dropbox-deployment
