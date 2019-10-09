@@ -12,7 +12,6 @@ if (!getGradle().getStartParameter().getTaskRequests()
     apply plugin: 'com.didiglobal.booster'
 }
 
-
 andResGuard {
     mappingFile = file("./resource_mapping.txt")
     useSign = true
@@ -197,6 +196,12 @@ dependencies {
     )
 
 //    implementation 'androidx.multidex:multidex:2.0.1'
+}
+
+gradle.projectsEvaluated {
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << "-Xlint:unchecked"
+    }
 }
 
 buildscript {
