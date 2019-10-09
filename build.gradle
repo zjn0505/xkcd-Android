@@ -2,7 +2,7 @@
 
 buildscript {
     ext.objectboxVersion = '2.3.4'
-    ext.booster_version = '0.24.0'
+    ext.booster_version = '0.25.0-SNAPSHOT'
     repositories {
         google()
         jcenter()

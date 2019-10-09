@@ -7,7 +7,11 @@ if (getGradle().getStartParameter().getTaskRequests()
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'com.didiglobal.booster'
+if (!getGradle().getStartParameter().getTaskRequests()
+        .toString().endsWith("AndroidTest")) {
+    apply plugin: 'com.didiglobal.booster'
+}
+
 
 andResGuard {
     mappingFile = file("./resource_mapping.txt")
