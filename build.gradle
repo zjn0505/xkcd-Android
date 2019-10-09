@@ -2,12 +2,11 @@
 
 buildscript {
     ext.objectboxVersion = '2.3.4'
-    ext.booster_version = '0.25.0-SNAPSHOT'
+    ext.booster_version = '0.25.0'
     repositories {
         google()
         jcenter()
         maven { url 'https://maven.fabric.io/public' }
-        maven { url 'https://oss.sonatype.org/content/repositories/public' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.5.1'
@@ -27,10 +26,8 @@ allprojects {
         google()
         jcenter()
         maven { url "https://jitpack.io" }
-        maven { url "https://dl.bintray.com/piasy/maven" }
         maven { url 'https://maven.google.com/' }
-        maven { url 'https://oss.sonatype.org/content/repositories/public' }
-        maven { url 'https://dl.bintray.com/guardian/android' }
+        maven { url 'https://dl.bintray.com/guardian/android' } // TooLargeTool
     }
 }
 
