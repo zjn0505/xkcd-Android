@@ -28,12 +28,13 @@ deploy:
   api_key:
     secure: 2JNGJxl5VSgZkU4Fuvw8Cj1lulQJX6tMJQbmdZ6lZ4XeG1vI5d3Qt/xLI5s8h/ahXDSFZwA/HefJ2r6MxSSs4sAtpXjMEkyudLEqetbYV/0Y7URmgC2M97YfObsRD4eEM238jOkP/b9SLgzZ9K8MDv2YNhfztG+XT5rtVQcr+Vw3EJ4omvkmtj6MMClCii7fFhCtQOUljusFe+QzdwlbeuPhltO1LJ+TczNmP3A0+f3iHA30TIQAm15NFhbHI8Bd/DmhljLVRMlAEIrk8pAC2dRFURsheVBTQWricyXP/+gdHEtD8HuWZHOlNhs7KiBCgKEMpzI7gedCJWPSv5CNO00iiJtCEj3AlVEjjp5RyNsSM9cvqwRjmZgNH1Cpd6GN9ifjzzjiD9402kk8Cwl9WtEPX0ZZ80kM8fd/Ce+qAVlC3bKnU/4QX8OAWQfqMmXtBdDLGCIQqGW1LD3ntPMu62i0AUzEcdXSTJ0rerpcBWBKTuFvtA2Q5Cm2erOC+NpOSmVSnpKhn/8EHiZDzRXe8VAhaoNrvEgEbSOApzRAgEZ0HHzh6Pcx/2uaPiNgxTJmeo3ccdI1MC5rvOkpkPYgitRdUYILI8a1sCGS3k0BkwEoZxt4jv1ulQHBEaAKVppK24IoAB/PQcBIWqxEonIcnZ3loBinXgPxEEdqQ2qQrhc=
   file_glob: true
-  file: xkcd/build/outputs/apk/release/*.apk
+  file: xkcd/build/outputs/apk/*/release/*.apk
   skip_cleanup: true
   on:
     tags: true
     all_branches: true
 after_deploy:
 - mkdir xkcd/build/outputs/mapping/release/upload
-- mv xkcd/build/outputs/mapping/release/mapping.txt "xkcd/build/outputs/mapping/release/upload/mapping_${TRAVIS_TAG:5}.txt"
+- mv xkcd/build/outputs/mapping/foss/release/mapping.txt "xkcd/build/outputs/mapping/release/upload/mapping_foss_${TRAVIS_TAG:5}.txt"
+- mv xkcd/build/outputs/mapping/proprietary/release/mapping.txt "xkcd/build/outputs/mapping/release/upload/mapping_proprietary_${TRAVIS_TAG:5}.txt"
 - dropbox-deployment
