@@ -6,6 +6,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposables
 import io.reactivex.schedulers.Schedulers
+import retrofit2.HttpException
 import timber.log.Timber
 import xyz.jienan.xkcd.Const.PREF_XKCD_TRANSLATION
 import xyz.jienan.xkcd.comics.contract.SingleComicContract
@@ -141,7 +142,13 @@ class SingleComicPresenter(private val view: SingleComicContract.View, private v
                     } else {
                         view.translationMode = 0
                     }
-                }, { Timber.e(it) })
+                }, {
+                    if (it is HttpException && it.code() == 400) {
+                        Timber.i("Translation not available for ${xkcdPic.num}")
+                    } else {
+                        Timber.e(it)
+                    }
+                })
                 .also {
                     loadLocalizedPicDisposable = it
                     compositeDisposable.add(it)
