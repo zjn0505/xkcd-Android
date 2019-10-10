@@ -22,7 +22,7 @@ before_install:
 - rvm install 2.2.6
 - gem install dropbox-deployment
 script:
-- "./gradlew resguardRelease"
+- "./gradlew assembleFossRelease resguardProprietaryRelease"
 deploy:
   provider: releases
   api_key:
