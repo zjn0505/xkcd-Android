@@ -111,6 +111,7 @@ android {
     productFlavors {
         foss {
             dimension "distribution"
+            ext.enableCrashlytics = false
         }
         proprietary {
             dimension "distribution"
