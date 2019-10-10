@@ -215,15 +215,11 @@ buildscript {
     }
 }
 
+println "Task exec " + getGradle().getStartParameter().getTaskRequests().toString()
+
 apply plugin: 'com.getkeepsafe.dexcount'
 if (getGradle().getStartParameter().getTaskRequests()
         .toString().contains("Proprietary")) {
     apply plugin: 'com.google.gms.google-services'
-}
-android.applicationVariants.all { variant ->
-    if (variant.name == 'foss') {
-        project.tasks.getByName('process' + variant.name.capitalize() + 'GoogleServices').enabled = false
-        project.tasks.getByName('process' + variant.name.capitalize() + 'ReleaseGoogleServices').enabled = false
-    }
 }
 apply plugin: 'io.objectbox'
