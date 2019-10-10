@@ -60,8 +60,8 @@ android {
         applicationId "xyz.jienan.xkcd"
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 49
-        versionName "2.6.9"
+        versionCode 50
+        versionName "2.6.10"
         vectorDrawables.useSupportLibrary = true
         resConfigs "zh-rCN"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
