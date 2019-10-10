@@ -1,7 +1,11 @@
+ext {
+    isProprietary = getGradle().getStartParameter().getTaskRequests().toString().contains("Proprietary")
+}
+
+
 apply plugin: 'AndResGuard'
 apply plugin: 'com.android.application'
-if (getGradle().getStartParameter().getTaskRequests()
-        .toString().contains("Proprietary")) {
+if (isProprietary) {
     apply plugin: 'io.fabric'
 }
 apply plugin: 'kotlin-android'
@@ -130,6 +134,10 @@ android {
     lintOptions {
         abortOnError true
     }
+
+    aaptOptions {
+        cruncherEnabled = isProprietary
+    }
 }
 
 dependencies {
@@ -218,8 +226,7 @@ buildscript {
 println "Task exec " + getGradle().getStartParameter().getTaskRequests().toString()
 
 apply plugin: 'com.getkeepsafe.dexcount'
-if (getGradle().getStartParameter().getTaskRequests()
-        .toString().contains("Proprietary")) {
+if (isProprietary) {
     apply plugin: 'com.google.gms.google-services'
 }
 apply plugin: 'io.objectbox'
