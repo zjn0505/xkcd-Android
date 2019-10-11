@@ -1,9 +1,10 @@
 ext {
-    isProprietary = getGradle().getStartParameter().getTaskRequests().toString().contains("Proprietary")
+    isProprietary = rootProject.ext.isProprietary
 }
 
-
-apply plugin: 'AndResGuard'
+if (isProprietary) {
+    apply plugin: 'AndResGuard'
+}
 apply plugin: 'com.android.application'
 if (isProprietary) {
     apply plugin: 'io.fabric'
@@ -16,38 +17,40 @@ if (!getGradle().getStartParameter().getTaskRequests()
     apply plugin: 'com.didiglobal.booster'
 }
 
-andResGuard {
-    mappingFile = file("./resource_mapping.txt")
-    useSign = true
-    keepRoot = false
-    mergeDuplicatedRes = true
-    fixedResName = "x"
-    whiteList = [
-            // for icon
-            "R.mipmap.ic_launcher",
-            "R.mipmap.ic_launcher_round",
-            // for fabric
-            "R.string.com.crashlytics.*",
-            // for google-services
-            "R.string.default_web_client_id",
-            "R.string.firebase_database_url",
-            "R.string.gcm_defaultSenderId",
-            "R.string.google_api_key",
-            "R.string.google_app_id",
-            "R.string.google_crash_reporting_api_key",
-            "R.string.google_storage_bucket",
-            "R.string.project_id",
+if (isProprietary) {
+    andResGuard {
+        mappingFile = file("./resource_mapping.txt")
+        useSign = true
+        keepRoot = false
+        mergeDuplicatedRes = true
+        fixedResName = "x"
+        whiteList = [
+                // for icon
+                "R.mipmap.ic_launcher",
+                "R.mipmap.ic_launcher_round",
+                // for fabric
+                "R.string.com.crashlytics.*",
+                // for google-services
+                "R.string.default_web_client_id",
+                "R.string.firebase_database_url",
+                "R.string.gcm_defaultSenderId",
+                "R.string.google_api_key",
+                "R.string.google_app_id",
+                "R.string.google_crash_reporting_api_key",
+                "R.string.google_storage_bucket",
+                "R.string.project_id",
 
-            "R.string.arrow_1",
-            "R.string.arrow_10",
-            "R.string.arrow_30"
-    ]
-    compressFilePattern = [
-            "*.png",
-            "*.jpg",
-            "*.jpeg",
-            "*.gif",
-    ]
+                "R.string.arrow_1",
+                "R.string.arrow_10",
+                "R.string.arrow_30"
+        ]
+        compressFilePattern = [
+                "*.png",
+                "*.jpg",
+                "*.jpeg",
+                "*.gif",
+        ]
+    }
 }
 
 android {
@@ -153,8 +156,8 @@ dependencies {
     implementation 'androidx.preference:preference:1.1.0'
     implementation 'androidx.media:media:1.1.0'
     implementation 'androidx.exifinterface:exifinterface:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0-beta04'
-    implementation 'com.google.android.material:material:1.1.0-alpha10'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0-beta05'
+    implementation 'com.google.android.material:material:1.1.0-beta01'
     implementation 'androidx.percentlayout:percentlayout:1.0.0'
     implementation 'org.jsoup:jsoup:1.12.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.0'

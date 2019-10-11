@@ -3,6 +3,7 @@
 buildscript {
     ext.objectboxVersion = '2.3.4'
     ext.booster_version = '0.25.0'
+    ext.isProprietary = getGradle().getStartParameter().getTaskRequests().toString().contains("Proprietary")
     repositories {
         google()
         jcenter()
@@ -16,7 +17,10 @@ buildscript {
         classpath "com.tencent.mm:AndResGuard-gradle-plugin:1.2.17"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.50"
         classpath "com.didiglobal.booster:booster-gradle-plugin:$booster_version"
-        classpath "com.didiglobal.booster:booster-task-all:$booster_version"
+        if (isProprietary) {
+            // https://github.com/didi/booster/issues/103
+            classpath "com.didiglobal.booster:booster-task-all:$booster_version"
+        }
         classpath "com.didiglobal.booster:booster-transform-all:$booster_version"
     }
 }
