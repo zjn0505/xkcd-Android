@@ -1,3 +1,7 @@
+---
+layout: default
+---
+
 # Xkcd-Android  [![Build Status][1]][2] [![codebeat badge][3]][4] [![Latest xkcd][5]](https://xkcd.com)
 
 [1]: https://travis-ci.org/zjn0505/Xkcd-Android.svg?branch=master "Travis CI build status icon"
