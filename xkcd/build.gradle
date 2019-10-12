@@ -90,6 +90,20 @@ android {
                 keyPassword project.hasProperty("ALIAS_PASS") ? ALIAS_PASS : (System.getenv("ALIAS_PASS") ? System.getenv("ALIAS_PASS") : properties.getProperty("ALIAS_PASS"))
             }
         }
+        releaseFossConfig {
+            File key = file("../key.jks")
+            if (key.exists()) {
+                storeFile key
+                Properties properties = new Properties()
+                File localProperty = file('../local.properties')
+                if (localProperty.exists())
+                    properties.load(localProperty.newDataInputStream())
+                storePassword project.hasProperty("KEYSTORE_PASS") ? KEYSTORE_PASS : (System.getenv("KEYSTORE_PASS") ? System.getenv("KEYSTORE_PASS") : properties.getProperty("KEYSTORE_PASS"))
+                keyAlias project.hasProperty("ALIAS_NAME") ? ALIAS_NAME : (System.getenv("ALIAS_NAME") ? System.getenv("ALIAS_NAME") : properties.getProperty("ALIAS_NAME"))
+                keyPassword project.hasProperty("ALIAS_PASS") ? ALIAS_PASS : (System.getenv("ALIAS_PASS") ? System.getenv("ALIAS_PASS") : properties.getProperty("ALIAS_PASS"))
+            }
+            v2SigningEnabled false
+        }
     }
 
     buildTypes {
@@ -110,7 +124,12 @@ android {
             zipAlignEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.releaseConfig
+            if (isProprietary) {
+                signingConfig signingConfigs.releaseConfig
+            } else {
+                // https://gitlab.com/fdroid/fdroidserver/issues/697#note_229584776
+                signingConfig signingConfigs.releaseFossConfig
+            }
             multiDexEnabled false
         }
     }
