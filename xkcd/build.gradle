@@ -56,7 +56,8 @@ if (isProprietary) {
 android {
     packagingOptions {
         exclude "/META-INF/*.kotlin_module"
-        exclude "/kotlin/*/.kotlin_metadata"
+        exclude "/kotlinx/coroutines/*.kotlin_metadata"
+        exclude "/kotlinx/coroutines/*/*.kotlin_metadata"
         exclude "**/kotlin/**"
         exclude "/META-INF/*.version"
         exclude "/META-INF/CHANGES"
