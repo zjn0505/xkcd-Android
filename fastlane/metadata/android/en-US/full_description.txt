@@ -1,0 +1,13 @@
+Kudos to Randall, glory to all xkcd lovers.
+
+This is yet another xkcd comics and what if articles viewer, while I'm refining it to become the best one, an easy and lite app with best in-app browsing experience.
+
+ This app has so far:
+ - the best support to all those large xkcd comics. e.g. No. 657, 1040, and the toughest No. 980.
+ - native support for interactive comics like 1608, 2198, etc
+ - the best experience to read what if articles on mobile screen.
+ - the most fantastic list to browse xkcd archive.
+ - the quickest and most convenient way to check Explainxkcd, just hold and tap.
+ - the adorable favorite and thumb-up feature to your beloved comics and articles.
+ 
+I am actively improving this app and related services, and it is fully open-sourced for every aspect of code on Github.

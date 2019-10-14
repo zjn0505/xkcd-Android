@@ -1,0 +1,2 @@
+- Add interactive comics support. 825, 1110, 1416, 1525, 1608, 1663, 2067, 2131, 2198 now can be played within this application.
+- Add bookmark, double tap on the top bar, on the, e.g. "xkcd 1210",  will add a bookmark to current comic, long press on the top bar will bring you back to this comic. The same for what if articles.

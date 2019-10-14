@@ -1,0 +1,3 @@
+- Gandalf switch in xkcd 1608.
+- Trying to fix a critical issue but maybe it's still there.
+- Fix many other issues.
