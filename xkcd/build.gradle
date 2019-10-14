@@ -112,7 +112,7 @@ android {
             zipAlignEnabled true
             shrinkResources true
             useProguard false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'proguard-rules-debug.pro'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'proguard-rules-no-obfuscate.pro'
             testProguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project-test.pro'
             applicationIdSuffix ".debug"
             multiDexEnabled false
@@ -123,12 +123,13 @@ android {
             minifyEnabled true
             zipAlignEnabled true
             shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             if (isProprietary) {
                 signingConfig signingConfigs.releaseConfig
+                proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             } else {
                 // https://gitlab.com/fdroid/fdroidserver/issues/697#note_229584776
                 signingConfig signingConfigs.releaseFossConfig
+                proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro', 'proguard-rules-no-obfuscate.pro'
             }
             multiDexEnabled false
         }
