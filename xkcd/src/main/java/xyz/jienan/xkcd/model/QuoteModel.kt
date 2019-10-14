@@ -23,7 +23,10 @@ object QuoteModel {
     private fun queryNewQuote(quote: Quote) =
             NetworkService.quoteAPI.quotes
                     .subscribeOn(Schedulers.io())
-                    .doOnNext { quotes -> quotes.remove(quote) }
+                    .map { quotes ->
+                        quotes.remove(quote)
+                        quotes
+                    }
                     .map { quotes -> quotes[Random().nextInt(quotes.size)] }
                     .doOnNext { result -> result.timestamp = System.currentTimeMillis() }
 }

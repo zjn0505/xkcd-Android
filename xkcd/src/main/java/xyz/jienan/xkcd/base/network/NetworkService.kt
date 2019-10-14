@@ -41,6 +41,7 @@ object NetworkService {
         val httpClientBuilder = OkHttpClient.Builder()
                 .addNetworkInterceptor(NetworkCacheInterceptor())
                 .addInterceptor(ApplicationCacheInterceptor())
+                .addNetworkInterceptor(SelfHostInterceptor())
                 .cache(Cache(File(XkcdApplication.instance!!.cacheDir, "responses"), 10 * 1024 * 1024L))
 
         if (BuildConfig.DEBUG) {
@@ -99,9 +100,9 @@ object NetworkService {
         @Throws(IOException::class)
         override fun intercept(chain: Interceptor.Chain): Response {
             val request = chain.request()
-            val cacheable = request.header("cacheable")
+            val cacheable = request.header(HEADER_CACHEABLE)
             val originalResponse = chain.proceed(request)
-            val builder = originalResponse.newBuilder().removeHeader("pragma").removeHeader("cacheable")
+            val builder = originalResponse.newBuilder().removeHeader("pragma").removeHeader(HEADER_CACHEABLE)
             return if (TextUtils.isEmpty(cacheable)) {
                 builder.header(HEADER_CACHE_CONTROL, "no-cache").build()
             } else {
@@ -110,6 +111,20 @@ object NetworkService {
         }
     }
 
+    /**
+     * Interceptor to add headers to requests to self hosted endpoints
+     */
+    private class SelfHostInterceptor : Interceptor {
+        @Throws(IOException::class)
+        override fun intercept(chain: Interceptor.Chain): Response {
+            val request = chain.request()
+            return if (SELF_HOST_ENDPOINTS.contains(request.url().host())) {
+                chain.proceed(request.newBuilder().addHeader("x-api-client", HEADER_VAL_CLIENT).build())
+            } else {
+                chain.proceed(request)
+            }
+        }
+    }
 
     /**
      * Enable TLS on the OKHttp builder by setting a custom SocketFactory
@@ -187,8 +202,12 @@ const val WHAT_IF_TOP               = "https://api.jienan.xyz/xkcd/what-if-top"
 const val XKCD_EXPLAIN_URL          = "https://www.explainxkcd.com/wiki/index.php/"
 const val XKCD_BASE_URL             = "https://xkcd.com/"
 const val XKCD_TOP_SORT_BY_THUMB_UP = "thumb-up"
+const val HEADER_VAL_CLIENT = "xkcd-Android-${BuildConfig.FLAVOR}-${BuildConfig.VERSION_NAME}"
+const val HEADER_CACHEABLE = "cacheable"
 
 private const val WHAT_IF_BASE_URL  = "https://what-if.xkcd.com/"
 private const val DEFAULT_READ_TIMEOUT = 30 // in seconds
 private const val DEFAULT_CONNECT_TIMEOUT = 15 // in seconds
 private const val HEADER_CACHE_CONTROL = "Cache-Control"
+private val SELF_HOST_ENDPOINTS = listOf("api.jienan.xyz", "xkcd.jienan.xyz")
+
