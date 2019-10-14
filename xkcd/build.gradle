@@ -123,13 +123,11 @@ android {
             minifyEnabled true
             zipAlignEnabled true
             shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             if (isProprietary) {
                 signingConfig signingConfigs.releaseConfig
-                proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             } else {
-                // https://gitlab.com/fdroid/fdroidserver/issues/697#note_229584776
-                signingConfig signingConfigs.releaseFossConfig
-                proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro', 'proguard-rules-no-obfuscate.pro'
+                signingConfig signingConfigs.releaseFossConfig // https://gitlab.com/fdroid/fdroidserver/issues/697#note_229584776
             }
             multiDexEnabled false
         }
