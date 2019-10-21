@@ -24,7 +24,7 @@
 - **Dark theme**
 
 
-So, I just put all these great services and modules together, and offering the best experience to explore xkcd comic on mobile phone.
+So, I just put all these great services and modules together, and offering the best experience to explore xkcd comic on mobile phone<sup>[citation needed]</sup>.
 
 Kudos to Randall, and all xkcd lovers.
 
