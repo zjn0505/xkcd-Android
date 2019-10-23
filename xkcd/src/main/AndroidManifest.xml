@@ -7,7 +7,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name="xyz.jienan.xkcd.XkcdApplication"
+        android:name=".XkcdApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"

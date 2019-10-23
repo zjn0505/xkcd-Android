@@ -51,7 +51,7 @@ class ComicsMainFragment : ContentMainBaseFragment(), ComicsMainContract.View {
             btnFav.isLiked = isFavorite
             btnThumb.isLiked = hasThumbed
         }
-        fab.show()
+        fab?.show()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
