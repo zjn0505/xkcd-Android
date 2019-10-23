@@ -27,7 +27,8 @@
                 android:gravity="center"
                 android:textSize="25sp"
                 android:textStyle="bold"
-                tools:text="0. Default Image" />
+                tools:text="0. Default Image"
+                android:saveEnabled="false"/>
 
             <ScrollView
                 android:layout_width="match_parent"
@@ -44,7 +45,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_margin="20dp"
-                        android:textSize="15sp" />
+                        android:textSize="15sp"
+                        android:saveEnabled="false"/>
 
                 </LinearLayout>
 
@@ -65,7 +67,8 @@
                     android:paddingTop="8dp"
                     android:paddingBottom="8dp"
                     android:textColor="@color/colorAccent"
-                    android:visibility="gone"/>
+                    android:visibility="gone"
+                    android:saveEnabled="false"/>
 
                 <TextView
                     android:id="@+id/tvCreateDate"
@@ -76,7 +79,8 @@
                     android:fontFamily="@font/xkcd"
                     android:gravity="end"
                     android:textSize="15sp"
-                    tools:text="2017.7.2" />
+                    tools:text="2017.7.2"
+                    android:saveEnabled="false"/>
 
             </LinearLayout>
 
@@ -94,7 +98,8 @@
                 android:layout_margin="20dp"
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/xkcd_pic"
-                android:scaleType="fitCenter" />
+                android:scaleType="fitCenter"
+                android:saveEnabled="false"/>
 
             <Button
                 android:id="@+id/btnReload"
@@ -102,15 +107,16 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="@string/btn_reload"
-                android:visibility="gone" />
+                android:visibility="gone"
+                android:saveEnabled="false"/>
 
         </FrameLayout>
-
 
     </LinearLayout>
 
     <xyz.jienan.xkcd.ui.CircleProgressBar
         android:id="@+id/pbLoading"
-        style="@style/image_progress_bar" />
+        style="@style/image_progress_bar"
+        android:saveEnabled="false"/>
 
 </FrameLayout>

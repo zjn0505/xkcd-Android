@@ -172,6 +172,7 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         pbLoading?.clearAnimation()
         pbLoading?.animation = AnimationUtils.loadAnimation(pbLoading!!.context, R.anim.rotate)
         initGlide()

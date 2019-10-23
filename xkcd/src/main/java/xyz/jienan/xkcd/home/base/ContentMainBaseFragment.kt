@@ -150,6 +150,7 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         btnFav.setOnLikeListener(likeListener)
         btnThumb.setOnLikeListener(likeListener)
         viewPager.adapter = adapter

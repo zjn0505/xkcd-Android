@@ -6,7 +6,8 @@
     <xyz.jienan.xkcd.ui.WhatIfViewPager
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:saveEnabled="false"/>
 
     <include layout="@layout/fab_sub_icons" />
 

@@ -22,7 +22,8 @@
         app:icon_size="24dp"
         app:icon_type="heart"
         tools:visibility="visible"
-        tools:background="@mipmap/ic_launcher"/>
+        tools:background="@mipmap/ic_launcher"
+        android:saveEnabled="false"/>
 
     <xyz.jienan.xkcd.ui.like.LikeButton
         android:id="@+id/btnThumb"
@@ -41,7 +42,8 @@
         app:icon_type="thumb"
         app:persist_liked="true"
         tools:visibility="visible"
-        tools:background="@mipmap/ic_launcher" />
+        tools:background="@mipmap/ic_launcher"
+        android:saveEnabled="false"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
@@ -54,6 +56,7 @@
         android:layout_marginEnd="8dp"
         app:backgroundTint="@color/pink"
         app:srcCompat="@drawable/ic_heart_white"
-        app:useCompatPadding="true" />
+        app:useCompatPadding="true"
+        android:saveEnabled="false"/>
 
 </merge>
