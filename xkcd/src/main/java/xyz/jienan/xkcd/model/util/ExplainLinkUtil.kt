@@ -18,6 +18,7 @@ import xyz.jienan.xkcd.R
 import xyz.jienan.xkcd.comics.activity.ImageDetailPageActivity
 
 import xyz.jienan.xkcd.Const.URI_XKCD_EXPLAIN_EDIT
+import xyz.jienan.xkcd.ui.ToastUtils
 
 object ExplainLinkUtil {
 
@@ -46,7 +47,7 @@ object ExplainLinkUtil {
                         context.startActivity(browserIntent)
                     }
                 } else if (URI_XKCD_EXPLAIN_EDIT == url) {
-                    Toast.makeText(context, R.string.uri_hint_explain_edit, Toast.LENGTH_SHORT).show()
+                    ToastUtils.showToast(context, context.getString(R.string.uri_hint_explain_edit))
                 }
                 if (BuildConfig.DEBUG) {
                     Toast.makeText(context, url, Toast.LENGTH_SHORT).show()

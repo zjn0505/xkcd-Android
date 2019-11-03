@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.DialogFragment
@@ -16,6 +15,7 @@ import xyz.jienan.xkcd.R
 import xyz.jienan.xkcd.model.XkcdPic
 import xyz.jienan.xkcd.model.util.ExplainLinkUtil
 import xyz.jienan.xkcd.ui.CustomMovementMethod
+import xyz.jienan.xkcd.ui.ToastUtils
 
 /**
  * Created by jienanzhang on 09/07/2017.
@@ -59,7 +59,7 @@ class SimpleInfoDialogFragment : DialogFragment() {
 
                             override fun explanationFailed() {
                                 if (dialog.isShowing) {
-                                    Toast.makeText(v.context, R.string.toast_more_explain_failed, Toast.LENGTH_SHORT).show()
+                                    ToastUtils.showToast(v.context, v.context.getString(R.string.toast_more_explain_failed))
                                     pbLoading.visibility = View.GONE
                                     it.setText(R.string.more_on_explainxkcd)
                                     hasExplainedMore = true

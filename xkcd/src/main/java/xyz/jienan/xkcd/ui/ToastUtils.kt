@@ -3,7 +3,10 @@ package xyz.jienan.xkcd.ui
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.Gravity
+import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.res.ResourcesCompat
+import xyz.jienan.xkcd.R
 
 object ToastUtils {
 
@@ -22,6 +25,10 @@ object ToastUtils {
             toast!!.setGravity(position, 0, 0)
         }
 
+        val textView = toast!!.view.findViewById<TextView>(android.R.id.message)
+        if (textView != null) {
+            textView.typeface = ResourcesCompat.getFont(context, R.font.xkcd)
+        }
         toast!!.show()
     }
 
