@@ -25,7 +25,7 @@ object XkcdExplainUtil {
 
         explainNodes.filterIsInstance<Element>().map { it.allElements }.forEach { it.cleanUp() }
 
-        return explainNodes.joinToString("")
+        return explainNodes.joinToString("").updateEndPadding()
     }
 
     fun isXkcdImageLink(url: String): Boolean {
@@ -61,6 +61,7 @@ object XkcdExplainUtil {
             elements.select("p sup").filter { it.toString().contains("<i>citation needed</i>") }.map { it.remove() }
             elements.select("a[href]").forEach { it.refillToFullUrl() }
             elements.select("tbody").flatMap { it.children() }.map { it.append("<br />") }
+            elements.select("dd").map { it.tagName("p") }
         }
     }
 
@@ -72,6 +73,14 @@ object XkcdExplainUtil {
             } else if (href.startsWith("//www.explainxkcd") && href.endsWith("action=edit")) {
                 attr("href", URI_XKCD_EXPLAIN_EDIT)
             }
+        }
+    }
+
+    private fun String.updateEndPadding(): String {
+        return if (!endsWith("p> ")) {
+            plus("<br />")
+        } else {
+            this
         }
     }
 }
