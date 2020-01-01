@@ -1,8 +1,8 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.objectboxVersion = '2.3.4'
-    ext.booster_version = '0.27.0'
+    ext.objectboxVersion = '2.5.0'
+    ext.booster_version = '0.28.0'
     ext.isProprietary = getGradle().getStartParameter().getTaskRequests().toString().contains("Proprietary")
     repositories {
         google()
@@ -32,7 +32,6 @@ allprojects {
         maven { url "https://jitpack.io" }
         maven { url 'https://maven.google.com/' }
         maven { url 'https://dl.bintray.com/guardian/android' } // TooLargeTool
-        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     }
 }
 
