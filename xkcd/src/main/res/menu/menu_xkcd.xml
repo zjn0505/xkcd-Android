@@ -7,6 +7,7 @@
         android:title="@string/action_xkcd_list"
         android:icon="@drawable/ic_xkcd_list"
         app:showAsAction="always" />
+
     <item
         android:id="@+id/action_specific"
         android:orderInCategory="2"
@@ -14,8 +15,15 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_go_explain"
+        android:id="@+id/action_go_xk3d"
         android:orderInCategory="11"
+        android:title="@string/action_xk3d"
+        android:visible="false"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_go_explain"
+        android:orderInCategory="12"
         android:title="@string/action_explain"
         app:showAsAction="never" />
 </menu>

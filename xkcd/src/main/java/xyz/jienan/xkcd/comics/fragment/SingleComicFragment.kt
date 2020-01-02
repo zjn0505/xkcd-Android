@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
 import android.view.HapticFeedbackConstants.LONG_PRESS
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.AnimationUtils
@@ -218,6 +219,11 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
         super.onSaveInstanceState(outState)
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        if (ind <= 880) menu.findItem(R.id.action_go_xk3d).isVisible = true
+        super.onPrepareOptionsMenu(menu)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (currentPic == null) {
             return false
@@ -236,6 +242,11 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
                 val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(XKCD_BASE_URL + currentPic!!.num))
                 startActivity(browserIntent)
                 logUXEvent(FIRE_GO_XKCD_MENU)
+                return true
+            }
+            R.id.action_go_xk3d -> {
+                ImageWebViewActivity.startActivity(activity!!, currentPic!!.num, translationMode == 1)
+                logUXEvent(FIRE_GO_XK3D_MENU)
                 return true
             }
             R.id.action_go_explain -> {

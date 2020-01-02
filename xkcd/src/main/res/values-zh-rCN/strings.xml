@@ -7,6 +7,7 @@
     <string name="action_xkcd_list">浏览 xkcd 列表</string>
     <string name="action_specific">选择指定 xkcd</string>
     <string name="action_xkcd">访问 xkcd.com</string>
+    <string name="action_xk3d">访问 xk3d</string>
     <string name="action_explain">访问 Explainxkcd</string>
     <string name="search_hint_xkcd">搜索 xkcd</string>
 

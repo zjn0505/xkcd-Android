@@ -47,6 +47,7 @@ public class Const {
     public static final String FIRE_BROWSE_LIST_MENU = "browse_list_menu";
     public static final String FIRE_SPECIFIC_MENU = "specific_menu";
     public static final String FIRE_GO_XKCD_MENU = "go_xkcd_menu";
+    public static final String FIRE_GO_XK3D_MENU = "go_xk3d_menu";
     public static final String FIRE_GO_WHAT_IF_MENU = "go_what_if_menu";
     public static final String FIRE_GO_EXTRA_MENU = "go_extra_menu";
     public static final String FIRE_GO_EXPLAIN_MENU = "go_explain_menu";

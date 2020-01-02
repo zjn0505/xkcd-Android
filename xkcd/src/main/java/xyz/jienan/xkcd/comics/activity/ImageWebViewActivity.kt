@@ -99,19 +99,49 @@ class ImageWebViewActivity : BaseActivity() {
     }
 
     private fun loadXkcdInWebView(xkcd: XkcdPic) {
-        val url = when (xkcd.num) {
-            1663L -> {
+        var script = ""
+        val url = when (xkcd.num.toInt()) {
+            1663 -> {
                 if (permalink1663.isNullOrBlank()) {
                     "https://zjn0505.github.io/xkcd-undressed/${xkcd.num}/"
                 } else {
                     "https://zjn0505.github.io/xkcd-undressed/${xkcd.num}/#${permalink1663}"
                 }
             }
-            else -> if (!intent.getBooleanExtra("translationMode", false)) {
+            in resources.getIntArray(R.array.interactive_comics) -> if (!intent.getBooleanExtra("translationMode", false)) {
                 "https://zjn0505.github.io/xkcd-undressed/${xkcd.num}/"
             } else {
                 Timber.d("region ${Locale.getDefault()}")
                 "https://zjn0505.github.io/xkcd-undressed/${xkcd.num}/?region=${Locale.getDefault().toString().replace("#", "_")}"
+            }
+            else -> {
+                // xk3d
+                script = """
+                    javascript:
+                    var toDelete = [];
+                    toDelete.push(document.getElementById("topContainer"));
+                    toDelete.push(document.getElementById("bottom"));
+                    toDelete.push(document.getElementById("ctitle"));
+                    toDelete.push(document.getElementById("middleFooter"));
+                    toDelete.push(document.getElementsByClassName("menuCont")[0]);
+                    toDelete.push(document.getElementsByClassName("menuCont")[1]);
+                    toDelete.push(document.getElementsByClassName("br")[0]);
+                    toDelete.push(document.getElementsByClassName("br")[1]);
+                    toDelete.forEach(function (element) {
+                        if (element) element.style.display = 'none';
+                    });
+                    var container = document.getElementById("container");
+                    if (container) {
+                        container.style.marginRight = 0;
+                        container.style.marginLeft = 0;
+                        container.style.width = "100vw";
+                    }
+                    var comic = document.getElementById("comic");
+                    if (comic) {
+                        comic.style.zoom = window.innerWidth / comic.offsetWidth / 1.2;
+                    }
+                """.trimIndent()
+                "https://xk3d.xkcd.com/$index"
             }
         }
         webView.webViewClient = object : WebViewClient() {
@@ -132,6 +162,7 @@ class ImageWebViewActivity : BaseActivity() {
             override fun onProgressChanged(view: WebView?, newProgress: Int) {
                 super.onProgressChanged(view, newProgress)
                 val baseTitle = "xkcd: ${xkcd.title}"
+                if (newProgress > 20 && script.isNotBlank()) view?.loadUrl(script)
                 title = baseTitle + when (newProgress) {
                     in 0..99 -> {
                         progress.isIndeterminate = false
