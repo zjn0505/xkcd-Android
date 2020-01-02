@@ -6,9 +6,12 @@ import android.database.MatrixCursor
 import android.graphics.Color
 import android.os.Bundle
 import android.provider.BaseColumns
-import android.view.*
 import android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
 import android.view.HapticFeedbackConstants.LONG_PRESS
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
 import com.jakewharton.rxbinding3.view.attaches
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -17,7 +20,9 @@ import kotlinx.android.synthetic.main.fragment_comic_main.*
 import timber.log.Timber
 import xyz.jienan.xkcd.Const.*
 import xyz.jienan.xkcd.R
+import xyz.jienan.xkcd.home.base.BaseStatePagerAdapter
 import xyz.jienan.xkcd.home.base.ContentMainBaseFragment
+import xyz.jienan.xkcd.home.base.ContentMainBasePresenter
 import xyz.jienan.xkcd.list.activity.WhatIfListActivity
 import xyz.jienan.xkcd.model.WhatIfArticle
 import xyz.jienan.xkcd.whatif.WhatIfPagerAdapter
@@ -28,6 +33,10 @@ import java.util.concurrent.TimeUnit
 class WhatIfMainFragment : ContentMainBaseFragment(), WhatIfMainContract.View {
 
     override val layoutResId = R.layout.fragment_comic_main
+
+    override val adapter: BaseStatePagerAdapter by lazy { WhatIfPagerAdapter(childFragmentManager) }
+
+    override val presenter: ContentMainBasePresenter by lazy { WhatIfMainPresenter(this) }
 
     override var searchItemBackgroundRes: Int? = Color.parseColor("#EBEBEB")
 
@@ -46,12 +55,6 @@ class WhatIfMainFragment : ContentMainBaseFragment(), WhatIfMainContract.View {
             val article = searchSuggestions[position]
             scrollViewPagerToItem((article.num - 1).toInt(), false)
         }
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        adapter = WhatIfPagerAdapter(childFragmentManager)
-        presenter = WhatIfMainPresenter(this)
-        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

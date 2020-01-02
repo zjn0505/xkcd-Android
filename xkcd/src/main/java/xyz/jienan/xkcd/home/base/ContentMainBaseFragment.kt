@@ -54,9 +54,9 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
     val isFabShowing: Boolean
         get() = fab.isShown
 
-    protected lateinit var adapter: BaseStatePagerAdapter
+    protected abstract val adapter: BaseStatePagerAdapter
 
-    protected lateinit var presenter: ContentMainBasePresenter
+    protected abstract val presenter: ContentMainBasePresenter
 
     protected open var searchItemBackgroundRes: Int? = null
 
@@ -130,7 +130,7 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
 
     protected abstract val pickerTitleTextRes: Int
 
-    protected val currentIndex: Int
+    val currentIndex: Int
         get() = viewPager!!.currentItem + 1
 
     protected abstract val searchHint: CharSequence

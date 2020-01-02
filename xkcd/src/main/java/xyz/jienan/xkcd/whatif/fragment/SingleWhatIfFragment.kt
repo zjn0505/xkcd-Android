@@ -93,6 +93,9 @@ open class SingleWhatIfFragment : BaseFragment(), ImgInterface.ImgCallback, RefI
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if ((parentFragment as WhatIfMainFragment).currentIndex != ind) {
+            return false
+        }
         when (item.itemId) {
             R.id.action_share -> {
                 Intent(Intent.ACTION_SEND).apply {

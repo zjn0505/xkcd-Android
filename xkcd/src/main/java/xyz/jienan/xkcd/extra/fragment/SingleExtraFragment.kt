@@ -184,6 +184,9 @@ class SingleExtraFragment : BaseFragment(), SingleExtraContract.View {
         if (currentExtra == null) {
             return false
         }
+        if ((parentFragment as ExtraMainFragment).currentIndex != ind) {
+            return false
+        }
         when (item.itemId) {
             R.id.action_share -> {
                 val shareIntent = Intent()
@@ -201,7 +204,7 @@ class SingleExtraFragment : BaseFragment(), SingleExtraContract.View {
                 return true
             }
         }
-        return false
+        return super.onOptionsItemSelected(item)
     }
 
     override fun setLoading(isLoading: Boolean) {

@@ -5,9 +5,11 @@ import android.content.Intent
 import android.database.MatrixCursor
 import android.os.Bundle
 import android.provider.BaseColumns
-import android.view.*
 import android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
 import android.view.HapticFeedbackConstants.LONG_PRESS
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import kotlinx.android.synthetic.main.fab_sub_icons.*
 import kotlinx.android.synthetic.main.fragment_comic_main.*
 import xyz.jienan.xkcd.Const
@@ -17,7 +19,9 @@ import xyz.jienan.xkcd.R
 import xyz.jienan.xkcd.comics.ComicsPagerAdapter
 import xyz.jienan.xkcd.comics.contract.ComicsMainContract
 import xyz.jienan.xkcd.comics.presenter.ComicsMainPresenter
+import xyz.jienan.xkcd.home.base.BaseStatePagerAdapter
 import xyz.jienan.xkcd.home.base.ContentMainBaseFragment
+import xyz.jienan.xkcd.home.base.ContentMainBasePresenter
 import xyz.jienan.xkcd.list.activity.XkcdListActivity
 import xyz.jienan.xkcd.model.XkcdPic
 
@@ -31,13 +35,11 @@ class ComicsMainFragment : ContentMainBaseFragment(), ComicsMainContract.View {
 
     private lateinit var searchSuggestions: List<XkcdPic>
 
-    override val pickerTitleTextRes = R.string.dialog_pick_content
+    override val presenter: ContentMainBasePresenter by lazy { ComicsMainPresenter(this) }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        presenter = ComicsMainPresenter(this)
-        adapter = ComicsPagerAdapter(childFragmentManager)
-        return super.onCreateView(inflater, container, savedInstanceState)
-    }
+    override val adapter: BaseStatePagerAdapter by lazy { ComicsPagerAdapter(childFragmentManager) }
+
+    override val pickerTitleTextRes = R.string.dialog_pick_content
 
     override fun latestXkcdLoaded(xkcdPic: XkcdPic) {
         latestIndex = xkcdPic.num.toInt()

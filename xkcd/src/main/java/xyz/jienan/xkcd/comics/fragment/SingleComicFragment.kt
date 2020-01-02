@@ -228,6 +228,9 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
         if (currentPic == null) {
             return false
         }
+        if ((parentFragment as ComicsMainFragment).currentIndex != currentPic!!.num.toInt()) {
+            return false
+        }
         when (item.itemId) {
             R.id.action_share -> {
                 val shareIntent = Intent()
@@ -256,7 +259,7 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
                 return true
             }
         }
-        return false
+        return super.onOptionsItemSelected(item)
     }
 
     override fun setLoading(isLoading: Boolean) {

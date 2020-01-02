@@ -94,6 +94,9 @@ class SingleExtraWebViewFragment : SingleWhatIfFragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if ((parentFragment as ExtraMainFragment).currentIndex != 1) { // use 0 as we only have 1 extra WebView at first page
+            return false
+        }
         when (item.itemId) {
             R.id.action_share -> {
                 val shareIntent = Intent()

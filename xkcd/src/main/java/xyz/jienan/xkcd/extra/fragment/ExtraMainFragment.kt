@@ -10,7 +10,9 @@ import xyz.jienan.xkcd.R
 import xyz.jienan.xkcd.extra.ExtraPagerAdapter
 import xyz.jienan.xkcd.extra.contract.ExtraMainContract
 import xyz.jienan.xkcd.extra.presenter.ExtraMainPresenter
+import xyz.jienan.xkcd.home.base.BaseStatePagerAdapter
 import xyz.jienan.xkcd.home.base.ContentMainBaseFragment
+import xyz.jienan.xkcd.home.base.ContentMainBasePresenter
 import xyz.jienan.xkcd.model.ExtraComics
 
 class ExtraMainFragment : ContentMainBaseFragment(), ExtraMainContract.View {
@@ -21,17 +23,15 @@ class ExtraMainFragment : ContentMainBaseFragment(), ExtraMainContract.View {
 
     override val titleTextRes by lazy { getString(R.string.menu_extra) }
 
+    override val presenter: ContentMainBasePresenter by lazy { ExtraMainPresenter(this) }
+
+    override val adapter: BaseStatePagerAdapter by lazy { ExtraPagerAdapter(childFragmentManager) }
+
     override val pickerTitleTextRes = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        presenter = ExtraMainPresenter(this)
-        adapter = ExtraPagerAdapter(childFragmentManager)
-        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
