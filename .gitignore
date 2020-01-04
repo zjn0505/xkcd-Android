@@ -10,3 +10,7 @@
 /.idea/
 key.jks
 api-[a-z0-9-]*.json
+Gemfile
+Gemfile.lock
+fastlane/Appfile
+fastlane/Fastfile

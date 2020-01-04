@@ -1,6 +1,6 @@
 Kudos to Randall, glory to all xkcd lovers.
 
-This is yet another xkcd comics and what if articles viewer, while I'm refining it to become the best one, an easy and lite app with best in-app browsing experience.
+This is yet another xkcd comics and what if articles viewer, while I'm refining it to become the best one, an easy and lite app with best in-app browsing experience<sup><b>[<i>citation needed</i>]</b></sup>.
 
  This app has so far:
  - the best support to all those large xkcd comics. e.g. No. 657, 1040, and the toughest No. 980.

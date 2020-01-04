@@ -1,2 +1,0 @@
-- Fix the scrolling issue of xkcd list
-- Fix notification content title

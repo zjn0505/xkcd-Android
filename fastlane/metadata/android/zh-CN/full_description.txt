@@ -1,6 +1,6 @@
 Kudos to Randall, glory to all xkcd lovers.
 
-这是众多 xkcd 漫画和 what if 文章阅读器之一，而我正在将它打磨至臻，旨在提供最棒的阅读体验
+这是众多 xkcd 漫画和 what if 文章阅读器之一<sup><b>[<i>citation needed</i>]</b></sup>，而我正在将它打磨至臻，旨在提供最棒的阅读体验
 
 目前这一 xkcd viewer 拥有：
  - 对那些大图最佳的支持，比如 No. 657， 1040，以及体量惊人的 No. 980；
@@ -9,6 +9,6 @@ Kudos to Randall, glory to all xkcd lovers.
  - 最方便的 Explainxkcd 查询方式，长按、点击，结束！
  - 讨人喜欢的收藏、点赞功能，对你喜欢的漫画请疯狂点赞。
  - 互动型漫画原生支持，请打开 1608 开始飞驰，打开 2198 开始投掷。
- - 来自 @蜡象汉化组 的中文漫画翻译。
+ - 来自 @蜡象汉化组 的中文漫画翻译，请前往 xkcd.in 支持或加入他们。
 
 应用和相关服务处于不断完善当中，所有的的代码都于Github上开源，欢迎提供意见。
