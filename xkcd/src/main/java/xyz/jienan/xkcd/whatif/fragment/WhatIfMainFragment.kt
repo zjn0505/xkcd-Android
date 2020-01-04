@@ -97,10 +97,9 @@ class WhatIfMainFragment : ContentMainBaseFragment(), WhatIfMainContract.View {
     }
 
     override fun updateFab() {
-        val fragment = adapter.getItemFromMap(viewPager.currentItem + 1)
-        if (fragment != null && fragment is SingleWhatIfFragment) {
-            fragment.updateFab()
-        }
+        childFragmentManager.fragments
+                .filter { it is SingleWhatIfFragment && it.ind == viewPager.currentItem + 1 }
+                .forEach { (it as SingleWhatIfFragment).updateFab() }
     }
 
     override fun showFab(whatIfArticle: WhatIfArticle) {

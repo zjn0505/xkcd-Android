@@ -43,7 +43,7 @@ import java.lang.ref.WeakReference
 
 open class SingleWhatIfFragment : BaseFragment(), ImgInterface.ImgCallback, RefInterface.RefCallback {
 
-    private var ind = -1
+    var ind = -1
 
     private var parentFragment: WhatIfMainFragment? = null
 

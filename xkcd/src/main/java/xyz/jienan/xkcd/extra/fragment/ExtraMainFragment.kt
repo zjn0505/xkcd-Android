@@ -58,7 +58,7 @@ class ExtraMainFragment : ContentMainBaseFragment(), ExtraMainContract.View {
     }
 
     override fun showExtras(extraComics: List<ExtraComics>) {
-        adapter.setSize(extraComics.size)
+        adapter.size = extraComics.size
         (adapter as ExtraPagerAdapter).setEntities(extraComics)
     }
 

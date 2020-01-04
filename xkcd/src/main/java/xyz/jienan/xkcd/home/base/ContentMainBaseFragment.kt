@@ -206,7 +206,7 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
         }
         isFre = latestIndex == INVALID_ID
         if (latestIndex > INVALID_ID) {
-            adapter.setSize(latestIndex)
+            adapter.size = latestIndex
             scrollViewPagerToItem(if (lastViewedId > INVALID_ID) lastViewedId - 1 else latestIndex - 1, false)
         }
 
@@ -378,7 +378,7 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
                 latestIndex -= 1
                 presenter.latest = latestIndex
                 presenter.setLastViewed(10)
-                adapter.setSize(latestIndex)
+                adapter.size = latestIndex
                 xkcdNoti(xkcd!!)
             } else if (titleTextRes == TAG_WHAT_IF) {
                 val whatIfArticle = BoxManager.getWhatIf(latestIndex.toLong())
@@ -386,7 +386,7 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
                 latestIndex -= 1
                 presenter.latest = latestIndex
                 presenter.setLastViewed(10)
-                adapter.setSize(latestIndex)
+                adapter.size = latestIndex
                 whatIfNoti(whatIfArticle!!)
             }
         }
@@ -428,7 +428,7 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
 
     fun expand(size: Int) {
         if (size > adapter.count) {
-            adapter.setSize(size)
+            adapter.size = size
         }
     }
 
@@ -453,7 +453,7 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
     }
 
     protected fun latestLoaded() {
-        adapter.setSize(latestIndex)
+        adapter.size = latestIndex
         if (isFre) {
             scrollViewPagerToItem(latestIndex - 1, false)
         }
