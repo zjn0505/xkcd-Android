@@ -19,7 +19,7 @@ before_install:
 - openssl aes-256-cbc -K $encrypted_89744ce7a44a_key -iv $encrypted_89744ce7a44a_iv -in secrets.tar.enc -out secrets.tar -d
 - tar xvf secrets.tar
 - mv google-services.json xkcd/google-services.json
-- rvm install 2.2.6
+- rvm install 2.3.1
 - gem install dropbox-deployment
 script:
 - "./gradlew assembleFossRelease"
