@@ -93,7 +93,7 @@ open class SingleWhatIfFragment : BaseFragment(), ImgInterface.ImgCallback, RefI
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if ((parentFragment as WhatIfMainFragment).currentIndex != ind) {
+        if (parentFragment !is WhatIfMainFragment || (parentFragment as WhatIfMainFragment).currentIndex != ind) {
             return false
         }
         when (item.itemId) {
