@@ -1,0 +1,3 @@
+- New feature: xk3d support to comics No.1 - 880 is added, check that in the up-right menu.
+- Click on comic date is an alternative way to jump to random comics.
+- Fix what if search when the preference is "Also include article contents that liked or thumb-up-ed"
