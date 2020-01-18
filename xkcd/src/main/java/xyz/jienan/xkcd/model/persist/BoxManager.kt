@@ -145,12 +145,16 @@ object BoxManager {
             builder = builder.or().equal(WhatIfArticle_.num, query.toLong())
         }
         when (option) {
-            PREF_WHAT_IF_SEARCH_INCLUDE_READ -> builder = builder.or()
-                    .contains(WhatIfArticle_.content, query)
-                    .and()
-                    .equal(WhatIfArticle_.hasThumbed, true)
-                    .or()
-                    .equal(WhatIfArticle_.isFavorite, true)
+            PREF_WHAT_IF_SEARCH_INCLUDE_READ -> {
+                // ObjectBox is not good at such query filters
+                val listInTitle = builder.build().find()
+                val listInReadContent = whatIfBox.query()
+                        .contains(WhatIfArticle_.content, query)
+                        .build()
+                        .find()
+                        .filter { it.hasThumbed || it.isFavorite }
+                return listInTitle.union(listInReadContent).toMutableList()
+            }
             PREF_WHAT_IF_SEARCH_ALL -> builder = builder.or()
                     .contains(WhatIfArticle_.content, query)
         }
