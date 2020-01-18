@@ -8,8 +8,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
         android:baselineAligned="false"
+        android:orientation="horizontal"
         android:weightSum="3">
 
         <LinearLayout
@@ -25,10 +25,10 @@
                 android:layout_margin="5dp"
                 android:fontFamily="@font/xkcd"
                 android:gravity="center"
+                android:saveEnabled="false"
                 android:textSize="25sp"
                 android:textStyle="bold"
-                tools:text="0. Default Image"
-                android:saveEnabled="false"/>
+                tools:text="0. Default Image" />
 
             <ScrollView
                 android:layout_width="match_parent"
@@ -45,14 +45,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_margin="20dp"
-                        android:textSize="15sp"
-                        android:saveEnabled="false"/>
+                        android:saveEnabled="false"
+                        android:textSize="15sp" />
 
                 </LinearLayout>
 
             </ScrollView>
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical">
@@ -61,28 +61,42 @@
                     android:id="@+id/btnSeeTranslation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/see_translation"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginBottom="12dp"
                     android:fontFamily="@font/xkcd"
-                    android:layout_margin="20dp"
                     android:paddingTop="8dp"
                     android:paddingBottom="8dp"
-                    android:textColor="@color/colorAccent"
-                    android:visibility="gone"
-                    android:saveEnabled="false"/>
+                    android:saveEnabled="false"
+                    android:text="@string/see_translation"
+                    android:textColor="@color/colorAccent" />
 
                 <TextView
                     android:id="@+id/tvCreateDate"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="20dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginBottom="12dp"
                     android:fontFamily="@font/xkcd"
-                    android:gravity="end"
+                    android:gravity="end|center_vertical"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:saveEnabled="false"
                     android:textSize="15sp"
-                    tools:text="2017.7.2"
-                    android:saveEnabled="false"/>
+                    tools:text="2017.7.2" />
 
-            </LinearLayout>
+            </RelativeLayout>
 
         </LinearLayout>
 
@@ -98,17 +112,17 @@
                 android:layout_margin="20dp"
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/xkcd_pic"
-                android:scaleType="fitCenter"
-                android:saveEnabled="false"/>
+                android:saveEnabled="false"
+                android:scaleType="fitCenter" />
 
             <Button
                 android:id="@+id/btnReload"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:saveEnabled="false"
                 android:text="@string/btn_reload"
-                android:visibility="gone"
-                android:saveEnabled="false"/>
+                android:visibility="gone" />
 
         </FrameLayout>
 
@@ -117,6 +131,6 @@
     <xyz.jienan.xkcd.ui.CircleProgressBar
         android:id="@+id/pbLoading"
         style="@style/image_progress_bar"
-        android:saveEnabled="false"/>
+        android:saveEnabled="false" />
 
 </FrameLayout>

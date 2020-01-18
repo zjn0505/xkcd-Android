@@ -55,7 +55,7 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
 
     private var explainingCallback: SimpleInfoDialogFragment.ExplainingCallback? = null
 
-    private val singleComicPresenter : SingleComicContract.Presenter by lazy { SingleComicPresenter(this, PreferenceManager.getDefaultSharedPreferences(context)) }
+    private val singleComicPresenter: SingleComicContract.Presenter by lazy { SingleComicPresenter(this, PreferenceManager.getDefaultSharedPreferences(context)) }
 
     private val dialogListener = object : ISimpleInfoDialogListener {
         override fun onPositiveClick() {
@@ -315,8 +315,13 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
         Timber.i("Pic to be loaded: $ind - ${xkcdPic.targetImg}")
         @SuppressLint("SetTextI18n")
         tvTitle!!.text = "${xkcdPic.num}. ${xkcdPic.title}"
-        tvCreateDate!!.text = String.format(getString(R.string.created_on), xkcdPic.year, xkcdPic.month, xkcdPic.day)
+        tvCreateDate?.text = String.format(getString(R.string.created_on), xkcdPic.year, xkcdPic.month, xkcdPic.day)
         tvDescription?.text = xkcdPic.alt
+        tvCreateDate?.setOnClickListener {
+            if (parentFragment is ComicsMainFragment) {
+                (parentFragment as ComicsMainFragment).hearShake()
+            }
+        }
     }
 
     private fun load(url: String) {
