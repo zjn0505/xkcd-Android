@@ -190,9 +190,9 @@ object NetworkService {
         }
 }
 
-const val XKCD_SPECIAL_LIST         = "https://zjn0505.github.io/Xkcd-Android/xkcd_special.json"
-const val XKCD_EXTRA_LIST           = "https://zjn0505.github.io/Xkcd-Android/xkcd_extra.json"
-const val QUOTE_LIST                = "https://zjn0505.github.io/Xkcd-Android/quotes.json"
+const val XKCD_SPECIAL_LIST         = "https://zjn0505.github.io/xkcd-Android/xkcd_special.json"
+const val XKCD_EXTRA_LIST           = "https://zjn0505.github.io/xkcd-Android/xkcd_extra.json"
+const val QUOTE_LIST                = "https://zjn0505.github.io/xkcd-Android/quotes.json"
 const val XKCD_SEARCH_SUGGESTION    = "https://api.jienan.xyz/xkcd/xkcd-suggest"
 const val XKCD_BROWSE_LIST          = "https://api.jienan.xyz/xkcd/xkcd-list"
 const val XKCD_THUMBS_UP            = "https://api.jienan.xyz/xkcd/xkcd-thumb-up"

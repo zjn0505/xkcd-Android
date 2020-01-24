@@ -1,0 +1,12 @@
+<resources>
+    <string name="action_share">Teile dieses xkcd</string>
+    <string name="action_left">Bisherige</string>
+    <string name="action_right">Nächster</string>
+    <string name="action_search">Suche</string>
+
+    <string name="pref_xkcd_translation_title">Übersetzung by @xkcDE</string>
+    <string name="pref_xkcd_translation_on">Eine Schaltfläche wird angezeigt, wenn eine Übersetzung vorhanden ist</string>
+    <string name="pref_xkcd_translation_off">Übersetzungen ignorieren</string>
+    <string name="see_translation">Übersetzung</string>
+    <string name="see_original">Original</string>
+</resources>

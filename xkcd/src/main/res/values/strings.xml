@@ -1,10 +1,4 @@
 <resources>
-    <string name="app_name" translatable="false">xkcd</string>
-
-    <string name="menu_xkcd" translatable="false">xkcd</string>
-    <string name="menu_whatif" translatable="false">what if</string>
-    <string name="menu_extra" translatable="false">extra</string>
-
     <string name="action_share">Share this xkcd</string>
     <string name="action_left">Previous</string>
     <string name="action_right">Next</string>
@@ -27,12 +21,9 @@
     <string name="share_to">Share this xkcd to</string>
     <string name="share_to_what_if">Share this what if to</string>
 
-    <string name="notification_content" translatable="false">%d-%s</string>
-    <string name="item_search_title" translatable="false">%s - %s</string>
     <string name="btn_reload">reload</string>
     <string name="go_to_explainxkcd">GO TO EXPLAINXKCD</string>
     <string name="more_on_explainxkcd">MORE ON EXPLAINXKCD</string>
-    <string name="created_on" translatable="false">%s.%s.%s</string>
     <string name="xkcd_pic">xkcd comics</string>
     <string name="pref_arrow">Quick switch</string>
     <plurals name="pref_arrow_summary">
@@ -62,21 +53,13 @@
     <string name="pref_xkcd_interactive_title">Interactive comics</string>
     <string name="pref_xkcd_interactive_on">Comics 1525, 1663, 2198, etc. are alive</string>
     <string name="pref_xkcd_interactive_off">Comics stay static</string>
-    <string name="pref_xkcd_translation_title">Translation switch</string>
+    <string name="pref_xkcd_translation_title">Translation</string>
     <string name="pref_xkcd_translation_on">A switch will be shown when translation exists</string>
     <string name="pref_xkcd_translation_off">Ignore translations</string>
-    <string name="pref_what_if" translatable="false">what if</string>
-    <string name="pref_xkcd" translatable="false">xkcd</string>
     <string name="settings">Settings</string>
     <string name="see_translation">SEE TRANSLATION</string>
     <string name="see_original">SEE ORIGINAL</string>
 
-    <string name="arrow_1" translatable="false">1</string>
-    <string name="arrow_10" translatable="false">10</string>
-    <string name="arrow_30" translatable="false">30</string>
-    <string name="arrow_1_value" translatable="false">arrow_1</string>
-    <string name="arrow_10_value" translatable="false">arrow_10</string>
-    <string name="arrow_30_value" translatable="false">arrow_30</string>
     <string name="random_disabled">Disabled</string>
     <string name="random_fav_like">Exclude favorites or thumbed</string>
     <string name="random_all">All the contents</string>
@@ -100,26 +83,13 @@
         <item>new %s on the way</item>
     </string-array>
 
-    <string name="heart" translatable="false">
-        M25.1 2.6c12.5 0 18.7 5.9 24.9 17.6C56.2 8.5 62.4 2.6 74.9 2.6c13.8 0 25 10.5 25 23.6C100 50 75 73.7 50 97.4 25 73.7 0 50 0 26.2c0-13 11.3-23.7 25.1-23.6z
-      </string>
-
-    <string name="thumb" translatable="false">
-        M1 21h4V9H1v12zm22-11a2 2 0 0 0-2-2h-6.3l1-4.6v-0.3c0-0.4-0.2-0.8-0.5-1l-1-1.1-6.6 6.6A2 2 0 0 0 7 9v10c0 1.1 0.9 2 2 2h9a2 2 0 0 0 1.8-1.2l3-7 0.2-0.8v-2
-    </string>
-
     <string name="action_what_if_list">Browse what if</string>
     <string name="action_specific_what_if">Specific what if</string>
     <string name="search_hint_what_if">Search what if</string>
-    <string name="item_what_if_list_title" translatable="false">%d - %s</string>
     <string name="title_what_if_list">what if list</string>
     <string name="share_text_what_if">Come and check this article I got from what if. %s</string>
     <string name="share_text_article_extra">Come and check this article I got. %s</string>
-
-    <string name="quote_sub_text" translatable="false">- %s %s:%d</string>
-
     <string name="release_for_solution">Release for solution</string>
     <string name="release_for_puzzle">Release for puzzle</string>
-
     <string name="bookmark_saved">Bookmark saved</string>
 </resources>

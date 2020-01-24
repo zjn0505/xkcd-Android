@@ -5,13 +5,11 @@ import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.preference.ListPreference
-import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.SwitchPreferenceCompat
+import androidx.preference.*
 import xyz.jienan.xkcd.Const.*
 import xyz.jienan.xkcd.R
 import xyz.jienan.xkcd.model.WhatIfModel
+import xyz.jienan.xkcd.model.XkcdModel
 
 /**
  * Created by Jienan on 2018/3/9.
@@ -35,6 +33,10 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
         arrowPref?.onPreferenceChangeListener = this
         zoomPref?.onPreferenceChangeListener = this
         darkPref?.onPreferenceChangeListener = this
+
+        if (XkcdModel.localizedUrl.isBlank()) {
+            findPreference<PreferenceCategory>("pref_key_xkcd")?.removePreference(findPreference(PREF_XKCD_TRANSLATION))
+        }
     }
 
     override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {

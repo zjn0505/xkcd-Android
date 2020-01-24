@@ -72,7 +72,7 @@ android {
         versionCode 64
         versionName "2.7.1"
         vectorDrawables.useSupportLibrary = true
-        resConfigs "zh-rCN"
+        resConfigs "zh-rCN", "de"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -177,7 +177,7 @@ dependencies {
     implementation 'androidx.media:media:1.1.0'
     implementation 'androidx.exifinterface:exifinterface:1.1.0'
     implementation 'androidx.recyclerview:recyclerview:1.2.0-alpha01'
-    implementation 'com.google.android.material:material:1.2.0-alpha03'
+    implementation 'com.google.android.material:material:1.2.0-alpha04'
     implementation 'androidx.percentlayout:percentlayout:1.0.0'
     implementation 'org.jsoup:jsoup:1.12.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.4'
@@ -205,9 +205,9 @@ dependencies {
     implementation 'me.dkzwm.widget.srl:core:1.6.6.7.androidx'
     implementation 'me.dkzwm.widget.srl:ext-classics:1.6.6.7.androidx'
 
-    fossImplementation "androidx.work:work-runtime-ktx:2.2.0"
-    fossImplementation "androidx.work:work-rxjava2:2.2.0"
-    proprietaryImplementation 'com.google.firebase:firebase-analytics:17.2.1'
+    fossImplementation "androidx.work:work-runtime-ktx:2.3.0"
+    fossImplementation "androidx.work:work-rxjava2:2.3.0"
+    proprietaryImplementation 'com.google.firebase:firebase-analytics:17.2.2'
     proprietaryImplementation 'com.google.firebase:firebase-messaging:20.1.0'
     proprietaryImplementation "com.crashlytics.sdk.android:crashlytics:2.10.1"
 
