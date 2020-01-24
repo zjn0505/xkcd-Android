@@ -75,4 +75,11 @@
         <item name="android:tag">0</item>
         <item name="android:padding">5dp</item>
     </style>
+
+    <style name="avatar_image">
+        <item name="android:layout_width">40dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:padding">10dp</item>
+    </style>
+
 </resources>

@@ -8,15 +8,18 @@ import android.content.res.Configuration
 import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.text.HtmlCompat
 import androidx.core.view.GravityCompat
+import androidx.core.widget.ImageViewCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.drawer_footer.*
 import kotlinx.android.synthetic.main.nav_header.view.*
 import timber.log.Timber
 import xyz.jienan.xkcd.Const.*
@@ -31,6 +34,7 @@ import xyz.jienan.xkcd.settings.PreferenceActivity
 import xyz.jienan.xkcd.ui.getColorResCompat
 import xyz.jienan.xkcd.whatif.WhatIfFastLoadService
 import xyz.jienan.xkcd.whatif.fragment.WhatIfMainFragment
+import kotlin.random.Random
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -49,6 +53,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     private var currentDarkPref = -10 // a compromise for 5.0- devices since some recreate issues
 
+    private val avatarList by lazy { arrayListOf(ic_1, ic_2, ic_3, ic_4, ic_5) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // init view
@@ -57,7 +63,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         navigationView.setNavigationItemSelectedListener(this)
-        navigationView.itemIconTintList = ColorStateList.valueOf(getColorResCompat(android.R.attr.textColorPrimary))
+        val tintList = ColorStateList.valueOf(getColorResCompat(android.R.attr.textColorPrimary))
+        navigationView.itemIconTintList = tintList
         if (savedInstanceState == null) {
 
             val fragmentTag = if (intent?.getIntExtra(INDEX_ON_NOTI_INTENT, 0) != 0) {
@@ -68,11 +75,29 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
             openFragment(fragmentTag)
         }
+        avatarList.forEach { ImageViewCompat.setImageTintList(it, tintList) }
+        drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
+            override fun onDrawerStateChanged(newState: Int) {
+                if (newState == DrawerLayout.STATE_SETTLING && !drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    // shuffle
+                    avatarList.forEach { it.rotationY = Random.nextInt(2) * 180f }
+                }
+            }
+
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+            }
+
+            override fun onDrawerClosed(drawerView: View) {
+            }
+
+            override fun onDrawerOpened(drawerView: View) {
+            }
+
+        })
         // load data - daily quote & fast load xkcd comics
         getDailyQuote()
         fastLoad()
     }
-
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

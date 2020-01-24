@@ -2,7 +2,7 @@
 
 buildscript {
     ext.objectboxVersion = '2.5.0'
-    ext.booster_version = '0.28.0'
+    ext.booster_version = '1.0.0'
     ext.isProprietary = getGradle().getStartParameter().getTaskRequests().toString().contains("Proprietary")
     repositories {
         google()
