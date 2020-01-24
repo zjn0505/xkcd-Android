@@ -1,0 +1,4 @@
+- German translations from xkcDE added to available comics.
+- More xkcd characters joined into the side drawer menu
+- xk3d support to comics No.1 - 880 is added, check that in the up-right menu.
+- Click on comic date is an alternative way to jump to random comics.
