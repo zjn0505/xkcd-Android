@@ -1,0 +1,7 @@
+<resources>
+    <string name="pref_xkcd_translation_title">Traduction by @lapin.org</string>
+    <string name="pref_xkcd_translation_on">Un commutateur sera affiché lorsque la traduction existe</string>
+    <string name="pref_xkcd_translation_off">Ignorer les traductions</string>
+    <string name="see_translation">Traduction</string>
+    <string name="see_original">Original</string>
+</resources>

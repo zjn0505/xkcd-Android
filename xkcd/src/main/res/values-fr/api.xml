@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="api_xkcd_localization">https://xkcd.jienan.xyz/%d/info.0.json?locale=fr</string>
+</resources>

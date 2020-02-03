@@ -1,0 +1,7 @@
+<resources>
+    <string name="pref_xkcd_translation_title">Traducción by @es.xkcd.com</string>
+    <string name="pref_xkcd_translation_on">Se mostrará un cambio cuando exista traducción</string>
+    <string name="pref_xkcd_translation_off">Ignorar traducciones</string>
+    <string name="see_translation">Traducción</string>
+    <string name="see_original">Original</string>
+</resources>

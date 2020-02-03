@@ -72,7 +72,7 @@ android {
         versionCode 65
         versionName "2.7.2"
         vectorDrawables.useSupportLibrary = true
-        resConfigs "zh-rCN", "de"
+        resConfigs "de", "es", "fr", "ru", "b+zh", "b+zh+hant+TW"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -166,7 +166,7 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-beta-3'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.1'
     debugImplementation 'com.gu.android:toolargetool:0.2.1@aar'
     debugImplementation "io.objectbox:objectbox-android-objectbrowser:$objectboxVersion"
     releaseImplementation "io.objectbox:objectbox-android:$objectboxVersion"

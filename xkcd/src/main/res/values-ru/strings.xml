@@ -1,0 +1,7 @@
+<resources>
+    <string name="pref_xkcd_translation_title">Перевод by @xkcd.ru</string>
+    <string name="pref_xkcd_translation_on">Переключатель будет показан, когда перевод существует</string>
+    <string name="pref_xkcd_translation_off">Игнорировать переводы</string>
+    <string name="see_translation">Перевод</string>
+    <string name="see_original">Oригинал</string>
+</resources>

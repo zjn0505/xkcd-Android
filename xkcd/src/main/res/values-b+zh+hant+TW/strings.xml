@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_share">分享 xkcd</string>
+    <string name="action_left">向前</string>
+    <string name="action_right">向後</string>
+    <string name="action_search">搜索</string>
+    <string name="action_xkcd_list">瀏覽 xkcd 列表</string>
+    <string name="action_specific">選擇指定 xkcd</string>
+    <string name="action_xkcd">訪問 xkcd.com</string>
+    <string name="action_xk3d">訪問 xk3d</string>
+    <string name="action_explain">訪問 Explainxkcd</string>
+    <string name="search_hint_xkcd">搜索 xkcd</string>
+
+    <string name="dialog_got_it">了解</string>
+    <string name="dialog_more_details">更多解釋</string>
+
+    <string name="dialog_pick_content">選擇指定 xkcd</string>
+    <string name="dialog_pick_content_what_if">選擇指定 what if</string>
+    <string name="dialog_select">選擇</string>
+    <string name="dialog_cancel">取消</string>
+
+    <string name="share_to">分享這篇 xkcd 至</string>
+    <string name="share_to_what_if">分享這篇 what if 至</string>
+
+    <string name="btn_reload">刷新</string>
+    <string name="go_to_explainxkcd">訪問Explainxkcd</string>
+    <string name="more_on_explainxkcd">訪問Explainxkcd</string>
+    <string name="xkcd_pic">xkcd漫畫</string>
+    <string name="pref_arrow">快速切換</string>
+    <plurals name="pref_arrow_summary">
+        <item quantity="other">點擊標題欄箭頭，切換 %s 頁</item>
+    </plurals>
+    <string name="pref_what_if_zoom">what if 字體縮放</string>
+    <string name="pref_what_if_search">what if 搜索偏好</string>
+    <string name="pref_what_if_search_ignore_content">僅搜索文章標題</string>
+    <string name="pref_what_if_search_include_read">同時搜索已收藏或點贊過的文章的內容</string>
+    <string name="pref_what_if_search_search_all">同時搜索所有文章的標題和內容</string>
+
+    <string name="pref_arrow_content">選擇快速切換的數量</string>
+    <string name="pref_font">增加可讀性</string>
+    <string name="pref_random_title">隨機搖一搖</string>
+    <string name="random_disabled">關閉</string>
+    <string name="random_fav_like">排除已收藏或贊過的內容</string>
+    <string name="random_all">全部內容</string>
+    <string name="pref_appearance">外觀</string>
+    <string name="pref_font_xkcd">正在使用 xkcd 字體</string>
+    <string name="pref_font_normal">正在使用正常字體</string>
+    <string name="pref_dark_mode">夜間模式</string>
+    <string name="pref_dark_mode_on">開啟</string>
+    <string name="pref_dark_mode_off">關閉</string>
+    <string name="pref_dark_mode_system">跟隨系統</string>
+    <string name="pref_control">控制</string>
+    <string name="pref_xkcd_gif_eco_mode_title">Gif 動畫節能模式</string>
+    <string name="pref_xkcd_gif_eco_mode_on">更加節能，每秒鐘 10 幀畫面</string>
+    <string name="pref_xkcd_gif_eco_mode_off">更多細節，幀率提高70%</string>
+    <string name="pref_xkcd_interactive_title">漫畫互動功能</string>
+    <string name="pref_xkcd_interactive_on">1525, 1663, 2198等漫畫可以點進去玩耍了</string>
+    <string name="pref_xkcd_interactive_off">漫畫將保持靜止</string>
+    <string name="pref_xkcd_translation_title">漫畫翻譯 by @CQD</string>
+    <string name="pref_xkcd_translation_on">當有對應翻譯時，顯示翻譯切換開關</string>
+    <string name="pref_xkcd_translation_off">已關閉</string>
+    <string name="settings">設置</string>
+    <string name="share_text">壹起來看看這張有趣的 xkcd 漫畫吧. %s</string>
+    <string name="toast_more_explain_failed">獲取失敗，請嘗試訪問 Explainxkcd</string>
+    <string name="title_xkcd_list">xkcd列表</string>
+    <string name="see_translation">查看翻譯</string>
+    <string name="see_original">查看原圖</string>
+
+    <string name="thumbs_up">點贊</string>
+    <string name="add_to_fav">收藏</string>
+
+    <string name="uri_hint_explain_edit">當前這條解釋尚不完整，歡迎前去維護</string>
+
+    <string-array name="notification_titles">
+        <item>有新的 %s 了</item>
+        <item>%s 剛剛更新</item>
+    </string-array>
+    <string name="menu_filter">篩選</string>
+    <string name="filter_all_comics">全部漫畫</string>
+    <string name="filter_all_articles">全部文章</string>
+    <string name="filter_my_fav">我的最愛</string>
+    <string name="filter_people_choice">人民之選</string>
+
+    <string name="action_what_if_list">瀏覽 what if 列表</string>
+    <string name="action_specific_what_if">選擇指定 what if</string>
+    <string name="search_hint_what_if">搜索 what if</string>
+    <string name="title_what_if_list">what if 列表</string>
+    <string name="share_text_what_if">壹起來看看這篇有趣的 what if 文章吧. %s</string>
+    <string name="share_text_article_extra">壹起來看看這篇有趣的文章吧. %s</string>
+
+    <string name="release_for_solution">松開查看答案</string>
+    <string name="release_for_puzzle">松開查看問題</string>
+
+    <string name="bookmark_saved">書簽已保存</string>
+</resources>
