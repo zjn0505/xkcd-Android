@@ -27,8 +27,8 @@
   - German xkcd from https://xkcde.dapete.net
   - Russian xkcd from https://xkcd.ru
   - Spanish xkcd from https://es.xkcd.com
-  - Simplified Chinese xkcd from https://xkcd.in
-  - Traditional Chinese xkcd from https//xkcd.tw
+  - Simplified Chinese xkcd from [https://xkcd.in](https://xkcd.in)
+  - Traditional Chinese xkcd from [https//xkcd.tw](https//xkcd.tw)
 
 
 So, I just put all these great services and modules together, and offering the best experience to explore xkcd comic on mobile phone<sup><b>[<i>citation needed</i>]</b></sup>.
