@@ -1,0 +1,5 @@
+- 加入法语、俄语、西班牙语、繁体中文的漫画翻译支持.
+- 法语 xkcd 来自 https://xkcd.lapin.org
+- 俄语 xkcd 来自 https://xkcd.ru
+- 西班牙语 xkcd 来自 https://es.xkcd.com
+- 繁体中文 Chinese 来自 from https//xkcd.tw

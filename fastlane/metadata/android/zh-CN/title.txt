@@ -1,1 +1,1 @@
-xkcd viewer - 漫画浏览器
+xkcd - 漫画浏览器
