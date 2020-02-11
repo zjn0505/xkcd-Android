@@ -2,4 +2,4 @@
 - French xkcd from https://xkcd.lapin.org
 - Russian xkcd from https://xkcd.ru
 - Spanish xkcd from https://es.xkcd.com
-- Traditional Chinese xkcd from https//xkcd.tw
+- Traditional Chinese xkcd from https://xkcd.tw
