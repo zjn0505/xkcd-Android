@@ -26,12 +26,20 @@ layout: default
 - xkcd staggered list, server implemented in this [repo](https://github.com/zjn0505/xkcd)
 - Favorite :heart: and thumbs-up :thumbsup:, modified from [LikeButton](https://github.com/jd-alexander/LikeButton)
 - **Dark theme**
+- Translated xkcd 
+  - French xkcd from https://xkcd.lapin.org
+  - German xkcd from https://xkcde.dapete.net
+  - Russian xkcd from https://xkcd.ru
+  - Spanish xkcd from https://es.xkcd.com
+  - Simplified Chinese xkcd from [https://xkcd.in](https://xkcd.in)
+  - Traditional Chinese xkcd from [https://xkcd.tw](https://xkcd.tw)
 
 
-So, I just put all these great services and modules together, and offering the best experience to explore xkcd comic on mobile phone.
+So, I just put all these great services and modules together, and offering the best experience to explore xkcd comic on mobile phone<sup><b>[<i>citation needed</i>]</b></sup>.
 
 Kudos to Randall, and all xkcd lovers.
 
 # Disclaimer
 
 This project is under Apache License 2.0, and the xkcd comics are under [CC BY-NC 2.5](https://xkcd.com/license.html).
+
