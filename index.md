@@ -27,10 +27,10 @@ layout: default
 - Favorite :heart: and thumbs-up :thumbsup:, modified from [LikeButton](https://github.com/jd-alexander/LikeButton)
 - **Dark theme**
 - Translated xkcd 
-  - French xkcd from https://xkcd.lapin.org
-  - German xkcd from https://xkcde.dapete.net
-  - Russian xkcd from https://xkcd.ru
-  - Spanish xkcd from https://es.xkcd.com
+  - French xkcd from [https://xkcd.lapin.org](https://xkcd.lapin.org)
+  - German xkcd from [https://xkcde.dapete.net](https://xkcde.dapete.net)
+  - Russian xkcd from [https://xkcd.ru](https://xkcd.ru)
+  - Spanish xkcd from [https://es.xkcd.com](https://es.xkcd.com)
   - Simplified Chinese xkcd from [https://xkcd.in](https://xkcd.in)
   - Traditional Chinese xkcd from [https://xkcd.tw](https://xkcd.tw)
 
