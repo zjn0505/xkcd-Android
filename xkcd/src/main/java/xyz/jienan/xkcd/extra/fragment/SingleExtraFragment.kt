@@ -23,6 +23,7 @@ import xyz.jienan.xkcd.R
 import xyz.jienan.xkcd.base.BaseFragment
 import xyz.jienan.xkcd.base.glide.MyProgressTarget
 import xyz.jienan.xkcd.base.glide.ProgressTarget
+import xyz.jienan.xkcd.base.glide.fallback
 import xyz.jienan.xkcd.comics.activity.ImageDetailPageActivity
 import xyz.jienan.xkcd.comics.dialog.SimpleInfoDialogFragment
 import xyz.jienan.xkcd.comics.dialog.SimpleInfoDialogFragment.ISimpleInfoDialogListener
@@ -79,8 +80,9 @@ class SingleExtraFragment : BaseFragment(), SingleExtraContract.View {
                 return false
             }
 
-            if (model.startsWith("https")) {
-                fragment.load(model.replaceFirst("https".toRegex(), "http"))
+            val fallback = model.fallback()
+            if (fallback != model) {
+                fragment.load(fallback)
                 return true
             }
 

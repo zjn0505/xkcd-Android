@@ -30,7 +30,8 @@ import timber.log.Timber
 import xyz.jienan.xkcd.Const.*
 import xyz.jienan.xkcd.R
 import xyz.jienan.xkcd.base.BaseActivity
-import xyz.jienan.xkcd.base.glide.GlideUtils
+import xyz.jienan.xkcd.base.glide.XkcdGlideUtils
+import xyz.jienan.xkcd.base.glide.fallback
 import xyz.jienan.xkcd.comics.contract.ImageDetailPageContract
 import xyz.jienan.xkcd.comics.presenter.ImageDetailPagePresenter
 import xyz.jienan.xkcd.model.XkcdPic
@@ -295,7 +296,7 @@ class ImageDetailPageActivity : BaseActivity(), ImageDetailPageContract.View {
 
     private fun loadGifWithControl() {
         pbLoading!!.visibility = View.VISIBLE
-        GlideUtils.loadGif(glide!!, url!!, object : SimpleTarget<GifDrawable>() {
+        XkcdGlideUtils.loadGif(glide!!, url!!, object : SimpleTarget<GifDrawable>() {
 
             override fun onResourceReady(resource: GifDrawable, glideAnimation: GlideAnimation<in GifDrawable>) {
                 imageDetailPagePresenter.parseGifData(resource.data)
@@ -346,7 +347,8 @@ class ImageDetailPageActivity : BaseActivity(), ImageDetailPageContract.View {
                             }
                         }
 
-                        val maxScale = (viewWidth / imageWidth.toFloat()).coerceAtLeast(viewHeight / imageHeight.toFloat())
+                        val maxScale = (viewWidth / imageWidth.toFloat())
+                                .coerceAtLeast(viewHeight / imageHeight.toFloat())
                         if (maxScale > 1) {
                             // image is smaller than screen, it should be zoomed out to its origin size
                             ssiv.minScale = 1f
@@ -362,7 +364,8 @@ class ImageDetailPageActivity : BaseActivity(), ImageDetailPageContract.View {
                             }
                         } else {
                             // image is bigger than screen, it should be zoomed out to fit the screen
-                            val minScale = (viewWidth / imageWidth.toFloat()).coerceAtMost(viewHeight / imageHeight.toFloat())
+                            val minScale = (viewWidth / imageWidth.toFloat())
+                                    .coerceAtMost(viewHeight / imageHeight.toFloat())
                             ssiv.minScale = minScale
                             // but no need to set max scale
                         }
@@ -376,7 +379,6 @@ class ImageDetailPageActivity : BaseActivity(), ImageDetailPageContract.View {
                     }
 
                     override fun onPreviewReleased() {
-
                         Timber.d("")
                     }
 
@@ -391,23 +393,21 @@ class ImageDetailPageActivity : BaseActivity(), ImageDetailPageContract.View {
             }
 
             override fun onFail(error: Exception) {
-                if (url.startsWith("https")) {
-                    loadImgWithoutControl(url.replaceFirst("https".toRegex(), "http"))
+                val fallback = url.fallback()
+                if (fallback != url) {
+                    loadImgWithoutControl(fallback)
                 }
             }
 
             override fun onCacheHit(imageType: Int, image: File) {
-
                 Timber.d("")
             }
 
             override fun onCacheMiss(imageType: Int, image: File) {
-
                 Timber.d("")
             }
 
             override fun onProgress(progress: Int) {
-
                 Timber.d("")
             }
 

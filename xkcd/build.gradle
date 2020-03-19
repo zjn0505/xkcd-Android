@@ -74,6 +74,11 @@ android {
         vectorDrawables.useSupportLibrary = true
         resConfigs "de", "es", "fr", "ru", "b+zh", "b+zh+hant+TW"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [ "objectbox.incremental" : "true" ]
+            }
+        }
     }
 
     signingConfigs {

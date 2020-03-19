@@ -12,7 +12,7 @@ import com.bumptech.glide.RequestManager
 import kotlinx.android.synthetic.main.item_xkcd_list.view.*
 import timber.log.Timber
 import xyz.jienan.xkcd.R
-import xyz.jienan.xkcd.base.glide.GlideUtils
+import xyz.jienan.xkcd.base.glide.XkcdGlideUtils
 import xyz.jienan.xkcd.model.XkcdModel
 import xyz.jienan.xkcd.model.XkcdPic
 
@@ -67,7 +67,7 @@ internal class XkcdListGridAdapter : ListBaseAdapter<XkcdListGridAdapter.XkcdVie
 
             info.aspectRatio = width.toFloat() / height
             layoutParams.height = 0
-            GlideUtils.load(glide, pic, pic.targetImg, itemView.itemXkcdImageView)
+            XkcdGlideUtils.load(glide, pic, pic.targetImg, itemView.itemXkcdImageView)
             itemView.itemXkcdImageNum?.text = pic.num.toString()
             itemView.itemXkcdImageNum?.background = if (pic.isFavorite) {
                 ContextCompat.getDrawable(itemView.context, R.drawable.ic_heart_on)

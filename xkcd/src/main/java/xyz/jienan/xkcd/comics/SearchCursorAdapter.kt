@@ -14,7 +14,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 
 import xyz.jienan.xkcd.R
-import xyz.jienan.xkcd.base.glide.GlideUtils
+import xyz.jienan.xkcd.base.glide.XkcdGlideUtils
 
 /**
  * Created by jienanzhang on 21/03/2018.
@@ -46,7 +46,7 @@ class SearchCursorAdapter(context: Context?, c: Cursor? = null, flags: Int = 0, 
             ivThumbnail.setBackgroundColor(itemBgColor)
         }
 
-        GlideUtils.load(glide, url, ivThumbnail)
+        XkcdGlideUtils.load(glide, url, ivThumbnail)
 
         (view.findViewById<View>(R.id.tv_xkcd_title) as TextView).text = ivThumbnail.context.resources.getString(R.string.item_search_title,
                 cursor.getString(3),
