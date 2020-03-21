@@ -137,7 +137,7 @@ open class SingleWhatIfFragment : BaseFragment(), ImgInterface.ImgCallback, RefI
                 .subscribe({ showSimpleInfoDialog(it) },
                         { Timber.e(it, "long click error") })
                 .also { compositeDisposable.add(it) }
-        view?.performHapticFeedback(LONG_PRESS, FLAG_IGNORE_GLOBAL_SETTING)
+        view?.performHapticFeedback(LONG_PRESS)
         logUXEvent(FIRE_WHAT_IF_IMG_LONG)
     }
 
@@ -148,7 +148,7 @@ open class SingleWhatIfFragment : BaseFragment(), ImgInterface.ImgCallback, RefI
                         { Timber.e(it, "ref click error") })
                 .also { compositeDisposable.add(it) }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            view?.performHapticFeedback(CONTEXT_CLICK, FLAG_IGNORE_GLOBAL_SETTING)
+            view?.performHapticFeedback(CONTEXT_CLICK)
         }
         logUXEvent(FIRE_WHAT_IF_REF)
     }

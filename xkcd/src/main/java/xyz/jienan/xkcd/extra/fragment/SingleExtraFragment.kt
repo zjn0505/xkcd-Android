@@ -160,7 +160,7 @@ class SingleExtraFragment : BaseFragment(), SingleExtraContract.View {
                 dialogFragment = SimpleInfoDialogFragment()
                 dialogFragment!!.setListener(dialogListener)
                 dialogFragment!!.show(childFragmentManager, "AltInfoDialogFragment")
-                it.performHapticFeedback(LONG_PRESS, FLAG_IGNORE_GLOBAL_SETTING)
+                it.performHapticFeedback(LONG_PRESS)
                 singleExtraPresenter!!.getExplain(currentExtra!!.explainUrl)
                 logUXEvent(FIRE_LONG_PRESS)
                 true

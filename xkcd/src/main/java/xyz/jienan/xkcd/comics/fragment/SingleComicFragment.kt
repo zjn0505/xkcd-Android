@@ -197,7 +197,7 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
                 false
             } else {
                 showInfoDialog()
-                it.performHapticFeedback(LONG_PRESS, FLAG_IGNORE_GLOBAL_SETTING)
+                it.performHapticFeedback(LONG_PRESS)
                 true
             }
         }
