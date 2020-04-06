@@ -1,2 +1,0 @@
-- Vibration on long click now follows Android system settings
-- Fix image loading when high resolution comics not available

@@ -1,7 +1,7 @@
 package xyz.jienan.xkcd
 
 import android.app.Application
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.messaging.FirebaseMessaging
 import java.util.*
 
@@ -20,7 +20,8 @@ object FlavorUtils {
 
     fun updateLocale() {
         if (!BuildConfig.DEBUG) {
-            Crashlytics.setString("locale", Locale.getDefault().toString())
+            FirebaseCrashlytics.getInstance()
+                    .setCustomKey("locale", Locale.getDefault().toString())
         }
     }
 }

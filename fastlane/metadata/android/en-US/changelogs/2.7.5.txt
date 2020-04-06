@@ -1,0 +1,4 @@
+- Add interactive support for comic #2288
+- Vibration on long click now follows Android system settings
+- Fix image loading when high resolution comics not available
+- Fix xk3d #826 loaded as interactive comic
