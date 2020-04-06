@@ -31,6 +31,7 @@ import xyz.jienan.xkcd.base.network.XKCD_BASE_URL
 import xyz.jienan.xkcd.base.network.XKCD_EXPLAIN_URL
 import xyz.jienan.xkcd.comics.activity.ImageDetailPageActivity
 import xyz.jienan.xkcd.comics.activity.ImageWebViewActivity
+import xyz.jienan.xkcd.comics.activity.ImageWebViewActivity.Companion.TAG_XK3D
 import xyz.jienan.xkcd.comics.contract.SingleComicContract
 import xyz.jienan.xkcd.comics.dialog.SimpleInfoDialogFragment
 import xyz.jienan.xkcd.comics.dialog.SimpleInfoDialogFragment.ISimpleInfoDialogListener
@@ -250,7 +251,7 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
                 return true
             }
             R.id.action_go_xk3d -> {
-                ImageWebViewActivity.startActivity(activity!!, currentPic!!.num, translationMode == 1)
+                ImageWebViewActivity.startActivity(activity!!, currentPic!!.num, translationMode == 1, webPageMode = TAG_XK3D)
                 logUXEvent(FIRE_GO_XK3D_MENU)
                 return true
             }

@@ -29,15 +29,25 @@ class ImageWebViewActivity : BaseActivity() {
 
     companion object {
 
+        const val TAG_INTERACTIVE = "interactive"
+
+        const val TAG_XK3D = "xk3d"
+
         private const val PERMALINK_1663 = "xkcd_permalink_1663"
 
-        fun startActivity(context: Context, num: Long, translationMode: Boolean) {
+        private const val PERMALINK_2288 = "xkcd_permalink_2288"
+
+        fun startActivity(context: Context, num: Long, translationMode: Boolean, webPageMode: String = TAG_INTERACTIVE) {
             val intent = Intent(context, ImageWebViewActivity::class.java)
             intent.putExtra("index", num)
             intent.putExtra("translationMode", translationMode)
+            intent.putExtra("webPageMode", webPageMode)
             context.startActivity(intent)
         }
     }
+
+    private val isInteractiveMode: Boolean
+        get() = intent.getStringExtra("webPageMode") == TAG_INTERACTIVE
 
     private val webView by lazy { findViewById<WebView>(R.id.imgWebView) }
 
@@ -48,6 +58,10 @@ class ImageWebViewActivity : BaseActivity() {
     private var permalink1663: String?
         get() = sharedPreferences.getString(PERMALINK_1663, "")
         set(value) = sharedPreferences.edit { putString(PERMALINK_1663, value) }
+
+    private var permalink2288: String?
+        get() = sharedPreferences.getString(PERMALINK_2288, "")
+        set(value) = sharedPreferences.edit { putString(PERMALINK_2288, value) }
 
     private var index: Long = 1L
 
@@ -99,60 +113,24 @@ class ImageWebViewActivity : BaseActivity() {
     }
 
     private fun loadXkcdInWebView(xkcd: XkcdPic) {
-        var script = ""
-        val url = when (xkcd.num.toInt()) {
-            1663 -> {
-                if (permalink1663.isNullOrBlank()) {
-                    "https://zjn0505.github.io/xkcd-undressed/${xkcd.num}/"
-                } else {
-                    "https://zjn0505.github.io/xkcd-undressed/${xkcd.num}/#${permalink1663}"
-                }
-            }
-            in resources.getIntArray(R.array.interactive_comics) -> if (!intent.getBooleanExtra("translationMode", false)) {
-                "https://zjn0505.github.io/xkcd-undressed/${xkcd.num}/"
-            } else {
-                Timber.d("region ${Locale.getDefault()}")
-                "https://zjn0505.github.io/xkcd-undressed/${xkcd.num}/?region=${Locale.getDefault().toString().replace("#", "_")}"
-            }
-            else -> {
-                // xk3d
-                script = """
-                    javascript:
-                    var toDelete = [];
-                    toDelete.push(document.getElementById("topContainer"));
-                    toDelete.push(document.getElementById("bottom"));
-                    toDelete.push(document.getElementById("ctitle"));
-                    toDelete.push(document.getElementById("middleFooter"));
-                    toDelete.push(document.getElementsByClassName("menuCont")[0]);
-                    toDelete.push(document.getElementsByClassName("menuCont")[1]);
-                    toDelete.push(document.getElementsByClassName("br")[0]);
-                    toDelete.push(document.getElementsByClassName("br")[1]);
-                    toDelete.forEach(function (element) {
-                        if (element) element.style.display = 'none';
-                    });
-                    var container = document.getElementById("container");
-                    if (container) {
-                        container.style.marginRight = 0;
-                        container.style.marginLeft = 0;
-                        container.style.width = "100vw";
-                    }
-                    var comic = document.getElementById("comic");
-                    if (comic) {
-                        comic.style.zoom = window.innerWidth / comic.offsetWidth / 1.2;
-                    }
-                """.trimIndent()
-                "https://xk3d.xkcd.com/$index"
-            }
+        val urlScriptPair = if (isInteractiveMode) {
+            loadInteractivePage(xkcd)
+        } else {
+            loadXk3dPage()
         }
+        val url = urlScriptPair.first
+        val script = urlScriptPair.second
         webView.webViewClient = object : WebViewClient() {
 
             override fun onPageFinished(view: WebView, url: String) {
                 this@ImageWebViewActivity.title = view.title
                 Timber.d("Current page $url")
-                if (url.contains("/1663/#".toRegex())) {
+                if (index == 1663L && url.contains("/1663/#".toRegex())) {
                     if (permalink1663.isNullOrBlank()) {
                         permalink1663 = extractUuidFrom1663url(url)
                     }
+                } else if (index == 2288L && url.contains("https://xkcd.com/2288/#-".toRegex())) {
+                    permalink2288 = url
                 }
             }
         }
@@ -178,7 +156,88 @@ class ImageWebViewActivity : BaseActivity() {
         }
 
         webView.updateSettings()
+        if (index == 2288L) {
+            webView.settings.displayZoomControls = true
+        }
         webView.loadUrl(url)
+    }
+
+    private fun loadInteractivePage(xkcd: XkcdPic): Pair<String, String> {
+        var script = ""
+        val url = when (xkcd.num.toInt()) {
+            1663 -> {
+                if (permalink1663.isNullOrBlank()) {
+                    "https://zjn0505.github.io/xkcd-undressed/${xkcd.num}/"
+                } else {
+                    "https://zjn0505.github.io/xkcd-undressed/${xkcd.num}/#${permalink1663}"
+                }
+            }
+            2288 -> {
+                script = """
+                    javascript:
+                    var toDelete = [];
+                    toDelete.push(document.getElementById("topContainer"));
+                    toDelete.push(document.getElementById("bottom"));
+                    toDelete.push(document.getElementById("ctitle"));
+                    toDelete.push(document.getElementById("middleFooter"));
+                    toDelete.push(document.getElementsByClassName("menuCont")[0]);
+                    toDelete.push(document.getElementsByClassName("menuCont")[1]);
+                    toDelete.push(document.getElementsByClassName("br")[0]);
+                    toDelete.push(document.getElementsByClassName("br")[1]);
+                    toDelete.push(document.getElementsByClassName("comicNav")[0]);
+                    toDelete.push(document.getElementsByClassName("comicNav")[1]);
+                    toDelete.forEach(function (element) {
+                        if (element) element.style.display = 'none';
+                    });
+                """.trimIndent()
+                if (permalink2288.isNullOrBlank()) {
+                    "https://xkcd.com/2288"
+                } else {
+                    permalink2288!!
+                }
+            }
+            in resources.getIntArray(R.array.interactive_comics) -> if (!intent.getBooleanExtra("translationMode", false)) {
+                "https://zjn0505.github.io/xkcd-undressed/${xkcd.num}/"
+            } else {
+                Timber.d("region ${Locale.getDefault()}")
+                "https://zjn0505.github.io/xkcd-undressed/${xkcd.num}/?region=${Locale.getDefault().toString().replace("#", "_")}"
+            }
+            else -> {
+                ""
+            }
+        }
+        return url to script
+    }
+
+    private fun loadXk3dPage(): Pair<String, String> {
+        // xk3d
+        val script = """
+                    javascript:
+                    var toDelete = [];
+                    toDelete.push(document.getElementById("topContainer"));
+                    toDelete.push(document.getElementById("bottom"));
+                    toDelete.push(document.getElementById("ctitle"));
+                    toDelete.push(document.getElementById("middleFooter"));
+                    toDelete.push(document.getElementsByClassName("menuCont")[0]);
+                    toDelete.push(document.getElementsByClassName("menuCont")[1]);
+                    toDelete.push(document.getElementsByClassName("br")[0]);
+                    toDelete.push(document.getElementsByClassName("br")[1]);
+                    toDelete.forEach(function (element) {
+                        if (element) element.style.display = 'none';
+                    });
+                    var container = document.getElementById("container");
+                    if (container) {
+                        container.style.marginRight = 0;
+                        container.style.marginLeft = 0;
+                        container.style.width = "100vw";
+                    }
+                    var comic = document.getElementById("comic");
+                    if (comic) {
+                        comic.style.zoom = window.innerWidth / comic.offsetWidth / 1.2;
+                    }
+                """.trimIndent()
+        val url = "https://xk3d.xkcd.com/$index"
+        return url to script
     }
 
     @VisibleForTesting
