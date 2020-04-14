@@ -6,7 +6,7 @@
         android:fontStyle="normal"
         android:fontWeight="400"
         app:font="@font/xkcd_script"
-        app:fontStyle="italic"
+        app:fontStyle="normal"
         app:fontWeight="400" />
     <font
         android:font="@font/xkcd_script"
