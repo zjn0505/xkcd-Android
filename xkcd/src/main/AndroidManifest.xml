@@ -3,21 +3,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="xyz.jienan.xkcd">
 
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:name=".XkcdApplication"
         android:allowBackup="true"
+        android:extractNativeLibs="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:extractNativeLibs="true"
-        tools:replace="android:extractNativeLibs"
-        android:networkSecurityConfig="@xml/network_security_config"
         android:theme="@style/AppBarFontTheme"
-        tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
+        tools:ignore="GoogleAppIndexingWarning,UnusedAttribute"
+        tools:replace="android:extractNativeLibs">
 
         <activity
             android:name=".home.MainActivity"
@@ -37,20 +37,20 @@
         <activity
             android:name=".comics.activity.ImageDetailPageActivity"
             android:configChanges="screenSize|orientation|keyboardHidden"
-            android:theme="@style/TransparentBackgroundTheme"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"
+            android:theme="@style/TransparentBackgroundTheme" />
 
         <activity
             android:name=".comics.activity.ImageWebViewActivity"
             android:configChanges="screenSize|orientation|keyboardHidden"
-            android:theme="@style/TransparentBackgroundTheme"
             android:label=" "
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"
+            android:theme="@style/TransparentBackgroundTheme" />
 
         <activity
             android:name=".settings.PreferenceActivity"
-            android:label="@string/settings"
             android:configChanges="screenSize|orientation|keyboardHidden|uiMode"
+            android:label="@string/settings"
             android:launchMode="singleTop" />
 
         <activity
@@ -62,9 +62,6 @@
             android:name=".list.activity.WhatIfListActivity"
             android:configChanges="screenSize|orientation|keyboardHidden"
             android:label="@string/title_what_if_list" />
-
-        <service android:name=".whatif.WhatIfFastLoadService"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <meta-data
             android:name="xyz.jienan.xkcd.base.glide.OkHttpProgressGlideModule"

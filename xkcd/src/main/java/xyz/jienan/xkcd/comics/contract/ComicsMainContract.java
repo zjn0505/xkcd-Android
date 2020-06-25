@@ -23,8 +23,6 @@ public interface ComicsMainContract {
 
     interface Presenter extends ContentMainBasePresenter {
 
-        void fastLoad(int latestIndex);
-
         long getBookmark();
 
         boolean setBookmark(long index);

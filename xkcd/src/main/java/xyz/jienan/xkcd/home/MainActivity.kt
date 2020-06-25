@@ -1,11 +1,9 @@
 package xyz.jienan.xkcd.home
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.content.res.Configuration
-import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -32,7 +30,6 @@ import xyz.jienan.xkcd.model.QuoteModel
 import xyz.jienan.xkcd.model.persist.SharedPrefManager
 import xyz.jienan.xkcd.settings.PreferenceActivity
 import xyz.jienan.xkcd.ui.getColorResCompat
-import xyz.jienan.xkcd.whatif.WhatIfFastLoadService
 import xyz.jienan.xkcd.whatif.fragment.WhatIfMainFragment
 import kotlin.random.Random
 
@@ -96,7 +93,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         })
         // load data - daily quote & fast load xkcd comics
         getDailyQuote()
-        fastLoad()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -221,19 +217,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                     }
                 }, { e -> Timber.e(e, "failed to get daily quote") })
                 .also { compositeDisposable.add(it) }
-    }
-
-    private fun fastLoad() {
-        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetwork = connectivityManager.activeNetworkInfo
-        val isUnlimitedConnected = (activeNetwork != null
-                && activeNetwork.isConnected
-                && !connectivityManager.isActiveNetworkMetered)
-        if (isUnlimitedConnected) {
-            val msgIntent = Intent(this, WhatIfFastLoadService::class.java)
-            msgIntent.putExtra(WHAT_IF_LATEST_INDEX, SharedPrefManager.latestWhatIf)
-            WhatIfFastLoadService.enqueueWork(this, msgIntent)
-        }
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {

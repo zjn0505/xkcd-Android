@@ -53,17 +53,6 @@ class ComicsMainPresenter(private val view: ComicsMainContract.View) : ComicsMai
         view.toggleFab(isFav)
     }
 
-    override fun fastLoad(latestIndex: Int) {
-        if (latestIndex <= 0) {
-            return
-        }
-        Timber.d("Start fast load")
-        XkcdModel.fastLoad(latestIndex)
-                .subscribe({ Timber.d("Fast load succeed") },
-                        { e -> Timber.e(e, "Error in fast load") })
-                .also { compositeDisposable.add(it) }
-    }
-
     override fun getInfoAndShowFab(index: Int) {
         if (!fabShowDisposable.isDisposed) {
             fabShowDisposable.dispose()
@@ -149,7 +138,7 @@ class ComicsMainPresenter(private val view: ComicsMainContract.View) : ComicsMai
 
     override fun getBookmark() = SharedPrefManager.getBookmark(XKCD_BOOKMARK)
 
-    override fun setBookmark(index: Long) : Boolean {
+    override fun setBookmark(index: Long): Boolean {
         return if (index > 0) {
             SharedPrefManager.setBookmark(XKCD_BOOKMARK, index)
             true

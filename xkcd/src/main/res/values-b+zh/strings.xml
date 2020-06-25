@@ -59,6 +59,8 @@
     <string name="pref_xkcd_translation_title">漫画翻译 by @蜡象汉化组</string>
     <string name="pref_xkcd_translation_on">当有对应翻译时，显示翻译切换开关</string>
     <string name="pref_xkcd_translation_off">已关闭</string>
+    <string name="pref_xkcd_preload_title">预加载 xkcd 漫画</string>
+    <string name="pref_xkcd_preload_summary">下载所有漫画以快速浏览或离线阅读</string>
     <string name="settings">设置</string>
     <string name="share_text">一起来看看这张有趣的 xkcd 漫画吧. %s</string>
     <string name="toast_more_explain_failed">获取失败，请尝试访问 Explainxkcd</string>
@@ -92,4 +94,6 @@
     <string name="release_for_puzzle">松开查看问题</string>
 
     <string name="bookmark_saved">书签已保存</string>
+    <string name="xkcd_download_notification_channel_name">下载 xkcd</string>
+    <string name="xkcd_download_notification_content_text">剩余: %d</string>
 </resources>

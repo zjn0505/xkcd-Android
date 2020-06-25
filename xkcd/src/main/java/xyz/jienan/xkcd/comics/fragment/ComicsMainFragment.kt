@@ -44,7 +44,6 @@ class ComicsMainFragment : ContentMainBaseFragment(), ComicsMainContract.View {
     override fun latestXkcdLoaded(xkcdPic: XkcdPic) {
         latestIndex = xkcdPic.num.toInt()
         super.latestLoaded()
-        (presenter as ComicsMainPresenter).fastLoad(latestIndex)
     }
 
     override fun showFab(xkcdPic: XkcdPic) {
@@ -84,7 +83,7 @@ class ComicsMainFragment : ContentMainBaseFragment(), ComicsMainContract.View {
     }
 
     override fun showThumbUpCount(thumbCount: Long?) {
-        showToast(context!!, thumbCount.toString())
+        showToast(requireContext(), thumbCount.toString())
     }
 
     override fun renderXkcdSearch(xkcdPics: List<XkcdPic>) {
@@ -112,7 +111,7 @@ class ComicsMainFragment : ContentMainBaseFragment(), ComicsMainContract.View {
     override fun onTabTitleDoubleTap() {
         if (currentIndex > 0) {
             (presenter as ComicsMainPresenter).bookmark = currentIndex.toLong()
-            showToast(context!!, getString(R.string.bookmark_saved))
+            showToast(requireContext(), getString(R.string.bookmark_saved))
             view?.performHapticFeedback(LONG_PRESS, FLAG_IGNORE_GLOBAL_SETTING)
             logUXEvent(Const.FIRE_XKCD_BOOKMARK_DOUBLE_TAP)
         }

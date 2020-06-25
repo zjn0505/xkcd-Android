@@ -90,15 +90,6 @@ object NotificationUtils {
         notificationManager.notify(if (tag == TAG_XKCD) 0 else 1, notification)
     }
 
-    private fun Context.getPendingIntent(num: Int, tag: String): PendingIntent {
-        val intent = Intent(this, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        intent.putExtra(INDEX_ON_NOTI_INTENT, num)
-        intent.putExtra(LANDING_TYPE, tag)
-        return PendingIntent.getActivity(this, 0 /* Request code */, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT)
-    }
-
     private fun Context.createNotificationBuilder(title: String, content: String, tag: String) =
             NotificationCompat.Builder(this, tag)
                     .setSmallIcon(R.drawable.ic_notification)
@@ -130,4 +121,13 @@ object NotificationUtils {
             Single.just(tag)
                     .map { if (tag == TAG_XKCD) XKCD_LOGO else WHAT_IF_LOGO }
                     .map { logo -> Glide.with(context).load(logo).asBitmap().into(width, height).get() }
+}
+
+fun Context.getPendingIntent(num: Int, tag: String): PendingIntent {
+    val intent = Intent(this, MainActivity::class.java)
+    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+    intent.putExtra(INDEX_ON_NOTI_INTENT, num)
+    intent.putExtra(LANDING_TYPE, tag)
+    return PendingIntent.getActivity(this, 0 /* Request code */, intent,
+            PendingIntent.FLAG_UPDATE_CURRENT)
 }

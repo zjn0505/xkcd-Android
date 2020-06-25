@@ -59,6 +59,8 @@
     <string name="pref_xkcd_translation_title">漫畫翻譯 by @CQD</string>
     <string name="pref_xkcd_translation_on">當有對應翻譯時，顯示翻譯切換開關</string>
     <string name="pref_xkcd_translation_off">已關閉</string>
+    <string name="pref_xkcd_preload_title">預加載 xkcd 漫畫</string>
+    <string name="pref_xkcd_preload_summary">下載所有漫畫以快速瀏覽或離線閱讀</string>
     <string name="settings">設置</string>
     <string name="share_text">壹起來看看這張有趣的 xkcd 漫畫吧. %s</string>
     <string name="toast_more_explain_failed">獲取失敗，請嘗試訪問 Explainxkcd</string>
@@ -92,4 +94,6 @@
     <string name="release_for_puzzle">松開查看問題</string>
 
     <string name="bookmark_saved">書簽已保存</string>
+    <string name="xkcd_download_notification_channel_name">下載 xkcd</string>
+    <string name="xkcd_download_notification_content_text">剩餘: %d</string>
 </resources>

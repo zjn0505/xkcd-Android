@@ -6,10 +6,14 @@ import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.*
+import androidx.work.*
+import timber.log.Timber
 import xyz.jienan.xkcd.Const.*
 import xyz.jienan.xkcd.R
 import xyz.jienan.xkcd.model.WhatIfModel
 import xyz.jienan.xkcd.model.XkcdModel
+import xyz.jienan.xkcd.model.work.XkcdDownloadWorker
+import xyz.jienan.xkcd.model.work.XkcdFastLoadWorker
 
 /**
  * Created by Jienan on 2018/3/9.
@@ -36,6 +40,32 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
 
         if (XkcdModel.localizedUrl.isBlank()) {
             findPreference<PreferenceCategory>("pref_key_xkcd")?.removePreference(findPreference(PREF_XKCD_TRANSLATION))
+        }
+
+        findPreference<PreferenceCategory>("pref_key_xkcd")?.findPreference<Preference>("pref_xkcd_preload")?.setOnPreferenceClickListener {
+
+            val xkcdFastLoadRequest: OneTimeWorkRequest =
+                    OneTimeWorkRequestBuilder<XkcdFastLoadWorker>()
+                            .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
+                            .build()
+
+            val xkcdPreloadRequest: OneTimeWorkRequest =
+                    OneTimeWorkRequestBuilder<XkcdDownloadWorker>()
+                            .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).setRequiresStorageNotLow(true).build())
+                            .build()
+
+            val work = WorkManager.getInstance(requireContext()).getWorkInfosByTag("xkcd").get().firstOrNull()
+
+            Timber.d("State = ${work?.state}")
+
+            if (work?.state == WorkInfo.State.SUCCEEDED) {
+                WorkManager.getInstance(requireContext()).enqueueUniqueWork("xkcd download", ExistingWorkPolicy.KEEP, xkcdPreloadRequest)
+            } else {
+                WorkManager.getInstance(requireContext()).beginUniqueWork("xkcd download", ExistingWorkPolicy.KEEP, xkcdFastLoadRequest)
+                        .then(xkcdPreloadRequest).enqueue()
+            }
+
+            true
         }
     }
 

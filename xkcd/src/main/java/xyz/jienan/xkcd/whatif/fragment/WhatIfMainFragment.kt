@@ -115,7 +115,7 @@ class WhatIfMainFragment : ContentMainBaseFragment(), WhatIfMainContract.View {
     }
 
     override fun showThumbUpCount(thumbCount: Long?) {
-        showToast(context!!, thumbCount.toString())
+        showToast(requireContext(), thumbCount.toString())
     }
 
     override fun renderWhatIfSearch(articles: List<WhatIfArticle>) {
@@ -144,7 +144,7 @@ class WhatIfMainFragment : ContentMainBaseFragment(), WhatIfMainContract.View {
     override fun onTabTitleDoubleTap() {
         if (currentIndex > 0) {
             (presenter as WhatIfMainPresenter).setBookmark(currentIndex.toLong())
-            showToast(context!!, getString(R.string.bookmark_saved))
+            showToast(requireContext(), getString(R.string.bookmark_saved))
             view?.performHapticFeedback(LONG_PRESS, FLAG_IGNORE_GLOBAL_SETTING)
             logUXEvent(FIRE_WHAT_IF_BOOKMARK_DOUBLE_TAP)
         }

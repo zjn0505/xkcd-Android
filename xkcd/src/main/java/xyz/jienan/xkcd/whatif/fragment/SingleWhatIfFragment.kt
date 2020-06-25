@@ -154,7 +154,7 @@ open class SingleWhatIfFragment : BaseFragment(), ImgInterface.ImgCallback, RefI
     }
 
     private fun showSimpleInfoDialog(content: String) {
-        dialog = AlertDialog.Builder(context!!).create()
+        dialog = AlertDialog.Builder(requireContext()).create()
         @SuppressLint("InflateParams")
         val view = layoutInflater.inflate(R.layout.dialog_explain, null) as LinearLayout
         val document = Jsoup.parse(content)

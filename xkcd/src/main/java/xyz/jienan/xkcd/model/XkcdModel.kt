@@ -6,6 +6,7 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
+import timber.log.Timber
 import xyz.jienan.xkcd.base.network.NetworkService
 import xyz.jienan.xkcd.base.network.XKCD_BROWSE_LIST
 import xyz.jienan.xkcd.base.network.XKCD_EXPLAIN_URL
@@ -62,22 +63,32 @@ object XkcdModel {
      * @param latestIndex
      * @return
      */
-    fun fastLoad(latestIndex: Int): Observable<Boolean> = Observable.range(0, (latestIndex - 1) / SLICE + 1)
-            .subscribeOn(Schedulers.io())
-            .map { i -> i * 400 + 1 }
-            .flatMap { startIndex ->
-                Observable.just(BoxManager.getValidXkcdInRange(startIndex.toLong(), startIndex + SLICE - 1L))
-                        .filter { it.size != SLICE }
-                        .filter {
-                            if (it.isEmpty()) {
-                                true
-                            } else {
-                                startIndex <= 404 && startIndex + SLICE > 404 && it.size != SLICE - 1
+    fun fastLoad(latestIndex: Int): Single<Long> {
+
+        val sectionCount = (latestIndex - 1) / SLICE + 1
+
+        val lastSectionStartIndex = SLICE * (sectionCount - 1) + 1
+
+        return Observable.range(0, (latestIndex - 1) / SLICE + 1)
+                .subscribeOn(Schedulers.io())
+                .map { i -> i * 400 + 1 }
+                .flatMap { startIndex ->
+                    Observable.just(BoxManager.getValidXkcdInRange(startIndex.toLong(), startIndex + SLICE - 1L))
+                            .flatMap {
+                                Timber.d("Start Index $startIndex, list size :${it.size}")
+                                if (startIndex == 401 && it.size == 399 || it.size == SLICE) {
+                                    Observable.just(true)
+                                } else if (lastSectionStartIndex == startIndex && it.size == latestIndex - startIndex + 1) {
+                                    Observable.just(true)
+                                } else {
+                                    loadRange(startIndex.toLong(), SLICE.toLong()).map { true }
+                                }
                             }
-                        }
-                        .flatMap { loadRange(startIndex.toLong(), SLICE.toLong()) }
-            }
-            .map { true }
+                }
+                .doOnNext { Timber.d("XkcdFastLoad") }
+                .take(sectionCount.toLong())
+                .count()
+    }
 
     /**
      * @param start
@@ -156,7 +167,7 @@ object XkcdModel {
 
     fun loadLocalizedXkcd(index: Long): Maybe<XkcdPic> {
         return if (localizedUrl.isBlank()) {
-             Maybe.error(Exception("Local xkcd not configured"))
+            Maybe.error(Exception("Local xkcd not configured"))
         } else {
             NetworkService.xkcdAPI
                     .getLocalizedXkcd(localizedUrl.format(index))

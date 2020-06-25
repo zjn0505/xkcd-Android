@@ -78,11 +78,17 @@
 
         <SwitchPreferenceCompat
             app:defaultValue="false"
+            app:iconSpaceReserved="false"
             app:key="pref_xkcd_translation"
             app:summaryOff="@string/pref_xkcd_translation_off"
             app:summaryOn="@string/pref_xkcd_translation_on"
-            app:title="@string/pref_xkcd_translation_title"
-            app:iconSpaceReserved="false" />
+            app:title="@string/pref_xkcd_translation_title" />
+
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="pref_xkcd_preload"
+            app:summary="@string/pref_xkcd_preload_summary"
+            app:title="@string/pref_xkcd_preload_title" />
 
     </PreferenceCategory>
 

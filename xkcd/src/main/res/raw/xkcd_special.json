@@ -60,6 +60,10 @@
     "img": "https://imgs.xkcd.com/comics/visual_field_large.png"
   },
   {
+    "num": 1097,
+    "img": "https://imgs.xkcd.com/comics/a_hypochondriacs_nightmare.png"
+  },
+  {
     "num": 1103,
     "img": "https://imgs.xkcd.com/comics/nine.png"
   },
@@ -72,6 +76,10 @@
     "img": "https://imgs.xkcd.com/comics/congress_large.png"
   },
   {
+    "num": 1182,
+    "img": "https://imgs.xkcd.com/comics/rembrandt_photo.png"
+  },
+  {
     "num": 1190,
     "img": "https://www.explainxkcd.com/wiki/images/4/41/time-animated.gif"
   },
@@ -82,6 +90,14 @@
   {
     "num": 1196,
     "img": "https://imgs.xkcd.com/comics/subways_large.png"
+  },
+  {
+    "num": 1229,
+    "img": "https://imgs.xkcd.com/comics/screensaver.png"
+  },
+  {
+    "num": 1253,
+    "img": "https://imgs.xkcd.com/comics/exoplanet_names.png"
   },
   {
     "num": 1256,
@@ -116,6 +132,10 @@
     "img": "https://imgs.xkcd.com/comics/dominant_players_large.png"
   },
   {
+    "num": 1416,
+    "img": "https://imgs.xkcd.com/comics/pixels.png"
+  },
+  {
     "num": 1446,
     "img": "https://i.imgur.com/M4wa8Ed.gif"
   },
@@ -138,6 +158,10 @@
   {
     "num": 1525,
     "img": "https://www.explainxkcd.com/wiki/images/e/e0/emojic_8_ball.png"
+  },
+  {
+    "num": 1551,
+    "img": "https://imgs.xkcd.com/comics/pluto.png"
   },
   {
     "num": 1608,

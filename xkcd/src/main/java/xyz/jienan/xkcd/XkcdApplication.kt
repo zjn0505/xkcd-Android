@@ -1,15 +1,19 @@
 package xyz.jienan.xkcd
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
+import androidx.work.*
 import xyz.jienan.xkcd.base.glide.GlideImageLoader
 import xyz.jienan.xkcd.model.MyObjectBox
 import xyz.jienan.xkcd.model.XkcdModel
 import xyz.jienan.xkcd.model.persist.BoxManager
 import xyz.jienan.xkcd.model.persist.SharedPrefManager
 import xyz.jienan.xkcd.model.util.XkcdSideloadUtils
+import xyz.jienan.xkcd.model.work.WhatIfFastLoadWorker
+import xyz.jienan.xkcd.model.work.XkcdFastLoadWorker
 import xyz.jienan.xkcd.ui.xkcdimageview.ImageLoaderFactory
 
 /**
@@ -38,6 +42,7 @@ class XkcdApplication : Application() {
         SharedPrefManager.init(this)
 
         ImageLoaderFactory.initialize(GlideImageLoader.with(this))
+        fastLoad()
     }
 
     companion object {
@@ -54,5 +59,28 @@ class XkcdApplication : Application() {
     private fun updateLocale() {
         XkcdModel.localizedUrl = resources.getString(R.string.api_xkcd_localization)
         FlavorUtils.updateLocale()
+    }
+
+
+    @SuppressLint("EnqueueWork")
+    private fun fastLoad() {
+        val xkcdFastLoadRequest: OneTimeWorkRequest =
+                OneTimeWorkRequestBuilder<XkcdFastLoadWorker>()
+                        .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
+                        .addTag("xkcd")
+                        .build()
+
+        val whatIfFastLoad: OneTimeWorkRequest =
+                OneTimeWorkRequestBuilder<WhatIfFastLoadWorker>()
+                        .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
+                        .build()
+
+        val xkcdWork = WorkManager.getInstance(this)
+                .beginUniqueWork("xkcd", ExistingWorkPolicy.KEEP, xkcdFastLoadRequest)
+
+        val whatIfWork = WorkManager.getInstance(this)
+                .beginUniqueWork("what_if", ExistingWorkPolicy.KEEP, whatIfFastLoad)
+
+        WorkContinuation.combine(listOf(xkcdWork, whatIfWork)).enqueue()
     }
 }

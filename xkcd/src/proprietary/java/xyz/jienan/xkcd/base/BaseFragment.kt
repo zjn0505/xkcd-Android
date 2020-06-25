@@ -11,7 +11,7 @@ import xyz.jienan.xkcd.Const.FIRE_UX_ACTION
 
 abstract class BaseFragment : Fragment() {
 
-    private val mFirebaseAnalytics by lazy { FirebaseAnalytics.getInstance(context!!) }
+    private val mFirebaseAnalytics by lazy { FirebaseAnalytics.getInstance(requireContext()) }
 
     @get:LayoutRes
     protected abstract val layoutResId: Int

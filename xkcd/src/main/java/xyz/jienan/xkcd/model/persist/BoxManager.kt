@@ -25,6 +25,11 @@ object BoxManager {
         extraBox = boxStore.boxFor(ExtraComics::class.java)
     }
 
+    val allXkcd: List<XkcdPic>
+        get() {
+            return xkcdBox.query().build().find()
+        }
+
     val favXkcd: List<XkcdPic>
         get() {
             val queryFav = xkcdBox.query().equal(XkcdPic_.isFavorite, true).build()
