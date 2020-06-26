@@ -69,14 +69,14 @@ android {
         applicationId "xyz.jienan.xkcd"
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 69
-        versionName "2.7.6"
+        versionCode 70
+        versionName "2.7.7"
         vectorDrawables.useSupportLibrary = true
         resConfigs "de", "es", "fr", "ru", "b+zh", "b+zh+hant+TW"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments = [ "objectbox.incremental" : "true" ]
+                arguments = ["objectbox.incremental": "true"]
             }
         }
     }
@@ -135,7 +135,8 @@ android {
             if (isProprietary) {
                 signingConfig signingConfigs.releaseConfig
             } else {
-                signingConfig signingConfigs.releaseFossConfig // https://gitlab.com/fdroid/fdroidserver/issues/697#note_229584776
+                signingConfig signingConfigs.releaseFossConfig
+                // https://gitlab.com/fdroid/fdroidserver/issues/697#note_229584776
             }
             multiDexEnabled false
         }
@@ -190,26 +191,36 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.12.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.9.0'
-    //noinspection GradleDependency
-    implementation('com.squareup.okhttp3:logging-interceptor:3.12.3') {
-        force = true // don't change
+
+    implementation('com.squareup.okhttp3:logging-interceptor') {
+        version {
+            strictly '[3.12, 3.13['
+            prefer '3.12.12'
+        }
     }
-    //noinspection GradleDependency
-    implementation('com.squareup.okhttp3:okhttp:3.12.3') {
-        force = true // from 3.13, okhttp only support Android 5+
+
+    implementation('com.squareup.okhttp3:okhttp') {
         // https://cashapp.github.io/2019-02-05/okhttp-3-13-requires-android-5
+        version {
+            strictly '[3.12, 3.13['
+            prefer '3.12.12'
+        }
     }
     implementation 'com.squareup:seismic:1.0.2'
     implementation 'io.reactivex.rxjava2:rxjava:2.2.19'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
     implementation 'com.jakewharton.rxbinding3:rxbinding:3.1.0'
     implementation 'com.google.code.gson:gson:2.8.6'
-    //noinspection GradleDependency
-    implementation('com.github.bumptech.glide:glide:3.8.0') {
-        force = true
+
+    implementation('com.github.bumptech.glide:glide') {
+        version {
+            strictly '3.8.0'
+        }
     }
-    implementation('com.github.bumptech.glide:okhttp3-integration:1.5.0') {
-        force = true
+    implementation('com.github.bumptech.glide:okhttp3-integration') {
+        version {
+            strictly '1.5.0'
+        }
     }
     implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
     implementation 'com.jakewharton.timber:timber:4.7.1'

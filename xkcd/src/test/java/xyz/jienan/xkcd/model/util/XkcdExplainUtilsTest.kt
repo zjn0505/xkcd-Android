@@ -1,10 +1,9 @@
 package xyz.jienan.xkcd.model.util
 
 import okhttp3.MediaType
-import org.junit.Test
 import okhttp3.ResponseBody
-import org.junit.Assert.*
-
+import org.junit.Assert.assertEquals
+import org.junit.Test
 
 
 class XkcdExplainUtilsTest {

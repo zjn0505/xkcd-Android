@@ -8,7 +8,10 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.CATEGORY_PROGRESS
-import androidx.work.*
+import androidx.work.CoroutineWorker
+import androidx.work.ForegroundInfo
+import androidx.work.WorkManager
+import androidx.work.WorkerParameters
 import com.bumptech.glide.Glide
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.asFlow
@@ -52,8 +55,11 @@ class XkcdDownloadWorker(private val context: Context, parameters: WorkerParamet
                 }
                 Timber.i("Progress ${++count}/${allXkcd.size}")
                 if (!isStopped) {
-                    setProgressAsync(workDataOf("progress" to count))
-                    setForegroundAsync(createForegroundInfo(count, max))
+                    try {
+                        setForegroundAsync(createForegroundInfo(count, max))
+                    } catch (e: Exception) {
+                        Timber.e(e)
+                    }
                 }
 
             }
@@ -68,7 +74,6 @@ class XkcdDownloadWorker(private val context: Context, parameters: WorkerParamet
                 }
                 Timber.i("Progress ${++count}/${allXkcd.size}")
                 if (!isStopped) {
-                    setProgress(workDataOf("progress" to count))
                     setForeground(createForegroundInfo(count, max))
                 }
             }

@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
-import android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
 import android.view.HapticFeedbackConstants.LONG_PRESS
 import android.view.MenuItem
 import android.view.View

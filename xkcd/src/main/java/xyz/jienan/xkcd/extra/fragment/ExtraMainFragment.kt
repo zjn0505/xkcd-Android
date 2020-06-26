@@ -1,7 +1,9 @@
 package xyz.jienan.xkcd.extra.fragment
 
 import android.os.Bundle
-import android.view.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.View
 import kotlinx.android.synthetic.main.fab_sub_icons.*
 import kotlinx.android.synthetic.main.fragment_comic_main.*
 import xyz.jienan.xkcd.Const

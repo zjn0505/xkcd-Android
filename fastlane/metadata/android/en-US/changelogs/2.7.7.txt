@@ -1,0 +1,1 @@
+- Add prefetch all comics option, for fast or offline browsing

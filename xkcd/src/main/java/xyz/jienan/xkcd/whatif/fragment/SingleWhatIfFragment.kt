@@ -7,7 +7,8 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
-import android.view.HapticFeedbackConstants.*
+import android.view.HapticFeedbackConstants.CONTEXT_CLICK
+import android.view.HapticFeedbackConstants.LONG_PRESS
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView

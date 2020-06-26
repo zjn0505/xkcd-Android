@@ -28,7 +28,7 @@ class DragImageView @JvmOverloads constructor(context: Context, attr: AttributeS
     private var oneFingerTouch = true
 
     private var firstPointerId = 0
-    
+
     init {
         systemUiVisibility = SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
     }
@@ -47,8 +47,11 @@ class DragImageView @JvmOverloads constructor(context: Context, attr: AttributeS
                 MotionEvent.ACTION_DOWN -> onActionDown(event)
                 MotionEvent.ACTION_MOVE -> {
                     return if (firstPointerId == event.getPointerId(event.actionIndex) && (event.pointerCount == 1 || scale < 1f)) {
-                        onActionMove(event)
-                        true
+                        if (onActionMove(event)) {
+                            true
+                        } else {
+                            super.dispatchTouchEvent(event)
+                        }
                     } else if (event.pointerCount > 1 && scale != 1f) {
                         false
                     } else {
@@ -75,17 +78,23 @@ class DragImageView @JvmOverloads constructor(context: Context, attr: AttributeS
         downY = event.y
     }
 
-    private fun onActionMove(event: MotionEvent) {
+    private fun onActionMove(event: MotionEvent): Boolean {
         translateX = event.x - downX
         translateY = event.y - downY
 
         val percent = abs(translateY) / height
+
+        // Workaround, on Samsung S9, double click and pinch are hard to trigger.
+        if (percent < 0.001) {
+            return false
+        }
 
         if (scale in MIN_SCALE..1f) {
             scale = (1 - percent).coerceIn(MIN_SCALE, 1f)
             newAlpha = (1 - 1.5f * percent).coerceIn(0f, 1f)
         }
         invalidate()
+        return true
     }
 
     private fun onActionUp() {

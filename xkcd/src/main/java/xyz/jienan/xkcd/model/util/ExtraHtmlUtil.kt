@@ -1,9 +1,8 @@
 package xyz.jienan.xkcd.model.util
 
-import org.jsoup.Jsoup
-
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
+import org.jsoup.Jsoup
 import xyz.jienan.xkcd.base.network.NetworkService
 
 object ExtraHtmlUtil {

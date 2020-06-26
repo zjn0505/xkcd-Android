@@ -43,28 +43,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
         }
 
         findPreference<PreferenceCategory>("pref_key_xkcd")?.findPreference<Preference>("pref_xkcd_preload")?.setOnPreferenceClickListener {
-
-            val xkcdFastLoadRequest: OneTimeWorkRequest =
-                    OneTimeWorkRequestBuilder<XkcdFastLoadWorker>()
-                            .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
-                            .build()
-
-            val xkcdPreloadRequest: OneTimeWorkRequest =
-                    OneTimeWorkRequestBuilder<XkcdDownloadWorker>()
-                            .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).setRequiresStorageNotLow(true).build())
-                            .build()
-
-            val work = WorkManager.getInstance(requireContext()).getWorkInfosByTag("xkcd").get().firstOrNull()
-
-            Timber.d("State = ${work?.state}")
-
-            if (work?.state == WorkInfo.State.SUCCEEDED) {
-                WorkManager.getInstance(requireContext()).enqueueUniqueWork("xkcd download", ExistingWorkPolicy.KEEP, xkcdPreloadRequest)
-            } else {
-                WorkManager.getInstance(requireContext()).beginUniqueWork("xkcd download", ExistingWorkPolicy.KEEP, xkcdFastLoadRequest)
-                        .then(xkcdPreloadRequest).enqueue()
-            }
-
+            offlineWork()
             true
         }
     }
@@ -101,6 +80,31 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
         super.onConfigurationChanged(newConfig)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             activity?.recreate()
+        }
+    }
+
+    private fun offlineWork() {
+        val xkcdFastLoadRequest: OneTimeWorkRequest =
+                OneTimeWorkRequestBuilder<XkcdFastLoadWorker>()
+                        .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
+                        .build()
+
+        val xkcdPreloadRequest: OneTimeWorkRequest =
+                OneTimeWorkRequestBuilder<XkcdDownloadWorker>()
+                        .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED)
+                                .setRequiresStorageNotLow(true).build())
+                        .addTag("xkcd_download")
+                        .build()
+
+        val work = WorkManager.getInstance(requireContext()).getWorkInfosByTag("xkcd").get().firstOrNull()
+
+        Timber.d("State = ${work?.state}")
+
+        if (work?.state == WorkInfo.State.SUCCEEDED) {
+            WorkManager.getInstance(requireContext()).enqueueUniqueWork("xkcd download", ExistingWorkPolicy.KEEP, xkcdPreloadRequest)
+        } else {
+            WorkManager.getInstance(requireContext()).beginUniqueWork("xkcd download", ExistingWorkPolicy.KEEP, xkcdFastLoadRequest)
+                    .then(xkcdPreloadRequest).enqueue()
         }
     }
 

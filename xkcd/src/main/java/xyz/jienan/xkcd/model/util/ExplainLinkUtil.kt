@@ -12,12 +12,10 @@ import android.webkit.URLUtil
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.text.HtmlCompat
-
 import xyz.jienan.xkcd.BuildConfig
+import xyz.jienan.xkcd.Const.URI_XKCD_EXPLAIN_EDIT
 import xyz.jienan.xkcd.R
 import xyz.jienan.xkcd.comics.activity.ImageDetailPageActivity
-
-import xyz.jienan.xkcd.Const.URI_XKCD_EXPLAIN_EDIT
 import xyz.jienan.xkcd.ui.ToastUtils
 
 object ExplainLinkUtil {
