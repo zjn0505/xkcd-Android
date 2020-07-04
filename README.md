@@ -1,6 +1,6 @@
 # xkcd-Android  [![Build Status][1]][2] [![codebeat badge][3]][4] [![Latest xkcd][5]](https://xkcd.com)
 
-[1]: https://travis-ci.org/zjn0505/kcd-Android.svg?branch=master "Travis CI build status icon"
+[1]: https://travis-ci.org/zjn0505/xkcd-Android.svg?branch=master "Travis CI build status icon"
 [2]: https://travis-ci.org/zjn0505/xkcd-Android "Travis CI build page"
 [3]: https://codebeat.co/badges/af286bdc-8772-44b7-811e-30112770a444 "codebeat badge icon"
 [4]: https://codebeat.co/projects/github-com-zjn0505-xkcd-android-master "codebeat page"
