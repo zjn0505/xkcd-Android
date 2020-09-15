@@ -96,4 +96,8 @@
     <string name="bookmark_saved">书签已保存</string>
     <string name="xkcd_download_notification_channel_name">下载 xkcd</string>
     <string name="xkcd_download_notification_content_text">剩余: %d</string>
+    <string name="pref_xkcd_storage_title">漫画缓存配置</string>
+    <string name="pref_xkcd_storage_title_dialog">选择漫画缓存位置，重启应用以使其生效</string>
+    <string name="pref_xkcd_storage_internal">内部存储</string>
+    <string name="pref_xkcd_storage_external">外部存储</string>
 </resources>

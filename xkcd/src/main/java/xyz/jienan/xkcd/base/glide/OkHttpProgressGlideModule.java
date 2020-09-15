@@ -7,6 +7,7 @@ import android.os.Looper;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.integration.okhttp3.OkHttpUrlLoader;
+import com.bumptech.glide.load.engine.cache.ExternalCacheDiskCacheFactory;
 import com.bumptech.glide.load.engine.cache.InternalCacheDiskCacheFactory;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.module.GlideModule;
@@ -20,7 +21,11 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import timber.log.Timber;
 import xyz.jienan.xkcd.base.network.NetworkService;
+import xyz.jienan.xkcd.model.persist.SharedPrefManager;
+
+import static xyz.jienan.xkcd.settings.SettingsFragmentKt.externalMemoryAvailable;
 
 /**
  * Created by jienanzhang on 03/03/2018.
@@ -47,7 +52,14 @@ public class OkHttpProgressGlideModule implements GlideModule {
 
     @Override
     public void applyOptions(Context context, GlideBuilder builder) {
-        builder.setDiskCache(new InternalCacheDiskCacheFactory(context, 600 * 1024 * 1024));
+        if (SharedPrefManager.INSTANCE.getExternalCache() && externalMemoryAvailable(context)) {
+            Timber.i("Use external cache %s", context.getExternalCacheDir());
+            builder.setDiskCache(new ExternalCacheDiskCacheFactory(context, 600 * 1024 * 1024));
+        } else {
+            Timber.i("Use internal cache");
+            SharedPrefManager.INSTANCE.disableExternalCache();
+            builder.setDiskCache(new InternalCacheDiskCacheFactory(context, 600 * 1024 * 1024));
+        }
     }
 
     @Override

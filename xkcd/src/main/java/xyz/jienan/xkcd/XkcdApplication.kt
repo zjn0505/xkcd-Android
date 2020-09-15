@@ -6,6 +6,8 @@ import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
 import androidx.work.*
+import timber.log.Timber
+import xyz.jienan.xkcd.base.NotificationWorker
 import xyz.jienan.xkcd.base.glide.GlideImageLoader
 import xyz.jienan.xkcd.model.MyObjectBox
 import xyz.jienan.xkcd.model.XkcdModel
@@ -15,6 +17,7 @@ import xyz.jienan.xkcd.model.util.XkcdSideloadUtils
 import xyz.jienan.xkcd.model.work.WhatIfFastLoadWorker
 import xyz.jienan.xkcd.model.work.XkcdFastLoadWorker
 import xyz.jienan.xkcd.ui.xkcdimageview.ImageLoaderFactory
+import java.util.concurrent.TimeUnit
 
 /**
  * Created by Jienan on 2018/3/2.
@@ -22,12 +25,14 @@ import xyz.jienan.xkcd.ui.xkcdimageview.ImageLoaderFactory
 
 class XkcdApplication : Application() {
 
+    var gmsAvailability = false
+
     override fun onCreate() {
         super.onCreate()
         if (!DebugUtils.init()) {
             return
         }
-        FlavorUtils.init(this)
+        FlavorUtils.init()
         updateLocale()
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
         AppCompatDelegate.setDefaultNightMode((PreferenceManager
@@ -43,6 +48,11 @@ class XkcdApplication : Application() {
 
         ImageLoaderFactory.initialize(GlideImageLoader.with(this))
         fastLoad()
+        gmsAvailability = FlavorUtils.getGmsAvailability(this)
+        Timber.d("GMS availability $gmsAvailability")
+//        if (!gmsAvailability) {
+            initNotificationWorker()
+//        }
     }
 
     companion object {
@@ -82,5 +92,17 @@ class XkcdApplication : Application() {
                 .beginUniqueWork("what_if", ExistingWorkPolicy.KEEP, whatIfFastLoad)
 
         WorkContinuation.combine(listOf(xkcdWork, whatIfWork)).enqueue()
+    }
+
+    private fun initNotificationWorker() {
+        val notificationWorkRequest = PeriodicWorkRequestBuilder<NotificationWorker>(PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS,
+                TimeUnit.MILLISECONDS)
+                .addTag("Update")
+                .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
+                .build()
+        WorkManager.getInstance(this)
+                .enqueueUniquePeriodicWork("UpdateXkcd",
+                        ExistingPeriodicWorkPolicy.KEEP,
+                        notificationWorkRequest)
     }
 }

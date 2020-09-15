@@ -90,6 +90,16 @@
             app:summary="@string/pref_xkcd_preload_summary"
             app:title="@string/pref_xkcd_preload_title" />
 
+        <ListPreference
+            app:defaultValue="xkcd_storage_internal"
+            app:dialogTitle="@string/pref_xkcd_storage_title_dialog"
+            app:entries="@array/xkcd_storage_value"
+            app:entryValues="@array/xkcd_storage_option"
+            app:iconSpaceReserved="false"
+            app:key="pref_xkcd_storage"
+            app:title="@string/pref_xkcd_storage_title"
+            app:useSimpleSummaryProvider="true" />
+
     </PreferenceCategory>
 
     <PreferenceCategory
