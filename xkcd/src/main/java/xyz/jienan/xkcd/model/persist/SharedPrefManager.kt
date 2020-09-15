@@ -47,6 +47,13 @@ object SharedPrefManager {
     val whatIfSearchPref: String
         get() = sharedPreferences.getString(PREF_WHAT_IF_SEARCH, PREF_WHAT_IF_SEARCH_IGNORE_CONTENT)!!
 
+    val externalCache: Boolean
+        get() = sharedPreferences.getString(PREF_XKCD_STORAGE, PREF_XKCD_STORAGE_INTERNAL) != PREF_XKCD_STORAGE_INTERNAL
+
+    fun disableExternalCache() {
+        editor.putString(PREF_XKCD_STORAGE, PREF_XKCD_STORAGE_INTERNAL).apply()
+    }
+
     fun setLastViewedXkcd(lastViewed: Int) {
         editor.putInt(LAST_VIEW_XKCD_ID, lastViewed).apply()
     }
@@ -79,7 +86,7 @@ object SharedPrefManager {
         editor.putLong(key, index).apply()
     }
 
-    fun getBookmark(key: String) : Long {
+    fun getBookmark(key: String): Long {
         return sharedPreferences.getLong(key, 0L)
     }
 }

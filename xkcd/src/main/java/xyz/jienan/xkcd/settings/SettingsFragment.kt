@@ -1,10 +1,14 @@
 package xyz.jienan.xkcd.settings
 
+import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import androidx.preference.*
 import androidx.work.*
 import timber.log.Timber
@@ -40,6 +44,10 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
 
         if (XkcdModel.localizedUrl.isBlank()) {
             findPreference<PreferenceCategory>("pref_key_xkcd")?.removePreference(findPreference(PREF_XKCD_TRANSLATION))
+        }
+
+        if (!requireContext().externalMemoryAvailable()) {
+            findPreference<PreferenceCategory>("pref_key_xkcd")?.removePreference(findPreference(PREF_XKCD_STORAGE))
         }
 
         findPreference<PreferenceCategory>("pref_key_xkcd")?.findPreference<Preference>("pref_xkcd_preload")?.setOnPreferenceClickListener {
@@ -110,5 +118,18 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
 
     companion object {
         private const val RES_DARK = 101
+    }
+}
+
+fun Context.externalMemoryAvailable(): Boolean {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && getExternalFilesDir(null) != null) {
+        try {
+            !Environment.isExternalStorageEmulated(getExternalFilesDir(null)!!) && Environment.isExternalStorageRemovable(getExternalFilesDir(null)!!)
+        } catch (e: Exception) {
+            Timber.w(e, "Failed to check external storage")
+            false
+        }
+    } else {
+        false
     }
 }

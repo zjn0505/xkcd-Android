@@ -58,6 +58,11 @@
     <string name="pref_xkcd_translation_off">Ignore translations</string>
     <string name="pref_xkcd_preload_title">Preload xkcd</string>
     <string name="pref_xkcd_preload_summary">Download all comics for fast rendering or offline</string>
+    <string name="pref_xkcd_storage_title">Comic cache location</string>
+    <string name="pref_xkcd_storage_title_dialog">Select comic cache location.\nRestart the app to apply the change.</string>
+    <string name="pref_xkcd_storage_internal">Internal storage</string>
+    <string name="pref_xkcd_storage_external">External storage</string>
+
     <string name="settings">Settings</string>
     <string name="see_translation">SEE TRANSLATION</string>
     <string name="see_original">SEE ORIGINAL</string>

@@ -63,6 +63,16 @@
         <item>@string/pref_dark_mode_system</item>
     </string-array>
 
+    <string-array name="xkcd_storage_option">
+        <item>xkcd_storage_internal</item>
+        <item>xkcd_storage_external</item>
+    </string-array>
+
+    <string-array name="xkcd_storage_value">
+        <item>@string/pref_xkcd_storage_internal</item>
+        <item>@string/pref_xkcd_storage_external</item>
+    </string-array>
+
     <integer-array name="interactive_comics">
         <item>826</item>
         <item>1110</item>
