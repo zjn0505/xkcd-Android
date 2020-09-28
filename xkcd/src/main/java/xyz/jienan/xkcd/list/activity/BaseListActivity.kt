@@ -117,9 +117,9 @@ abstract class BaseListActivity : BaseActivity(), BaseListView, ListFilterDialog
         }
     }
 
-    override fun onItemSelected(which: Int) {
-        if (currentSelection.ordinal != which) {
-            currentSelection = Selection.fromValue(which)
+    override fun onItemSelected(selection: Selection) {
+        if (currentSelection != selection) {
+            currentSelection = selection
             reloadList(currentSelection)
             when (currentSelection) {
                 Selection.ALL -> logUXEvent(Const.FIRE_FILTER_ALL + logSuffix)
@@ -138,9 +138,7 @@ abstract class BaseListActivity : BaseActivity(), BaseListView, ListFilterDialog
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        if (presenter.hasFav()) {
-            menuInflater.inflate(R.menu.menu_list, menu)
-        }
+        menuInflater.inflate(R.menu.menu_list, menu)
         return true
     }
 
@@ -149,7 +147,8 @@ abstract class BaseListActivity : BaseActivity(), BaseListView, ListFilterDialog
             android.R.id.home -> onBackPressed()
             R.id.action_filter -> {
                 val filterDialog = supportFragmentManager.findFragmentByTag("filter")
-                        as ListFilterDialogFragment? ?: ListFilterDialogFragment()
+                        as ListFilterDialogFragment?
+                        ?: ListFilterDialogFragment.newInstance(presenter.hasFav())
                 filterDialog.filters = filters
                 if (!filterDialog.isAdded) {
                     filterDialog.show(supportFragmentManager, "filter")
@@ -187,7 +186,7 @@ abstract class BaseListActivity : BaseActivity(), BaseListView, ListFilterDialog
         super.onDestroy()
     }
 
-    protected enum class Selection(var id: Int) {
+    enum class Selection(var id: Int) {
         ALL(0),
         MY_FAVORITE(1),
         PEOPLES_CHOICE(2);

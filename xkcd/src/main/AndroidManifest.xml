@@ -23,6 +23,7 @@
         <activity
             android:name=".home.MainActivity"
             android:configChanges="screenSize|keyboardHidden|uiMode"
+            android:windowSoftInputMode="adjustNothing"
             android:launchMode="singleTop"
             android:theme="@style/CustomActionBarTheme">
             <intent-filter>
