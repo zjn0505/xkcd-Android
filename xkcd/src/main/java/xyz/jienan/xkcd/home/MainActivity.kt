@@ -72,7 +72,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
             openFragment(fragmentTag)
         }
-        avatarList.forEach { ImageViewCompat.setImageTintList(it, tintList) }
+        avatarList.forEach { if (it != null) ImageViewCompat.setImageTintList(it, tintList) }
         drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
             override fun onDrawerStateChanged(newState: Int) {
                 if (newState == DrawerLayout.STATE_SETTLING && !drawerLayout.isDrawerOpen(GravityCompat.START)) {

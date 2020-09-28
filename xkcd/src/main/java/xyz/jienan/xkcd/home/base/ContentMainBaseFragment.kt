@@ -194,7 +194,7 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
             val pickerDialog = childFragmentManager.findFragmentByTag(NumberPickerDialogFragment.TAG) as NumberPickerDialogFragment?
             pickerDialog?.setListener(pickerListener)
         } else if (activity?.intent != null) {
-            val notiIndex = activity!!.intent.getIntExtra(INDEX_ON_NOTI_INTENT, INVALID_ID)
+            val notiIndex = requireActivity().intent.getIntExtra(INDEX_ON_NOTI_INTENT, INVALID_ID)
 
             if (notiIndex != INVALID_ID) {
                 lastViewedId = notiIndex
@@ -202,7 +202,7 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
                 presenter.latest = latestIndex
                 logSubUXEvent(FIRE_FROM_NOTIFICATION, mapOf(FIRE_FROM_NOTIFICATION_INDEX to notiIndex.toString()))
             }
-            activity!!.intent = null
+            requireActivity().intent = null
         }
         isFre = latestIndex == INVALID_ID
         if (latestIndex > INVALID_ID) {
