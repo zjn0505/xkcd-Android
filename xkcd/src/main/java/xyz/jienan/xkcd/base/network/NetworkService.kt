@@ -81,10 +81,6 @@ object NetworkService {
                                 "public, only-if-cached, max-stale=" + 2419200)
                         .build()
             }
-            if ("1" == request.header("bypass")) {
-                val builder = request.newBuilder().addHeader(HEADER_CACHE_CONTROL, "no-cache")
-                request = builder.build()
-            }
             return chain.proceed(request)
         }
     }
@@ -97,6 +93,9 @@ object NetworkService {
      * the response is retrieved from cache.
      */
     private class NetworkCacheInterceptor : Interceptor {
+
+        private val noCacheHeader = CacheControl.Builder().noCache().noStore().build().toString()
+
         @Throws(IOException::class)
         override fun intercept(chain: Interceptor.Chain): Response {
             val request = chain.request()
@@ -104,7 +103,7 @@ object NetworkService {
             val originalResponse = chain.proceed(request)
             val builder = originalResponse.newBuilder().removeHeader("pragma").removeHeader(HEADER_CACHEABLE)
             return if (TextUtils.isEmpty(cacheable)) {
-                builder.header(HEADER_CACHE_CONTROL, "no-cache").build()
+                builder.header(HEADER_CACHE_CONTROL, noCacheHeader).build()
             } else {
                 builder.header(HEADER_CACHE_CONTROL, "public, max-age=" + cacheable!!).build()
             }
@@ -190,22 +189,22 @@ object NetworkService {
         }
 }
 
-const val XKCD_SPECIAL_LIST         = "https://zjn0505.github.io/xkcd-Android/xkcd_special.json"
-const val XKCD_EXTRA_LIST           = "https://zjn0505.github.io/xkcd-Android/xkcd_extra.json"
-const val QUOTE_LIST                = "https://zjn0505.github.io/xkcd-Android/quotes.json"
-const val XKCD_SEARCH_SUGGESTION    = "https://api.jienan.xyz/xkcd/xkcd-suggest"
-const val XKCD_BROWSE_LIST          = "https://api.jienan.xyz/xkcd/xkcd-list"
-const val XKCD_THUMBS_UP            = "https://api.jienan.xyz/xkcd/xkcd-thumb-up"
-const val XKCD_TOP                  = "https://api.jienan.xyz/xkcd/xkcd-top"
-const val WHAT_IF_THUMBS_UP         = "https://api.jienan.xyz/xkcd/what-if-thumb-up"
-const val WHAT_IF_TOP               = "https://api.jienan.xyz/xkcd/what-if-top"
-const val XKCD_EXPLAIN_URL          = "https://www.explainxkcd.com/wiki/index.php/"
-const val XKCD_BASE_URL             = "https://xkcd.com/"
+const val XKCD_SPECIAL_LIST = "https://zjn0505.github.io/xkcd-Android/xkcd_special.json"
+const val XKCD_EXTRA_LIST = "https://zjn0505.github.io/xkcd-Android/xkcd_extra.json"
+const val QUOTE_LIST = "https://zjn0505.github.io/xkcd-Android/quotes.json"
+const val XKCD_SEARCH_SUGGESTION = "https://api.jienan.xyz/xkcd/xkcd-suggest"
+const val XKCD_BROWSE_LIST = "https://api.jienan.xyz/xkcd/xkcd-list"
+const val XKCD_THUMBS_UP = "https://api.jienan.xyz/xkcd/xkcd-thumb-up"
+const val XKCD_TOP = "https://api.jienan.xyz/xkcd/xkcd-top"
+const val WHAT_IF_THUMBS_UP = "https://api.jienan.xyz/xkcd/what-if-thumb-up"
+const val WHAT_IF_TOP = "https://api.jienan.xyz/xkcd/what-if-top"
+const val XKCD_EXPLAIN_URL = "https://www.explainxkcd.com/wiki/index.php/"
+const val XKCD_BASE_URL = "https://xkcd.com/"
 const val XKCD_TOP_SORT_BY_THUMB_UP = "thumb-up"
 const val HEADER_VAL_CLIENT = "xkcd-Android-${BuildConfig.FLAVOR}-${BuildConfig.VERSION_NAME}"
 const val HEADER_CACHEABLE = "cacheable"
 
-private const val WHAT_IF_BASE_URL  = "https://what-if.xkcd.com/"
+private const val WHAT_IF_BASE_URL = "https://what-if.xkcd.com/"
 private const val DEFAULT_READ_TIMEOUT = 30 // in seconds
 private const val DEFAULT_CONNECT_TIMEOUT = 15 // in seconds
 private const val HEADER_CACHE_CONTROL = "Cache-Control"

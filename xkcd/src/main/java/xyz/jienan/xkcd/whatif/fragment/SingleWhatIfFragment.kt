@@ -88,7 +88,6 @@ open class SingleWhatIfFragment : BaseFragment(), ImgInterface.ImgCallback, RefI
     override fun onDestroyView() {
         dialog?.dismiss()
         compositeDisposable.dispose()
-        Timber.d("OkHttp: clear $ind")
         webView.clearTasks()
         super.onDestroyView()
     }

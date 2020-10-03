@@ -12,8 +12,6 @@ interface WhatIfAPI {
     @get:GET("archive/")
     val archive: Observable<ResponseBody>
 
-
-    @Headers("$HEADER_CACHEABLE: 2419200")
     @GET("{article_id}/")
     fun getArticle(@Path("article_id") id: Long): Observable<ResponseBody>
 
