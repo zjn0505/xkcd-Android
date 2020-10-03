@@ -14,6 +14,7 @@ import android.text.TextUtils
 import androidx.core.app.NotificationCompat
 import androidx.core.graphics.createBitmap
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import io.reactivex.Maybe
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -111,7 +112,7 @@ object NotificationUtils {
     private fun Context.getNotificationImgMaybe(width: Int, height: Int, url: String, tag: String) =
             Single.just(url)
                     .subscribeOn(Schedulers.io())
-                    .map { Glide.with(this).load(url).asBitmap().into(width, height).get() }
+                    .map { Glide.with(this).load(url).asBitmap().diskCacheStrategy(DiskCacheStrategy.SOURCE).into(width, height).get() }
                     .onErrorResumeNext(getLogoBitmapSingle(this, tag, width, height))
                     .toMaybe()
                     .onErrorResumeNext(Maybe.empty<Bitmap>())
