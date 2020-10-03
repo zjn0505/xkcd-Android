@@ -2,6 +2,7 @@ package xyz.jienan.xkcd.comics.fragment
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
@@ -193,12 +194,22 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
         singleComicPresenter.loadXkcd(ind)
 
         ivXkcdPic.setOnLongClickListener {
+            val comicOnly = sharedPref.getBoolean(PREF_XKCD_SHOW_COMIC_ONLY, true)
+
             if (currentPic == null) {
                 false
             } else {
-                showInfoDialog()
+                showInfoDialog(showAltText = comicOnly)
                 it.performHapticFeedback(LONG_PRESS)
                 true
+            }
+        }
+
+        if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            if (sharedPref.getBoolean(PREF_XKCD_SHOW_COMIC_ONLY, true)) {
+                scroll?.visibility = View.GONE
+            } else {
+                scroll?.visibility = View.VISIBLE
             }
         }
     }
@@ -250,7 +261,7 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
                 return true
             }
             R.id.action_go_xk3d -> {
-                ImageWebViewActivity.startActivity(activity!!, currentPic!!.num, translationMode == 1, webPageMode = TAG_XK3D)
+                ImageWebViewActivity.startActivity(requireContext(), currentPic!!.num, translationMode == 1, webPageMode = TAG_XK3D)
                 logUXEvent(FIRE_GO_XK3D_MENU)
                 return true
             }
@@ -272,6 +283,14 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
         }
     }
 
+    override fun setAltTextVisibility(gone: Boolean) {
+        if (gone) {
+            scroll?.visibility = View.GONE
+        } else {
+            scroll?.visibility = View.VISIBLE
+        }
+    }
+
     private fun initGlide() {
         target = MyProgressTarget(BitmapImageViewTarget(ivXkcdPic!!), pbLoading, ivXkcdPic)
     }
@@ -284,23 +303,25 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
         val prefInteractive = sharedPref.getBoolean(PREF_XKCD_INTERACTIVE, true)
 
         if (interactiveComics.contains(currentPic!!.num.toInt()) && prefInteractive) {
-            ImageWebViewActivity.startActivity(activity!!, currentPic!!.num, translationMode == 1)
+            ImageWebViewActivity.startActivity(requireContext(), currentPic!!.num, translationMode == 1)
         } else {
-            ImageDetailPageActivity.startActivity(activity!!, currentPic!!.targetImg, currentPic!!.num)
-            activity!!.overridePendingTransition(R.anim.fadein, R.anim.fadeout)
+            ImageDetailPageActivity.startActivity(requireContext(), currentPic!!.targetImg, currentPic!!.num)
+            requireActivity().overridePendingTransition(R.anim.fadein, R.anim.fadeout)
         }
     }
 
-    private fun showInfoDialog() {
-        dialogFragment = SimpleInfoDialogFragment()
-        dialogFragment!!.setPic(currentPic!!)
+    private fun showInfoDialog(showAltText: Boolean = true) {
+        dialogFragment = SimpleInfoDialogFragment.newInstance(showAltText)
+        if (showAltText) {
+            dialogFragment!!.setPic(currentPic!!)
+        }
         dialogFragment!!.setListener(dialogListener)
         dialogFragment!!.show(childFragmentManager, "AltInfoDialogFragment")
         logUXEvent(FIRE_LONG_PRESS)
     }
 
     override fun renderXkcdPic(xkcdPic: XkcdPic) {
-        if (activity == null || activity!!.isFinishing) {
+        if (activity == null || requireActivity().isFinishing) {
             return
         }
 

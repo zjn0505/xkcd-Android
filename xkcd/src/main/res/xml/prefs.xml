@@ -61,6 +61,15 @@
         <SwitchPreferenceCompat
             app:defaultValue="true"
             app:iconSpaceReserved="false"
+            app:key="pref_xkcd_show_comic_only"
+            app:summaryOff="@string/pref_xkcd_alt_on_main_in_page"
+            app:summaryOn="@string/pref_xkcd_alt_on_main_long_press"
+            app:title="@string/pref_xkcd_alt_on_main_title"
+            app:useSimpleSummaryProvider="true" />
+
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:iconSpaceReserved="false"
             app:key="pref_xkcd_gif_eco_mode"
             app:summaryOff="@string/pref_xkcd_gif_eco_mode_off"
             app:summaryOn="@string/pref_xkcd_gif_eco_mode_on"

@@ -20,6 +20,7 @@ public class Const {
     public static final String PREF_WHAT_IF_SEARCH_IGNORE_CONTENT = "ignore_content";
     public static final String PREF_WHAT_IF_SEARCH_INCLUDE_READ = "include_read";
     public static final String PREF_WHAT_IF_SEARCH_ALL = "search_all";
+    public static final String PREF_XKCD_SHOW_COMIC_ONLY = "pref_xkcd_show_comic_only";
     public static final String PREF_XKCD_GIF_ECO = "pref_xkcd_gif_eco_mode";
     public static final String PREF_XKCD_INTERACTIVE = "pref_xkcd_interactive";
     public static final String PREF_XKCD_TRANSLATION = "pref_xkcd_translation";

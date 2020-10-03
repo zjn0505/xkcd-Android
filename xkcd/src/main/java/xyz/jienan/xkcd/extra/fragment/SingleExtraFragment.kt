@@ -1,6 +1,7 @@
 package xyz.jienan.xkcd.extra.fragment
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
@@ -164,6 +165,9 @@ class SingleExtraFragment : BaseFragment(), SingleExtraContract.View {
                 logUXEvent(FIRE_LONG_PRESS)
                 true
             }
+        }
+        if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            scroll?.visibility = View.GONE
         }
     }
 

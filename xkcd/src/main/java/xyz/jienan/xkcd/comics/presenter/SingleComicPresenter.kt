@@ -8,6 +8,7 @@ import io.reactivex.disposables.Disposables
 import io.reactivex.schedulers.Schedulers
 import retrofit2.HttpException
 import timber.log.Timber
+import xyz.jienan.xkcd.Const.PREF_XKCD_SHOW_COMIC_ONLY
 import xyz.jienan.xkcd.Const.PREF_XKCD_TRANSLATION
 import xyz.jienan.xkcd.comics.contract.SingleComicContract
 import xyz.jienan.xkcd.model.XkcdModel
@@ -101,6 +102,9 @@ class SingleComicPresenter(private val view: SingleComicContract.View, private v
             if (index != null) {
                 loadXkcd(index!!)
             }
+        }
+        if (key == PREF_XKCD_SHOW_COMIC_ONLY) {
+            view.setAltTextVisibility(sharedPref!!.getBoolean(PREF_XKCD_SHOW_COMIC_ONLY, true))
         }
     }
 

@@ -6,9 +6,11 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.DialogFragment
 import xyz.jienan.xkcd.R
@@ -37,38 +39,19 @@ class SimpleInfoDialogFragment : DialogFragment() {
 
     private val showListener = DialogInterface.OnShowListener { dialog ->
         (dialog as AlertDialog).getButton(AlertDialog.BUTTON_NEGATIVE)?.let {
+
+            if (arguments?.getBoolean(KEY_SHOW_ALT_TEXT, true) == false) {
+                loadExplain(it)
+            }
+
             it.setOnClickListener(object : View.OnClickListener {
-                private var isLoading = false
 
                 override fun onClick(v: View) {
                     if (!hasExplainedMore) {
-                        if (isLoading) {
+                        if (it.tag != null && it.tag == true) {
                             return
                         }
-                        mListener?.onExplainMoreClick(object : ExplainingCallback {
-                            override fun explanationLoaded(result: String) {
-                                pbLoading.visibility = View.GONE
-                                if (tvExplain != null) {
-                                    htmlContent = result
-                                    ExplainLinkUtil.setTextViewHTML(tvExplain, result)
-                                }
-                                it.setText(R.string.go_to_explainxkcd)
-                                hasExplainedMore = true
-                                isLoading = false
-                            }
-
-                            override fun explanationFailed() {
-                                if (dialog.isShowing) {
-                                    ToastUtils.showToast(v.context, v.context.getString(R.string.toast_more_explain_failed))
-                                    pbLoading.visibility = View.GONE
-                                    it.setText(R.string.more_on_explainxkcd)
-                                    hasExplainedMore = true
-                                    isLoading = false
-                                }
-                            }
-                        })
-                        pbLoading.visibility = View.VISIBLE
-                        isLoading = true
+                        loadExplain(it)
                     } else {
                         mListener!!.onNegativeClick()
                         dismiss()
@@ -125,7 +108,7 @@ class SimpleInfoDialogFragment : DialogFragment() {
             negativeBtnTextId = R.string.go_to_explainxkcd
             hasExplainedMore = true
         }
-        return AlertDialog.Builder(activity!!).setView(view)
+        return AlertDialog.Builder(requireContext()).setView(view)
                 .setPositiveButton(R.string.dialog_got_it) { _, _ ->
                     mListener!!.onPositiveClick()
                     dismiss()
@@ -138,6 +121,33 @@ class SimpleInfoDialogFragment : DialogFragment() {
     override fun onDestroyView() {
         mListener = null
         super.onDestroyView()
+    }
+
+    private fun loadExplain(button: Button) {
+        mListener?.onExplainMoreClick(object : ExplainingCallback {
+            override fun explanationLoaded(result: String) {
+                pbLoading.visibility = View.GONE
+                if (tvExplain != null) {
+                    htmlContent = result
+                    ExplainLinkUtil.setTextViewHTML(tvExplain, result)
+                }
+                button.setText(R.string.go_to_explainxkcd)
+                hasExplainedMore = true
+                button.tag = false
+            }
+
+            override fun explanationFailed() {
+                if (dialog?.isShowing == true) {
+                    ToastUtils.showToast(requireContext(), resources.getString(R.string.toast_more_explain_failed))
+                    pbLoading.visibility = View.GONE
+                    button.setText(R.string.more_on_explainxkcd)
+                    hasExplainedMore = true
+                    button.tag = false
+                }
+            }
+        })
+        pbLoading.visibility = View.VISIBLE
+        button.tag = true
     }
 
     interface ISimpleInfoDialogListener {
@@ -155,6 +165,11 @@ class SimpleInfoDialogFragment : DialogFragment() {
     }
 
     companion object {
+        fun newInstance(showAltText: Boolean): SimpleInfoDialogFragment {
+            return SimpleInfoDialogFragment().also { it.arguments = bundleOf(KEY_SHOW_ALT_TEXT to showAltText) }
+        }
+
+        private const val KEY_SHOW_ALT_TEXT = "showAltText"
 
         private const val CONTENT = "content"
 
