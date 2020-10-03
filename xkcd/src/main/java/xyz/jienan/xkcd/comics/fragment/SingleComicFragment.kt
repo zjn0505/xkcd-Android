@@ -38,6 +38,8 @@ import xyz.jienan.xkcd.comics.dialog.SimpleInfoDialogFragment.ISimpleInfoDialogL
 import xyz.jienan.xkcd.comics.presenter.SingleComicPresenter
 import xyz.jienan.xkcd.model.XkcdPic
 import java.lang.ref.WeakReference
+import java.text.DateFormat
+import java.util.*
 
 /**
  * Created by jienanzhang on 03/03/2018.
@@ -338,7 +340,12 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
         Timber.i("Pic to be loaded: $ind - ${xkcdPic.targetImg}")
         @SuppressLint("SetTextI18n")
         tvTitle!!.text = "${xkcdPic.num}. ${xkcdPic.title}"
-        tvCreateDate?.text = String.format(getString(R.string.created_on), xkcdPic.year, xkcdPic.month, xkcdPic.day)
+
+        val df = DateFormat.getDateInstance(DateFormat.DEFAULT, Locale.getDefault())
+        val date = df.format(Calendar.getInstance().apply { set(xkcdPic.year.toInt(), xkcdPic.month.toInt() - 1, xkcdPic.day.toInt()) }.time)
+        Timber.d("date $date")
+
+        tvCreateDate?.text = date.replace('/', '.')
         tvDescription?.text = xkcdPic.alt
         tvCreateDate?.setOnClickListener {
             if (parentFragment is ComicsMainFragment) {

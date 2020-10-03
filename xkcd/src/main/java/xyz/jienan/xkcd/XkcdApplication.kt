@@ -50,9 +50,9 @@ class XkcdApplication : Application() {
         fastLoad()
         gmsAvailability = FlavorUtils.getGmsAvailability(this)
         Timber.d("GMS availability $gmsAvailability")
-//        if (!gmsAvailability) {
+        if (!gmsAvailability) {
             initNotificationWorker()
-//        }
+        }
     }
 
     companion object {
