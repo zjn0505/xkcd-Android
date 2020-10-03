@@ -19,6 +19,8 @@ interface SingleComicContract {
         fun renderXkcdPic(xkcdPic: XkcdPic)
 
         fun setLoading(isLoading: Boolean)
+
+        fun setAltTextVisibility(gone: Boolean)
     }
 
     interface Presenter : BasePresenter {

@@ -61,6 +61,15 @@
     <string name="pref_xkcd_translation_off">已關閉</string>
     <string name="pref_xkcd_preload_title">預加載 xkcd 漫畫</string>
     <string name="pref_xkcd_preload_summary">下載所有漫畫以快速瀏覽或離線閱讀</string>
+
+    <string name="pref_xkcd_storage_title">漫畫緩存配置</string>
+    <string name="pref_xkcd_storage_title_dialog">選擇漫畫緩存位置，重啟應用以使其生效</string>
+    <string name="pref_xkcd_storage_internal">內部存儲</string>
+    <string name="pref_xkcd_storage_external">外部存儲</string>
+    <string name="pref_xkcd_alt_on_main_title">漫畫配文</string>
+    <string name="pref_xkcd_alt_on_main_long_press">長按漫畫後在彈窗內顯示</string>
+    <string name="pref_xkcd_alt_on_main_in_page">在漫畫下方顯示</string>
+
     <string name="settings">設置</string>
     <string name="share_text">壹起來看看這張有趣的 xkcd 漫畫吧. %s</string>
     <string name="toast_more_explain_failed">獲取失敗，請嘗試訪問 Explainxkcd</string>
@@ -96,8 +105,4 @@
     <string name="bookmark_saved">書簽已保存</string>
     <string name="xkcd_download_notification_channel_name">下載 xkcd</string>
     <string name="xkcd_download_notification_content_text">剩餘: %d</string>
-    <string name="pref_xkcd_storage_title">漫畫緩存配置</string>
-    <string name="pref_xkcd_storage_title_dialog">選擇漫畫緩存位置，重啟應用以使其生效</string>
-    <string name="pref_xkcd_storage_internal">內部存儲</string>
-    <string name="pref_xkcd_storage_external">外部存儲</string>
 </resources>

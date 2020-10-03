@@ -62,6 +62,9 @@
     <string name="pref_xkcd_storage_title_dialog">Select comic cache location.\nRestart the app to apply the change.</string>
     <string name="pref_xkcd_storage_internal">Internal storage</string>
     <string name="pref_xkcd_storage_external">External storage</string>
+    <string name="pref_xkcd_alt_on_main_title">Title text</string>
+    <string name="pref_xkcd_alt_on_main_long_press">Long press on comic to show in dialog</string>
+    <string name="pref_xkcd_alt_on_main_in_page">Show title text under comics</string>
 
     <string name="settings">Settings</string>
     <string name="see_translation">SEE TRANSLATION</string>
