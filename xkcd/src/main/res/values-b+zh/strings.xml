@@ -63,7 +63,8 @@
     <string name="pref_xkcd_preload_summary">下载所有漫画以快速浏览或离线阅读</string>
 
     <string name="pref_xkcd_storage_title">漫画缓存位置</string>
-    <string name="pref_xkcd_storage_title_dialog">选择漫画缓存位置，重启应用以使其生效。另外可以清除应用缓存以回收磁盘空间</string>
+    <string name="pref_xkcd_storage_title_dialog">选择漫画缓存位置</string>
+    <string name="pref_xkcd_storage_toast">重启应用以使其生效。另外可以清除应用缓存以回收磁盘空间</string>
     <string name="pref_xkcd_storage_internal">内部存储</string>
     <string name="pref_xkcd_storage_external">外部存储</string>
     <string name="pref_xkcd_alt_on_main_title">漫画配文</string>

@@ -98,6 +98,7 @@ class XkcdApplication : Application() {
         val notificationWorkRequest = PeriodicWorkRequestBuilder<NotificationWorker>(PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS,
                 TimeUnit.MILLISECONDS)
                 .addTag("Update")
+                .setInitialDelay(20L, TimeUnit.SECONDS)
                 .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
                 .build()
         WorkManager.getInstance(this)

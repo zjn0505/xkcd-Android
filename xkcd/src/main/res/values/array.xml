@@ -64,8 +64,8 @@
     </string-array>
 
     <string-array name="xkcd_storage_option">
-        <item>xkcd_storage_internal</item>
-        <item>xkcd_storage_external</item>
+        <item>pref_xkcd_storage_internal</item>
+        <item>pref_xkcd_storage_external</item>
     </string-array>
 
     <string-array name="xkcd_storage_value">
