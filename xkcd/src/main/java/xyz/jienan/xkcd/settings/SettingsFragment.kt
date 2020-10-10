@@ -6,9 +6,8 @@ import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import androidx.annotation.RequiresApi
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.content.ContextCompat
 import androidx.preference.*
 import androidx.work.*
 import timber.log.Timber
@@ -18,6 +17,7 @@ import xyz.jienan.xkcd.model.WhatIfModel
 import xyz.jienan.xkcd.model.XkcdModel
 import xyz.jienan.xkcd.model.work.XkcdDownloadWorker
 import xyz.jienan.xkcd.model.work.XkcdFastLoadWorker
+import xyz.jienan.xkcd.ui.ToastUtils
 
 /**
  * Created by Jienan on 2018/3/9.
@@ -31,6 +31,8 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
 
     private val zoomPref by lazy { findPreference<ListPreference>(PREF_ZOOM) }
 
+    private val storagePref by lazy { findPreference<ListPreference>(PREF_XKCD_STORAGE) }
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.prefs, rootKey)
 
@@ -41,6 +43,8 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
         arrowPref?.onPreferenceChangeListener = this
         zoomPref?.onPreferenceChangeListener = this
         darkPref?.onPreferenceChangeListener = this
+        storagePref?.onPreferenceChangeListener = this
+
 
         if (XkcdModel.localizedUrl.isBlank()) {
             findPreference<PreferenceCategory>("pref_key_xkcd")?.removePreference(findPreference(PREF_XKCD_TRANSLATION))
@@ -79,6 +83,10 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
                 } else {
                     AppCompatDelegate.setDefaultNightMode(newValue.toString().toInt())
                 }
+            }
+            PREF_XKCD_STORAGE -> {
+                ToastUtils.showToast(requireContext(), getString(R.string.pref_xkcd_storage_toast), duration = Toast.LENGTH_LONG)
+                return true
             }
         }
         return false
@@ -124,7 +132,14 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
 fun Context.externalMemoryAvailable(): Boolean {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && getExternalFilesDir(null) != null) {
         try {
-            !Environment.isExternalStorageEmulated(getExternalFilesDir(null)!!) && Environment.isExternalStorageRemovable(getExternalFilesDir(null)!!)
+            getExternalFilesDirs(null).any {
+                try {
+                    !Environment.isExternalStorageEmulated(it) && Environment.isExternalStorageRemovable(it)
+                } catch (e: Exception) {
+                    Timber.w(e, "Failed to check external storage")
+                    false
+                }
+            }
         } catch (e: Exception) {
             Timber.w(e, "Failed to check external storage")
             false

@@ -100,7 +100,7 @@
             app:title="@string/pref_xkcd_preload_title" />
 
         <ListPreference
-            app:defaultValue="xkcd_storage_internal"
+            app:defaultValue="pref_xkcd_storage_internal"
             app:dialogTitle="@string/pref_xkcd_storage_title_dialog"
             app:entries="@array/xkcd_storage_value"
             app:entryValues="@array/xkcd_storage_option"

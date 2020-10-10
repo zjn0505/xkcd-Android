@@ -59,7 +59,8 @@
     <string name="pref_xkcd_preload_title">Preload xkcd</string>
     <string name="pref_xkcd_preload_summary">Download all comics for fast rendering or offline</string>
     <string name="pref_xkcd_storage_title">Comic cache location</string>
-    <string name="pref_xkcd_storage_title_dialog">Select comic cache location.\nRestart the app to apply the change.\nAlso clear cache to reclaim the disk space if desired</string>
+    <string name="pref_xkcd_storage_title_dialog">Select comic cache location.</string>
+    <string name="pref_xkcd_storage_toast">Restart the app to apply the change.\nAlso clear cache to reclaim the disk space if desired</string>
     <string name="pref_xkcd_storage_internal">Internal storage</string>
     <string name="pref_xkcd_storage_external">External storage</string>
     <string name="pref_xkcd_alt_on_main_title">Title text</string>

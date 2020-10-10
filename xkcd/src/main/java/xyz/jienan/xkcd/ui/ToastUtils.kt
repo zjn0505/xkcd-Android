@@ -13,12 +13,12 @@ object ToastUtils {
     private var toast: Toast? = null
 
     @SuppressLint("ShowToast")
-    fun showToast(context: Context, text: String, position : Int = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL) {
+    fun showToast(context: Context, text: String, position : Int = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL, duration: Int = Toast.LENGTH_SHORT) {
         try {
             toast!!.view.isShown
             toast!!.setText(text)
         } catch (e: Exception) {
-            toast = Toast.makeText(context.applicationContext, text, Toast.LENGTH_SHORT)
+            toast = Toast.makeText(context.applicationContext, text, duration)
         }
 
         if (position != Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL) {

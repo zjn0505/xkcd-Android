@@ -38,6 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
             android:saveEnabled="false"
+            android:textIsSelectable="true"
             android:textSize="16sp"
             tools:text="Hello" />
 
@@ -62,8 +63,8 @@
         android:saveEnabled="false"
         android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/btnSeeTranslation"
+        app:layout_constraintStart_toStartOf="parent"
         tools:text="2017.7.2" />
 
     <TextView

@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.objectboxVersion = '2.6.0'
+    ext.objectboxVersion = '2.7.1'
     ext.booster_version = '2.1.0'
     ext.isProprietary = getGradle().getStartParameter().getTaskRequests().toString().contains("Proprietary")
     repositories {
@@ -10,7 +10,7 @@ buildscript {
 
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.0.1'
+        classpath 'com.android.tools.build:gradle:4.0.2'
         if (isProprietary) {
             classpath 'com.google.gms:google-services:4.3.3'
             classpath 'com.google.firebase:firebase-crashlytics-gradle:2.1.1'

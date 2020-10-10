@@ -27,7 +27,6 @@ public class Const {
     public static final String PREF_DARK_THEME = "pref_dark";
     public static final String PREF_XKCD_STORAGE = "pref_xkcd_storage";
     public static final String PREF_XKCD_STORAGE_INTERNAL = "pref_xkcd_storage_internal";
-    public static final String PREF_XKCD_STORAGE_EXTERNAL = "pref_xkcd_storage_external";
 
 
     public static final String FIRE_LARGE_IMAGE = "large_image";

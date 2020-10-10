@@ -12,10 +12,7 @@ import xyz.jienan.xkcd.base.network.NetworkService
 import xyz.jienan.xkcd.model.ExtraComics
 import xyz.jienan.xkcd.model.ExtraModel
 import xyz.jienan.xkcd.model.XkcdPic
-import java.io.BufferedReader
 import java.io.IOException
-import java.io.InputStreamReader
-import java.io.StringWriter
 
 /**
  * Created by Jienan on 2018/3/2.
@@ -99,16 +96,6 @@ object XkcdSideloadUtils {
 
     @Throws(IOException::class)
     private fun Context.loadFromRaw(@RawRes raw: Int): String {
-        val writer = StringWriter()
-        val buffer = CharArray(1024)
-        resources.openRawResource(raw).use {
-            val reader = BufferedReader(InputStreamReader(it, "UTF-8"))
-            var n = reader.read(buffer)
-            while (n != -1) {
-                writer.write(buffer, 0, n)
-                n = reader.read(buffer)
-            }
-        }
-        return writer.toString()
+        return resources.openRawResource(raw).bufferedReader().use { it.readText() }
     }
 }
