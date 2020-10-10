@@ -1,1 +1,1 @@
-xkcd - easy and lite comics viewer
+xkcd - comics viewer

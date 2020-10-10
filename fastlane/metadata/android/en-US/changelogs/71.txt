@@ -1,0 +1,6 @@
+- Add settings option to select external comic cache when there is an SD card
+- Add settings option to show comic title text on preview page
+- Improve fullscreen comic page with navigation bar, and some other UI tweaks
+- Improve cache usage and notification
+
+Full release note on https://git.io/JTJMS
