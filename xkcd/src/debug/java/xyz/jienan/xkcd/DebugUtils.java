@@ -5,8 +5,6 @@ import android.content.Context;
 
 import com.gu.toolargetool.TooLargeTool;
 
-import io.objectbox.BoxStore;
-import io.objectbox.android.AndroidObjectBrowser;
 import timber.log.Timber;
 
 public class DebugUtils {
@@ -17,14 +15,9 @@ public class DebugUtils {
         return true;
     }
 
-    static void debugDB(Context context, BoxStore boxStore) {
+    static void debugDB(Context context) {
         if (BuildConfig.DEBUG) {
-            new AndroidObjectBrowser(boxStore).start(context);
-
             TooLargeTool.startLogging((Application) context);
         }
-    }
-
-    static void updateLocale() {
     }
 }

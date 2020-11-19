@@ -123,10 +123,10 @@ open class SingleWhatIfFragment : BaseFragment(), ImgInterface.ImgCallback, RefI
 
     private fun scrolledToTheEnd(isTheEnd: Boolean) {
         if (parentFragment != null) {
-            if (!parentFragment!!.isFabShowing && isTheEnd) {
-                parentFragment!!.showOrHideFabWithInfo(true)
-            } else if (parentFragment!!.isFabShowing && !isTheEnd) {
-                parentFragment!!.showOrHideFabWithInfo(false)
+            if (!(requireParentFragment() as WhatIfMainFragment).isFabShowing && isTheEnd) {
+                (requireParentFragment() as WhatIfMainFragment).showOrHideFabWithInfo(true)
+            } else if ((requireParentFragment() as WhatIfMainFragment).isFabShowing && !isTheEnd) {
+                (requireParentFragment() as WhatIfMainFragment).showOrHideFabWithInfo(false)
             }
         }
     }
@@ -179,7 +179,7 @@ open class SingleWhatIfFragment : BaseFragment(), ImgInterface.ImgCallback, RefI
                         imgView
                     }
 
-    private inner class WebViewScrollCallback internal constructor(fragment: SingleWhatIfFragment)
+    private inner class WebViewScrollCallback(fragment: SingleWhatIfFragment)
         : WhatIfWebView.ScrollToEndCallback {
 
         private val weakReference: WeakReference<SingleWhatIfFragment> = WeakReference(fragment)
@@ -203,7 +203,7 @@ open class SingleWhatIfFragment : BaseFragment(), ImgInterface.ImgCallback, RefI
                 }
                 .subscribe({
                     loadDataWithBaseURL("file:///android_asset/",
-                            it.content?.replace("\\$".toRegex(), "&#36;"),
+                            it.content?.replace("\\$".toRegex(), "&#36;")!!,
                             "text/html",
                             "UTF-8",
                             null)

@@ -121,7 +121,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         super.onNewIntent(intent)
         if (intent != null && intent.getIntExtra(INDEX_ON_NOTI_INTENT, 0) != 0) {
             val fragmentTag = intent.getStringExtra(LANDING_TYPE)
-            if (!openFragment(fragmentTag)) {
+            if (!fragmentTag.isNullOrBlank() && !openFragment(fragmentTag)) {
                 val fragment = visibleFragment as ContentMainBaseFragment?
                 if (fragment != null) {
                     val size = intent.getIntExtra(INDEX_ON_NOTI_INTENT, 0)

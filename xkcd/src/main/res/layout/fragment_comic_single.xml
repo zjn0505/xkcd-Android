@@ -52,13 +52,14 @@
         app:layout_constraintHeight_max="200dp"
         app:layout_constraintStart_toStartOf="parent">
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:saveEnabled="false"
             android:textIsSelectable="true"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
 
     </ScrollView>
 
@@ -81,12 +82,12 @@
         app:layout_constraintStart_toStartOf="parent"
         tools:text="2017.7.2" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/btnSeeTranslation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
+        android:layout_marginLeft="20dp"
         android:fontFamily="@font/xkcd"
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
@@ -96,6 +97,7 @@
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/tvCreateDate"
         app:layout_constraintStart_toEndOf="@id/tvCreateDate"
+        tools:ignore="TextContrastCheck"
         tools:visibility="visible" />
 
     <xyz.jienan.xkcd.ui.CircleProgressBar

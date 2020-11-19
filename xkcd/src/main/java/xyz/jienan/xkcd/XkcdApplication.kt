@@ -41,7 +41,7 @@ class XkcdApplication : Application() {
                 .toInt())
         instance = this
         val boxStore = MyObjectBox.builder().androidContext(this).maxReaders(300).build()
-        DebugUtils.debugDB(this, boxStore)
+        DebugUtils.debugDB(this)
         BoxManager.init(boxStore)
         XkcdSideloadUtils.init(this)
         SharedPrefManager.init(this)

@@ -2,7 +2,6 @@ package xyz.jienan.xkcd;
 
 import android.content.Context;
 
-import io.objectbox.BoxStore;
 import timber.log.Timber;
 
 public class DebugUtils {
@@ -13,10 +12,7 @@ public class DebugUtils {
         return true;
     }
 
-    static void debugDB(Context context, BoxStore boxStore) {
+    static void debugDB(Context context) {
         // no-ops
-    }
-
-    static void updateLocale() {
     }
 }
