@@ -126,7 +126,6 @@ object XkcdModel {
 
     fun loadXkcdFromDB(index: Long) = BoxManager.getXkcd(index)
 
-
     fun loadXkcdFromDB(start: Long, end: Long) = BoxManager.getXkcdInRange(start, end)
 
     fun updateSize(index: Long, width: Int, height: Int) =
@@ -175,5 +174,4 @@ object XkcdModel {
                     .toMaybe()
         }
     }
-
 }

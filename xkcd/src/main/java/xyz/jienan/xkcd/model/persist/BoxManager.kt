@@ -70,6 +70,15 @@ object BoxManager {
         return xkcdBox.get(index)
     }
 
+    fun searchXkcdByDate(date: Triple<Int, Int, Int>): XkcdPic? {
+        return xkcdBox.query().equal(XkcdPic_.year, date.first.toString())
+                .equal(XkcdPic_.month, date.second.toString())
+                .sort { x1, x2 -> kotlin.math.abs(x1.day.toInt() - date.third) - kotlin.math.abs(x2.day.toInt() - date.third) }
+                .build()
+                .find()
+                .firstOrNull()
+    }
+
     fun saveXkcd(xkcdPic: XkcdPic) {
         xkcdBox.put(xkcdPic)
     }
