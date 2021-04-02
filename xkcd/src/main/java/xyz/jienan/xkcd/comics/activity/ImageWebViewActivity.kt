@@ -3,13 +3,12 @@ package xyz.jienan.xkcd.comics.activity
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.webkit.WebChromeClient
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import android.webkit.*
 import android.widget.ProgressBar
 import androidx.annotation.VisibleForTesting
 import androidx.core.content.edit
@@ -36,6 +35,24 @@ class ImageWebViewActivity : BaseActivity() {
         private const val PERMALINK_1663 = "xkcd_permalink_1663"
 
         private const val PERMALINK_2288 = "xkcd_permalink_2288"
+
+        private const val TRIM = """
+                    javascript:
+                    var toDelete = [];
+                    toDelete.push(document.getElementById("topContainer"));
+                    toDelete.push(document.getElementById("bottom"));
+                    toDelete.push(document.getElementById("ctitle"));
+                    toDelete.push(document.getElementById("middleFooter"));
+                    toDelete.push(document.getElementsByClassName("menuCont")[0]);
+                    toDelete.push(document.getElementsByClassName("menuCont")[1]);
+                    toDelete.push(document.getElementsByClassName("br")[0]);
+                    toDelete.push(document.getElementsByClassName("br")[1]);
+                    toDelete.push(document.getElementsByClassName("comicNav")[0]);
+                    toDelete.push(document.getElementsByClassName("comicNav")[1]);
+                    toDelete.forEach(function (element) {
+                        if (element) element.style.display = 'none';
+                    });
+                """
 
         fun startActivity(context: Context, num: Long, translationMode: Boolean, webPageMode: String = TAG_INTERACTIVE) {
             val intent = Intent(context, ImageWebViewActivity::class.java)
@@ -119,8 +136,10 @@ class ImageWebViewActivity : BaseActivity() {
             loadXk3dPage()
         }
         val url = urlScriptPair.first
-        val script = urlScriptPair.second
+        var script = urlScriptPair.second
         webView.webViewClient = object : WebViewClient() {
+
+            var retry = false
 
             override fun onPageFinished(view: WebView, url: String) {
                 this@ImageWebViewActivity.title = view.title
@@ -131,6 +150,18 @@ class ImageWebViewActivity : BaseActivity() {
                     }
                 } else if (index == 2288L && url.contains("https://xkcd.com/2288/#-".toRegex())) {
                     permalink2288 = url
+                }
+            }
+
+            override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError) {
+                super.onReceivedError(view, request, error)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    Timber.e("Failed to load $url,\n${error.errorCode} ${error.description}")
+                }
+                if (!retry) {
+                    retry = true
+                    script = TRIM.trimIndent()
+                    webView.loadUrl("https://xkcd.com/${index}")
                 }
             }
         }
@@ -173,28 +204,16 @@ class ImageWebViewActivity : BaseActivity() {
                 }
             }
             2288 -> {
-                script = """
-                    javascript:
-                    var toDelete = [];
-                    toDelete.push(document.getElementById("topContainer"));
-                    toDelete.push(document.getElementById("bottom"));
-                    toDelete.push(document.getElementById("ctitle"));
-                    toDelete.push(document.getElementById("middleFooter"));
-                    toDelete.push(document.getElementsByClassName("menuCont")[0]);
-                    toDelete.push(document.getElementsByClassName("menuCont")[1]);
-                    toDelete.push(document.getElementsByClassName("br")[0]);
-                    toDelete.push(document.getElementsByClassName("br")[1]);
-                    toDelete.push(document.getElementsByClassName("comicNav")[0]);
-                    toDelete.push(document.getElementsByClassName("comicNav")[1]);
-                    toDelete.forEach(function (element) {
-                        if (element) element.style.display = 'none';
-                    });
-                """.trimIndent()
+                script = TRIM.trimIndent()
                 if (permalink2288.isNullOrBlank()) {
                     "https://xkcd.com/2288"
                 } else {
                     permalink2288!!
                 }
+            }
+            2445 -> {
+                script = TRIM.trimIndent()
+                "https://xkcd.com/2445"
             }
             in resources.getIntArray(R.array.interactive_comics) -> if (!intent.getBooleanExtra("translationMode", false)) {
                 "https://zjn0505.github.io/xkcd-undressed/${xkcd.num}/"
