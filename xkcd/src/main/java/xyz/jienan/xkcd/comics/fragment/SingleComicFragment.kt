@@ -279,9 +279,9 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
 
     override fun setLoading(isLoading: Boolean) {
         if (isLoading) {
-            pbLoading!!.visibility = View.VISIBLE
+            pbLoading?.visibility = View.VISIBLE
         } else {
-            pbLoading!!.visibility = View.GONE
+            pbLoading?.visibility = View.GONE
         }
     }
 

@@ -1,17 +1,23 @@
 package xyz.jienan.xkcd.comics.activity
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.PixelFormat
 import android.os.Build
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
+import android.text.method.ScrollingMovementMethod
+import android.view.*
 import android.webkit.*
 import android.widget.ProgressBar
+import android.widget.TextView
+import androidx.annotation.Keep
 import androidx.annotation.VisibleForTesting
 import androidx.core.content.edit
+import androidx.core.view.isVisible
+import com.google.gson.Gson
+import com.google.gson.annotations.SerializedName
+import com.google.gson.reflect.TypeToken
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -20,6 +26,7 @@ import xyz.jienan.xkcd.R
 import xyz.jienan.xkcd.base.BaseActivity
 import xyz.jienan.xkcd.model.XkcdModel
 import xyz.jienan.xkcd.model.XkcdPic
+import xyz.jienan.xkcd.ui.ToastUtils
 import xyz.jienan.xkcd.ui.updateSettings
 import java.util.*
 
@@ -70,6 +77,17 @@ class ImageWebViewActivity : BaseActivity() {
 
     private val progress by lazy { findViewById<ProgressBar>(R.id.progressWebView) }
 
+    private val consoleView by lazy {
+        TextView(this).also {
+            it.movementMethod = ScrollingMovementMethod()
+            it.gravity = Gravity.BOTTOM
+            it.setBackgroundColor(Color.GRAY)
+            it.setTextColor(Color.BLACK)
+        }
+    }
+
+    private val consoleLogs = mutableListOf<String>()
+
     private val compositeDisposable = CompositeDisposable()
 
     private var permalink1663: String?
@@ -109,13 +127,23 @@ class ImageWebViewActivity : BaseActivity() {
         super.onDestroy()
     }
 
-    @SuppressLint("AddJavascriptInterface")
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        if (index !in listOf(1608L)) {
+        if (index !in listOf(1608L, 2445)) {
             return false
         }
         when (index) {
-            1608L -> menu?.add(Menu.NONE, R.id.menu_gandalf, Menu.NONE, "i.am.gandalf")
+            1608L -> {
+                listOf(
+                        "i.am.gandalf",
+                        "i.am.stuck",
+                        "ze.goggles",
+                        "coins.count"
+                )
+            }
+            2445L -> listOf("console")
+            else -> listOf()
+        }.forEachIndexed { index, title ->
+            menu?.add(Menu.NONE, Menu.NONE, index, title)
         }
 
         return true
@@ -124,9 +152,58 @@ class ImageWebViewActivity : BaseActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> onBackPressed()
-            R.id.menu_gandalf -> webView.loadUrl("javascript:i.am.gandalf=true")
+            else -> {
+                if (index == 1608L)
+                    when (item.order) {
+                        0 -> webView.loadUrl("javascript:i.am.gandalf=true")
+                        1 -> webView.loadUrl("javascript:explorer.pos.x=512271;explorer.pos.y=-550319;explorer.pos.xv=0;explorer.pos.yv=0;explorer.pos.dir=1")
+                        2 -> webView.loadUrl("javascript:ze.goggles()")
+                        3 -> webView.loadUrl("javascript:android.onData('coin', JSON.stringify(explorer.objects))")
+                    }
+                else if (index == 2445L) {
+                    val isConsoleOpen = webView.getTag(R.id.webView) as Boolean? == true
+                    webView.setTag(R.id.webView, !isConsoleOpen)
+                    if (!isConsoleOpen) {
+                        val params = WindowManager.LayoutParams(
+                                WindowManager.LayoutParams.MATCH_PARENT,
+                                500,
+                                WindowManager.LayoutParams.TYPE_APPLICATION,
+                                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                                PixelFormat.TRANSLUCENT)
+                        params.gravity = Gravity.BOTTOM
+                        params.x = 0
+                        params.y = 100
+                        windowManager.addView(consoleView, params)
+                        val sb = StringBuilder()
+                        consoleLogs.forEach {
+                            sb.append(it)
+                            sb.append("\n")
+                        }
+                        consoleView.text = sb.toString()
+                    } else {
+                        windowManager.removeView(consoleView)
+                    }
+                }
+            }
         }
         return true
+    }
+
+    class AndroidInterface(private val webView: WebView) {
+
+        data class Coin(@SerializedName("got") val got: Boolean)
+
+        @Keep
+        @JavascriptInterface
+        fun onData(key: String?, value: String) {
+            if (key == "coin") {
+                val coinListType = object : TypeToken<List<Coin>>() {}.type
+                val coins = Gson().fromJson<List<Coin>>(value, coinListType)
+                val score = "${coins.filter { it.got }.size}/${coins.size}"
+                Timber.i("Coins $score")
+                ToastUtils.showToast(webView.context, score)
+            }
+        }
     }
 
     private fun loadXkcdInWebView(xkcd: XkcdPic) {
@@ -137,6 +214,7 @@ class ImageWebViewActivity : BaseActivity() {
         }
         val url = urlScriptPair.first
         var script = urlScriptPair.second
+        webView.addJavascriptInterface(AndroidInterface(webView), "android")
         webView.webViewClient = object : WebViewClient() {
 
             var retry = false
@@ -158,7 +236,7 @@ class ImageWebViewActivity : BaseActivity() {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     Timber.e("Failed to load $url,\n${error.errorCode} ${error.description}")
                 }
-                if (!retry) {
+                if (!retry && url.contains("github.io")) {
                     retry = true
                     script = TRIM.trimIndent()
                     webView.loadUrl("https://xkcd.com/${index}")
@@ -184,6 +262,24 @@ class ImageWebViewActivity : BaseActivity() {
                     }
                 }
             }
+
+            override fun onConsoleMessage(consoleMessage: ConsoleMessage?): Boolean {
+                if (index == 2445L) {
+                    Timber.d("Console ${consoleMessage?.message()}")
+                    if (!consoleMessage?.message().isNullOrBlank()) {
+                        consoleLogs.add(consoleMessage!!.message())
+                        if (consoleView.isVisible) {
+                            val sb = StringBuilder()
+                            consoleLogs.forEach {
+                                sb.append(it)
+                                sb.append("\n")
+                            }
+                            consoleView.text = sb.toString()
+                        }
+                    }
+                }
+                return super.onConsoleMessage(consoleMessage)
+            }
         }
 
         webView.updateSettings()
@@ -195,7 +291,7 @@ class ImageWebViewActivity : BaseActivity() {
 
     private fun loadInteractivePage(xkcd: XkcdPic): Pair<String, String> {
         var script = ""
-        val url = when (xkcd.num.toInt()) {
+        val url = when (index.toInt()) {
             1663 -> {
                 if (permalink1663.isNullOrBlank()) {
                     "https://zjn0505.github.io/xkcd-undressed/${xkcd.num}/"
@@ -211,9 +307,11 @@ class ImageWebViewActivity : BaseActivity() {
                     permalink2288!!
                 }
             }
-            2445 -> {
+            1608,
+            2445,
+            -> {
                 script = TRIM.trimIndent()
-                "https://xkcd.com/2445"
+                "https://xkcd.com/$index"
             }
             in resources.getIntArray(R.array.interactive_comics) -> if (!intent.getBooleanExtra("translationMode", false)) {
                 "https://zjn0505.github.io/xkcd-undressed/${xkcd.num}/"

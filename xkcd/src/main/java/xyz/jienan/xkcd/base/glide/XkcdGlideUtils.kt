@@ -48,7 +48,7 @@ object XkcdGlideUtils {
         glide.load(url)
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .listener(object : RequestListener<String, GlideDrawable?> {
-                    override fun onException(e: Exception, model: String,
+                    override fun onException(e: Exception?, model: String,
                                              target: Target<GlideDrawable?>, isFirstResource: Boolean): Boolean {
                         val fallback = model.fallback()
 
@@ -75,7 +75,7 @@ object XkcdGlideUtils {
                 .asGif()
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .listener(object : RequestListener<String, GifDrawable?> {
-                    override fun onException(e: Exception, model: String,
+                    override fun onException(e: Exception?, model: String,
                                              target: Target<GifDrawable?>, isFirstResource: Boolean): Boolean {
 
                         val fallback = model.fallback()

@@ -201,7 +201,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext { SharedPrefManager.saveNewQuote(it) }
                 .subscribe({ quote ->
-                    val header = navigationView.getHeaderView(0)
+                    val header = navigationView?.getHeaderView(0)
                     if (header != null && tvQuote != null && tvSubQuote != null) {
                         @SuppressLint("SetTextI18n")
                         tvQuote.text = "\"${HtmlCompat.fromHtml(quote.content, HtmlCompat.FROM_HTML_MODE_LEGACY)}\""
