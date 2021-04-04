@@ -179,7 +179,7 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.6'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
     debugImplementation 'com.gu.android:toolargetool:0.2.1@aar'
     implementation "io.objectbox:objectbox-android:$objectboxVersion"
 
@@ -210,7 +210,7 @@ dependencies {
         }
     }
     implementation 'com.squareup:seismic:1.0.2'
-    implementation 'io.reactivex.rxjava2:rxjava:2.2.19'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.21'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
     implementation 'com.jakewharton.rxbinding3:rxbinding:3.1.0'
     implementation 'com.google.code.gson:gson:2.8.6'
@@ -230,8 +230,8 @@ dependencies {
     implementation 'me.dkzwm.widget.srl:core:1.6.6.7.androidx'
     implementation 'me.dkzwm.widget.srl:ext-classics:1.6.6.7.androidx'
 
-    implementation "androidx.work:work-runtime-ktx:2.6.0-alpha01"
-    implementation "androidx.work:work-rxjava2:2.6.0-alpha01"
+    implementation 'androidx.work:work-runtime-ktx:2.7.0-alpha02'
+    implementation 'androidx.work:work-rxjava2:2.7.0-alpha02'
     proprietaryImplementation 'com.google.firebase:firebase-analytics:18.0.2'
     proprietaryImplementation 'com.google.firebase:firebase-messaging:21.0.1'
     proprietaryImplementation 'com.google.firebase:firebase-crashlytics:17.4.1'
@@ -239,7 +239,7 @@ dependencies {
 //    implementation 'androidx.slice:slice-core:1.0.0'
 //    implementation 'androidx.slice:slice-builders:1.0.0'
 
-    testImplementation 'junit:junit:4.13.1'
+    testImplementation 'junit:junit:4.13.2'
 
 //    androidTestImplementation "androidx.arch.core:core-testing:2.1.0"
     androidTestImplementation "androidx.test.ext:junit:1.1.2"
