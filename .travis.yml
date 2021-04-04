@@ -23,7 +23,8 @@ before_install:
 # - gem install dropbox-deployment
 script:
 - "./gradlew assembleFossRelease"
-- "./gradlew resguardProprietaryRelease"
+#- "./gradlew resguardProprietaryRelease"
+- "./gradlew assembleProprietaryRelease"
 deploy:
   provider: releases
   api_key:
