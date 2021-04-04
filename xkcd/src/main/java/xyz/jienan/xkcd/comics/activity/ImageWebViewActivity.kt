@@ -192,10 +192,6 @@ class ImageWebViewActivity : BaseActivity() {
                         } else {
                             windowManager.removeView(consoleView)
                         }
-                    } else if (item.order == 1) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                            webView.evaluateJavascript("BeepComic.hurryUp()", null)
-                        }
                     }
                 }
             }
@@ -279,9 +275,9 @@ class ImageWebViewActivity : BaseActivity() {
 
             override fun onConsoleMessage(consoleMessage: ConsoleMessage?): Boolean {
                 if (index == 2445L) {
-                    Timber.d("Console ${consoleMessage?.message()}")
-                    if (!consoleMessage?.message().isNullOrBlank()) {
-                        consoleLogs.add(consoleMessage!!.message())
+                    Timber.d("Console ${consoleMessage?.messageLevel()} ${consoleMessage?.message()}")
+                    if (!consoleMessage?.message().isNullOrBlank() && consoleMessage?.message()?.startsWith("Ignored") == false) {
+                        consoleLogs.add(consoleMessage.message())
                         if (consoleView.isVisible) {
                             val sb = StringBuilder()
                             consoleLogs.forEach {
