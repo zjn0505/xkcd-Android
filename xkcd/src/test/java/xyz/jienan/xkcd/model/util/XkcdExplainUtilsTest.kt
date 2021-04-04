@@ -8,7 +8,15 @@ import org.junit.Test
 
 class XkcdExplainUtilsTest {
 
+//    @Test
+//    fun test2198ExplainExtraction() {
+//        testExplainExtraction(resp2198, result2198)
+//    }
 //
+//    @Test
+//    fun test2207ExplainExtraction() {
+//        testExplainExtraction(resp2207, result2207)
+//    }
 
     private fun testExplainExtraction(resp: String, result: String) {
         val body = ResponseBody.create(
@@ -22,15 +30,7 @@ class XkcdExplainUtilsTest {
 
     private val result2198 = " <table style=\"background-color: white; border: 1px solid #aaa; box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2); border-left: 10px solid #1E90FF; margin: 0 auto;\" class=\"notice_tpl\"> \n" +
             " <tbody>\n" +
-            "  <tr> \n" +   @Test
-//    fun test2198ExplainExtraction() {
-//        testExplainExtraction(resp2198, result2198)
-//    }
-//
-//    @Test
-//    fun test2207ExplainExtraction() {
-//        testExplainExtraction(resp2207, result2207)
-//    }
+            "  <tr> \n" +
             "   <td> <img alt=\"Ambox notice.png\" src=\"/wiki/images/c/c8/Ambox_notice.png\" width=\"40\" height=\"40\"> </td> \n" +
             "   <td style=\"padding:0 1em\"> <b>This explanation may be incomplete or incorrect:</b> <i>Created by TWO UNKNOWNS. About half of the explanation seems insufficiently related to the comic. Do NOT delete this tag too soon.</i><br>If you can address this issue, please <b><a rel=\"nofollow\" class=\"external text\" href=\"xkcd://explain.edit\">edit the page</a>!</b> Thanks. </td>\n" +
             "   <br>\n" +
