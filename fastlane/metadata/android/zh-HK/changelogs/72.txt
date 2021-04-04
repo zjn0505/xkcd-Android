@@ -1,0 +1,5 @@
+- 搜索 ISO 8601 格式的日期可以返回最近的漫畫
+- 加入 #2445 互動漫畫的支持
+- 改進 #1608 互動漫畫的功能
+
+Full release note on https://git.io/JTJMS

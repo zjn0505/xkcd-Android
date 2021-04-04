@@ -140,13 +140,21 @@ class ImageWebViewActivity : BaseActivity() {
                         "coins.count"
                 )
             }
-            2445L -> listOf("console")
+            2445L -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) listOf("console", "hurryUp") else listOf("console")
             else -> listOf()
         }.forEachIndexed { index, title ->
             menu?.add(Menu.NONE, Menu.NONE, index, title)
         }
 
         return true
+    }
+
+    override fun onBackPressed() {
+        if (webView.canGoBack()) {
+            webView.goBack()
+            return
+        }
+        super.onBackPressed()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -161,27 +169,33 @@ class ImageWebViewActivity : BaseActivity() {
                         3 -> webView.loadUrl("javascript:android.onData('coin', JSON.stringify(explorer.objects))")
                     }
                 else if (index == 2445L) {
-                    val isConsoleOpen = webView.getTag(R.id.webView) as Boolean? == true
-                    webView.setTag(R.id.webView, !isConsoleOpen)
-                    if (!isConsoleOpen) {
-                        val params = WindowManager.LayoutParams(
-                                WindowManager.LayoutParams.MATCH_PARENT,
-                                500,
-                                WindowManager.LayoutParams.TYPE_APPLICATION,
-                                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-                                PixelFormat.TRANSLUCENT)
-                        params.gravity = Gravity.BOTTOM
-                        params.x = 0
-                        params.y = 100
-                        windowManager.addView(consoleView, params)
-                        val sb = StringBuilder()
-                        consoleLogs.forEach {
-                            sb.append(it)
-                            sb.append("\n")
+                    if (item.order == 0) {
+                        val isConsoleOpen = webView.getTag(R.id.webView) as Boolean? == true
+                        webView.setTag(R.id.webView, !isConsoleOpen)
+                        if (!isConsoleOpen) {
+                            val params = WindowManager.LayoutParams(
+                                    WindowManager.LayoutParams.MATCH_PARENT,
+                                    500,
+                                    WindowManager.LayoutParams.TYPE_APPLICATION,
+                                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                                    PixelFormat.TRANSLUCENT)
+                            params.gravity = Gravity.BOTTOM
+                            params.x = 0
+                            params.y = 100
+                            windowManager.addView(consoleView, params)
+                            val sb = StringBuilder()
+                            consoleLogs.forEach {
+                                sb.append(it)
+                                sb.append("\n")
+                            }
+                            consoleView.text = sb.toString()
+                        } else {
+                            windowManager.removeView(consoleView)
                         }
-                        consoleView.text = sb.toString()
-                    } else {
-                        windowManager.removeView(consoleView)
+                    } else if (item.order == 1) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                            webView.evaluateJavascript("BeepComic.hurryUp()", null)
+                        }
                     }
                 }
             }
