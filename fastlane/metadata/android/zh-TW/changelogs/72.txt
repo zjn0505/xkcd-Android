@@ -2,4 +2,4 @@
 - 加入 #2445 互動漫畫的支持
 - 改進 #1608 互動漫畫的功能
 
-Full release note on https://git.io/JTJMS
+Full release note on https://git.io/JYyD8

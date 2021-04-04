@@ -2,4 +2,4 @@
 - 加入 #2445 互动漫画的支持
 - 改进 #1608 互动漫画的功能
 
-Full release note on https://git.io/JTJMS
+Full release note on https://git.io/JYyD8

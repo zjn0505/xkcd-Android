@@ -2,4 +2,4 @@
 - Support #2445 interactive comic
 - Improve #1608 interactive functions
 
-Full release note on https://git.io/JTJMS
+Full release note on https://git.io/JYyD8

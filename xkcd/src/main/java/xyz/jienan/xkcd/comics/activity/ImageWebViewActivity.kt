@@ -140,7 +140,7 @@ class ImageWebViewActivity : BaseActivity() {
                         "coins.count"
                 )
             }
-            2445L -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) listOf("console", "hurryUp") else listOf("console")
+            2445L -> listOf("console")
             else -> listOf()
         }.forEachIndexed { index, title ->
             menu?.add(Menu.NONE, Menu.NONE, index, title)
