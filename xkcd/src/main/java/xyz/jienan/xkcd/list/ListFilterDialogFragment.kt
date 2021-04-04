@@ -50,7 +50,7 @@ class ListFilterDialogFragment() : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(requireActivity())
 
-        filters.filterIndexed { index, i -> hasFav || index != 1 }.forEachIndexed { index, res ->
+        filters.filterIndexed { index, _ -> hasFav || index != 1 }.forEachIndexed { index, res ->
             list.add(hashMapOf("filter" to getString(res), "iconRes" to icons[index]))
         }
 

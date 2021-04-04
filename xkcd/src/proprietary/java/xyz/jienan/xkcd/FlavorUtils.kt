@@ -5,7 +5,7 @@ import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.installations.FirebaseInstallations
 import com.google.firebase.messaging.FirebaseMessaging
 import timber.log.Timber
 import java.util.*
@@ -24,7 +24,7 @@ object FlavorUtils {
         }
         if (BuildConfig.DEBUG) {
             thread(start = true) {
-                Timber.d("FCM id ${FirebaseInstanceId.getInstance().id}")
+                Timber.d("FCM id ${FirebaseInstallations.getInstance().id}")
             }
 
             FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->

@@ -12,10 +12,10 @@ if (isProprietary) {
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-if (!getGradle().getStartParameter().getTaskRequests()
-        .toString().endsWith("AndroidTest")) {
-    apply plugin: 'com.didiglobal.booster'
-}
+//if (!getGradle().getStartParameter().getTaskRequests()
+//        .toString().endsWith("AndroidTest")) {
+//    apply plugin: 'com.didiglobal.booster'
+//}
 
 if (isProprietary) {
     andResGuard {
@@ -261,19 +261,8 @@ gradle.projectsEvaluated {
     }
 }
 
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:2.0.0'
-    }
-}
-
 println "Task exec " + getGradle().getStartParameter().getTaskRequests().toString()
 
-apply plugin: 'com.getkeepsafe.dexcount'
 if (isProprietary) {
     apply plugin: 'com.google.gms.google-services'
 }

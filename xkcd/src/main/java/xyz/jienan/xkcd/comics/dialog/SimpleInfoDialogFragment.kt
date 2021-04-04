@@ -127,6 +127,7 @@ class SimpleInfoDialogFragment : DialogFragment() {
         mListener?.onExplainMoreClick(object : ExplainingCallback {
             override fun explanationLoaded(result: String) {
                 pbLoading.visibility = View.GONE
+                @Suppress("SENSELESS_COMPARISON")
                 if (tvExplain != null) {
                     htmlContent = result
                     ExplainLinkUtil.setTextViewHTML(tvExplain, result)
