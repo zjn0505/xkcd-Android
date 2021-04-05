@@ -1,0 +1,73 @@
+{
+  "project_info": {
+    "project_number": "555415708408",
+    "firebase_url": "https://xkcd-233.firebaseio.com",
+    "project_id": "xkcd-233",
+    "storage_bucket": "xkcd-233.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:555415708408:android:d1d7b448c45d41bb",
+        "android_client_info": {
+          "package_name": "xyz.jienan.xkcd"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "555415708408-2c47ugj3qp2egh0opnk6m4jgk8grjhuk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAd6bmENN46kf5BPAlTCn5QEoaZVFx3MPk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:555415708408:android:47b48bc03d6bbf02",
+        "android_client_info": {
+          "package_name": "xyz.jienan.xkcd.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "555415708408-2c47ugj3qp2egh0opnk6m4jgk8grjhuk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAd6bmENN46kf5BPAlTCn5QEoaZVFx3MPk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
