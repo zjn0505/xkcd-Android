@@ -36,7 +36,7 @@ internal class XkcdListGridAdapter : ListBaseAdapter<XkcdListGridAdapter.XkcdVie
     }
 
     override fun onBindViewHolder(holder: XkcdViewHolder, position: Int) {
-        holder.bind(pics!![holder.adapterPosition])
+        holder.bind(pics!![holder.bindingAdapterPosition])
     }
 
     override fun getItemCount(): Int = pics?.size ?: 0

@@ -15,6 +15,7 @@ abstract class BaseFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
             inflater.inflate(layoutResId, container, false)
 
+    @Suppress("UNUSED_PARAMETER")
     protected fun logUXEvent(event: String, params: Map<String, String>? = null) {
         // analytics disabled
     }

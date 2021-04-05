@@ -2,9 +2,9 @@ ext {
     isProprietary = rootProject.ext.isProprietary
 }
 
-if (isProprietary) {
-    apply plugin: 'AndResGuard'
-}
+//if (isProprietary) {
+//    apply plugin: 'AndResGuard'
+//}
 apply plugin: 'com.android.application'
 if (isProprietary) {
     apply plugin: 'com.google.firebase.crashlytics'
@@ -12,46 +12,47 @@ if (isProprietary) {
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-//if (!getGradle().getStartParameter().getTaskRequests()
-//        .toString().endsWith("AndroidTest")) {
-//    apply plugin: 'com.didiglobal.booster'
-//}
-
-if (isProprietary) {
-    andResGuard {
-        mappingFile = file("./resource_mapping.txt")
-        useSign = true
-        keepRoot = false
-        mergeDuplicatedRes = true
-        fixedResName = "x"
-        whiteList = [
-                // for icon
-                "R.mipmap.ic_launcher",
-                "R.mipmap.ic_launcher_round",
-                // for fabric
-                "R.string.com.crashlytics.*",
-                // for google-services
-                "R.string.default_web_client_id",
-                "R.string.firebase_database_url",
-                "R.string.gcm_defaultSenderId",
-                "R.string.google_api_key",
-                "R.string.google_app_id",
-                "R.string.google_crash_reporting_api_key",
-                "R.string.google_storage_bucket",
-                "R.string.project_id",
-
-                "R.string.arrow_1",
-                "R.string.arrow_10",
-                "R.string.arrow_30"
-        ]
-        compressFilePattern = [
-                "*.png",
-                "*.jpg",
-                "*.jpeg",
-                "*.gif",
-        ]
-    }
+if (!getGradle().getStartParameter().getTaskRequests()
+        .toString().endsWith("AndroidTest")) {
+    apply plugin: 'com.didiglobal.booster'
 }
+
+// https://github.com/shwenzhang/AndResGuard/issues/436
+//if (isProprietary) {
+//    andResGuard {
+//        mappingFile = file("./resource_mapping.txt")
+//        useSign = true
+//        keepRoot = false
+//        mergeDuplicatedRes = true
+//        fixedResName = "x"
+//        whiteList = [
+//                // for icon
+//                "R.mipmap.ic_launcher",
+//                "R.mipmap.ic_launcher_round",
+//                // for fabric
+//                "R.string.com.crashlytics.*",
+//                // for google-services
+//                "R.string.default_web_client_id",
+//                "R.string.firebase_database_url",
+//                "R.string.gcm_defaultSenderId",
+//                "R.string.google_api_key",
+//                "R.string.google_app_id",
+//                "R.string.google_crash_reporting_api_key",
+//                "R.string.google_storage_bucket",
+//                "R.string.project_id",
+//
+//                "R.string.arrow_1",
+//                "R.string.arrow_10",
+//                "R.string.arrow_30"
+//        ]
+//        compressFilePattern = [
+//                "*.png",
+//                "*.jpg",
+//                "*.jpeg",
+//                "*.gif",
+//        ]
+//    }
+//}
 
 android {
     packagingOptions {

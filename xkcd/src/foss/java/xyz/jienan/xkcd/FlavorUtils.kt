@@ -10,5 +10,5 @@ object FlavorUtils {
     fun updateLocale() {
     }
 
-    fun getGmsAvailability(app: Application) = false
+    fun getGmsAvailability(@Suppress("UNUSED_PARAMETER") app: Application) = false
 }

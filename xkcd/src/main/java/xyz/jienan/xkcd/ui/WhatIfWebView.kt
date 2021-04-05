@@ -40,10 +40,9 @@ class WhatIfWebView(context: Context, attrs: AttributeSet) : WebView(context, at
     private val webViewClient = object : WebViewClient() {
 
         override fun shouldInterceptRequest(view: WebView, url: String): WebResourceResponse? {
-            var url = url
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT && url.contains("what-if.xkcd.com/imgs/a/") || url.contains("imgs.xkcd.com/comics")) {
-                url = url.replace("http://", "https://")
-                val t = glide.load(url).downloadOnly(10, 10)
+                val newUrl = url.replace("http://", "https://")
+                val t = glide.load(newUrl).downloadOnly(10, 10)
                 imageTasks.add(t)
                 try {
                     return WebResourceResponse("image/png", "deflate", FileInputStream(t.get()))

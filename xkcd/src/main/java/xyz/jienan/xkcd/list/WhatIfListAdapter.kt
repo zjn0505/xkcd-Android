@@ -35,7 +35,7 @@ internal class WhatIfListAdapter :
     }
 
     override fun onBindViewHolder(holder: WhatIfViewHolder, position: Int) {
-        holder.bind(articles!![holder.adapterPosition])
+        holder.bind(articles!![holder.bindingAdapterPosition])
     }
 
     override fun getItemCount(): Int = articles?.size ?: 0

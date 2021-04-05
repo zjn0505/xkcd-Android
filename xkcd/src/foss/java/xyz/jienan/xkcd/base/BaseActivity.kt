@@ -22,6 +22,7 @@ abstract class BaseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     protected fun logUXEvent(event: String, bundle: Bundle? = null) {
         // analytics disabled
     }
