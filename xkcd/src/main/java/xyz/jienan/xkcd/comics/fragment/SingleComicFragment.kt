@@ -68,7 +68,7 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
 
         override fun onNegativeClick() {
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(XKCD_EXPLAIN_URL + currentPic!!.num))
-            if (browserIntent.resolveActivity(activity!!.packageManager) != null) {
+            if (browserIntent.resolveActivity(requireActivity().packageManager) != null) {
                 startActivity(browserIntent)
             }
         }

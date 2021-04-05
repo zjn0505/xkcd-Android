@@ -57,7 +57,7 @@ class SingleExtraFragment : BaseFragment(), SingleExtraContract.View {
 
         override fun onNegativeClick() {
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(currentExtra!!.explainUrl))
-            if (browserIntent.resolveActivity(activity!!.packageManager) != null) {
+            if (browserIntent.resolveActivity(requireActivity().packageManager) != null) {
                 startActivity(browserIntent)
             }
         }
@@ -231,8 +231,8 @@ class SingleExtraFragment : BaseFragment(), SingleExtraContract.View {
         if (currentExtra == null || TextUtils.isEmpty(currentExtra!!.img)) {
             return
         }
-        ImageDetailPageActivity.startActivity(activity!!, currentExtra!!.img, currentExtra!!.num)
-        activity!!.overridePendingTransition(R.anim.fadein, R.anim.fadeout)
+        ImageDetailPageActivity.startActivity(requireActivity(), currentExtra!!.img, currentExtra!!.num)
+        requireActivity().overridePendingTransition(R.anim.fadein, R.anim.fadeout)
     }
 
     /**
@@ -241,7 +241,7 @@ class SingleExtraFragment : BaseFragment(), SingleExtraContract.View {
      * @param xPic
      */
     override fun renderExtraPic(xPic: ExtraComics) {
-        if (activity == null || activity!!.isFinishing) {
+        if (activity == null || requireActivity().isFinishing) {
             return
         }
         if (TextUtils.isEmpty(target!!.model)) {
