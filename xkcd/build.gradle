@@ -133,11 +133,13 @@ android {
             zipAlignEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            if (isProprietary) {
-                signingConfig signingConfigs.releaseConfig
-            } else {
-                signingConfig signingConfigs.releaseFossConfig
-                // https://gitlab.com/fdroid/fdroidserver/issues/697#note_229584776
+            if ("true" != System.getenv('CI')) {
+                if (isProprietary) {
+                    signingConfig signingConfigs.releaseConfig
+                } else {
+                    signingConfig signingConfigs.releaseFossConfig
+                    // https://gitlab.com/fdroid/fdroidserver/issues/697#note_229584776
+                }
             }
             multiDexEnabled false
         }
