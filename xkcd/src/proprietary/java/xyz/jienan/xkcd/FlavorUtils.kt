@@ -2,7 +2,7 @@ package xyz.jienan.xkcd
 
 import android.app.Application
 import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.GoogleApiAvailability
+import com.google.android.gms.common.GoogleApiAvailabilityLight
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.installations.FirebaseInstallations
@@ -48,7 +48,7 @@ object FlavorUtils {
     }
 
     fun getGmsAvailability(app: Application): Boolean {
-        val status = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(app)
+        val status = GoogleApiAvailabilityLight.getInstance().isGooglePlayServicesAvailable(app)
         Timber.d("GMS status = $status")
         return status == ConnectionResult.SUCCESS
     }

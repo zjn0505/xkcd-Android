@@ -7,7 +7,6 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        gradlePluginPortal()
 
     }
     dependencies {
@@ -15,10 +14,10 @@ buildscript {
         if (isProprietary) {
             classpath 'com.google.gms:google-services:4.3.5'
             classpath 'com.google.firebase:firebase-crashlytics-gradle:2.5.2'
-            classpath "com.tencent.mm:AndResGuard-gradle-plugin:1.2.18"
+//            classpath "com.tencent.mm:AndResGuard-gradle-plugin:1.2.21"
         }
         classpath "io.objectbox:objectbox-gradle-plugin:$objectboxVersion"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.31"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.20"
         classpath "com.didiglobal.booster:booster-gradle-plugin:$booster_version"
         classpath "com.didiglobal.booster:booster-transform-thread:$booster_version"
         classpath "com.didiglobal.booster:booster-transform-webview:$booster_version"
@@ -27,7 +26,6 @@ buildscript {
         classpath "com.didiglobal.booster:booster-transform-toast:$booster_version"
         classpath "com.didiglobal.booster:booster-transform-activity-thread:$booster_version"
         classpath "com.didiglobal.booster:booster-task-resource-deredundancy:$booster_version"
-        classpath "com.didiglobal.booster:booster-task-compression-processed-res:$booster_version"
         classpath "com.didiglobal.booster:booster-task-compression-cwebp:$booster_version"
     }
 }
@@ -36,10 +34,6 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        gradlePluginPortal()
-        maven { url "https://jitpack.io" }
-        maven { url 'https://maven.google.com/' }
-        maven { url 'https://dl.bintray.com/guardian/android' } // TooLargeTool
     }
 }
 
