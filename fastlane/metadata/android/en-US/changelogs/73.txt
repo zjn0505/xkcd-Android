@@ -1,0 +1,3 @@
+- Fix web links not clickable on Android 11
+
+Full release note on https://is.gd/AViC7y
