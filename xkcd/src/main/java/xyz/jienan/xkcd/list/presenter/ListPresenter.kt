@@ -4,7 +4,7 @@ import xyz.jienan.xkcd.base.BasePresenter
 
 interface ListPresenter : BasePresenter {
 
-    fun loadList(startIndex: Int = 1)
+    fun loadList(startIndex: Int = 1, reversed: Boolean = false)
 
     fun hasFav(): Boolean
 

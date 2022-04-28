@@ -95,8 +95,8 @@ object XkcdModel {
      * @param range
      * @return last index.
      */
-    fun loadRange(start: Long, range: Long): Observable<List<XkcdPic>> = NetworkService.xkcdAPI
-            .getXkcdList(XKCD_BROWSE_LIST, start.toInt(), 0, range.toInt())
+    fun loadRange(start: Long, range: Long, reversed: Int = 0): Observable<List<XkcdPic>> = NetworkService.xkcdAPI
+            .getXkcdList(XKCD_BROWSE_LIST, start.toInt(), reversed, range.toInt())
             .subscribeOn(Schedulers.io())
             .map { BoxManager.updateAndSave(it) }
 

@@ -29,6 +29,9 @@ class XkcdListActivity : BaseListActivity(), XkcdListContract.View {
         if (!(mAdapter as XkcdListGridAdapter).pics.isNullOrEmpty()) {
             val pics = mAdapter.pics!!
             val lastPic = pics.last()
+            if (reversed && lastPic.num == 1L) {
+                return true
+            }
             return presenter.lastItemReached(lastPic.num)
         }
         return false
@@ -56,7 +59,7 @@ class XkcdListActivity : BaseListActivity(), XkcdListContract.View {
                 && !loadingMore
                 && !lastItemReached()) {
             loadingMore = true
-            presenter.loadList((mAdapter.pics!![mAdapter.itemCount - 1].num + 1).toInt())
+            presenter.loadList((mAdapter.pics!![mAdapter.itemCount - 1].num + 1).toInt(), reversed = reversed)
         }
     }
 

@@ -3,6 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/action_calendar_desc"
+        android:icon="@drawable/ic_sort_calendar_descending"
+        android:title="@string/menu_calendar_descending"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_calendar_asc"
+        android:icon="@drawable/ic_sort_calendar_ascending"
+        android:title="@string/menu_calendar_ascending"
+        android:visible="false"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/action_filter"
         android:icon="@drawable/ic_filter_list"
         android:title="@string/menu_filter"

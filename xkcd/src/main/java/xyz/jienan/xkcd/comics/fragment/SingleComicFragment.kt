@@ -59,7 +59,7 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
 
     private var explainingCallback: SimpleInfoDialogFragment.ExplainingCallback? = null
 
-    private val singleComicPresenter: SingleComicContract.Presenter by lazy { SingleComicPresenter(this, PreferenceManager.getDefaultSharedPreferences(context)) }
+    private val singleComicPresenter: SingleComicContract.Presenter by lazy { SingleComicPresenter(this, PreferenceManager.getDefaultSharedPreferences(requireContext())) }
 
     private val dialogListener = object : ISimpleInfoDialogListener {
         override fun onPositiveClick() {
@@ -130,7 +130,7 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
         }
     }
 
-    private val sharedPref by lazy { PreferenceManager.getDefaultSharedPreferences(context) }
+    private val sharedPref by lazy { PreferenceManager.getDefaultSharedPreferences(requireContext()) }
 
     override var translationMode = -1 // -1 unavailable, 0 off, 1 on
         set(value) {

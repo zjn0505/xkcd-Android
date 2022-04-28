@@ -78,6 +78,8 @@
     <string name="toast_more_explain_failed">Failed to get more details</string>
     <string name="title_xkcd_list">xkcd list</string>
     <string name="menu_filter">Filter</string>
+    <string name="menu_calendar_ascending">Oldest First</string>
+    <string name="menu_calendar_descending">Newest First</string>
 
     <string name="thumbs_up">Thumbs-up</string>
     <string name="add_to_fav">Add to favorite</string>

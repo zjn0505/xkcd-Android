@@ -15,7 +15,7 @@ class XkcdListPresenter(private val view: XkcdListContract.View) : ListPresenter
 
     private val compositeDisposable = CompositeDisposable()
 
-    override fun loadList(startIndex: Int) {
+    override fun loadList(startIndex: Int, reversed: Boolean) {
         if (startIndex == 1) {
             view.setLoading(true)
         }
@@ -23,31 +23,38 @@ class XkcdListPresenter(private val view: XkcdListContract.View) : ListPresenter
         val latestIndex = SharedPrefManager.latestXkcd
 
         if (latestIndex - BoxManager.allXkcd.size < 2) {
-            updateView(latestIndex)
+            updateView(latestIndex, reversed)
             return
         }
-
-        val data = XkcdModel.loadXkcdFromDB(startIndex.toLong(), startIndex + 399.toLong())
+        var realStartIndex = startIndex
+        val data = if (reversed) {
+            if (startIndex == 1) {
+                realStartIndex = latestIndex.toInt()
+            }
+            XkcdModel.loadXkcdFromDB(realStartIndex - 399L, realStartIndex.toLong())
+        } else {
+            XkcdModel.loadXkcdFromDB(realStartIndex.toLong(), realStartIndex + 399L)
+        }
 
         val dataSize = data.size
-        Timber.d("Load xkcd list request, start from: %d, the response items: %d", startIndex, dataSize)
-        if (startIndex <= latestIndex - 399 && dataSize != 400 && startIndex != 401 ||
-                startIndex == 401 && dataSize != 399 ||
-                startIndex > latestIndex - 399 && startIndex + dataSize - 1.toLong() != latestIndex) {
+        Timber.d("Load xkcd list request, start from: %d, the response items: %d", realStartIndex, dataSize)
+        if (realStartIndex <= latestIndex - 399 && dataSize != 400 && realStartIndex != 401 ||
+                !reversed && realStartIndex == 401 && dataSize != 399 ||
+                !reversed && realStartIndex > latestIndex - 399 && realStartIndex + dataSize - 1.toLong() != latestIndex) {
             if (inRequest) {
                 return
             }
             inRequest = true
-            XkcdModel.loadRange(startIndex.toLong(), 400)
+            XkcdModel.loadRange(realStartIndex.toLong(), 400, reversed = if (reversed) 1 else 0)
                     .observeOn(AndroidSchedulers.mainThread())
                     .map { list -> list[list.size - 1].num }
                     .doOnDispose { inRequest = false }
                     .singleOrError()
-                    .subscribe({ lastIndex -> updateView(lastIndex) }
+                    .subscribe({ lastIndex -> updateView(lastIndex, reversed) }
                     ) { Timber.e(it, "update xkcd failed") }
                     .also { compositeDisposable.add(it) }
         } else if (dataSize > 0) {
-            updateView(data[dataSize - 1].num)
+            updateView(data[dataSize - 1].num, reversed)
         }
     }
 
@@ -82,10 +89,10 @@ class XkcdListPresenter(private val view: XkcdListContract.View) : ListPresenter
 
     override fun lastItemReached(index: Long) = index >= SharedPrefManager.latestXkcd
 
-    private fun updateView(lastIndex: Long) {
+    private fun updateView(lastIndex: Long, reversed: Boolean) {
         val xkcdPics = XkcdModel.loadXkcdFromDB(1, lastIndex)
         view.showScroller(if (xkcdPics.isEmpty()) View.GONE else View.VISIBLE)
-        view.updateData(xkcdPics)
+        view.updateData(if (reversed) xkcdPics.reversed() else xkcdPics)
         view.isLoadingMore(false)
         view.setLoading(false)
     }
