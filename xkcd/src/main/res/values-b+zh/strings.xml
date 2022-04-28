@@ -106,4 +106,6 @@
     <string name="bookmark_saved">书签已保存</string>
     <string name="xkcd_download_notification_channel_name">下载 xkcd</string>
     <string name="xkcd_download_notification_content_text">剩余: %d</string>
+    <string name="menu_calendar_ascending">从旧到新</string>
+    <string name="menu_calendar_descending">从新到旧</string>
 </resources>
