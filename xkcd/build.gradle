@@ -218,9 +218,9 @@ dependencies {
 
     implementation 'androidx.work:work-runtime-ktx:2.8.0-alpha02'
     implementation 'androidx.work:work-rxjava2:2.8.0-alpha02'
-    proprietaryImplementation 'com.google.firebase:firebase-analytics:20.1.2'
-    proprietaryImplementation 'com.google.firebase:firebase-messaging:23.0.3'
-    proprietaryImplementation 'com.google.firebase:firebase-crashlytics:18.2.10'
+    proprietaryImplementation 'com.google.firebase:firebase-analytics:19.0.0'
+    proprietaryImplementation 'com.google.firebase:firebase-messaging:22.0.0'
+    proprietaryImplementation 'com.google.firebase:firebase-crashlytics:18.1.0'
 
 //    implementation 'androidx.slice:slice-core:1.0.0'
 //    implementation 'androidx.slice:slice-builders:1.0.0'
