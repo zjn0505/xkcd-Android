@@ -66,7 +66,7 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
 
     private var isFre = false
 
-    private val sharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(context) }
+    private val sharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(requireContext()) }
 
     private var isFabsShowing = false
 

@@ -35,6 +35,11 @@ abstract class BaseListActivity : BaseActivity(), BaseListView, ListFilterDialog
 
     protected abstract val filters: IntArray
 
+    private var menu: Menu? = null
+
+    protected var reversed = false
+        private set
+
     private val rvScrollListener = object : RecyclerView.OnScrollListener() {
 
         private var dragging = false
@@ -139,6 +144,7 @@ abstract class BaseListActivity : BaseActivity(), BaseListView, ListFilterDialog
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_list, menu)
+        this.menu = menu
         return true
     }
 
@@ -157,15 +163,44 @@ abstract class BaseListActivity : BaseActivity(), BaseListView, ListFilterDialog
                     logUXEvent(Const.FIRE_LIST_FILTER_BAR + logSuffix)
                 }
             }
+            R.id.action_calendar_asc -> {
+                reversed = false
+                presenter.loadList(reversed = reversed)
+                rvList.scrollToPosition(0)
+                menu?.findItem(R.id.action_calendar_asc)?.isVisible = false
+                menu?.findItem(R.id.action_calendar_desc)?.isVisible = true
+            }
+            R.id.action_calendar_desc -> {
+                reversed = true
+                presenter.loadList(reversed = reversed)
+                rvList.scrollToPosition(0)
+                menu?.findItem(R.id.action_calendar_desc)?.isVisible = false
+                menu?.findItem(R.id.action_calendar_asc)?.isVisible = true
+            }
         }
         return true
     }
 
     private fun reloadList(currentSelection: Selection) {
         when (currentSelection) {
-            Selection.ALL -> presenter.loadList()
-            Selection.MY_FAVORITE -> presenter.loadFavList()
-            Selection.PEOPLES_CHOICE -> presenter.loadPeopleChoiceList()
+            Selection.ALL -> {
+                presenter.loadList(reversed = reversed)
+                if (reversed) {
+                    menu?.findItem(R.id.action_calendar_asc)?.isVisible = true
+                } else {
+                    menu?.findItem(R.id.action_calendar_desc)?.isVisible = true
+                }
+            }
+            Selection.MY_FAVORITE -> {
+                presenter.loadFavList()
+                menu?.findItem(R.id.action_calendar_asc)?.isVisible = false
+                menu?.findItem(R.id.action_calendar_desc)?.isVisible = false
+            }
+            Selection.PEOPLES_CHOICE -> {
+                presenter.loadPeopleChoiceList()
+                menu?.findItem(R.id.action_calendar_asc)?.isVisible = false
+                menu?.findItem(R.id.action_calendar_desc)?.isVisible = false
+            }
         }
         rvList.scrollToPosition(0)
     }

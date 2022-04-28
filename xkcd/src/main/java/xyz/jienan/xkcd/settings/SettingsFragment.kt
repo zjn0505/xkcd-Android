@@ -47,11 +47,11 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
 
 
         if (XkcdModel.localizedUrl.isBlank()) {
-            findPreference<PreferenceCategory>("pref_key_xkcd")?.removePreference(findPreference(PREF_XKCD_TRANSLATION))
+            findPreference<PreferenceCategory>("pref_key_xkcd")?.removePreference(findPreference(PREF_XKCD_TRANSLATION)!!)
         }
 
         if (!requireContext().externalMemoryAvailable()) {
-            findPreference<PreferenceCategory>("pref_key_xkcd")?.removePreference(findPreference(PREF_XKCD_STORAGE))
+            findPreference<PreferenceCategory>("pref_key_xkcd")?.removePreference(findPreference(PREF_XKCD_STORAGE)!!)
         }
 
         findPreference<PreferenceCategory>("pref_key_xkcd")?.findPreference<Preference>("pref_xkcd_preload")?.setOnPreferenceClickListener {
@@ -60,8 +60,8 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
         }
     }
 
-    override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
-        when (preference?.key) {
+    override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
+        when (preference.key) {
             PREF_ARROW -> {
                 (preference as ListPreference).value = newValue.toString()
                 arrowPref?.summary = resources.getQuantityString(R.plurals.pref_arrow_summary,
