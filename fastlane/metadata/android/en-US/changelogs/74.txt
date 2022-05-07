@@ -1,3 +1,8 @@
 - Fix compatibility with 2022 what if web content format
+- Add reversed list for xkcd and what if list view
+- Fix web links not clickable on Android 11
+- Support search ISO 8601 date for closest comic
+- Support #2445 interactive comic
+- Improve #1608 interactive functions
 
 Full release note on https://is.gd/xkcd_app

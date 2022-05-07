@@ -25,7 +25,8 @@
             android:configChanges="screenSize|keyboardHidden|uiMode"
             android:windowSoftInputMode="adjustNothing"
             android:launchMode="singleTop"
-            android:theme="@style/CustomActionBarTheme">
+            android:theme="@style/CustomActionBarTheme"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
