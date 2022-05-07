@@ -1,0 +1,3 @@
+- Fix compatibility with 2022 what if web content format
+
+Full release note on https://is.gd/xkcd_app

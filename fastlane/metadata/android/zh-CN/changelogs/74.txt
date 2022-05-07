@@ -1,0 +1,3 @@
+- 修复与 2022 新版 what if 页面内容的兼容性
+
+查看完整更新日志 https://is.gd/xkcd_app
