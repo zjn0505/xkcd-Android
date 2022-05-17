@@ -1,3 +1,4 @@
 - Fix compatibility with Android 12
+- Fix explainxkcd extraction on xkcd#2408
 
 Full release note on https://is.gd/xkcd_app

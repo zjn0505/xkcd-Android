@@ -15,7 +15,8 @@ object XkcdExplainUtil {
         val doc = Jsoup.parse(responseBody.string())
         doc.setBaseUri(url)
 
-        val h2Explain = doc.selectFirst("h2:has(span#Explanation)")
+        // https://explainxkcd.com/wiki/index.php/2408:_Egg_Strategies doesn't have Explanation span, good luck
+        val h2Explain = doc.selectFirst("h2:has(span#Explanation)") ?: doc.selectFirst("h2")
         val nextH2Element = h2Explain.nextElementSiblings().select("h2").first()
 
         val h2ExplainElementIndex = h2Explain.parent().childNodes().indexOf(h2Explain)
