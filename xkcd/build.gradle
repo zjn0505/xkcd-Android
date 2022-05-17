@@ -70,8 +70,8 @@ android {
         applicationId "xyz.jienan.xkcd"
         minSdkVersion 16
         targetSdkVersion 32
-        versionCode 74
-        versionName "2.8.0"
+        versionCode 75
+        versionName "2.8.1"
         vectorDrawables.useSupportLibrary = true
         resConfigs "de", "es", "fr", "ru", "b+zh", "b+zh+hant+TW"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -213,14 +213,16 @@ dependencies {
     }
     implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
     implementation 'com.jakewharton.timber:timber:4.7.1'
-    implementation 'com.github.dkzwm:srl-core:1.7.2.1'
-    implementation 'com.github.dkzwm:srl-ext-classics:1.7.2.1'
+    implementation 'com.github.dkzwm:srl-core:1.7.2.4'
+    implementation 'com.github.dkzwm:srl-ext-classics:1.7.2.4'
 
     implementation 'androidx.work:work-runtime-ktx:2.8.0-alpha02'
     implementation 'androidx.work:work-rxjava2:2.8.0-alpha02'
-    proprietaryImplementation 'com.google.firebase:firebase-analytics:19.0.0'
+    proprietaryImplementation 'com.google.firebase:firebase-analytics:19.0.2'
     proprietaryImplementation 'com.google.firebase:firebase-messaging:22.0.0'
-    proprietaryImplementation 'com.google.firebase:firebase-crashlytics:18.1.0'
+    // 23.0.0 will require API level 19, Android 4.4 higher.
+    // https://firebase.google.com/support/release-notes/android#messaging_v23-0-0
+    proprietaryImplementation 'com.google.firebase:firebase-crashlytics:18.2.3'
 
 //    implementation 'androidx.slice:slice-core:1.0.0'
 //    implementation 'androidx.slice:slice-builders:1.0.0'

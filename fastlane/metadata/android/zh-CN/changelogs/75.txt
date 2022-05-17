@@ -1,0 +1,3 @@
+- 修复与 Android 12 的兼容性
+
+查看完整更新日志 https://is.gd/xkcd_app

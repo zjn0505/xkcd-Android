@@ -1,0 +1,3 @@
+- Fix compatibility with Android 12
+
+Full release note on https://is.gd/xkcd_app
