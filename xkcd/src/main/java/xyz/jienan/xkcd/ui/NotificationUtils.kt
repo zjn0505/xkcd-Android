@@ -129,6 +129,11 @@ fun Context.getPendingIntent(num: Int, tag: String): PendingIntent {
     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
     intent.putExtra(INDEX_ON_NOTI_INTENT, num)
     intent.putExtra(LANDING_TYPE, tag)
-    return PendingIntent.getActivity(this, 0 /* Request code */, intent,
-            PendingIntent.FLAG_UPDATE_CURRENT)
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        PendingIntent.getActivity(this, 0 /* Request code */, intent,
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+    } else {
+        PendingIntent.getActivity(this, 0 /* Request code */, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT)
+    }
 }

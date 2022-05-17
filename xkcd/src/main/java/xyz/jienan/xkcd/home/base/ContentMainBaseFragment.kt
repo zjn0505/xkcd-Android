@@ -210,7 +210,7 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
             scrollViewPagerToItem(if (lastViewedId > INVALID_ID) lastViewedId - 1 else latestIndex - 1, false)
         }
 
-        sd.start(activity?.getSystemService(SENSOR_SERVICE) as SensorManager)
+        sd.start(activity?.getSystemService(SENSOR_SERVICE) as SensorManager, SensorManager.SENSOR_DELAY_GAME)
 
         fab.setOnClickListener { toggleSubFabs(!isFabsShowing) }
     }
