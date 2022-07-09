@@ -29,6 +29,7 @@ import androidx.viewpager.widget.ViewPager.SCROLL_STATE_IDLE
 import com.squareup.seismic.ShakeDetector
 import kotlinx.android.synthetic.main.fab_sub_icons.*
 import kotlinx.android.synthetic.main.fragment_comic_main.*
+import timber.log.Timber
 import xyz.jienan.xkcd.Const.*
 import xyz.jienan.xkcd.R
 import xyz.jienan.xkcd.base.BaseFragment
@@ -163,7 +164,7 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
 
         toolbar.forEach {
             if (it is TextView) {
-                it.setOnTouchListener { _, motionEvent ->  titleGestureDetector.onTouchEvent(motionEvent) }
+                it.setOnTouchListener { _, motionEvent -> titleGestureDetector.onTouchEvent(motionEvent) }
             }
         }
 
@@ -419,7 +420,7 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
 
     fun scrollViewPagerToItem(id: Int, smoothScroll: Boolean) {
         viewPager.setCurrentItem(id, smoothScroll)
-        fab.hide()
+        fab?.hide()
         toggleSubFabs(false)
         if (!smoothScroll) {
             presenter.getInfoAndShowFab(currentIndex)
@@ -437,12 +438,13 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
             return
         }
 
+        val distance = -subFabAnimationDistance * 1.3f
         if (showSubFabs) {
-            btnThumb.animateShow(-subFabAnimationDistance)
-            btnFav.animateShow(-subFabAnimationDistance * 2f)
+            btnFav?.animateShow(distance * 2)
+            btnThumb?.animateShow(distance)
         } else {
-            btnThumb.animateHide(0f)
-            btnFav.animateHide(-subFabAnimationDistance)
+            btnFav?.animateHide(distance)
+            btnThumb?.animateHide(0f)
         }
 
         isFabsShowing = showSubFabs

@@ -6,6 +6,7 @@ import android.view.MenuInflater
 import android.view.View
 import kotlinx.android.synthetic.main.fab_sub_icons.*
 import kotlinx.android.synthetic.main.fragment_comic_main.*
+import timber.log.Timber
 import xyz.jienan.xkcd.Const
 import xyz.jienan.xkcd.Const.LAST_VIEW_XKCD_ID
 import xyz.jienan.xkcd.R
@@ -16,6 +17,7 @@ import xyz.jienan.xkcd.home.base.BaseStatePagerAdapter
 import xyz.jienan.xkcd.home.base.ContentMainBaseFragment
 import xyz.jienan.xkcd.home.base.ContentMainBasePresenter
 import xyz.jienan.xkcd.model.ExtraComics
+import xyz.jienan.xkcd.model.util.XkcdSideloadUtils
 
 class ExtraMainFragment : ContentMainBaseFragment(), ExtraMainContract.View {
 
@@ -25,7 +27,7 @@ class ExtraMainFragment : ContentMainBaseFragment(), ExtraMainContract.View {
 
     override val titleTextRes by lazy { getString(R.string.menu_extra) }
 
-    override val presenter: ContentMainBasePresenter by lazy { ExtraMainPresenter(this) }
+    override val presenter: ExtraMainContract.Presenter by lazy { ExtraMainPresenter(this) }
 
     override val adapter: BaseStatePagerAdapter by lazy { ExtraPagerAdapter(childFragmentManager) }
 
@@ -62,6 +64,20 @@ class ExtraMainFragment : ContentMainBaseFragment(), ExtraMainContract.View {
     override fun showExtras(extraComics: List<ExtraComics>) {
         adapter.size = extraComics.size
         (adapter as ExtraPagerAdapter).setEntities(extraComics)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Timber.d("Adapter size ${adapter.size}")
+        if (adapter.size == 0) {
+            XkcdSideloadUtils.loadExtra(requireContext())
+            presenter.observe()
+        }
+    }
+
+    override fun onPause() {
+        presenter.dispose()
+        super.onPause()
     }
 
     override fun suggestionClicked(position: Int) {

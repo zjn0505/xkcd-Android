@@ -108,4 +108,23 @@
     <string name="xkcd_download_notification_content_text">剩余: %d</string>
     <string name="menu_calendar_ascending">从旧到新</string>
     <string name="menu_calendar_descending">从新到旧</string>
+
+    <string name="activity_title_manage_space">数据管理</string>
+    <string name="pref_system">系统</string>
+    <string name="pref_system_space_summary">管理漫画和文章的数据与缓存</string>
+
+    <string name="pref_storage_xkcd_comics_summary">漫画总数: %d\n数据可用: %d</string>
+    <string name="pref_storage_what_if_article_summary">文章总数: %d\n数据可用: %d</string>
+    <string name="pref_storage_what_if_cache_summary">缓存大小: %s</string>
+    <string name="pref_storage_xkcd_images_summary">图片已下载: %d\n缓存空间: %s</string>
+    <string name="pref_storage_xkcd_images_title">漫画图片 (估算值)</string>
+    <string name="pref_storage_what_if_cache_title">文章缓存 (估算值)</string>
+    <string name="delete">删除</string>
+    <string name="delete_info">删除记录</string>
+    <string name="delete_cache">删除缓存</string>
+    <string name="clear_data">清除数据</string>
+    <string name="pref_storage_clear_data_summary">请注意！所有的数据都将被删除</string>
+    <string name="pref_storage_xkcd_extra_summary">数据可用: %d</string>
+    <string name="pref_storage_xkcd_extra">xkcd extra</string>
+    <string name="pref_storage_what_if_article">what if 文章</string>
 </resources>

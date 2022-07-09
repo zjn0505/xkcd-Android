@@ -20,12 +20,12 @@ class WhatIfMainPresenter constructor(private val view: WhatIfMainContract.View)
 
     private var searchDisposable = Disposables.empty()
 
-    override fun favorited(index: Long, isFav: Boolean) {
-        if (index < 1) {
+    override fun favorited(currentIndex: Long, isFav: Boolean) {
+        if (currentIndex < 1) {
             return
         }
-        WhatIfModel.fav(index, isFav).subscribe({},
-                { e -> Timber.e(e, "error on get one pic: %d", index) })
+        WhatIfModel.fav(currentIndex, isFav).subscribe({},
+                { e -> Timber.e(e, "error on get one pic: %d", currentIndex) })
                 .also { compositeDisposable.add(it) }
         view.toggleFab(isFav)
     }
@@ -63,11 +63,11 @@ class WhatIfMainPresenter constructor(private val view: WhatIfMainContract.View)
         SharedPrefManager.setLastViewedWhatIf(lastViewed.toLong())
     }
 
-    override fun getLatest() = SharedPrefManager.latestWhatIf.toInt()
-
-    override fun setLatest(latestIndex: Int) {
-        SharedPrefManager.setLastViewedWhatIf(latestIndex.toLong())
-    }
+    override var latest: Int
+        get() = SharedPrefManager.latestWhatIf.toInt()
+        set(value) {
+            SharedPrefManager.setLastViewedWhatIf(value.toLong())
+        }
 
     override fun getLastViewed(latestIndex: Int) =
             SharedPrefManager.getLastViewedWhatIf(latestIndex.toLong()).toInt()
@@ -122,14 +122,15 @@ class WhatIfMainPresenter constructor(private val view: WhatIfMainContract.View)
         searchDisposable.dispose()
     }
 
-    override fun getRandomUntouchedIndex(): Long {
-        val list = WhatIfModel.untouchedList
-        return if (list.isEmpty()) {
-            0
-        } else {
-            list[Random.nextInt(list.size)].num
+    override val randomUntouchedIndex: Long
+        get() {
+            val list = WhatIfModel.untouchedList
+            return if (list.isEmpty()) {
+                0
+            } else {
+                list[Random.nextInt(list.size)].num
+            }
         }
-    }
 
     private fun moveNumberQueryToFirstPlace(list: MutableList<WhatIfArticle>, num: Long) {
         val matchNumArticle = list.firstOrNull { it.num == num }

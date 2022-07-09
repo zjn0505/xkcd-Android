@@ -34,6 +34,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
     private val storagePref by lazy { findPreference<ListPreference>(PREF_XKCD_STORAGE) }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        Timber.d("onCreatePreferences")
         setPreferencesFromResource(R.xml.prefs, rootKey)
 
         findPreference<SwitchPreferenceCompat>(PREF_FONT)?.onPreferenceChangeListener = this
@@ -56,6 +57,11 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
 
         findPreference<PreferenceCategory>("pref_key_xkcd")?.findPreference<Preference>("pref_xkcd_preload")?.setOnPreferenceClickListener {
             offlineWork()
+            true
+        }
+
+        findPreference<PreferenceCategory>("pref_key_system")?.findPreference<Preference>("pref_system_space")?.setOnPreferenceClickListener {
+            startActivity(Intent(context, ManageSpaceActivity::class.java))
             true
         }
     }
@@ -100,6 +106,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
     }
 
     private fun offlineWork() {
+        Timber.d("offlineWork")
         val xkcdFastLoadRequest: OneTimeWorkRequest =
                 OneTimeWorkRequestBuilder<XkcdFastLoadWorker>()
                         .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())

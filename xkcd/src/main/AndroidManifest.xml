@@ -9,6 +9,7 @@
     <application
         android:name=".XkcdApplication"
         android:allowBackup="true"
+        android:manageSpaceActivity="xyz.jienan.xkcd.settings.ManageSpaceActivity"
         android:extractNativeLibs="true"
         android:fullBackupContent="@xml/backup_descriptor"
         android:icon="@mipmap/ic_launcher"
@@ -65,6 +66,10 @@
             android:name=".list.activity.WhatIfListActivity"
             android:configChanges="screenSize|orientation|keyboardHidden"
             android:label="@string/title_what_if_list" />
+        
+        <activity android:name=".settings.ManageSpaceActivity"
+            android:launchMode="singleInstance"
+            android:label="@string/activity_title_manage_space"/>
 
         <meta-data
             android:name="xyz.jienan.xkcd.base.glide.OkHttpProgressGlideModule"

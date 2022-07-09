@@ -108,4 +108,24 @@
 
     <string name="xkcd_download_notification_channel_name">Download xkcd</string>
     <string name="xkcd_download_notification_content_text">Remain: %d</string>
+
+    <string name="activity_title_manage_space">Storage Management</string>
+    <string name="pref_system">System</string>
+    <string name="pref_system_space_summary">Manage space taken by comics and articles</string>
+
+    <string name="pref_storage_xkcd_comics_summary">total comics: %d\ninfo ready: %d</string>
+    <string name="pref_storage_what_if_article_summary">total articles: %d\ninfo ready: %d</string>
+    <string name="pref_storage_what_if_cache_summary">cache size: %s</string>
+    <string name="pref_storage_xkcd_images_summary">comics downloaded: %d\ncache size: %s</string>
+    <string name="pref_storage_xkcd_images_title">xkcd images (approx.)</string>
+    <string name="pref_storage_what_if_cache_title">what if cache (approx.)</string>
+    <string name="delete">Delete</string>
+    <string name="delete_info">Delete Info</string>
+    <string name="delete_cache">Delete Cache</string>
+    <string name="clear_data">Clear Data</string>
+    <string name="pref_storage_clear_data_summary">Be careful! All the data will be deleted</string>
+    <string name="pref_storage_xkcd_extra_summary">info ready: %d</string>
+    <string name="pref_storage_xkcd_extra">xkcd extra</string>
+    <string name="pref_storage_what_if_article">what if articles</string>
+    <string name="archive">Archive</string>
 </resources>

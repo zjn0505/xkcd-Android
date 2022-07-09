@@ -17,6 +17,6 @@ data class WhatIfArticle constructor(
         var dateInString: String = "",
         var isFavorite: Boolean = false,
         var hasThumbed: Boolean = false,
-        var thumbCount: Long = 0
+        var thumbCount: Long = 0,
 )
 

@@ -74,12 +74,11 @@ class ComicsMainPresenter(private val view: ComicsMainContract.View) : ComicsMai
         }
     }
 
-    override fun getLatest() =
-            SharedPrefManager.latestXkcd.toInt()
-
-    override fun setLatest(latestIndex: Int) {
-        SharedPrefManager.latestXkcd = latestIndex.toLong()
-    }
+    override var latest: Int
+        get() = SharedPrefManager.latestXkcd.toInt()
+        set(value) {
+            SharedPrefManager.latestXkcd = value.toLong()
+        }
 
     override fun setLastViewed(lastViewed: Int) {
         SharedPrefManager.setLastViewedXkcd(lastViewed)
@@ -140,14 +139,15 @@ class ComicsMainPresenter(private val view: ComicsMainContract.View) : ComicsMai
         compositeDisposable.add(searchDisposable)
     }
 
-    override fun getRandomUntouchedIndex(): Long {
-        val list = XkcdModel.untouchedList
-        return if (list.isEmpty()) {
-            0
-        } else {
-            list[Random().nextInt(list.size)].num
+    override val randomUntouchedIndex: Long
+        get() {
+            val list = XkcdModel.untouchedList
+            return if (list.isEmpty()) {
+                0
+            } else {
+                list[Random().nextInt(list.size)].num
+            }
         }
-    }
 
     override fun getBookmark() = SharedPrefManager.getBookmark(XKCD_BOOKMARK)
 

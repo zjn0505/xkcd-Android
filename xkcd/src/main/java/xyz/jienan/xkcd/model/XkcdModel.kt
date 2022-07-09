@@ -97,6 +97,7 @@ object XkcdModel {
      */
     fun loadRange(start: Long, range: Long, reversed: Int = 0): Observable<List<XkcdPic>> = NetworkService.xkcdAPI
             .getXkcdList(XKCD_BROWSE_LIST, start.toInt(), reversed, range.toInt())
+            .doOnSubscribe { Timber.i("Fast load xkcd in start $start, range $range") }
             .subscribeOn(Schedulers.io())
             .map { BoxManager.updateAndSave(it) }
 

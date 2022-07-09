@@ -12,6 +12,10 @@ import java.util.concurrent.TimeUnit
 class XkcdFastLoadWorker(appContext: Context, workerParams: WorkerParameters)
     : RxWorker(appContext, workerParams) {
 
+    init {
+        Timber.d("init")
+    }
+
     override fun createWork(): Single<Result> {
         return XkcdModel.loadLatest()
                 .doOnSubscribe { Timber.d("xkcd fast load start") }

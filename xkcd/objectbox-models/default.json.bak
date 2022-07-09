@@ -10,47 +10,63 @@
       "properties": [
         {
           "id": "1:584768171035076349",
-          "name": "year"
+          "name": "year",
+          "type": 9
         },
         {
           "id": "2:1882531501610369927",
-          "name": "month"
+          "name": "month",
+          "type": 9
         },
         {
           "id": "3:8290590702171298146",
-          "name": "day"
+          "name": "day",
+          "type": 9
         },
         {
           "id": "4:1293609121277332490",
-          "name": "num"
+          "name": "num",
+          "type": 6,
+          "flags": 129
         },
         {
           "id": "5:7047913805660868881",
-          "name": "_title"
+          "name": "_title",
+          "type": 9
         },
         {
           "id": "6:6826620300502689902",
-          "name": "img"
+          "name": "img",
+          "type": 9
         },
         {
           "id": "7:9035471003790175147",
-          "name": "_alt"
+          "name": "_alt",
+          "type": 9
         },
         {
           "id": "10:4122283148199933474",
-          "name": "isFavorite"
+          "name": "isFavorite",
+          "type": 1,
+          "flags": 4
         },
         {
           "id": "12:3915247161263449916",
-          "name": "width"
+          "name": "width",
+          "type": 5,
+          "flags": 4
         },
         {
           "id": "13:7086783021137211715",
-          "name": "height"
+          "name": "height",
+          "type": 5,
+          "flags": 4
         },
         {
           "id": "14:9125666023352709174",
-          "name": "hasThumbed"
+          "name": "hasThumbed",
+          "type": 1,
+          "flags": 4
         }
       ],
       "relations": []
@@ -62,35 +78,47 @@
       "properties": [
         {
           "id": "1:875740692732188558",
-          "name": "num"
+          "name": "num",
+          "type": 6,
+          "flags": 129
         },
         {
           "id": "2:4663039144198337006",
-          "name": "title"
+          "name": "title",
+          "type": 9
         },
         {
           "id": "3:4220785221140365380",
-          "name": "featureImg"
+          "name": "featureImg",
+          "type": 9
         },
         {
           "id": "4:6602345007450202671",
-          "name": "content"
+          "name": "content",
+          "type": 9
         },
         {
           "id": "5:769080332599008971",
-          "name": "isFavorite"
+          "name": "isFavorite",
+          "type": 1,
+          "flags": 4
         },
         {
           "id": "6:5867086381917672500",
-          "name": "hasThumbed"
+          "name": "hasThumbed",
+          "type": 1,
+          "flags": 4
         },
         {
           "id": "7:1068276546638640699",
-          "name": "thumbCount"
+          "name": "thumbCount",
+          "type": 6,
+          "flags": 4
         },
         {
           "id": "12:7195370541997785951",
-          "name": "dateInString"
+          "name": "dateInString",
+          "type": 9
         }
       ],
       "relations": []
@@ -102,31 +130,39 @@
       "properties": [
         {
           "id": "1:3849361378411559568",
-          "name": "num"
+          "name": "num",
+          "type": 6,
+          "flags": 129
         },
         {
           "id": "2:3602056239081349548",
-          "name": "title"
+          "name": "title",
+          "type": 9
         },
         {
           "id": "3:5900901818034830518",
-          "name": "date"
+          "name": "date",
+          "type": 9
         },
         {
           "id": "4:1164534608024511325",
-          "name": "img"
+          "name": "img",
+          "type": 9
         },
         {
           "id": "6:1416395650126494423",
-          "name": "links"
+          "name": "links",
+          "type": 9
         },
         {
           "id": "7:6502473592907040853",
-          "name": "explainUrl"
+          "name": "explainUrl",
+          "type": 9
         },
         {
           "id": "9:746594362399128394",
-          "name": "explainContent"
+          "name": "explainContent",
+          "type": 9
         }
       ],
       "relations": []
@@ -136,8 +172,8 @@
   "lastIndexId": "0:0",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
-  "modelVersion": 4,
-  "modelVersionParserMinimum": 4,
+  "modelVersion": 5,
+  "modelVersionParserMinimum": 5,
   "retiredEntityUids": [],
   "retiredIndexUids": [],
   "retiredPropertyUids": [

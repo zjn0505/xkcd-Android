@@ -136,4 +136,17 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:key="pref_key_system"
+        app:title="@string/pref_system">
+
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="pref_system_space"
+            app:summary="@string/pref_system_space_summary"
+            app:title="@string/activity_title_manage_space" />
+
+    </PreferenceCategory>
+
 </PreferenceScreen>

@@ -61,7 +61,6 @@ class XkcdDownloadWorker(private val context: Context, parameters: WorkerParamet
                         Timber.e(e)
                     }
                 }
-
             }
         } else {
             allXkcd.asFlow().collect {
@@ -89,6 +88,7 @@ class XkcdDownloadWorker(private val context: Context, parameters: WorkerParamet
     }
 
     private fun getNotification(progress: Int, max: Int): Notification {
+        Timber.d("getNotification progress $progress, max $max")
         return builder.setProgress(max, progress, false)
                 .setContentText(context.getString(R.string.xkcd_download_notification_content_text, max - progress))
                 .build()

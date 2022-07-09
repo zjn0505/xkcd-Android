@@ -2,7 +2,11 @@ package xyz.jienan.xkcd.model.persist
 
 import io.objectbox.Box
 import io.objectbox.BoxStore
+import io.objectbox.query.Query
+import io.objectbox.reactive.DataSubscription
+import io.objectbox.reactive.SubscriptionBuilder
 import org.jsoup.internal.StringUtil
+import timber.log.Timber
 import xyz.jienan.xkcd.Const.PREF_WHAT_IF_SEARCH_ALL
 import xyz.jienan.xkcd.Const.PREF_WHAT_IF_SEARCH_INCLUDE_READ
 import xyz.jienan.xkcd.model.*
@@ -17,7 +21,8 @@ object BoxManager {
     lateinit var whatIfBox: Box<WhatIfArticle>
         private set
 
-    private lateinit var extraBox: Box<ExtraComics>
+    lateinit var extraBox: Box<ExtraComics>
+        private set
 
     fun init(boxStore: BoxStore?) {
         xkcdBox = boxStore!!.boxFor(XkcdPic::class.java)
@@ -63,6 +68,9 @@ object BoxManager {
 
     val extraList: List<ExtraComics>
         get() = if (extraBox.isEmpty) ArrayList() else extraBox.all
+
+    val extraListObservable: SubscriptionBuilder<List<ExtraComics>>
+        get() = extraBox.query().build().subscribe()
 
     /********** xkcd  */
 
@@ -199,7 +207,7 @@ object BoxManager {
         extraBox.put(extraComics)
     }
 
-    fun getExtra(index: Int): ExtraComics = extraBox.get(index.toLong())
+    fun getExtra(index: Int): ExtraComics? = extraBox.get(index.toLong())
 
     fun loadExtraExplain(url: String) =
             extraBox.query().equal(ExtraComics_.explainUrl, url).build().findFirst()?.explainContent

@@ -14,5 +14,7 @@ public interface ExtraMainContract {
     }
 
     interface Presenter extends ContentMainBasePresenter {
+        void observe();
+        void dispose();
     }
 }

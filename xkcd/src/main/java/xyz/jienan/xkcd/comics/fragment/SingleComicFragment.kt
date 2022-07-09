@@ -195,7 +195,7 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
 
         singleComicPresenter.loadXkcd(ind)
 
-        ivXkcdPic.setOnLongClickListener {
+        ivXkcdPic?.setOnLongClickListener {
             val comicOnly = sharedPref.getBoolean(PREF_XKCD_SHOW_COMIC_ONLY, true)
 
             if (currentPic == null) {
@@ -294,6 +294,7 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
     }
 
     private fun initGlide() {
+        ivXkcdPic ?: return
         target = MyProgressTarget(BitmapImageViewTarget(ivXkcdPic!!), pbLoading, ivXkcdPic)
     }
 
@@ -339,7 +340,7 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
         currentPic = xkcdPic
         Timber.i("Pic to be loaded: $ind - ${xkcdPic.targetImg}")
         @SuppressLint("SetTextI18n")
-        tvTitle!!.text = "${xkcdPic.num}. ${xkcdPic.title}"
+        tvTitle?.text = "${xkcdPic.num}. ${xkcdPic.title}"
 
         val df = DateFormat.getDateInstance(DateFormat.DEFAULT, Locale.getDefault())
         val date = df.format(Calendar.getInstance().apply { set(xkcdPic.year.toInt(), xkcdPic.month.toInt() - 1, xkcdPic.day.toInt()) }.time)

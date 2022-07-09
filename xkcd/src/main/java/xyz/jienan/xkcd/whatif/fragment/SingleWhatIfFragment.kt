@@ -194,18 +194,19 @@ open class SingleWhatIfFragment : BaseFragment(), ImgInterface.ImgCallback, RefI
         WhatIfModel.loadArticle(index.toLong())
                 .doOnSuccess { WhatIfModel.push(it) }
                 .map {
+                    val doc = Jsoup.parse(it.content)
                     if (context?.getUiNightModeFlag() == Configuration.UI_MODE_NIGHT_YES) {
-                        val doc = Jsoup.parse(it.content)
                         doc.head()!!.appendCss("night_style.css")
-                        val ele = doc.body().child(0)
-                        Timber.d("Index $index, First Ele, $ele")
-                        if (ele.tag().name == "p" && ele.attr("id") == "question") {
-                            val titleAHref = Element("a").attr("href", "https://what-if.xkcd.com/${it.num}")
-                            titleAHref.appendChild(Element("h1").appendText(it.title))
-                            doc.head().insertChildren(0, titleAHref)
-                        }
-                        it.content = doc.html()
                     }
+
+                    val ele = doc.body().child(0)
+                    Timber.d("Index $index, First Ele, $ele")
+                    if (ele.tag().name == "p" && ele.attr("id") == "question") {
+                        val titleAHref = Element("a").attr("href", "https://what-if.xkcd.com/${it.num}")
+                        titleAHref.appendChild(Element("h1").appendText(it.title))
+                        doc.head().insertChildren(0, titleAHref)
+                    }
+                    it.content = doc.html()
                     it
                 }
                 .subscribe({

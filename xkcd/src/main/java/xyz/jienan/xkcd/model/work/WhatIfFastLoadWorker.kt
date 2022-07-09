@@ -11,6 +11,10 @@ import xyz.jienan.xkcd.model.persist.SharedPrefManager
 class WhatIfFastLoadWorker(appContext: Context, workerParams: WorkerParameters)
     : RxWorker(appContext, workerParams) {
 
+    init {
+        Timber.d("init")
+    }
+
     override fun createWork(): Single<Result> {
         return WhatIfModel.loadLatest()
                 .doOnSubscribe { Timber.d("what if fast load start") }

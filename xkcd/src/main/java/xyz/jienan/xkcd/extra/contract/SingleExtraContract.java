@@ -21,6 +21,6 @@ public interface SingleExtraContract {
 
         void loadExtra(int index);
 
-        void getExplain(String url);
+        void getExplain(String url, Boolean refresh);
     }
 }

@@ -75,7 +75,7 @@ object XkcdSideloadUtils {
     }
 
     @SuppressLint("CheckResult")
-    private fun loadExtra(context: Context) {
+    fun loadExtra(context: Context) {
         NetworkService.xkcdAPI
                 .extraComics
                 .subscribeOn(Schedulers.io())

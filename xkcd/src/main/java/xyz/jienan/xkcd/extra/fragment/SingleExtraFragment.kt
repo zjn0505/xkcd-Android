@@ -30,7 +30,9 @@ import xyz.jienan.xkcd.comics.dialog.SimpleInfoDialogFragment.ISimpleInfoDialogL
 import xyz.jienan.xkcd.extra.contract.SingleExtraContract
 import xyz.jienan.xkcd.extra.presenter.SingleExtraPresenter
 import xyz.jienan.xkcd.model.ExtraComics
+import xyz.jienan.xkcd.model.ExtraModel
 import xyz.jienan.xkcd.model.util.ExplainLinkUtil
+import xyz.jienan.xkcd.model.util.XkcdSideloadUtils
 import java.lang.ref.WeakReference
 
 /**
@@ -113,11 +115,16 @@ class SingleExtraFragment : BaseFragment(), SingleExtraContract.View {
 
     override fun explainLoaded(result: String) {
         if (!TextUtils.isEmpty(result)) {
+            val alt = if (currentExtra?.alt.isNullOrBlank()) {
+                ""
+            } else {
+                currentExtra?.alt + "<br><br>"
+            }
             if (dialogFragment != null && dialogFragment!!.isAdded) {
-                dialogFragment!!.setExtraExplain(result)
+                dialogFragment!!.setExtraExplain(alt + result)
             }
             if (tvDescription != null) {
-                ExplainLinkUtil.setTextViewHTML(tvDescription, result)
+                ExplainLinkUtil.setTextViewHTML(tvDescription, alt + result)
             }
         } else {
             if (dialogFragment != null && dialogFragment!!.isAdded) {
@@ -161,7 +168,7 @@ class SingleExtraFragment : BaseFragment(), SingleExtraContract.View {
                 dialogFragment!!.setListener(dialogListener)
                 dialogFragment!!.show(childFragmentManager, "AltInfoDialogFragment")
                 it.performHapticFeedback(LONG_PRESS)
-                singleExtraPresenter!!.getExplain(currentExtra!!.explainUrl)
+                singleExtraPresenter!!.getExplain(currentExtra!!.explainUrl, false)
                 logUXEvent(FIRE_LONG_PRESS)
                 true
             }
@@ -240,8 +247,11 @@ class SingleExtraFragment : BaseFragment(), SingleExtraContract.View {
      *
      * @param xPic
      */
-    override fun renderExtraPic(xPic: ExtraComics) {
-        if (activity == null || requireActivity().isFinishing) {
+    override fun renderExtraPic(xPic: ExtraComics?) {
+        if (xPic == null || activity == null || requireActivity().isFinishing) {
+            if (xPic == null) {
+                XkcdSideloadUtils.loadExtra(requireContext())
+            }
             return
         }
         if (TextUtils.isEmpty(target!!.model)) {
@@ -253,7 +263,7 @@ class SingleExtraFragment : BaseFragment(), SingleExtraContract.View {
         Timber.i("Pic to be loaded: %d - %s", ind, xPic.img)
         tvTitle!!.text = String.format("%d. %s", xPic.num, xPic.title)
         tvCreateDate!!.text = xPic.date
-        singleExtraPresenter!!.getExplain(xPic.explainUrl)
+        singleExtraPresenter!!.getExplain(xPic.explainUrl, true)
     }
 
     private fun load(url: String) {

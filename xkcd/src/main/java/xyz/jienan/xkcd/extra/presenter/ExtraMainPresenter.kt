@@ -1,6 +1,8 @@
 package xyz.jienan.xkcd.extra.presenter
 
+import io.objectbox.reactive.DataSubscription
 import io.reactivex.disposables.CompositeDisposable
+import timber.log.Timber
 import xyz.jienan.xkcd.extra.contract.ExtraMainContract
 import xyz.jienan.xkcd.model.ExtraComics
 import xyz.jienan.xkcd.model.ExtraModel
@@ -15,9 +17,28 @@ class ExtraMainPresenter(private val view: ExtraMainContract.View) : ExtraMainCo
 
     private var extraComics: List<ExtraComics> = ArrayList()
 
+    private var subscription: DataSubscription? = null
+
     override fun loadLatest() {
         extraComics = ExtraModel.all
         view.showExtras(extraComics)
+    }
+
+    override fun observe() {
+        subscription?.cancel()
+        subscription = ExtraModel.observe
+                .observer {
+                    if (it.size != extraComics.size && it.isNotEmpty()) {
+                        Timber.d("Show extra $it")
+                        extraComics = it
+                        view.showExtras(extraComics)
+                        subscription?.cancel()
+                    }
+                }
+    }
+
+    override fun dispose() {
+        subscription?.cancel()
     }
 
     override fun liked(index: Long) {
@@ -32,11 +53,11 @@ class ExtraMainPresenter(private val view: ExtraMainContract.View) : ExtraMainCo
         // no-ops
     }
 
-    override fun getLatest() = extraComics.size
-
-    override fun setLatest(latestIndex: Int) {
-        // no-ops
-    }
+    override var latest: Int
+        get() = extraComics.size
+        set(value) {
+            // no ops
+        }
 
     override fun setLastViewed(lastViewed: Int) {
         sharedPrefManager.setLastViewedExtra(lastViewed)
@@ -53,5 +74,6 @@ class ExtraMainPresenter(private val view: ExtraMainContract.View) : ExtraMainCo
         // no-ops
     }
 
-    override fun getRandomUntouchedIndex() = 0L
+    override val randomUntouchedIndex: Long
+        get() = 0L
 }

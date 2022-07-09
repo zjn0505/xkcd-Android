@@ -11,9 +11,9 @@ class SingleExtraPresenter(private val view: SingleExtraContract.View) : SingleE
 
     private var explainDisposable = Disposables.disposed()
 
-    override fun getExplain(url: String) {
+    override fun getExplain(url: String, refresh: Boolean) {
         explainDisposable.dispose()
-        ExtraModel.loadExplain(url)
+        ExtraModel.loadExplain(url, refresh)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { explainContent ->

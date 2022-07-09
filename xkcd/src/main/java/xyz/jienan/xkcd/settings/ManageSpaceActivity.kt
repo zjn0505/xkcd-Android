@@ -4,16 +4,11 @@ import android.os.Bundle
 import android.view.MenuItem
 import xyz.jienan.xkcd.base.BaseActivity
 
-/**
- * Created by Jienan on 2018/3/9.
- */
-
-class PreferenceActivity : BaseActivity() {
-
+class ManageSpaceActivity: BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportFragmentManager.beginTransaction()
-                .replace(android.R.id.content, SettingsFragment()).commit()
+                .replace(android.R.id.content, ManageSpaceFragment()).commit()
         val actionBar = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
     }

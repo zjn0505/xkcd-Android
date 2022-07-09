@@ -18,7 +18,9 @@ data class ExtraComics constructor(
         val explainUrl: String = "",
         var explainContent: String? = null,
         @Convert(converter = ListConverter::class, dbType = String::class)
-        var links: List<String>? = null) : Serializable {
+        var links: List<String>? = null,
+        val alt: String = ""
+) : Serializable {
 
     class ListConverter : PropertyConverter<List<String>, String> {
 

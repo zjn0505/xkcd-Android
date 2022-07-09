@@ -13,6 +13,7 @@ import androidx.core.view.GravityCompat
 import androidx.core.widget.ImageViewCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.work.*
 import com.google.android.material.navigation.NavigationView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -22,15 +23,21 @@ import kotlinx.android.synthetic.main.nav_header.view.*
 import timber.log.Timber
 import xyz.jienan.xkcd.Const.*
 import xyz.jienan.xkcd.R
+import xyz.jienan.xkcd.XkcdApplication
 import xyz.jienan.xkcd.base.BaseActivity
+import xyz.jienan.xkcd.base.NotificationWorker
 import xyz.jienan.xkcd.comics.fragment.ComicsMainFragment
 import xyz.jienan.xkcd.extra.fragment.ExtraMainFragment
 import xyz.jienan.xkcd.home.base.ContentMainBaseFragment
 import xyz.jienan.xkcd.model.QuoteModel
 import xyz.jienan.xkcd.model.persist.SharedPrefManager
+import xyz.jienan.xkcd.model.util.XkcdSideloadUtils
+import xyz.jienan.xkcd.model.work.WhatIfFastLoadWorker
+import xyz.jienan.xkcd.model.work.XkcdFastLoadWorker
 import xyz.jienan.xkcd.settings.PreferenceActivity
 import xyz.jienan.xkcd.ui.getColorResCompat
 import xyz.jienan.xkcd.whatif.fragment.WhatIfMainFragment
+import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -54,6 +61,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Timber.d("onCreate")
         // init view
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
@@ -93,6 +101,12 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         })
         // load data - daily quote & fast load xkcd comics
         getDailyQuote()
+        fastLoad()
+        XkcdSideloadUtils.init(this)
+
+        if (!(application as XkcdApplication).gmsAvailability) {
+            initNotificationWorker()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -222,6 +236,42 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         recreate()
+    }
+
+    @SuppressLint("EnqueueWork")
+    private fun fastLoad() {
+        Timber.d("fastLoad")
+        val xkcdFastLoadRequest: OneTimeWorkRequest =
+                OneTimeWorkRequestBuilder<XkcdFastLoadWorker>()
+                        .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
+                        .addTag("xkcd")
+                        .build()
+
+        val whatIfFastLoad: OneTimeWorkRequest =
+                OneTimeWorkRequestBuilder<WhatIfFastLoadWorker>()
+                        .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
+                        .build()
+
+        val xkcdWork = WorkManager.getInstance(this)
+                .beginUniqueWork("xkcd", ExistingWorkPolicy.KEEP, xkcdFastLoadRequest)
+
+        val whatIfWork = WorkManager.getInstance(this)
+                .beginUniqueWork("what_if", ExistingWorkPolicy.KEEP, whatIfFastLoad)
+
+        WorkContinuation.combine(listOf(xkcdWork, whatIfWork)).enqueue()
+    }
+
+    private fun initNotificationWorker() {
+        val notificationWorkRequest = PeriodicWorkRequestBuilder<NotificationWorker>(PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS,
+                TimeUnit.MILLISECONDS)
+                .addTag("Update")
+                .setInitialDelay(20L, TimeUnit.SECONDS)
+                .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
+                .build()
+        WorkManager.getInstance(this)
+                .enqueueUniquePeriodicWork("UpdateXkcd",
+                        ExistingPeriodicWorkPolicy.KEEP,
+                        notificationWorkRequest)
     }
 
     companion object {
