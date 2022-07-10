@@ -317,11 +317,18 @@ class ImageWebViewActivity : BaseActivity() {
                     permalink2288!!
                 }
             }
+            1350,
+            1506,
             1608,
+            1975,
             2445,
             -> {
                 script = TRIM.trimIndent()
                 "https://xkcd.com/$index"
+            }
+            2601 -> {
+                script = TRIM.trimIndent()
+                "https://zjn0505.github.io/xkcd-2601-drawer/"
             }
             in resources.getIntArray(R.array.interactive_comics) -> if (!intent.getBooleanExtra("translationMode", false)) {
                 "https://zjn0505.github.io/xkcd-undressed/${xkcd.num}/"
