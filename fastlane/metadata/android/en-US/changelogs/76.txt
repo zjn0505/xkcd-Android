@@ -1,0 +1,6 @@
+- Add storage manage page
+- Support interactive comic #2601
+- Re-enable interactive comics #1350, #1506, #1975
+- Fix what if article's title not shown
+
+Full release note on https://is.gd/xkcd_app
