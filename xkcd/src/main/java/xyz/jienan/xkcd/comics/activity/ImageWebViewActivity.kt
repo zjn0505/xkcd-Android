@@ -122,6 +122,16 @@ class ImageWebViewActivity : BaseActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        webView?.onResume()
+    }
+
+    override fun onPause() {
+        webView?.onPause()
+        super.onPause()
+    }
+
     override fun onDestroy() {
         compositeDisposable.clear()
         super.onDestroy()
