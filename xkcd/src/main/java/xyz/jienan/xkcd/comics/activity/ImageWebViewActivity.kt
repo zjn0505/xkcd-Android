@@ -128,7 +128,7 @@ class ImageWebViewActivity : BaseActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        if (index !in listOf(1608L, 2445)) {
+        if (index !in listOf(1608L, 2445, 2601)) {
             return false
         }
         when (index) {
@@ -141,6 +141,7 @@ class ImageWebViewActivity : BaseActivity() {
                 )
             }
             2445L -> listOf("console")
+            2601L -> listOf("audio")
             else -> listOf()
         }.forEachIndexed { index, title ->
             menu?.add(Menu.NONE, Menu.NONE, index, title)
@@ -194,6 +195,11 @@ class ImageWebViewActivity : BaseActivity() {
                         }
                     }
                 }
+                else if (index == 2601L) {
+                    if (item.order == 0) {
+                        webView.loadUrl("javascript:togglePlayer()")
+                    }
+                }
             }
         }
         return true
@@ -245,6 +251,9 @@ class ImageWebViewActivity : BaseActivity() {
                 super.onReceivedError(view, request, error)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     Timber.e("Failed to load $url,\n${error.errorCode} ${error.description}")
+                    if (index == 2601L && error.errorCode == -1 && url.contains("github.io")) {
+                        return
+                    }
                 }
                 if (!retry && url.contains("github.io")) {
                     retry = true

@@ -115,7 +115,7 @@
 
     <string name="pref_storage_xkcd_comics_summary">total comics: %d\ninfo ready: %d</string>
     <string name="pref_storage_what_if_article_summary">total articles: %d\ninfo ready: %d</string>
-    <string name="pref_storage_what_if_cache_summary">cache size: %s</string>
+    <string name="pref_storage_what_if_cache_summary">cache size: %s\nIncluding interactive xkcd webpage data</string>
     <string name="pref_storage_xkcd_images_summary">comics downloaded: %d\ncache size: %s</string>
     <string name="pref_storage_xkcd_images_title">xkcd images (approx.)</string>
     <string name="pref_storage_what_if_cache_title">what if cache (approx.)</string>

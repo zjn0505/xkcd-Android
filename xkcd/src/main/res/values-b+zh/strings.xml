@@ -115,7 +115,7 @@
 
     <string name="pref_storage_xkcd_comics_summary">漫画总数: %d\n数据可用: %d</string>
     <string name="pref_storage_what_if_article_summary">文章总数: %d\n数据可用: %d</string>
-    <string name="pref_storage_what_if_cache_summary">缓存大小: %s</string>
+    <string name="pref_storage_what_if_cache_summary">缓存大小: %s\n包含交互式 xkcd 网页数据</string>
     <string name="pref_storage_xkcd_images_summary">图片已下载: %d\n缓存空间: %s</string>
     <string name="pref_storage_xkcd_images_title">漫画图片 (估算值)</string>
     <string name="pref_storage_what_if_cache_title">文章缓存 (估算值)</string>

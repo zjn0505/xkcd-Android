@@ -95,21 +95,35 @@ class ManageSpaceFragment : PreferenceFragmentCompat() {
         }
 
         findPreference<ButtonPreference>("pref_what_if_cache")?.apply {
-            val path = requireContext().cacheDir.path + "/WebView/Default/HTTP Cache"
-            Timber.d("WebView cache path $path")
-            with(File(path)) {
-                val totalSize = if (this.exists() && this.isDirectory) {
+            val path = requireContext().cacheDir.path + "/WebView"
+            val dataPath = requireContext().dataDir.path + "/app_webview"
+            Timber.d("WebView cache path $path data path $dataPath")
+            val cacheSize = with(File(path)) {
+                if (this.exists() && this.isDirectory) {
                     File(path).walkTopDown().filter { it.isFile }.map { it.length() }.sum()
                 } else {
                     0
                 }
-                val webViewCacheSize = Formatter.formatShortFileSize(requireContext(), totalSize)
-                val whatIfCacheStatus = getString(R.string.pref_storage_what_if_cache_summary, webViewCacheSize)
-                setup(whatIfCacheStatus, R.string.delete_cache) {
-                    if (totalSize > 0) {
-                        deleteRecursively()
-                        requireActivity().recreate()
+            }
+            val dataSize = with(File(dataPath)) {
+                if (this.exists() && this.isDirectory) {
+                    File(path).walkTopDown().filter { it.isFile }.map { it.length() }.sum()
+                } else {
+                    0
+                }
+            }
+
+            val webViewCacheSize = Formatter.formatShortFileSize(requireContext(), cacheSize + dataSize)
+            val whatIfCacheStatus = getString(R.string.pref_storage_what_if_cache_summary, webViewCacheSize)
+            setup(whatIfCacheStatus, R.string.delete_cache) {
+                if (cacheSize + dataSize > 0) {
+                    if (cacheSize > 0) {
+                        File(path).deleteRecursively()
                     }
+                    if (dataSize > 0) {
+                        File(dataPath).deleteRecursively()
+                    }
+                    requireActivity().recreate()
                 }
             }
         }
