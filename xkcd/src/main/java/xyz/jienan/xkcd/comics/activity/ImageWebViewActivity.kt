@@ -134,6 +134,7 @@ class ImageWebViewActivity : BaseActivity() {
 
     override fun onDestroy() {
         compositeDisposable.clear()
+        webView?.destroy()
         super.onDestroy()
     }
 
