@@ -1,9 +1,10 @@
 package xyz.jienan.xkcd.home.base
 
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.fragment.app.Fragment
+import androidx.viewpager2.adapter.FragmentStateAdapter
 
-abstract class BaseStatePagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+
+abstract class BaseStatePagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 
     var size = 0
         set(value) {
@@ -11,5 +12,5 @@ abstract class BaseStatePagerAdapter(fm: FragmentManager) : FragmentStatePagerAd
             notifyDataSetChanged()
         }
 
-    override fun getCount(): Int = size
+    override fun getItemCount(): Int = size
 }

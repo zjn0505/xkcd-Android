@@ -23,13 +23,12 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.view.forEach
 import androidx.preference.PreferenceManager
-import androidx.viewpager.widget.ViewPager
-import androidx.viewpager.widget.ViewPager.SCROLL_STATE_DRAGGING
-import androidx.viewpager.widget.ViewPager.SCROLL_STATE_IDLE
+import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
+import androidx.viewpager2.widget.ViewPager2.SCROLL_STATE_DRAGGING
+import androidx.viewpager2.widget.ViewPager2.SCROLL_STATE_IDLE
 import com.squareup.seismic.ShakeDetector
 import kotlinx.android.synthetic.main.fab_sub_icons.*
 import kotlinx.android.synthetic.main.fragment_comic_main.*
-import timber.log.Timber
 import xyz.jienan.xkcd.Const.*
 import xyz.jienan.xkcd.R
 import xyz.jienan.xkcd.base.BaseFragment
@@ -168,7 +167,9 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
             }
         }
 
-        viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+        viewPager.offscreenPageLimit = 1
+
+        viewPager.registerOnPageChangeCallback(object : OnPageChangeCallback() {
             override fun onPageScrollStateChanged(state: Int) {
                 if (state == SCROLL_STATE_DRAGGING) {
                     fab?.hide()
@@ -176,10 +177,6 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
                 } else if (state == SCROLL_STATE_IDLE) {
                     updateFab()
                 }
-            }
-
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-                // no ops
             }
 
             override fun onPageSelected(position: Int) {
@@ -428,7 +425,7 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
     }
 
     fun expand(size: Int) {
-        if (size > adapter.count) {
+        if (size > adapter.size) {
             adapter.size = size
         }
     }

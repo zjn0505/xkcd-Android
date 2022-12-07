@@ -37,7 +37,7 @@ class ComicsMainFragment : ContentMainBaseFragment(), ComicsMainContract.View {
 
     override val presenter: ContentMainBasePresenter by lazy { ComicsMainPresenter(this) }
 
-    override val adapter: BaseStatePagerAdapter by lazy { ComicsPagerAdapter(childFragmentManager) }
+    override val adapter: BaseStatePagerAdapter by lazy { ComicsPagerAdapter(this) }
 
     override val pickerTitleTextRes = R.string.dialog_pick_content
 

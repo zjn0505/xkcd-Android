@@ -29,7 +29,7 @@ class ExtraMainFragment : ContentMainBaseFragment(), ExtraMainContract.View {
 
     override val presenter: ExtraMainContract.Presenter by lazy { ExtraMainPresenter(this) }
 
-    override val adapter: BaseStatePagerAdapter by lazy { ExtraPagerAdapter(childFragmentManager) }
+    override val adapter: BaseStatePagerAdapter by lazy { ExtraPagerAdapter(this) }
 
     override val pickerTitleTextRes = 0
 

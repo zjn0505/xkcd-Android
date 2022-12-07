@@ -1,10 +1,10 @@
 package xyz.jienan.xkcd.comics
 
-import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.Fragment
 import xyz.jienan.xkcd.comics.fragment.SingleComicFragment
 import xyz.jienan.xkcd.home.base.BaseStatePagerAdapter
 
-class ComicsPagerAdapter(fm: FragmentManager) : BaseStatePagerAdapter(fm) {
+class ComicsPagerAdapter(fragment: Fragment) : BaseStatePagerAdapter(fragment) {
 
-    override fun getItem(position: Int) = SingleComicFragment.newInstance(position + 1)
+    override fun createFragment(position: Int)= SingleComicFragment.newInstance(position + 1)
 }

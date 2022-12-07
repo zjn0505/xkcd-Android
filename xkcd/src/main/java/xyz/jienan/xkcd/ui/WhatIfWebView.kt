@@ -9,6 +9,7 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.webkit.WebResourceResponse
 import android.webkit.WebSettings
 import android.webkit.WebView
@@ -25,6 +26,7 @@ import xyz.jienan.xkcd.whatif.interfaces.LatexInterface
 import java.io.File
 import java.io.FileInputStream
 import java.util.*
+import kotlin.math.abs
 import kotlin.math.floor
 
 class WhatIfWebView(context: Context, attrs: AttributeSet) : WebView(context, attrs) {
@@ -40,7 +42,10 @@ class WhatIfWebView(context: Context, attrs: AttributeSet) : WebView(context, at
     private val webViewClient = object : WebViewClient() {
 
         override fun shouldInterceptRequest(view: WebView, url: String): WebResourceResponse? {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT && url.contains("what-if.xkcd.com/imgs/a/") || url.contains("imgs.xkcd.com/comics")) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT && url.contains("what-if.xkcd.com/imgs/a/") || url.contains(
+                    "imgs.xkcd.com/comics"
+                )
+            ) {
                 val newUrl = url.replace("http://", "https://")
                 val t = glide.load(newUrl).downloadOnly(10, 10)
                 imageTasks.add(t)
@@ -65,7 +70,10 @@ class WhatIfWebView(context: Context, attrs: AttributeSet) : WebView(context, at
                     ImageDetailPageActivity.startActivity(getContext(), url, 1L)
                 }
                 if (getContext() is Activity) {
-                    (getContext() as Activity).overridePendingTransition(R.anim.fadein, R.anim.fadeout)
+                    (getContext() as Activity).overridePendingTransition(
+                        R.anim.fadein,
+                        R.anim.fadeout
+                    )
                 }
 
             } else {
@@ -106,7 +114,6 @@ class WhatIfWebView(context: Context, attrs: AttributeSet) : WebView(context, at
 
     override fun onScrollChanged(l: Int, t: Int, oldl: Int, oldt: Int) {
         super.onScrollChanged(l, t, oldl, oldt)
-
         if (callback != null) {
             if (distanceToEnd() < 200) {
                 callback!!.scrolledToTheEnd(true)
@@ -122,7 +129,7 @@ class WhatIfWebView(context: Context, attrs: AttributeSet) : WebView(context, at
         super.destroy()
     }
 
-    fun canScrollHor(direction: Int): Boolean {
+    private fun canScrollHor(direction: Int): Boolean {
         if (zoomScroll(direction)) {
             return true
         }
@@ -155,6 +162,34 @@ class WhatIfWebView(context: Context, attrs: AttributeSet) : WebView(context, at
     interface ScrollToEndCallback {
         fun scrolledToTheEnd(isTheEnd: Boolean)
     }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        val action = event.actionMasked
+        val x = event.x.toInt()
+        val y = event.y.toInt()
+
+        when (action) {
+            MotionEvent.ACTION_DOWN -> {
+                lastMotionX = x
+                lastMotionY = y
+            }
+
+            MotionEvent.ACTION_MOVE -> {
+                val deltaY = lastMotionY - y
+                val deltaX = lastMotionX - x
+                if (abs(deltaY) > abs(deltaX)
+                    && (canScrollVertically(1) || canScrollVertically(-1))
+                    || canScrollHor(deltaX)
+                ) {
+                    requestDisallowInterceptTouchEvent(true)
+                }
+            }
+        }
+        return super.onTouchEvent(event)
+    }
+
+    private var lastMotionX: Int = 0
+    private var lastMotionY: Int = 0
 }
 
 fun WebView.updateSettings() {
