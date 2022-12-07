@@ -3,11 +3,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <xyz.jienan.xkcd.ui.WhatIfViewPager
+    <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:saveEnabled="false"/>
+        android:saveEnabled="false" />
 
     <include layout="@layout/fab_sub_icons" />
 

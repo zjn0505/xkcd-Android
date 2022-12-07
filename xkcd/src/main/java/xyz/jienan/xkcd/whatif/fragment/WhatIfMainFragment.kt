@@ -34,7 +34,7 @@ class WhatIfMainFragment : ContentMainBaseFragment(), WhatIfMainContract.View {
 
     override val layoutResId = R.layout.fragment_comic_main
 
-    override val adapter: BaseStatePagerAdapter by lazy { WhatIfPagerAdapter(childFragmentManager) }
+    override val adapter: BaseStatePagerAdapter by lazy { WhatIfPagerAdapter(this) }
 
     override val presenter: ContentMainBasePresenter by lazy { WhatIfMainPresenter(this) }
 
