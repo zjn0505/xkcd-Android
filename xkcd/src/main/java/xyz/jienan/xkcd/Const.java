@@ -93,6 +93,10 @@ public class Const {
 
     public static final String URI_XKCD_EXPLAIN_EDIT = "xkcd://explain.edit";
 
+    public static final String URI_XKCD_EXTRA_SOLUTION = "xkcd://extra.1.solution";
+
+    public static final String URI_XKCD_EXTRA_PUZZLE = "xkcd://extra.1.puzzle";
+
     public static final String INDEX_ON_NOTI_INTENT = "index_on_noti_intent";
 
     public static final String XKCD_LATEST_INDEX = "xkcd_last_index";

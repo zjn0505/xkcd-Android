@@ -166,7 +166,7 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.9.1'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.10'
     debugImplementation 'com.gu.android:toolargetool:0.3.0'
     implementation "io.objectbox:objectbox-android:$objectboxVersion"
 
@@ -215,8 +215,6 @@ dependencies {
     }
     implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
     implementation 'com.jakewharton.timber:timber:5.0.1'
-    implementation 'com.github.dkzwm:srl-core:1.7.2.4'
-    implementation 'com.github.dkzwm:srl-ext-classics:1.7.2.4'
 
     implementation 'androidx.work:work-runtime-ktx:2.8.0-beta02'
     implementation 'androidx.work:work-rxjava2:2.8.0-beta02'

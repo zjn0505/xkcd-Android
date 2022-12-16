@@ -37,6 +37,8 @@ class WhatIfWebView(context: Context, attrs: AttributeSet) : WebView(context, at
 
     private val glide by lazy { Glide.with(context) }
 
+    private var interceptor: ((String) -> Unit)? = null
+
     private val imageTasks = ArrayList<FutureTarget<File>>()
 
     private val webViewClient = object : WebViewClient() {
@@ -76,6 +78,8 @@ class WhatIfWebView(context: Context, attrs: AttributeSet) : WebView(context, at
                     )
                 }
 
+            } else if (url.startsWith("xkcd://")) {
+                interceptor?.invoke(url)
             } else {
                 val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                 if (browserIntent.resolveActivity(view.context.packageManager) != null) {
@@ -186,6 +190,10 @@ class WhatIfWebView(context: Context, attrs: AttributeSet) : WebView(context, at
             }
         }
         return super.onTouchEvent(event)
+    }
+
+    fun addXkcdUriInterceptor(interceptor: (String) -> Unit) {
+        this.interceptor = interceptor
     }
 
     private var lastMotionX: Int = 0

@@ -1,7 +1,6 @@
 package xyz.jienan.xkcd.extra.fragment
 
 import android.content.Intent
-import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
@@ -9,27 +8,18 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.webkit.WebSettings
-import android.widget.TextView
 import androidx.core.os.bundleOf
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.fragment_extra_single.*
-import me.dkzwm.widget.srl.SmoothRefreshLayout
-import me.dkzwm.widget.srl.extra.footer.ClassicFooter
-import me.dkzwm.widget.srl.extra.header.ClassicHeader
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Element
 import timber.log.Timber
 import xyz.jienan.xkcd.Const.*
 import xyz.jienan.xkcd.R
 import xyz.jienan.xkcd.model.ExtraComics
 import xyz.jienan.xkcd.model.ExtraModel
 import xyz.jienan.xkcd.model.util.appendCss
-import xyz.jienan.xkcd.ui.RefreshFooterView
-import xyz.jienan.xkcd.ui.RefreshHeaderView
-import xyz.jienan.xkcd.ui.getColorResCompat
 import xyz.jienan.xkcd.ui.getUiNightModeFlag
 import xyz.jienan.xkcd.whatif.fragment.SingleWhatIfFragment
-import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 
 /**
@@ -42,29 +32,7 @@ class SingleExtraWebViewFragment : SingleWhatIfFragment() {
 
     private var currentPage = 0
 
-    private val refreshTextSize by lazy { resources.getDimension(R.dimen.refresh_text_size) }
-
     override val layoutResId = R.layout.fragment_extra_single
-
-    private val refreshListener = object : SmoothRefreshLayout.OnRefreshListener {
-        override fun onRefreshing() {
-            Timber.d("Refresh")
-            loadLinkPage(--currentPage)
-            refreshLayout!!.refreshComplete()
-            updateReleaseText()
-        }
-
-        override fun onLoadingMore() {
-            Timber.d("LoadMore")
-            loadLinkPage(++currentPage)
-            refreshLayout!!.refreshComplete()
-            Observable.timer(700, TimeUnit.MILLISECONDS)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .doOnNext { webView.scrollTo(0, 0) }
-                    .subscribe()
-            updateReleaseText()
-        }
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -74,14 +42,6 @@ class SingleExtraWebViewFragment : SingleWhatIfFragment() {
             currentPage = savedInstanceState.getInt("current", 0)
         }
         loadLinkPage(currentPage)
-        if (extraComics.links?.size ?: 0 > 1) {
-            refreshLayout?.setupMultipage()
-            updateReleaseText()
-        }
-        val color = ColorStateList.valueOf(requireContext().getColorResCompat(android.R.attr.textColorPrimary))
-        refreshLayout?.findViewById<TextView>(R.id.sr_classic_title)?.setTextColor(color)
-        refreshLayout?.findViewById<TextView>(R.id.sr_classic_last_update)?.setTextColor(color)
-        (refreshLayout?.footerView as ClassicFooter<*>).findViewById<TextView>(R.id.sr_classic_title).setTextColor(color)
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -123,9 +83,7 @@ class SingleExtraWebViewFragment : SingleWhatIfFragment() {
     }
 
     private fun loadLinkPage(pageIndex: Int) {
-
         val links = extraComics.links
-
         if (links != null) {
             ExtraModel.parseContentFromUrl(links[abs(pageIndex % links.size)])
                     .map {
@@ -137,24 +95,32 @@ class SingleExtraWebViewFragment : SingleWhatIfFragment() {
                             it
                         }
                     }
+                    .map {
+                        // Check solution / Go back to puzzle,
+                        val doc = Jsoup.parse(it)
+                        val (text, uri) =  if (pageIndex == 0) {
+                            getString(R.string.check_solution) to  URI_XKCD_EXTRA_SOLUTION
+                        } else  {
+                            getString(R.string.check_puzzle) to URI_XKCD_EXTRA_PUZZLE
+                        }
+                        doc.body().children().last().appendElement("br").appendChild(Element("a").appendText(text).attr("href", uri))
+                        doc.html()
+                    }
                     .subscribe({ html ->
                         webView.loadDataWithBaseURL("file:///android_asset/.",
                                 html, "text/html", "UTF-8", null)
+
+                        webView.addXkcdUriInterceptor { url ->
+                            if (url == URI_XKCD_EXTRA_SOLUTION) {
+                                currentPage = 1
+                                loadLinkPage(currentPage)
+                            } else if (url == URI_XKCD_EXTRA_PUZZLE) {
+                                currentPage = 0
+                                loadLinkPage(currentPage)
+                            }
+                        }
                     }, { Timber.e(it) })
                     .also { compositeDisposable.add(it) }
-        }
-    }
-
-    private fun updateReleaseText() {
-        if (extraComics.num == 1L) {
-            val texRes = if (abs(currentPage) % 2 != 0) {
-                R.string.release_for_puzzle
-            } else {
-                R.string.release_for_solution
-            }
-
-            (refreshLayout!!.headerView as ClassicHeader<*>).setReleaseToRefreshRes(texRes)
-            (refreshLayout!!.footerView as ClassicFooter<*>).setReleaseToLoadRes(texRes)
         }
     }
 
@@ -166,18 +132,6 @@ class SingleExtraWebViewFragment : SingleWhatIfFragment() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             webView.settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.SINGLE_COLUMN
         }
-    }
-
-    private fun SmoothRefreshLayout.setupMultipage() {
-        setDisableLoadMore(false)
-        setDisablePerformRefresh(false)
-        setDisablePerformLoadMore(false)
-        setEnableKeepRefreshView(false)
-        setOnRefreshListener(refreshListener)
-        setEnableAutoRefresh(true)
-        setEnableAutoLoadMore(true)
-        setHeaderView(RefreshHeaderView(context).apply { setTextSize(refreshTextSize) })
-        setFooterView(RefreshFooterView(context).apply { setTextSize(refreshTextSize) })
     }
 
     companion object {

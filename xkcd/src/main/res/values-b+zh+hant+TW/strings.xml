@@ -100,8 +100,8 @@
     <string name="share_text_what_if">壹起來看看這篇有趣的 what if 文章吧. %s</string>
     <string name="share_text_article_extra">壹起來看看這篇有趣的文章吧. %s</string>
 
-    <string name="release_for_solution">松開查看答案</string>
-    <string name="release_for_puzzle">松開查看問題</string>
+    <string name="check_solution">查看答案</string>
+    <string name="check_puzzle">返回問題</string>
 
     <string name="bookmark_saved">書簽已保存</string>
     <string name="xkcd_download_notification_channel_name">下載 xkcd</string>

@@ -102,8 +102,8 @@
     <string name="title_what_if_list">what if list</string>
     <string name="share_text_what_if">Come and check this article I got from what if. %s</string>
     <string name="share_text_article_extra">Come and check this article I got. %s</string>
-    <string name="release_for_solution">Release for solution</string>
-    <string name="release_for_puzzle">Release for puzzle</string>
+    <string name="check_solution">Check solution</string>
+    <string name="check_puzzle">Go back to puzzle</string>
     <string name="bookmark_saved">Bookmark saved</string>
 
     <string name="xkcd_download_notification_channel_name">Download xkcd</string>
