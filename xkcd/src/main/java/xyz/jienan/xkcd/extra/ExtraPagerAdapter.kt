@@ -11,13 +11,10 @@ class ExtraPagerAdapter(fragment: Fragment) : BaseStatePagerAdapter(fragment) {
     private var extraComicsList: List<ExtraComics>? = null
 
     override fun createFragment(position: Int): Fragment {
-        var realPosition = position
-        if (realPosition > extraComicsList!!.size) {
-            realPosition = extraComicsList!!.size - 1
-        }
+        val realPosition = position.coerceIn(0, extraComicsList!!.size - 1)
         val extraComics = extraComicsList!![realPosition]
 
-        return if (!extraComics.links?.get(0).isNullOrBlank()) {
+        return if (extraComics.isWebExtra()) {
             SingleExtraWebViewFragment.newInstance(extraComics)
         } else {
             SingleExtraFragment.newInstance(realPosition + 1)
@@ -26,5 +23,11 @@ class ExtraPagerAdapter(fragment: Fragment) : BaseStatePagerAdapter(fragment) {
 
     fun setEntities(extraComics: List<ExtraComics>?) {
         extraComicsList = extraComics
+    }
+
+    override fun getItemCount(): Int = extraComicsList?.size ?: 0
+
+    private fun ExtraComics.isWebExtra(): Boolean {
+        return !links?.get(0).isNullOrBlank()
     }
 }
