@@ -11,7 +11,6 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.fab_sub_icons.*
-import kotlinx.android.synthetic.main.fragment_comic_main.*
 import xyz.jienan.xkcd.Const
 import xyz.jienan.xkcd.Const.FIRE_BROWSE_LIST_MENU
 import xyz.jienan.xkcd.Const.LAST_VIEW_XKCD_ID
@@ -53,13 +52,6 @@ class ComicsMainFragment : ContentMainBaseFragment(), ComicsMainContract.View {
             btnThumb.isLiked = hasThumbed
         }
         fab?.show()
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        if (viewPager != null && viewPager.currentItem >= 0) {
-            outState.putInt(LAST_VIEW_XKCD_ID, viewPager.currentItem + 1)
-        }
     }
 
     override fun updateFab() {

@@ -15,7 +15,6 @@ import xyz.jienan.xkcd.extra.contract.ExtraMainContract
 import xyz.jienan.xkcd.extra.presenter.ExtraMainPresenter
 import xyz.jienan.xkcd.home.base.BaseStatePagerAdapter
 import xyz.jienan.xkcd.home.base.ContentMainBaseFragment
-import xyz.jienan.xkcd.home.base.ContentMainBasePresenter
 import xyz.jienan.xkcd.model.ExtraComics
 import xyz.jienan.xkcd.model.util.XkcdSideloadUtils
 
@@ -41,13 +40,6 @@ class ExtraMainFragment : ContentMainBaseFragment(), ExtraMainContract.View {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         fab.visibility = View.GONE
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        if (viewPager != null && viewPager.currentItem >= 0) {
-            outState.putInt(LAST_VIEW_XKCD_ID, viewPager.currentItem + 1)
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

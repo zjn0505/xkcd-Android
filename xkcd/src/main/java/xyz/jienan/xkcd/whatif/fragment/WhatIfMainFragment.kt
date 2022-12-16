@@ -68,13 +68,6 @@ class WhatIfMainFragment : ContentMainBaseFragment(), WhatIfMainContract.View {
         super.onViewCreated(view, savedInstanceState)
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        if (viewPager != null && viewPager.currentItem >= 0) {
-            outState.putInt(LAST_VIEW_WHAT_IF_ID, viewPager.currentItem + 1)
-        }
-    }
-
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.menu_what_if, menu)
