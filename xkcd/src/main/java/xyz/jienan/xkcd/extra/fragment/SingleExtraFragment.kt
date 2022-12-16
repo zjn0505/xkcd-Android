@@ -30,7 +30,6 @@ import xyz.jienan.xkcd.comics.dialog.SimpleInfoDialogFragment.ISimpleInfoDialogL
 import xyz.jienan.xkcd.extra.contract.SingleExtraContract
 import xyz.jienan.xkcd.extra.presenter.SingleExtraPresenter
 import xyz.jienan.xkcd.model.ExtraComics
-import xyz.jienan.xkcd.model.ExtraModel
 import xyz.jienan.xkcd.model.util.ExplainLinkUtil
 import xyz.jienan.xkcd.model.util.XkcdSideloadUtils
 import java.lang.ref.WeakReference

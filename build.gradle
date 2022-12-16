@@ -10,7 +10,7 @@ buildscript {
 
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.2.1'
+        classpath 'com.android.tools.build:gradle:7.3.1'
         if (isProprietary) {
             classpath 'com.google.gms:google-services:4.3.5'
             classpath 'com.google.firebase:firebase-crashlytics-gradle:2.5.2'
@@ -18,14 +18,14 @@ buildscript {
         }
         classpath "io.objectbox:objectbox-gradle-plugin:$objectboxVersion"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10"
-        classpath "com.didiglobal.booster:booster-gradle-plugin:$booster_version"
-        classpath "com.didiglobal.booster:booster-transform-thread:$booster_version"
-        classpath "com.didiglobal.booster:booster-transform-webview:$booster_version"
-        classpath "com.didiglobal.booster:booster-transform-shared-preferences:$booster_version"
-        classpath "com.didiglobal.booster:booster-transform-r-inline:$booster_version"
-        classpath "com.didiglobal.booster:booster-transform-toast:$booster_version"
-        classpath "com.didiglobal.booster:booster-transform-activity-thread:$booster_version"
-        classpath "com.didiglobal.booster:booster-task-resource-deredundancy:$booster_version"
+//        classpath "com.didiglobal.booster:booster-gradle-plugin:$booster_version"
+//        classpath "com.didiglobal.booster:booster-transform-thread:$booster_version"
+//        classpath "com.didiglobal.booster:booster-transform-webview:$booster_version"
+//        classpath "com.didiglobal.booster:booster-transform-shared-preferences:$booster_version"
+//        classpath "com.didiglobal.booster:booster-transform-r-inline:$booster_version"
+//        classpath "com.didiglobal.booster:booster-transform-toast:$booster_version"
+//        classpath "com.didiglobal.booster:booster-transform-activity-thread:$booster_version"
+//        classpath "com.didiglobal.booster:booster-task-resource-deredundancy:$booster_version"
 //        classpath "com.didiglobal.booster:booster-task-compression-cwebp:$booster_version"
     }
 }
