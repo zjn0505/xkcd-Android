@@ -60,8 +60,7 @@ class ExtraMainFragment : ContentMainBaseFragment(), ExtraMainContract.View {
 
     override fun onResume() {
         super.onResume()
-        Timber.d("Adapter size ${adapter.size}")
-        if (adapter.size == 0) {
+        if (adapter.itemCount == 0) {
             XkcdSideloadUtils.loadExtra(requireContext())
             presenter.observe()
         }
