@@ -28,6 +28,7 @@ public class Const {
     public static final String PREF_XKCD_STORAGE = "pref_xkcd_storage";
     public static final String PREF_XKCD_STORAGE_INTERNAL = "pref_xkcd_storage_internal";
 
+    public static final String PREF_FAV_AND_ARCHIVE = "pref_fav_and_archive";
 
     public static final String FIRE_LARGE_IMAGE = "large_image";
     public static final String FIRE_COMIC_ID = "comic_id";

@@ -112,16 +112,16 @@ abstract class ContentMainBaseFragment : BaseFragment(), ShakeDetector.Listener 
 
     private val titleGestureListener = object : GestureDetector.SimpleOnGestureListener() {
 
-        override fun onDoubleTap(e: MotionEvent?): Boolean {
+        override fun onDoubleTap(e: MotionEvent): Boolean {
             onTabTitleDoubleTap()
             return true
         }
 
-        override fun onLongPress(e: MotionEvent?) {
+        override fun onLongPress(e: MotionEvent) {
             onTabTitleLongPress()
         }
 
-        override fun onDown(e: MotionEvent?) = true
+        override fun onDown(e: MotionEvent) = true
     }
 
     private val titleGestureDetector = GestureDetector(activity, titleGestureListener)

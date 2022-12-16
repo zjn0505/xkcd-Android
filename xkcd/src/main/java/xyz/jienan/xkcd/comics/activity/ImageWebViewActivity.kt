@@ -138,7 +138,7 @@ class ImageWebViewActivity : BaseActivity() {
         super.onDestroy()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         if (index !in listOf(1608L, 2445, 2601)) {
             return false
         }
@@ -155,7 +155,7 @@ class ImageWebViewActivity : BaseActivity() {
             2601L -> listOf("audio")
             else -> listOf()
         }.forEachIndexed { index, title ->
-            menu?.add(Menu.NONE, Menu.NONE, index, title)
+            menu.add(Menu.NONE, Menu.NONE, index, title)
         }
 
         return true

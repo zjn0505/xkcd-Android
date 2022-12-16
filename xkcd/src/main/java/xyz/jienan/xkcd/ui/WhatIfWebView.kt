@@ -205,7 +205,7 @@ fun WebView.updateSettings() {
         displayZoomControls = false
         loadWithOverviewMode = true
         allowFileAccess = true
-        setAppCacheEnabled(true)
+//        setAppCacheEnabled(true)
         domStorageEnabled = true
         cacheMode = WebSettings.LOAD_DEFAULT
         textZoom = SharedPrefManager.whatIfZoom
