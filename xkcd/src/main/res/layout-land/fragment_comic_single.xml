@@ -85,6 +85,7 @@
         android:saveEnabled="false"
         android:text="@string/see_translation"
         android:textColor="@color/colorAccent"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/tvCreateDate" />
 
