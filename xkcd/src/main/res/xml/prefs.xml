@@ -51,13 +51,13 @@
             app:title="@string/pref_random_title"
             app:useSimpleSummaryProvider="true" />
 
-        <SwitchPreferenceCompat
-            app:defaultValue="false"
-            app:iconSpaceReserved="false"
-            app:key="pref_xkcd_show_archive"
-            app:title="@string/pref_fav_and_archive_title"
-            app:summary="@string/pref_fav_and_archive_summery"
-            app:useSimpleSummaryProvider="true" />
+<!--        <SwitchPreferenceCompat-->
+<!--            app:defaultValue="false"-->
+<!--            app:iconSpaceReserved="false"-->
+<!--            app:key="pref_xkcd_show_archive"-->
+<!--            app:title="@string/pref_fav_and_archive_title"-->
+<!--            app:summary="@string/pref_fav_and_archive_summery"-->
+<!--            app:useSimpleSummaryProvider="true" />-->
 
     </PreferenceCategory>
 

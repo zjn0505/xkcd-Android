@@ -139,7 +139,7 @@ class ImageWebViewActivity : BaseActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        if (index !in listOf(1608L, 2445, 2601)) {
+        if (index !in listOf(1608L, 2445, 2601, 2712, 2765)) {
             return false
         }
         when (index) {
@@ -153,6 +153,12 @@ class ImageWebViewActivity : BaseActivity() {
             }
             2445L -> listOf("console")
             2601L -> listOf("audio")
+            2712L, 2765L -> listOf(
+                "ze.googles",
+                "python(\"import antigravity\")",
+                "ship.shield",
+                "ship.engine"
+            )
             else -> listOf()
         }.forEachIndexed { index, title ->
             menu.add(Menu.NONE, Menu.NONE, index, title)
@@ -211,10 +217,28 @@ class ImageWebViewActivity : BaseActivity() {
                         webView.loadUrl("javascript:togglePlayer()")
                     }
                 }
+                else if (index == 2712L || index == 2765L) {
+                    when (item.order) {
+                        0 -> {
+                            webView.loadUrl("javascript:ze.goggles()")
+                            // they do nothing!
+                            ToastUtils.showToast(this, "they do nothing!")
+                        }
+                        // javascript:python("import antigravity")
+                        1 -> webView.loadUrl("javascript:python(\"import antigravity\")")
+                        2 -> {
+                            webView.loadUrl("javascript:ship.shields=${!shipShield}")
+                            shipShield = !shipShield
+                        }
+                        3 -> webView.loadUrl("javascript:ship.engines='infinite improbability drive'")
+                    }
+                }
             }
         }
         return true
     }
+
+    private var shipShield = true
 
     class AndroidInterface(private val webView: WebView) {
 
@@ -342,6 +366,8 @@ class ImageWebViewActivity : BaseActivity() {
             1608,
             1975,
             2445,
+            2712,
+            2765,
             -> {
                 script = TRIM.trimIndent()
                 "https://xkcd.com/$index"
