@@ -36,7 +36,6 @@ class WhatIfMainPresenter constructor(private val view: WhatIfMainContract.View)
         }
 
         WhatIfModel.thumbsUp(currentIndex)
-                .debounce(100, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ view.showThumbUpCount(it) },
                         { e -> Timber.e(e, "Thumbs up failed") })

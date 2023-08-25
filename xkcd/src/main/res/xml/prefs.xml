@@ -59,6 +59,15 @@
 <!--            app:summary="@string/pref_fav_and_archive_summery"-->
 <!--            app:useSimpleSummaryProvider="true" />-->
 
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:iconSpaceReserved="false"
+            app:key="pref_notification"
+            app:summaryOff="@string/pref_notification_summary_disabled"
+            app:summaryOn="@string/pref_notification_summary_enabled"
+            app:title="@string/pref_notification_title"
+            app:useSimpleSummaryProvider="true" />
+
     </PreferenceCategory>
 
     <PreferenceCategory

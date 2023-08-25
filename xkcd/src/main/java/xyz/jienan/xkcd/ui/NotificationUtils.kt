@@ -12,7 +12,9 @@ import android.media.RingtoneManager
 import android.os.Build
 import android.text.TextUtils
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.graphics.createBitmap
+import androidx.preference.PreferenceManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import io.reactivex.Maybe
@@ -20,6 +22,7 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
+import xyz.jienan.xkcd.Const
 import xyz.jienan.xkcd.Const.*
 import xyz.jienan.xkcd.R
 import xyz.jienan.xkcd.home.MainActivity
@@ -58,6 +61,16 @@ object NotificationUtils {
 
     @SuppressLint("CheckResult")
     fun showNotification(context: Context, article: WhatIfArticle) {
+
+        val allowNotification = PreferenceManager
+            .getDefaultSharedPreferences(context)
+            .getBoolean(PREF_NOTIFICATION, true)
+                && NotificationManagerCompat.from(context).areNotificationsEnabled()
+
+        if (!allowNotification) {
+            return
+        }
+
         val width = 400
         val height = 400
         val num = article.num.toInt()

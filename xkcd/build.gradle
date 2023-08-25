@@ -69,7 +69,7 @@ android {
     defaultConfig {
         applicationId "xyz.jienan.xkcd"
         minSdkVersion 16
-        targetSdkVersion 32
+        targetSdkVersion 33
         versionCode 76
         versionName "2.8.2"
         vectorDrawables.useSupportLibrary = true
@@ -218,7 +218,7 @@ dependencies {
 
     implementation 'androidx.work:work-runtime-ktx:2.8.0-beta02'
     implementation 'androidx.work:work-rxjava2:2.8.0-beta02'
-    proprietaryImplementation 'com.google.firebase:firebase-analytics:21.2.0'
+    proprietaryImplementation 'com.google.firebase:firebase-analytics:19.0.2'
     //noinspection GradleDependency
     proprietaryImplementation('com.google.firebase:firebase-messaging:22.0.0')  {
         // 23.0.0 will require API level 19, Android 4.4 higher.

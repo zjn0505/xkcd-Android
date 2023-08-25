@@ -2,6 +2,8 @@ package xyz.jienan.xkcd.model
 
 import android.text.TextUtils
 import io.reactivex.Completable
+import io.reactivex.Flowable
+import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -26,7 +28,7 @@ object WhatIfModel {
     val favWhatIf: List<WhatIfArticle>
         get() = BoxManager.favWhatIf
 
-    val thumbUpList: Observable<List<WhatIfArticle>>
+    val thumbUpList: Single<List<WhatIfArticle>>
         get() = whatIfAPI.getTopWhatIfs(WHAT_IF_TOP, XKCD_TOP_SORT_BY_THUMB_UP)
                 .subscribeOn(Schedulers.io())
 
@@ -52,7 +54,6 @@ object WhatIfModel {
     fun loadAllWhatIf(): Single<List<WhatIfArticle>> {
         return whatIfAPI.archive
                 .subscribeOn(Schedulers.io())
-                .singleOrError()
                 .map { WhatIfArticleUtil.getArticlesFromArchive(it) }
                 .map { BoxManager.updateAndSaveWhatIf(it.toMutableList()) }
     }
@@ -65,7 +66,6 @@ object WhatIfModel {
     fun loadArticle(id: Long): Single<WhatIfArticle> {
         return loadArticleContentFromDB(id)
                 .switchIfEmpty(loadArticleFromAPI(id))
-                .singleOrError()
                 .observeOn(AndroidSchedulers.mainThread())
     }
 
@@ -90,7 +90,7 @@ object WhatIfModel {
      * @param index
      * @return thumb up count
      */
-    fun thumbsUp(index: Long): Observable<Long> {
+    fun thumbsUp(index: Long): Single<Long> {
         return whatIfAPI.thumbsUpWhatIf(WHAT_IF_THUMBS_UP, index.toInt())
                 .subscribeOn(Schedulers.io())
                 .doOnSubscribe { BoxManager.likeWhatIf(index) }
@@ -98,25 +98,29 @@ object WhatIfModel {
     }
 
     fun fastLoadWhatIfs(index: Long): Completable =
-            Observable.just(index)
-                    .flatMap<Long> {
+            Flowable.just(index)
+                    .flatMap {
                         if (index == 0L) {
                             loadLatest().map { it.num }
-                                    .flatMapObservable { Observable.rangeLong(1, it) }
+                                    .toFlowable()
+                                    .flatMap { Flowable.rangeLong(1, it) }
                         } else {
-                            Observable.rangeLong(1, index)
+                            Flowable.rangeLong(1, index)
                         }
-                    }.flatMap {
+                    }.flatMapSingle {
                         if (loadArticleFromDB(it) == null || loadArticleFromDB(it)!!.content.isNullOrBlank()) {
                             loadArticleFromAPI(it)
+                                .map { index }
+                                .onErrorReturnItem(index)
                         } else {
-                            Observable.just(it)
+                            Single.just(it)
                         }
                     }
                     .toList()
                     .ignoreElement()
+                    .onErrorComplete()
 
-    private fun loadArticleFromAPI(id: Long): Observable<WhatIfArticle> {
+    private fun loadArticleFromAPI(id: Long): Single<WhatIfArticle> {
         return whatIfAPI.getArticle(id)
                 .subscribeOn(Schedulers.io())
                 .map { WhatIfArticleUtil.getArticleFromHtml(it) }
@@ -124,8 +128,8 @@ object WhatIfModel {
                 .map { BoxManager.updateAndSaveWhatIf(id, it) }
     }
 
-    private fun loadArticleContentFromDB(id: Long): Observable<WhatIfArticle> {
+    private fun loadArticleContentFromDB(id: Long): Maybe<WhatIfArticle> {
         val article = BoxManager.getWhatIf(id)
-        return if (article == null || TextUtils.isEmpty(article.content)) Observable.empty() else Observable.just(article)
+        return if (article == null || TextUtils.isEmpty(article.content)) Maybe.empty() else Maybe.just(article)
     }
 }

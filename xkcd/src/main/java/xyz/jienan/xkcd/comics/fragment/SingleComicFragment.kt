@@ -201,7 +201,7 @@ class SingleComicFragment : BaseFragment(), SingleComicContract.View {
             if (currentPic == null) {
                 false
             } else {
-                showInfoDialog(showAltText = comicOnly)
+                showInfoDialog(showAltText = comicOnly && resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
                 it.performHapticFeedback(LONG_PRESS)
                 true
             }
