@@ -14,6 +14,8 @@ public class Const {
 
     public static final String PREF_ARROW = "pref_arrow";
     public static final String PREF_RANDOM = "pref_random";
+
+    public static final String PREF_NOTIFICATION = "pref_notification";
     public static final String PREF_FONT = "pref_font";
     public static final String PREF_ZOOM = "pref_zoom";
     public static final String PREF_WHAT_IF_SEARCH = "pref_what_if_search";

@@ -127,4 +127,9 @@
     <string name="pref_storage_xkcd_extra_summary">数据可用: %d</string>
     <string name="pref_storage_xkcd_extra">xkcd extra</string>
     <string name="pref_storage_what_if_article">what if 文章</string>
+
+    <string name="pref_notification_title">通知</string>
+    <string name="pref_notification_summary_enable_from_settings">点击前往设置开启应用通知</string>
+    <string name="pref_notification_summary_enabled">每周一、三、五，4月1日，以及大概每四年收到更新通知</string>
+    <string name="pref_notification_summary_disabled">开启后，在有更新时会收到通知</string>
 </resources>

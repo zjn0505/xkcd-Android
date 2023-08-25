@@ -127,6 +127,13 @@
     <string name="pref_storage_xkcd_extra_summary">info ready: %d</string>
     <string name="pref_storage_xkcd_extra">xkcd extra</string>
     <string name="pref_storage_what_if_article">what if articles</string>
+
     <string name="pref_fav_and_archive_title">Love &amp; Archive</string>
     <string name="pref_fav_and_archive_summery">Archive comics and articles when added to favorites</string>
+    <string name="archive">Archive</string>
+
+    <string name="pref_notification_title">Notification</string>
+    <string name="pref_notification_summary_enable_from_settings">Enable notification from system settings</string>
+    <string name="pref_notification_summary_enabled">Receive notifications on Monday, Wednesday, Friday, April 1, and every 4 years.</string>
+    <string name="pref_notification_summary_disabled">Turn ON to get notified of latest xkcd and what if</string>
 </resources>

@@ -1,7 +1,9 @@
 package xyz.jienan.xkcd.list.presenter
 
 import android.view.View
+import io.reactivex.Flowable
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
@@ -39,14 +41,14 @@ class WhatIfListPresenter(private val view: WhatIfListContract.View) : ListPrese
         WhatIfModel.thumbUpList
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { view.setLoading(true) }
-                .flatMapSingle { whatIfArticles ->
-                    Observable.fromIterable(whatIfArticles)
+                .flatMap { whatIfArticles ->
+                    Flowable.fromIterable(whatIfArticles)
                             .map { it.num }
                             .filter { num -> num <= latest }
                             .map { WhatIfModel.loadArticleFromDB(it)!! }
                             .toList()
                 }
-                .doOnNext { view.setLoading(false) }
+                .doOnSuccess { view.setLoading(false) }
                 .subscribe({ view.updateData(it) },
                         { e -> Timber.e(e, "get top what if error") })
                 .also { compositeDisposable.add(it) }
