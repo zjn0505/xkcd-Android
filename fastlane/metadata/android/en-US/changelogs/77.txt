@@ -1,0 +1,5 @@
+- Support interactive comic #2712, #2765
+- Add settings for notification
+- Improve extra puzzle #1 experience
+
+Full release note on https://is.gd/xkcd_app
