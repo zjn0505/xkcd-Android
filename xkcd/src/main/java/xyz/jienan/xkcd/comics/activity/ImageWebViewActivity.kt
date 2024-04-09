@@ -167,10 +167,15 @@ class ImageWebViewActivity : BaseActivity() {
         return true
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (webView.canGoBack()) {
-            webView.goBack()
-            return
+            if (webView.originalUrl?.contains("/2916/#xt") == true) {
+                // For 2916, we should skip the fragment #
+            } else {
+                webView.goBack()
+                return
+            }
         }
         super.onBackPressed()
     }
