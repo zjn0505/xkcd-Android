@@ -147,7 +147,7 @@ class SingleComicPresenter(private val view: SingleComicContract.View, private v
                         view.translationMode = 0
                     }
                 }, {
-                    if (it is HttpException && it.code() == 400) {
+                    if (it is HttpException && (it.code() == 400 || it.code() == 404)) {
                         Timber.i("Translation not available for ${xkcdPic.num}")
                     } else {
                         Timber.e(it)
