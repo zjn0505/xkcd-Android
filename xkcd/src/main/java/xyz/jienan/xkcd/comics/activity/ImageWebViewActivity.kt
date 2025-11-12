@@ -421,7 +421,7 @@ class ImageWebViewActivity : BaseActivity() {
                         comic.style.zoom = window.innerWidth / comic.offsetWidth / 1.2;
                     }
                 """.trimIndent()
-        val url = "https://xk3d.xkcd.com/$index"
+        val url = "https://3d.xkcd.com/$index"
         return url to script
     }
 
